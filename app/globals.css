@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  --blue-foreground: #fcfcfd; */
+   --blue-foreground: #0d111d;
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+
+    --bg-primary: #0d111d;
+    --cursor-color: #fcfcfd;
+    --bg-secondary: #151d29;
+    --text-primary: #fcfcfd;
+    --bg-tab-cursor:#475467;
+    --bg-menu-cont:#0d111da8;
+  --green100: #05834b;
+  --gray100: #475467;
+  --image-bkg: #d56b6b;
+  --homeCouroselbg: #6d2445
+  /* --bg-primary: #fcfcfd;
+  --cursor-color: #0d111d;
+  --bg-secondary: #8e949d;
+  --text-primary: #0f0202;
+  --bg-tab-cursor:#fcfcfd;
+  --bg-menu-cont:#fcfcfda8; */
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --blue-foreground: #0d111d;
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+
+    --bg-primary: #0d111d;
+    --cursor-color: #fcfcfd;
+    --bg-secondary: #151d29;
+    --text-primary: #fcfcfd;
+    --bg-tab-cursor:#475467;
+    --bg-menu-cont:#0d111da8;
+
+    
+  }
+} */
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: var(--bg-primary);
+  scroll-behavior: smooth;
+}
+.parent-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.parent-wrap > .child-wrap {
+  /* max-width: 1536px; */
+  max-width: 1400px;
+  width: 100%;
+  padding: 0px 24px;
+}
+.parent-wrap > .child-wrap-sm {
+  max-width: 1400px;
+  /* max-width: 1536px; */
+  width: 100%;
+  padding: 0px 10px;
+}
+.home-slick-cont .slick-arrow {
+  position: absolute !important;
+  width: 40px !important;
+  height: 40px !important;
+}
+.auth-container {
+  background: url("../public/static/images/auth_bkg.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: calc(100vh - 92px);
+}
+.text-gray {
+  color: #969aa0;
+}
+/* .home-slick-cont .slick-slider .slick-slide {
+  padding: 0 10px;
+} */
+.home-slick-cont .slick-next {
+  /* right:-40px */
+}
+
+/** Classes for the displayed toast **/
+
+/* .Toastify__toast--rtl {
+}
+.Toastify__toast-body {
+  
+} */
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

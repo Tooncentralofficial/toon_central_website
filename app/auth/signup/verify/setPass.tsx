@@ -1,0 +1,168 @@
+"use client";
+
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
+import { useMutation } from "@tanstack/react-query";
+import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
+import { useState } from "react";
+import { postRequest } from "@/app/utils/queries/requests";
+import { InputOutline } from "@/app/_shared/inputs_actions/inputFields";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "@/lib/slices/auth-slice";
+import { useRouter } from "next/navigation";
+
+const SetPassword = ({
+  verification_code,
+  email,
+}: {
+  verification_code: string | any;
+  email: string | any;
+}) => {
+  const [isText, setIsText] = useState(false);
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const initialValues = {
+    email: email,
+    password: "",
+    user_type:2,
+    confirmed_password: "",
+  };
+  console.log("verification code", verification_code);
+
+  const validationSchema = Yup.object().shape({
+    password: Yup.string().required("Password is required"),
+    confirmed_password: Yup.string()
+      .oneOf([Yup.ref("password"), ""], "Passwords must match")
+      .required("Confirm Password is required"),
+    // email: Yup.string().required("Email is required"),
+  });
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: (values) => {
+      console.log("values", values);
+      setPassword.mutate(values);
+    },
+  });
+  ///TODO: MOVE THIS TO A DIFFERENT PAGE
+  const setPassword = useMutation({
+    mutationFn: (data: any) => postRequest(data, "/onboard/set-password"),
+    onSuccess(data, variables, context) {
+      const { success, message, data: resData } = data;
+      if (success) {
+        
+        toast(message, {
+          toastId: "verify",
+          type: "success",
+        });
+        dispatch(loginSuccess(resData));
+        setTimeout(() => {
+          router.push("/");
+        }, 1000);
+      } else {
+        
+        toast(message, {
+          toastId: "verify",
+          type: "error",
+        });
+      }
+    },
+    onError(error, variables, context) {
+      
+    },
+  });
+  return (
+    <form onSubmit={formik.handleSubmit}>
+      <div className="">
+        <p className="text-center">Password verified</p>
+        <p className="text-3xl text-center">Set Password</p>
+        <div className="flex flex-col gap-4">
+          {/* <InputOutline
+            name="email"
+            label="Email"
+            labelPlacement="outside"
+            placeholder=" "
+            onChange={formik.handleChange}
+            isInvalid={Boolean(formik.touched.email && formik.errors.email)}
+            //  errorMessage={formik.errors.email}
+          /> */}
+
+          <InputOutline
+            name="password"
+            label="Password"
+            type={isText ? "text" : "password"}
+            labelPlacement="outside"
+            placeholder=" "
+            onChange={formik.handleChange}
+            isInvalid={Boolean(
+              formik.touched.password && formik.errors.password
+            )}
+            //errorMessage={formik.errors.password}
+            endContent={
+              <div
+                onClick={() => setIsText(!isText)}
+                className="cursor-pointer"
+              >
+                <svg
+                  width="16"
+                  height="15"
+                  viewBox="0 0 16 15"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15.5112 5.7713C14.9096 4.78615 14.1507 3.90616 13.2647 3.16626L15.1307 1.30029C15.2521 1.1746 15.3193 1.00626 15.3177 0.831527C15.3162 0.656794 15.2461 0.489648 15.1226 0.366088C14.999 0.242529 14.8319 0.172442 14.6571 0.170924C14.4824 0.169405 14.3141 0.236577 14.1884 0.35797L12.1591 2.38988C10.9012 1.64271 9.46307 1.25328 8 1.26363C3.8742 1.26363 1.52307 4.08792 0.488783 5.7713C0.169253 6.28811 0 6.88371 0 7.49133C0 8.09894 0.169253 8.69454 0.488783 9.21136C1.0904 10.1965 1.84927 11.0765 2.73528 11.8164L0.869308 13.6824C0.805659 13.7438 0.754889 13.8174 0.719963 13.8987C0.685037 13.98 0.666653 14.0674 0.665884 14.1559C0.665115 14.2444 0.681976 14.3322 0.715484 14.4141C0.748993 14.496 0.798476 14.5704 0.861048 14.6329C0.92362 14.6955 0.998027 14.745 1.07993 14.7785C1.16183 14.812 1.24958 14.8289 1.33807 14.8281C1.42656 14.8273 1.514 14.809 1.59531 14.774C1.67661 14.7391 1.75015 14.6883 1.81163 14.6247L3.84554 12.5908C5.10192 13.3378 6.53832 13.7279 8 13.719C12.1258 13.719 14.4769 10.8947 15.5112 9.21136C15.8307 8.69454 16 8.09894 16 7.49133C16 6.88371 15.8307 6.28811 15.5112 5.7713ZM1.62436 8.51362C1.43452 8.20643 1.33397 7.85244 1.33397 7.49133C1.33397 7.13021 1.43452 6.77623 1.62436 6.46904C2.51337 5.02557 4.52262 2.59647 8 2.59647C9.10644 2.59028 10.1973 2.85694 11.1762 3.37285L9.83465 4.71436C9.19485 4.28958 8.42778 4.09925 7.66361 4.17565C6.89945 4.25206 6.18525 4.59049 5.64221 5.13354C5.09917 5.67658 4.76073 6.39077 4.68433 7.15494C4.60792 7.91911 4.79825 8.68617 5.22303 9.32598L3.6836 10.8654C2.8673 10.2055 2.17072 9.40992 1.62436 8.51362ZM9.99926 7.49133C9.99926 8.02156 9.78862 8.53008 9.41369 8.90502C9.03876 9.27995 8.53024 9.49059 8 9.49059C7.70312 9.48944 7.41035 9.42109 7.14365 9.29066L9.79933 6.63498C9.92976 6.90168 9.99811 7.19445 9.99926 7.49133ZM6.00074 7.49133C6.00074 6.96109 6.21138 6.45257 6.58631 6.07764C6.96124 5.7027 7.46976 5.49207 8 5.49207C8.29688 5.49322 8.58965 5.56157 8.85635 5.69199L6.20067 8.34768C6.07024 8.08098 6.00189 7.78821 6.00074 7.49133ZM14.3756 8.51362C13.4866 9.95708 11.4774 12.3862 8 12.3862C6.89356 12.3924 5.80266 12.1257 4.82384 11.6098L6.16535 10.2683C6.80515 10.6931 7.57222 10.8834 8.33639 10.807C9.10055 10.7306 9.81475 10.3922 10.3578 9.84912C10.9008 9.30608 11.2393 8.59188 11.3157 7.82771C11.3921 7.06355 11.2017 6.29648 10.777 5.65667L12.3164 4.11724C13.1327 4.77719 13.8293 5.57274 14.3756 6.46904C14.5655 6.77623 14.666 7.13021 14.666 7.49133C14.666 7.85244 14.5655 8.20643 14.3756 8.51362Z"
+                    fill="#9FA6B2"
+                  />
+                </svg>
+              </div>
+            }
+          />
+          <InputOutline
+            name="confirmed_password"
+            label="Confirm password"
+            type={isText ? "text" : "confirmed_password"}
+            labelPlacement="outside"
+            placeholder=" "
+            onChange={formik.handleChange}
+            isInvalid={Boolean(
+              formik.touched.confirmed_password &&
+                formik.errors.confirmed_password
+            )}
+            errorMessage={formik.errors.confirmed_password}
+            endContent={
+              <div
+                onClick={() => setIsText(!isText)}
+                className="cursor-pointer"
+              >
+                <svg
+                  width="16"
+                  height="15"
+                  viewBox="0 0 16 15"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15.5112 5.7713C14.9096 4.78615 14.1507 3.90616 13.2647 3.16626L15.1307 1.30029C15.2521 1.1746 15.3193 1.00626 15.3177 0.831527C15.3162 0.656794 15.2461 0.489648 15.1226 0.366088C14.999 0.242529 14.8319 0.172442 14.6571 0.170924C14.4824 0.169405 14.3141 0.236577 14.1884 0.35797L12.1591 2.38988C10.9012 1.64271 9.46307 1.25328 8 1.26363C3.8742 1.26363 1.52307 4.08792 0.488783 5.7713C0.169253 6.28811 0 6.88371 0 7.49133C0 8.09894 0.169253 8.69454 0.488783 9.21136C1.0904 10.1965 1.84927 11.0765 2.73528 11.8164L0.869308 13.6824C0.805659 13.7438 0.754889 13.8174 0.719963 13.8987C0.685037 13.98 0.666653 14.0674 0.665884 14.1559C0.665115 14.2444 0.681976 14.3322 0.715484 14.4141C0.748993 14.496 0.798476 14.5704 0.861048 14.6329C0.92362 14.6955 0.998027 14.745 1.07993 14.7785C1.16183 14.812 1.24958 14.8289 1.33807 14.8281C1.42656 14.8273 1.514 14.809 1.59531 14.774C1.67661 14.7391 1.75015 14.6883 1.81163 14.6247L3.84554 12.5908C5.10192 13.3378 6.53832 13.7279 8 13.719C12.1258 13.719 14.4769 10.8947 15.5112 9.21136C15.8307 8.69454 16 8.09894 16 7.49133C16 6.88371 15.8307 6.28811 15.5112 5.7713ZM1.62436 8.51362C1.43452 8.20643 1.33397 7.85244 1.33397 7.49133C1.33397 7.13021 1.43452 6.77623 1.62436 6.46904C2.51337 5.02557 4.52262 2.59647 8 2.59647C9.10644 2.59028 10.1973 2.85694 11.1762 3.37285L9.83465 4.71436C9.19485 4.28958 8.42778 4.09925 7.66361 4.17565C6.89945 4.25206 6.18525 4.59049 5.64221 5.13354C5.09917 5.67658 4.76073 6.39077 4.68433 7.15494C4.60792 7.91911 4.79825 8.68617 5.22303 9.32598L3.6836 10.8654C2.8673 10.2055 2.17072 9.40992 1.62436 8.51362ZM9.99926 7.49133C9.99926 8.02156 9.78862 8.53008 9.41369 8.90502C9.03876 9.27995 8.53024 9.49059 8 9.49059C7.70312 9.48944 7.41035 9.42109 7.14365 9.29066L9.79933 6.63498C9.92976 6.90168 9.99811 7.19445 9.99926 7.49133ZM6.00074 7.49133C6.00074 6.96109 6.21138 6.45257 6.58631 6.07764C6.96124 5.7027 7.46976 5.49207 8 5.49207C8.29688 5.49322 8.58965 5.56157 8.85635 5.69199L6.20067 8.34768C6.07024 8.08098 6.00189 7.78821 6.00074 7.49133ZM14.3756 8.51362C13.4866 9.95708 11.4774 12.3862 8 12.3862C6.89356 12.3924 5.80266 12.1257 4.82384 11.6098L6.16535 10.2683C6.80515 10.6931 7.57222 10.8834 8.33639 10.807C9.10055 10.7306 9.81475 10.3922 10.3578 9.84912C10.9008 9.30608 11.2393 8.59188 11.3157 7.82771C11.3921 7.06355 11.2017 6.29648 10.777 5.65667L12.3164 4.11724C13.1327 4.77719 13.8293 5.57274 14.3756 6.46904C14.5655 6.77623 14.666 7.13021 14.666 7.49133C14.666 7.85244 14.5655 8.20643 14.3756 8.51362Z"
+                    fill="#9FA6B2"
+                  />
+                </svg>
+              </div>
+            }
+          />
+        </div>
+        <SolidPrimaryButton
+          className="mt-6"
+          type="submit"
+          isLoading={setPassword.isPending}
+        >
+          Set Password
+        </SolidPrimaryButton>
+      </div>
+    </form>
+  );
+};
+
+export default SetPassword;

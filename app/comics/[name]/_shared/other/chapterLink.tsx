@@ -1,0 +1,45 @@
+"use client";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import React from "react";
+
+const ChapterLink = ({
+  uid,
+  index,
+  image,
+  chapter,
+}: {
+  uid:any
+  index: number;
+  image: string;
+  chapter: any;
+}) => {
+  const pathname = usePathname();
+  const router = useRouter();
+  const readChapter = () => router.push(`${pathname}/chapter?chapter=${index}&uid=${uid}`);
+  return (
+    <div className="flex gap-4">
+      <div className="w-[60px] h-[60px] rounded-lg overflow-hidden">
+        <Image
+          src={image}
+          width={60}
+          height={60}
+          alt={`${chapter?.title || "toon_central"}`}
+          style={{
+            objectFit: "cover",
+            maxWidth: "100%",
+            width: "100%",
+            height: "100%",
+          }}
+          unoptimized
+        />
+      </div>
+      <div className="cursor-pointer " onClick={readChapter}>
+        <p className="mb-3 text-[#969AA0]">{chapter?.slug}</p>
+        <p className="font-bold text-[#FCFCFD]">{chapter?.title} </p>
+      </div>
+    </div>
+  );
+};
+
+export default ChapterLink;

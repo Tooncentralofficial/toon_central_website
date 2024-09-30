@@ -1,0 +1,259 @@
+"use client";
+import React, { useEffect, useRef, useState } from "react";
+import Slider from "react-slick";
+import { ArrowLeft, ArrowRight } from "../_shared/icons/icons";
+import CardTitleBottom from "../_shared/cards/cardTitleBottom";
+import { getRequest } from "../utils/queries/requests";
+import { useQuery } from "@tanstack/react-query";
+import { dummyItems } from "../_shared/data";
+import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
+import "swiper/css";
+import {motion} from "framer-motion"
+import Curve from "../_shared/curve";
+export const staticCardItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+function HomeCarousel() {
+  const [carouselItems, setCarouselItems] = useState([]);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [hoverIndex,setHoverIndex] = useState(-1)
+  const [slidesPerPage, setSlidesPerPage] = useState(5);
+  const swiperRef:any = useRef(null);
+  const [currentGroup, setCurrentGroup] = useState(0);
+  const { data, isFetching, isLoading, isError, isSuccess } = useQuery({
+    queryKey: ["carousel"],
+    queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
+  });
+  const swiper =useSwiper()
+  console.log(data)
+  useEffect(() => {
+    if (isSuccess) {
+      setCarouselItems(data?.data?.comics || dummyItems);
+    }
+  }, [isLoading, isFetching, data]);
+   useEffect(() => {
+     
+     if (swiperRef.current) {
+       const { slidesPerView } = swiperRef.current.params;
+       setSlidesPerPage(slidesPerView);
+     }
+   }, [swiperRef.current, currentSlide]);
+  let sliderRef: any = useRef();
+   const handleSlideChange = (swiper:any) => {
+     // Calculate the current group index
+     const groupIndex = Math.floor(
+       swiper.realIndex / swiper.params.slidesPerGroup
+     );
+     console.log(groupIndex)
+     setCurrentGroup(groupIndex);
+   };
+  const next = () => {
+    sliderRef.slickNext();
+  };
+  const previous = () => {
+    sliderRef.slickPrev();
+  };
+  console.log(currentSlide)
+  const handleNext = () => {
+    if (swiperRef.current) {
+      swiperRef.current.slideNext();
+    }
+  };
+
+  const handlePrev = () => {
+    if (swiperRef.current) {
+      swiperRef.current.slidePrev();
+    }
+  };
+
+  const ArrowCircle = ({ type }: { type: "left" | "right" }) => {
+    return (
+      <div
+        onClick={type === "left" ? handlePrev : handleNext}
+        className={`absolute top-[50%] translate-y-[-50%] ${
+          type === "left" ? "left-[-40px]" : "right-[-40px]"
+        } rounded-[50%] h-10 w-10 bg-[var(--green100)] hidden md:inline-grid place-items-center cursor-pointer`}
+      >
+        {type === "left" ? <ArrowLeft /> : <ArrowRight />}
+      </div>
+    );
+  };
+  // const ArrowCircle = ({ type }: { type: "left" | "right" }) => {
+  //   return (
+  //     <div
+  //       onClick={type == "left" ? previous : next}
+  //       className={`absolute top-[50%] translate-y-[-50%] ${
+  //         type == "left" ? "left-[-40px]" : "right-[-40px]"
+  //       } rounded-[50%] h-10 w-10 bg-[var(--green100)] hidden md:inline-grid place-items-center cursor-pointer`}
+  //     >
+  //       {type == "left" ? <ArrowLeft /> : <ArrowRight />}
+  //     </div>
+  //   );
+  // };
+  
+  var settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 5,
+    slidesToScroll: 5,
+    initialSlide: 0,
+    arrows: false,
+    beforeChange:(current :number,next :number)=>setCurrentSlide(next),
+    responsive: [
+      {
+        breakpoint: 1400,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 4,
+          infinite: true,
+        },
+      },
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+        },
+      },
+      {
+        breakpoint: 700,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          initialSlide: 2,
+          // infinite:true
+        },
+      },
+      // {
+      //   breakpoint: 0,
+      //   settings: {
+      //     slidesToShow: 1,
+      //     slidesToScroll: 1,
+      //   },
+      // },
+    ],
+  };
+  const color = [
+    "#21D19F",
+    "#AB2346",
+    "#820263",
+    "#BFAB25",
+    "#21D19F",
+    "#AB2346",
+    "#F08080",
+    "#C5E7E2",
+    "#453F78",
+    "#664147",
+  ];
+  return (
+    <div className="parent-wrap bg-[--homeCouroselbg] py-7  backdrop-blur-sm hover:backdrop-blur-lg transition-colors duration-400 ease-in-out">
+      <div className="child-wrap-sm home-slick-cont relative">
+        <div className="relative">
+          <Curve />
+          <Swiper
+            slidesPerView={5}
+            spaceBetween={5}
+            pagination={{
+              clickable: true,
+            }}
+            loop={true}
+            navigation={true}
+            slidesPerGroup={5}
+            className="mySwiper"
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+            }}
+            onSlideChange={(swiper) => {
+              setCurrentSlide(swiper.realIndex);
+              handleSlideChange(swiper);
+            }}
+            breakpoints={{
+              1150: {
+                slidesPerView: 5,
+                slidesPerGroup: 5,
+              },
+              1024: {
+                slidesPerView: 4,
+                slidesPerGroup: 4,
+              },
+              700: {
+                slidesPerView: 3,
+                slidesPerGroup: 3,
+              },
+              500: {
+                slidesPerView: 2,
+                slidesPerGroup: 2,
+              },
+              200: {
+                slidesPerView: 1,
+                slidesPerGroup: 1,
+              },
+            }}
+          >
+            {carouselItems.map((item, i) => (
+              <SwiperSlide key={i}>
+                <motion.div
+                  key={i}
+                  animate={{
+                    x:
+                      hoverIndex !== -1
+                        ? i < hoverIndex
+                          ? "-2rem"
+                          : i > hoverIndex
+                          ? "2rem"
+                          : "0rem"
+                        : i < currentSlide && hoverIndex === -1
+                        ? "-2rem"
+                        : i > currentSlide && hoverIndex === -1
+                        ? "5rem"
+                        : i === 9
+                        ? "-4rem"
+                        : "0rem",
+                    width:
+                      hoverIndex === i ||
+                      (i === currentSlide && hoverIndex === -1)
+                        ? "21rem"
+                        : "15.5rem",
+                    translateX: hoverIndex === i ? "-3.0rem" : "0rem",
+                    zIndex: hoverIndex == i ? 88 : currentSlide ? 2 : 0,
+                    opacity: i === 0 && currentGroup === 1 ? 0 : 1,
+                  }}
+                  transition={{
+                    duration: 0.5,
+                  }}
+                  onMouseOver={() => {
+                    document.documentElement.style.setProperty(
+                      "--homeCouroselbg",
+                      color[i]
+                    );
+                    if (i == currentSlide) {
+                      setHoverIndex(-1);
+                    } else {
+                      setHoverIndex(i);
+                    }
+                  }}
+                  onMouseOut={() => {
+                    setHoverIndex(-1);
+                  }}
+                >
+                  <CardTitleBottom
+                    cardData={item}
+                    index={i}
+                    expand={
+                      hoverIndex === i ||
+                      (hoverIndex === -1 && i === currentSlide)
+                    }
+                  />
+                </motion.div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
+          <ArrowCircle type="left" />
+          <ArrowCircle type="right" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default HomeCarousel;
