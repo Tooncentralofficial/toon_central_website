@@ -10,7 +10,7 @@ export const SolidPrimaryButton = ({
     <Button
       {...ButtonProps}
       size={ButtonProps.size||"lg"}
-      className={`${ButtonProps.className} bg-[var(--green100)] text-white rounded-lg text-lg w-full`}
+      className={`${ButtonProps.className} bg-[var(--green100)] text-white rounded-lg text-lg`}
       variant="flat"
       spinner={
         <svg

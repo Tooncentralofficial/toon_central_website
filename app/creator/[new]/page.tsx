@@ -28,6 +28,7 @@ import { useEffect, useState } from "react";
 import { Comic } from "@/helpers/types";
 import CheckCountry from "./modals/checkCountry";
 import AddStrips from "./modals/addStrips";
+import { parseArray } from "@/helpers/parsArray";
 
 interface NewUpload {
   uuid: string | null;
@@ -48,6 +49,9 @@ export default function Page({
   const pathname = usePathname();
 
   const isEdit = pathname.includes("edit");
+
+  const BANNER_SIZE = "1952 x 587";
+  const COMIC_SIZE = "1080 x 1080";
   const { onClose, isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
     onClose: onAddClose,
@@ -151,7 +155,11 @@ export default function Page({
           type: "success",
         });
         if (resData?.uuid && resData?.id) {
-          addMoreStrips({ comicId: resData.id, uuid: resData.uuid });
+          // if(parseArray(comicData?.episodes).length>0){
+
+          //   addMoreStrips({ comicId: resData.id, uuid: resData.uuid });
+          // }
+          addPart(resData.uuid, resData.id);
         }
       } else {
         toast(message, {
@@ -243,6 +251,9 @@ export default function Page({
     },
   ];
   const goBack = () => router.back();
+  function addPart(uid: string, comicId: string) {
+    router.push(`/user/library/books/addpart?uuid${uid}&comicId=${comicId}`);
+  }
   if (userType !== "user") {
     router.push("/creator");
     return <div></div>;
@@ -268,6 +279,7 @@ export default function Page({
                       error={Boolean(
                         formik.errors.title && formik.touched.title
                       )}
+                      isDisabled={addNew.isPending}
                     />
 
                     <FlatTextarea
@@ -279,6 +291,7 @@ export default function Page({
                       error={Boolean(
                         formik.errors.description && formik.touched.description
                       )}
+                      isDisabled={addNew.isPending}
                     />
 
                     <div className="flex flex-col sm:flex-row gap-6">
@@ -292,6 +305,7 @@ export default function Page({
                           formik.errors.genreId && formik.touched.genreId
                         )}
                         selectedKeys={[formik.values.genreId]}
+                        isDisabled={addNew.isPending}
                       >
                         {SELECT_ITEMS.map((item) => (
                           <SelectItem key={item.id} value={item.id.toString()}>
@@ -309,6 +323,7 @@ export default function Page({
                           formik.errors.status && formik.touched.status
                         )}
                         selectedKeys={[formik.values.status]}
+                        isDisabled={addNew.isPending}
                       >
                         {COMIC_STATUS.map((item) => (
                           <SelectItem key={item.id} value={item.id.toString()}>
@@ -327,6 +342,7 @@ export default function Page({
                       isInvalid={Boolean(
                         formik.errors.updateDays && formik.touched.updateDays
                       )}
+                      isDisabled={addNew.isPending}
                     >
                       {UPDATE_DAYS.map((item) => (
                         <SelectItem key={item.id} value={item.id.toString()}>
@@ -345,6 +361,7 @@ export default function Page({
                         formik.errors.socialMediaHandle &&
                           formik.touched.socialMediaHandle
                       )}
+                      isDisabled={addNew.isPending}
                     />
                   </div>
 
@@ -366,7 +383,7 @@ export default function Page({
 
                           <p>
                             Recommended size is{" "}
-                            <span className="font-semibold">1952 x 587</span>{" "}
+                            <span className="font-semibold">{COMIC_SIZE}</span>{" "}
                           </p>
                         </div>
                       }
@@ -382,7 +399,7 @@ export default function Page({
 
                           <p>
                             Recommended size is{" "}
-                            <span className="font-semibold">1952 x 587</span>{" "}
+                            <span className="font-semibold">{COMIC_SIZE}</span>{" "}
                           </p>
                         </div>
                       }
@@ -406,7 +423,7 @@ export default function Page({
 
                         <p>
                           Recommended size is{" "}
-                          <span className="font-semibold">1080 x 1080</span>{" "}
+                          <span className="font-semibold">{BANNER_SIZE}</span>{" "}
                         </p>
                       </div>
                     }
@@ -422,7 +439,7 @@ export default function Page({
 
                         <p>
                           Recommended size is{" "}
-                          <span className="font-semibold">1080 x 1080</span>{" "}
+                          <span className="font-semibold">{BANNER_SIZE}</span>{" "}
                         </p>
                       </div>
                     }
@@ -431,6 +448,7 @@ export default function Page({
                 {/* <InputPicture formik={formik} fieldName={""} /> */}
                 <div className="flex mt-10 gap-5">
                   <SolidPrimaryButton
+                    className="w-full"
                     isLoading={addNew.isPending || editComic.isPending}
                     type="submit"
                   >

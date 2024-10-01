@@ -120,7 +120,7 @@ const Page = () => {
           />
         </div>
         <SolidPrimaryButton
-          className="mt-6"
+         className="w-full mt-6"
           type="submit"
           isLoading={registerUser.isPending}
         >

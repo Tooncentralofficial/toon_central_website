@@ -6,15 +6,10 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
-  getRequestProtected,
-  patchRequestProtected,
-  postRequest,
   postRequestProtected,
 } from "@/app/utils/queries/requests";
 import {
   FlatInput,
-  FlatTextarea,
-  InputSolid,
 } from "@/app/_shared/inputs_actions/inputFields";
 import InputPicture from "@/app/_shared/inputs_actions/inputPicture";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
@@ -22,9 +17,6 @@ import { Button, Select, SelectItem } from "@nextui-org/react";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Comic } from "@/helpers/types";
-import InputPictureMultiple from "@/app/_shared/inputs_actions/inputPictureMultiple";
 import { generateUrl } from "@/helpers/parseImage";
 import InputPictureFloating from "@/app/_shared/inputs_actions/inputPictureFloating";
 export default function Page({
@@ -59,8 +51,7 @@ export default function Page({
       values.comicImages.map((image, i) => {
         formData.append(`comicImage[${i}][image]`, image);
       });
-      publishChapter.mutate(formData)
-
+      publishChapter.mutate(formData);
     },
     enableReinitialize: true,
   });
@@ -80,7 +71,7 @@ export default function Page({
     );
     return images;
   }, [formik.values.comicImages]);
-
+  const router = useRouter();
   const publishChapter = useMutation({
     mutationKey: [`comic${comicId}_post_chapter`],
     mutationFn: (data: any) =>
@@ -93,10 +84,11 @@ export default function Page({
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {
-        toast("Chapter published", {
+        toast("Chapter added", {
           toastId: "add_comic",
           type: "success",
         });
+        router.push("/user/library");
       } else {
         toast(message, {
           toastId: "add_comic",
@@ -128,7 +120,7 @@ export default function Page({
                   value={formik.values.title}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  error={Boolean(formik.errors.title&&formik.touched.title)}
+                  error={Boolean(formik.errors.title && formik.touched.title)}
                 />
                 <FlatInput
                   label={"Chapter Description"}
@@ -136,7 +128,9 @@ export default function Page({
                   value={formik.values.description}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  error={Boolean(formik.errors.description&&formik.touched.description)}
+                  error={Boolean(
+                    formik.errors.description && formik.touched.description
+                  )}
                 />
               </div>
               <div className=" mt-10">
@@ -145,7 +139,9 @@ export default function Page({
                   <div className="hidden md:block">
                     <InputPicture
                       formik={formik}
-                      fieldError={Boolean(formik.errors.comicImages&&formik.touched.comicImages)}
+                      fieldError={Boolean(
+                        formik.errors.comicImages && formik.touched.comicImages
+                      )}
                       onChange={(file) => addImage(file)}
                       fieldName={"comicImages"}
                       variant="add"
@@ -157,7 +153,7 @@ export default function Page({
                               Upload image file
                             </span>{" "}
                           </p>
-  
+
                           <p className="text-center">
                             Recommended size is{" "}
                             <span className="font-semibold">160 x 151</span>{" "}
@@ -193,14 +189,14 @@ export default function Page({
               fieldError={Boolean(formik.errors.comicImages)}
               onChange={(file) => addImage(file)}
               fieldName={"comicImages"}
-              
             />
             <div className="flex mt-10 gap-5">
               <SolidPrimaryButton
+                className="w-full"
                 isLoading={publishChapter.isPending}
                 type="submit"
               >
-                Publish
+                Add Chapter
               </SolidPrimaryButton>
               <Button
                 // onPress={goBack}

@@ -43,10 +43,11 @@ const Chapters = ({ uid, data, comicId }: ComicTab) => {
       <div className="flex justify-center">
         <div className="w-[400px] mt-3">
           <SolidPrimaryButton
+          className="w-full"
             as={Link}
             href={`/user/library/books/addpart?uuid${uid}&comicId=${comicId}`}
           >
-            Add a part
+            Add Episode
           </SolidPrimaryButton>
         </div>
       </div>

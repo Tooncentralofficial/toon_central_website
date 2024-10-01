@@ -70,6 +70,7 @@ interface CustomInputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   error?:boolean;
+  isDisabled?:boolean
 }
 
 export const FlatInput: React.FC<CustomInputProps> = ({
@@ -81,6 +82,7 @@ export const FlatInput: React.FC<CustomInputProps> = ({
   onChange,
   onBlur,
   error,
+  isDisabled
 }) => {
   return (
     <div  className="w-full flex flex-col gap-1.5">
@@ -98,6 +100,8 @@ export const FlatInput: React.FC<CustomInputProps> = ({
           onBlur={onBlur}
           className={`w-full py-[10px] px-6 bg-[#D9D9D9] rounded-[8px] text-[#8C8C8C] focus:text-[#000000]`}
           placeholder={placeholder}
+          disabled={isDisabled}
+
         />
       </div>
       {/* {Boolean(error) && <div className="text-danger">{error}</div>} */}
@@ -113,6 +117,7 @@ interface CustomTextareaProps {
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void; // onChange handler
   onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void; // onBlur handler (optional)
   error?: boolean; // Error message (optional)
+  isDisabled?:boolean
 }
 
 export const FlatTextarea: React.FC<CustomTextareaProps> = ({
@@ -123,6 +128,7 @@ export const FlatTextarea: React.FC<CustomTextareaProps> = ({
   onChange,
   onBlur,
   error,
+  isDisabled
 }) => {
   return (
     <div className="flex flex-col gap-1.5">
@@ -136,6 +142,7 @@ export const FlatTextarea: React.FC<CustomTextareaProps> = ({
           name={name}
           value={value}
           onChange={onChange}
+          disabled={isDisabled}
           onBlur={onBlur}
           className={`w-full py-[10px] px-6 bg-[#D9D9D9] align-top rounded-[8px] text-[#8C8C8C] focus:text-[#000000]`}
           placeholder={placeholder}
