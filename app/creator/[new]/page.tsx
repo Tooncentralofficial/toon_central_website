@@ -42,7 +42,7 @@ export default function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const { user, userType, token } = useSelector(selectAuthState);
-  console.log("user",user)
+  console.log("user", user);
   const router = useRouter();
   const { comicId }: any = searchParams;
   const [comicData, setComicData] = useState<Comic | null>();
@@ -61,7 +61,13 @@ export default function Page({
     onOpenChange: onAddOpenChange,
   } = useDisclosure();
   useEffect(() => {
-    if (!user?.country_id) onOpen();
+    setTimeout(() => {
+      if (!user?.country_id) {
+        onOpen();
+      } else {
+        onClose();
+      }
+    }, 2000);
   }, [user?.country_id]);
 
   const {
@@ -71,7 +77,11 @@ export default function Page({
   } = useQuery({
     queryKey: [`fetchcomic_${comicId}`],
     queryFn: () =>
-      getRequestProtected(`my-libraries/comics/${comicId}/get`, token,pathname),
+      getRequestProtected(
+        `my-libraries/comics/${comicId}/get`,
+        token,
+        pathname
+      ),
     enabled: isEdit,
   });
 
@@ -261,7 +271,7 @@ export default function Page({
   //   router.push("/creator");
   //   return <div></div>;
   // } else {
-   
+
   // }
   return (
     <>
@@ -281,9 +291,7 @@ export default function Page({
                     value={formik.values.title}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    error={Boolean(
-                      formik.errors.title && formik.touched.title
-                    )}
+                    error={Boolean(formik.errors.title && formik.touched.title)}
                     isDisabled={addNew.isPending}
                   />
 
