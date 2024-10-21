@@ -21,28 +21,27 @@ const Page = ({
   searchParams,
 }: {
   params: { slug: string };
-  searchParams: { uuid:string,id:number };
+  searchParams: { uuid: string; id: number };
 }) => {
   const [comic, setComic] = useState(null);
   const { uuid, id } = searchParams;
+  console.log("search", searchParams);
   const pathname = usePathname();
   const { token } = useSelector(selectAuthState);
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [`comic_${uuid}`],
     queryFn: () =>
       getRequestProtected(`/my-libraries/comics/${id}/get`, token, pathname),
-    enabled: token !== null,
+    enabled: token !== null && id !== null,
   });
   useEffect(() => {
     if (isSuccess) {
       console.log(data);
       setComic(data?.data || null);
-    }else{
-      console.log("erre",data);
+    } else {
+      console.log("erre", data);
     }
   }, [data, isFetching, isSuccess]);
-  console.log(data);
-  ("AppHttpControllersComicController::getComicsById(): Argument #2 ($comicId) must be of type int, string given, called in /home/tooncent/devapi.tooncentralhub.com/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php on line 46");
   return (
     <main>
       <div className="parent-wrap py-10">
