@@ -33,7 +33,7 @@ const Chapters = ({ uid, data, comicId }: ComicTab) => {
               <ChapterLink
                 uid={uid}
                 index={i}
-                image={data?.backgroundImage || ""}
+                image={item?.thumbnail ||data?.backgroundImage||""}
                 chapter={item}
               />
             </div>

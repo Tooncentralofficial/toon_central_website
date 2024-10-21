@@ -22,7 +22,7 @@ const Chapters = ({uid, data }: ComicTab) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {chapters?.map((item:any, i:number) => (
             <div key={i}>
-              <ChapterLink uid={uid} index={i} image={data?.backgroundImage||""} chapter={item} />
+              <ChapterLink uid={uid} index={i}  image={item?.thumbnail ||data?.backgroundImage||""} chapter={item} />
             </div>
           ))}
         </div>

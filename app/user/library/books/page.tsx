@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 export interface ViewComicProps {
   uid: any;
   data: any;
-  comicId:any;
+  comicId: any;
   isLoading: boolean;
 }
 const Page = ({
@@ -24,26 +24,42 @@ const Page = ({
   searchParams: { [key: string]: string | string[] | undefined };
 }) => {
   const [comic, setComic] = useState(null);
-  const { uuid,id } = searchParams;
-  const pathname=usePathname()
+  const { uuid, id } = searchParams;
+  const pathname = usePathname();
   const { token } = useSelector(selectAuthState);
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [`comic_${uuid}`],
-    queryFn: () => getRequestProtected(`/my-libraries/comics/${id}/get`, token,pathname),
+    queryFn: () =>
+      getRequestProtected(`/my-libraries/comics/${id}/get`, token, pathname),
     enabled: token !== null,
   });
   useEffect(() => {
-    if (isSuccess) setComic(data?.data || null);
+    if (isSuccess) {
+      console.log(data);
+      setComic(data?.data || null);
+    }else{
+      console.log("erre",data);
+    }
   }, [data, isFetching, isSuccess]);
-  console.log(data)
-  "App\Http\Controllers\ComicController::getComicsById(): Argument #2 ($comicId) must be of type int, string given, called in /home/tooncent/devapi.tooncentralhub.com/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php on line 46";
+  console.log(data);
+  ("AppHttpControllersComicController::getComicsById(): Argument #2 ($comicId) must be of type int, string given, called in /home/tooncent/devapi.tooncentralhub.com/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php on line 46");
   return (
     <main>
       <div className="parent-wrap py-10">
         <div className="child-wrap">
           <BackButton />
-          <LibraryBookOverview uid={uuid} data={comic} isLoading={isLoading} comicId={id}/>
-          <ComicTabs uid={uuid} data={comic} isLoading={isLoading} comicId={id} />
+          <LibraryBookOverview
+            uid={uuid}
+            data={comic}
+            isLoading={isLoading}
+            comicId={id}
+          />
+          <ComicTabs
+            uid={uuid}
+            data={comic}
+            isLoading={isLoading}
+            comicId={id}
+          />
         </div>
       </div>
     </main>

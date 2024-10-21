@@ -136,7 +136,7 @@ export default function Page({
               </div>
               <div className=" mt-10">
                 <label className="">Thumbnail</label>
-                <div className="mt-2 flex ">
+                <div className="mt-2 flex max-w-[300px] ">
                   <InputPicture
                     formik={formik}
                     maxSize={0.5}
