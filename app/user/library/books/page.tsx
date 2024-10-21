@@ -30,10 +30,10 @@ const Page = ({
   const pathname = usePathname();
   const { token } = useSelector(selectAuthState);
   const { data, isLoading, isFetching, isSuccess } = useQuery({
-    queryKey: [`comic_${uuid2}`],
+    queryKey: [`comic_${uuid2}`,id2],
     queryFn: () =>
       getRequestProtected(`/my-libraries/comics/${Number(id2)}/get`, token, pathname),
-    enabled: token !== null && id2 !== null && id2 !==undefined,
+    enabled: token !== null 
   });
   useEffect(() => {
     if (isSuccess) {

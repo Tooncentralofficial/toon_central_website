@@ -38,7 +38,7 @@ const LibraryBookOverview = ({
     isLoading: isLiking,
   } = useQuery({
     queryKey: ["like"],
-    queryFn: () => getRequestProtected(`/comics/${uid}/like`, token,pathname),
+    queryFn: () => getRequestProtected(`/comics/${uid}/like`, token, pathname),
     enabled: isLiked != false,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
@@ -135,13 +135,13 @@ const LibraryBookOverview = ({
                       Edit
                     </SolidPrimaryButton>
                     <Button
-                    isDisabled={!data?.id}
-                      onClick={() => publish()}
+                      isDisabled={data?.statusId == 1}
+                      onClick={() => data?.statusId == 0 && publish()}
                       className="  rounded-lg"
                       size="lg"
                       isLoading={isPublishing}
                     >
-                      Publish
+                      {data?.statusId == 1 ? "Published" : "Publish"}
                     </Button>
                   </div>
                 </div>
