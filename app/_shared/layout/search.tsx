@@ -87,7 +87,7 @@ const SearchModal = ({
                       className="w-full"
                       href={`${
                         item?.uuid
-                          ? `/comics/${item?.title}?uid=${item?.uuid}`
+                          ? `/comics/${item?.uuid}`
                           : ""
                       }`}
                     >
