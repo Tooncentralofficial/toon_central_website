@@ -21,7 +21,7 @@ const Page = ({
   searchParams,
 }: {
   params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { uuid:string,id:number };
 }) => {
   const [comic, setComic] = useState(null);
   const { uuid, id } = searchParams;
