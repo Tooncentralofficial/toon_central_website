@@ -37,6 +37,15 @@ const Page = () => {
     },
   });
 
+  const routeUser = () => {
+    const prevUrl = new URLSearchParams(window.location.search).get("previous");
+    if (prevUrl) {
+      router.push(decodeURIComponent(prevUrl));
+    } else {
+      router.push("/");
+    }
+  };
+
   const loginUser = useMutation({
     mutationFn: (data: any) => LoginUser(data, "/onboard/login"),
     onSuccess(data, variables, context) {
@@ -47,7 +56,7 @@ const Page = () => {
           type: "success",
         });
         dispatch(loginSuccess(resData));
-        router.push("/");
+        routeUser();
       } else {
         toast(message, {
           toastId: "login",

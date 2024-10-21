@@ -21,7 +21,12 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import Link from "next/link";
-import { BellIcon, DownMenuArrow, SearchIcon, ToonCentralIcon } from "../icons/icons";
+import {
+  BellIcon,
+  DownMenuArrow,
+  SearchIcon,
+  ToonCentralIcon,
+} from "../icons/icons";
 import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 import {
@@ -74,7 +79,7 @@ const NavHome = () => {
   }, []);
 
   const { mutate: logoutUser } = useMutation({
-    mutationFn: (data: any) => LogoutUser(),
+    mutationFn: (data: any) => LogoutUser(pathname),
     onSuccess(data, variables, context) {
       toast("Logged out", {
         toastId: "login",
@@ -94,7 +99,7 @@ const NavHome = () => {
     <>
       <Navbar
         isBlurred={false}
-       shouldHideOnScroll
+        shouldHideOnScroll
         className="bg-[var(--bg-menu-cont)] py-6"
         height="44px"
         maxWidth="2xl"

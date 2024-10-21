@@ -126,7 +126,7 @@ const Page = () => {
             // }
           />
         </div>
-        <SolidPrimaryButton className="mt-6" type="submit" isLoading={completeSignup.isPending}>
+        <SolidPrimaryButton className="w-full mt-6" type="submit" isLoading={completeSignup.isPending}>
           Continue
         </SolidPrimaryButton>
       </div>

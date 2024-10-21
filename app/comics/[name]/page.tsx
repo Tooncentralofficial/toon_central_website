@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import NotFound from "@/app/user/library/_shared/notFound";
+import { usePathname } from "next/navigation";
 
 export interface ViewComicProps {
   uid: any;
@@ -19,15 +20,16 @@ const Page = ({
   params,
   searchParams,
 }: {
-  params: { slug: string };
+  params: { name: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) => {
+  const pathname=usePathname()
   const [comic, setComic] = useState(null);
-  const { uid } = searchParams;
+  const { name } = params;
   const { token } = useSelector(selectAuthState);
   const { data, isLoading, isFetching, isSuccess } = useQuery({
-    queryKey: [`comic_${uid}`],
-    queryFn: () => getRequestProtected(`/comics/${uid}/view`, token),
+    queryKey: [`comic_${name}`],
+    queryFn: () => getRequestProtected(`/comics/${name}/view`, token,pathname),
     enabled: token !== null,
   });
   useEffect(() => {
@@ -50,8 +52,8 @@ const Page = ({
             </div>
           ) : (
             <>
-              <ComicOverview uid={uid} data={comic} isLoading={isLoading} />
-              <ComicTabs uid={uid} data={comic} isLoading={isLoading} />
+              <ComicOverview uid={name} data={comic} isLoading={isLoading} />
+              <ComicTabs uid={name} data={comic} isLoading={isLoading} />
             </>
           )}
         </div>

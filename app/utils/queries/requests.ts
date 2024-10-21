@@ -26,7 +26,11 @@ export const getRequest = async (url: string) => {
   }
 };
 
-export const getRequestProtected = async (url: string, token: any) => {
+export const getRequestProtected = async (
+  url: string,
+  token: any,
+  prevClientUrl: string
+) => {
   try {
     const response = await axiosPrivateInstance(token, "json").get(url);
     if (response.data?.status) {
@@ -40,7 +44,7 @@ export const getRequestProtected = async (url: string, token: any) => {
   } catch (error: any) {
     console.log("err", error?.response);
     if (error?.response?.status === 401) {
-      return await LogoutUser();
+      return await LogoutUser(prevClientUrl);
     }
     return FailedResponse(
       error?.response?.data?.message || "Some error occured",
@@ -72,6 +76,7 @@ export const postRequestProtected = async (
   data: any,
   url: string,
   token: string,
+  prevClientUrl: string,
   type: ContentType
 ) => {
   try {
@@ -91,7 +96,7 @@ export const postRequestProtected = async (
   } catch (error: any) {
     console.log("error:", error);
     if (error?.response?.status === 401) {
-      return await LogoutUser();
+      return await LogoutUser(prevClientUrl);
     }
     return FailedResponse(
       error?.response?.data?.message || "Some error occured",
@@ -104,6 +109,7 @@ export const putRequestProtected = async (
   data: any,
   url: string,
   token: string,
+  prevClientUrl: string,
   type: ContentType
 ) => {
   try {
@@ -119,7 +125,7 @@ export const putRequestProtected = async (
   } catch (error: any) {
     console.log("error:", error);
     if (error?.response?.status === 401) {
-      return await LogoutUser();
+      return await LogoutUser(prevClientUrl);
     }
     return FailedResponse(
       error?.response?.data?.message || "Some error occured",
@@ -128,15 +134,15 @@ export const putRequestProtected = async (
   }
 };
 
-
 export const patchRequestProtected = async (
   data: any,
   url: string,
   token: string,
+  prevClientUrl: string,
   type?: ContentType
 ) => {
   try {
-    const response = await axiosPrivateInstance(token, type||"json").patch(
+    const response = await axiosPrivateInstance(token, type || "json").patch(
       url,
       data,
       {
@@ -155,7 +161,7 @@ export const patchRequestProtected = async (
     }
   } catch (error: any) {
     if (error?.response?.status === 401) {
-      return await LogoutUser();
+      return await LogoutUser(prevClientUrl);
     }
     return FailedResponse(
       error?.response?.data?.message || "Some error occured",

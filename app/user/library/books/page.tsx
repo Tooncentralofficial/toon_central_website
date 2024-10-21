@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import LibraryBookOverview from "./_shared/overview";
+import { usePathname } from "next/navigation";
 
 export interface ViewComicProps {
   uid: any;
@@ -24,11 +25,11 @@ const Page = ({
 }) => {
   const [comic, setComic] = useState(null);
   const { uuid,id } = searchParams;
-  
+  const pathname=usePathname()
   const { token } = useSelector(selectAuthState);
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [`comic_${uuid}`],
-    queryFn: () => getRequestProtected(`/my-libraries/comics/${id}/get`, token),
+    queryFn: () => getRequestProtected(`/my-libraries/comics/${id}/get`, token,pathname),
     enabled: token !== null,
   });
   useEffect(() => {

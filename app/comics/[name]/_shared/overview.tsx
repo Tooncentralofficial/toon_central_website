@@ -23,7 +23,7 @@ const ComicOverview = ({ uid, data, isLoading }: ViewComicProps) => {
     router.push(`${pathname}/chapter?chapter=${0}&uid=${uid}`);
   const { data: likeResponse,isSuccess:isLikeSuccess, refetch: likeComic,isLoading:isLiking } = useQuery({
     queryKey: ["like"],
-    queryFn: () => getRequestProtected(`/comics/${uid}/like`, token),
+    queryFn: () => getRequestProtected(`/comics/${uid}/like`, token,pathname),
     enabled:isLiked!=false,
     refetchOnWindowFocus:false,
     refetchOnMount:false

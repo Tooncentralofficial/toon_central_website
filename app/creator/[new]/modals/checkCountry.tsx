@@ -28,7 +28,7 @@ const CheckCountry = ({ isOpen, onOpenChange, onClose }: ModalBaseProps) => {
                 Update your country to continue creating
               </p>
               <Link href="/user/profile">
-                <SolidPrimaryButton>Update</SolidPrimaryButton>
+                <SolidPrimaryButton className="w-full">Update</SolidPrimaryButton>
               </Link>
             </ModalBody>
             <ModalFooter></ModalFooter>

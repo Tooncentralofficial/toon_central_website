@@ -38,7 +38,7 @@ const LibraryBookOverview = ({
     isLoading: isLiking,
   } = useQuery({
     queryKey: ["like"],
-    queryFn: () => getRequestProtected(`/comics/${uid}/like`, token),
+    queryFn: () => getRequestProtected(`/comics/${uid}/like`, token,pathname),
     enabled: isLiked != false,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
@@ -65,6 +65,7 @@ const LibraryBookOverview = ({
         null,
         `/my-libraries/comics/${data?.id}/toggle`,
         token || "",
+        pathname,
         "json"
       ),
     onSuccess(data, variables, context) {

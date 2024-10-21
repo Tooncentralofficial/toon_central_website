@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { retrieveUser } from "../session/retrieveUser";
+import { getRequestProtected } from "@/app/utils/queries/requests";
+import { UpdateUser } from "@/app/auth/login/login";
 
 export interface AuthState {
   user?: any | null;
@@ -22,6 +24,46 @@ export const getUser = createAsyncThunk("auth/getuser", async () => {
   // console.log("retrieved user", user);
   return user;
 });
+
+export const updateProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (userUpdates: any, { getState, dispatch }) => {
+    const state = getState() as { auth: AuthState };
+    const token = state.auth.token;
+    const userType=state.auth.userType
+    const response = await getRequestProtected(
+      "/profile",
+      token,
+      window.location.pathname
+    );
+    if (response?.success) {
+      const{data}=response
+      const user = {
+        ...state.auth.user,
+        photo: data?.photo,
+        first_name: data?.firstName,
+        last_name: data?.lastName,
+        phone: data?.phone,
+        username: data?.username,
+        country_id: data?.countryId,
+        email: data?.email,
+        welcome_note: data?.welcomeNote,
+      };
+      const payload = {
+        userType: userType, 
+        user: user,
+        token: token,
+      };
+      console.log("payloadtoupd",payload)
+      // TODO:UPDATE REM fix
+      const remember = true;
+      await UpdateUser(payload, remember);
+    }
+    console.log("updateres",response)
+    return response;
+  }
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState: userInit,
@@ -62,6 +104,22 @@ export const authSlice = createSlice({
     builder.addCase(getUser.rejected, (state) => {
       state.pending = false;
       state.error = true;
+    });
+    builder.addCase(updateProfile.fulfilled, (state, { payload }) => {
+      if (payload?.success) {
+        const user = {
+          ...state.user,
+          photo: payload?.data?.photo,
+          first_name: payload?.data?.firstName,
+          last_name: payload?.data?.lastName,
+          phone: payload?.data?.phone,
+          username: payload?.data?.username,
+          country_id: payload?.data?.countryId,
+          email: payload?.data?.email,
+          welcome_note: payload?.data?.welcomeNote,
+        };
+        state.user = user;
+      }
     });
   },
 });

@@ -5,6 +5,7 @@ import { RoundUploadIcon } from "../icons/icons";
 import { Skeleton } from "@nextui-org/react";
 import { useState } from "react";
 const fileTypes = ["PNG", "jpeg", "JPEG", "JPG"];
+const MAX_SIZE = 5;
 const InputPicture = ({
   formik,
   fieldName,
@@ -15,6 +16,7 @@ const InputPicture = ({
   variant = "empty",
   emptyPlaceholder = "Upload Image file or drag and drop",
   placeholder = "Add new",
+  maxSize = MAX_SIZE,
 }: {
   formik: any;
   fieldName: any;
@@ -25,9 +27,9 @@ const InputPicture = ({
   variant?: "empty" | "add" | "upload";
   emptyPlaceholder?: React.ReactNode;
   placeholder?: React.ReactNode;
+  maxSize?: number;
 }) => {
-  const MAX_SIZE = 5;
-  const [sizeError,setSizeError]=useState(false)
+  const [sizeError, setSizeError] = useState(false);
   const { src, isFile } = parseImageSrc(formik.values[fieldName]);
   // let src = formik.values[fieldName]
   //   ? typeof formik.values[fieldName] === "string" &&
@@ -37,7 +39,7 @@ const InputPicture = ({
   //   : "";
 
   const handleChange = (file: any) => {
-    setSizeError(false)
+    setSizeError(false);
     if (onChange) {
       onChange(file);
     } else {
@@ -60,14 +62,18 @@ const InputPicture = ({
         return "";
     }
   };
-  const SizeWarning = () => <span className={`text-sm  ${sizeError?"text-danger":"text-gray"}`}>Max size is {MAX_SIZE}MB</span>;
+  const SizeWarning = () => (
+    <span className={`text-sm  ${sizeError ? "text-danger" : "text-gray"}`}>
+      Max size is {maxSize}MB
+    </span>
+  );
 
   return (
     <DragNDropTyped
       handleChange={handleChange}
       name="image"
       types={fileTypes}
-      maxSize={MAX_SIZE}
+      maxSize={maxSize}
       onSizeError={() => setSizeError(true)}
     >
       <div

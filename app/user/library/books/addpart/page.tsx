@@ -5,12 +5,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  postRequestProtected,
-} from "@/app/utils/queries/requests";
-import {
-  FlatInput,
-} from "@/app/_shared/inputs_actions/inputFields";
+import { postRequestProtected } from "@/app/utils/queries/requests";
+import { FlatInput } from "@/app/_shared/inputs_actions/inputFields";
 import InputPicture from "@/app/_shared/inputs_actions/inputPicture";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
 import { Button, Select, SelectItem } from "@nextui-org/react";
@@ -26,16 +22,19 @@ export default function Page({
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const pathname = usePathname();
   const { user, userType, token } = useSelector(selectAuthState);
   const { comicId, uuid }: any = searchParams;
   const initialValues = {
     title: "",
     description: "",
+    thumbnail: "",
     comicImages: [],
   };
   const validationSchema = Yup.object().shape({
     title: Yup.string().required(" is required"),
     description: Yup.string().required(" is required"),
+    thumbnail: Yup.mixed().required("thumbnail required"),
     comicImages: Yup.array()
       .of(Yup.mixed())
       .min(1, "At least one item is required")
@@ -48,6 +47,7 @@ export default function Page({
       const formData = new FormData();
       formData?.append("title", values.title);
       formData?.append("description", values.description);
+      formData?.append("thumbnail", values.thumbnail);
       values.comicImages.map((image, i) => {
         formData.append(`comicImage[${i}][image]`, image);
       });
@@ -79,6 +79,7 @@ export default function Page({
         data,
         `/my-libraries/chapters/comic/${comicId}/create`,
         token || "",
+        pathname,
         "form"
       ),
     onSuccess(data, variables, context) {
@@ -134,9 +135,41 @@ export default function Page({
                 />
               </div>
               <div className=" mt-10">
+                <label className="">Thumbnail</label>
+                <div className="mt-2 flex ">
+                  <InputPicture
+                    formik={formik}
+                    maxSize={0.5}
+                    fieldError={Boolean(
+                      formik.errors.comicImages && formik.touched.comicImages
+                    )}
+                    fieldName={"thumbnail"}
+                    variant="add"
+                    emptyPlaceholder={
+                      <div className="flex flex-col sm:gap-2 text-[#000000]">
+                        <p className="text-center">
+                          {" "}
+                          <span className=" text-[var(--green100)]">
+                            Upload thumbnail file
+                          </span>{" "}
+                        </p>
+
+                        <p className="text-center">
+                          Recommended size is{" "}
+                          <span className="font-semibold">1080 x 1080</span>{" "}
+                        </p>
+                        <p className="text-center text-xs">
+                          Only JPG, JPEG, and PNG formats are allowed.
+                        </p>
+                      </div>
+                    }
+                  />
+                </div>
+              </div>
+              <div className=" mt-10">
                 <label className="">Comic content</label>
                 <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-                  <div className="hidden md:block">
+                  <div className="hidden sm:block">
                     <InputPicture
                       formik={formik}
                       fieldError={Boolean(

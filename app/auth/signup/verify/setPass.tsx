@@ -154,7 +154,7 @@ const SetPassword = ({
           />
         </div>
         <SolidPrimaryButton
-          className="mt-6"
+          className="w-full mt-6"
           type="submit"
           isLoading={setPassword.isPending}
         >

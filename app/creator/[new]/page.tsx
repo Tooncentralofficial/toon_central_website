@@ -42,6 +42,7 @@ export default function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const { user, userType, token } = useSelector(selectAuthState);
+  console.log("user",user)
   const router = useRouter();
   const { comicId }: any = searchParams;
   const [comicData, setComicData] = useState<Comic | null>();
@@ -70,7 +71,7 @@ export default function Page({
   } = useQuery({
     queryKey: [`fetchcomic_${comicId}`],
     queryFn: () =>
-      getRequestProtected(`my-libraries/comics/${comicId}/get`, token),
+      getRequestProtected(`my-libraries/comics/${comicId}/get`, token,pathname),
     enabled: isEdit,
   });
 
@@ -145,6 +146,7 @@ export default function Page({
         data,
         "/my-libraries/comics/create",
         token || "",
+        pathname,
         "form"
       ),
     onSuccess(data, variables, context) {
@@ -182,7 +184,8 @@ export default function Page({
       patchRequestProtected(
         data,
         `/my-libraries/comics/${comicId}/update`,
-        token || ""
+        token || "",
+        pathname
       ),
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
@@ -254,163 +257,125 @@ export default function Page({
   function addPart(uid: string, comicId: string) {
     router.push(`/user/library/books/addpart?uuid${uid}&comicId=${comicId}`);
   }
-  if (userType !== "user") {
-    router.push("/creator");
-    return <div></div>;
-  } else {
-    return (
-      <>
-        <div className="min-h-dvh">
-          <div className="parent-wrap py-10">
-            <div className="child-wrap w-full">
-              <H2SectionTitle title="Start creating your comic on Tooncentral" />
-              <form
-                onSubmit={formik.handleSubmit}
-                className="bg-[var(--bg-secondary)] p-6 md:p-9 rounded-[8px]"
-              >
-                <div className="flex flex-col xl:flex-row gap-6 xl:gap-10">
-                  <div className="w-full xl:w-[60%] flex flex-col gap-6">
-                    <FlatInput
-                      label={"Comic Title"}
-                      name={"title"}
-                      value={formik.values.title}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      error={Boolean(
-                        formik.errors.title && formik.touched.title
-                      )}
-                      isDisabled={addNew.isPending}
-                    />
+  // if (userType !== "user") {
+  //   router.push("/creator");
+  //   return <div></div>;
+  // } else {
+   
+  // }
+  return (
+    <>
+      <div className="min-h-dvh">
+        <div className="parent-wrap py-10">
+          <div className="child-wrap w-full">
+            <H2SectionTitle title="Start creating your comic on Tooncentral" />
+            <form
+              onSubmit={formik.handleSubmit}
+              className="bg-[var(--bg-secondary)] p-6 md:p-9 rounded-[8px]"
+            >
+              <div className="flex flex-col xl:flex-row gap-6 xl:gap-10">
+                <div className="w-full xl:w-[60%] flex flex-col gap-6">
+                  <FlatInput
+                    label={"Comic Title"}
+                    name={"title"}
+                    value={formik.values.title}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={Boolean(
+                      formik.errors.title && formik.touched.title
+                    )}
+                    isDisabled={addNew.isPending}
+                  />
 
-                    <FlatTextarea
-                      label={"Comic Description"}
-                      name={"description"}
-                      value={formik.values.description}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      error={Boolean(
-                        formik.errors.description && formik.touched.description
-                      )}
-                      isDisabled={addNew.isPending}
-                    />
+                  <FlatTextarea
+                    label={"Comic Description"}
+                    name={"description"}
+                    value={formik.values.description}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={Boolean(
+                      formik.errors.description && formik.touched.description
+                    )}
+                    isDisabled={addNew.isPending}
+                  />
 
-                    <div className="flex flex-col sm:flex-row gap-6">
-                      <FlatSelect
-                        name="genreId"
-                        label="Genre"
-                        placeholder="Select genre"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        isInvalid={Boolean(
-                          formik.errors.genreId && formik.touched.genreId
-                        )}
-                        selectedKeys={[formik.values.genreId]}
-                        isDisabled={addNew.isPending}
-                      >
-                        {SELECT_ITEMS.map((item) => (
-                          <SelectItem key={item.id} value={item.id.toString()}>
-                            {item.name}
-                          </SelectItem>
-                        ))}
-                      </FlatSelect>
-                      <FlatSelect
-                        name="status"
-                        label="Status"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        placeholder="Select status"
-                        isInvalid={Boolean(
-                          formik.errors.status && formik.touched.status
-                        )}
-                        selectedKeys={[formik.values.status]}
-                        isDisabled={addNew.isPending}
-                      >
-                        {COMIC_STATUS.map((item) => (
-                          <SelectItem key={item.id} value={item.id.toString()}>
-                            {item.name}
-                          </SelectItem>
-                        ))}
-                      </FlatSelect>
-                    </div>
+                  <div className="flex flex-col sm:flex-row gap-6">
                     <FlatSelect
-                      label="Update Days"
-                      name="updateDays"
-                      placeholder="Select day"
-                      selectedKeys={[formik.values.updateDays]}
+                      name="genreId"
+                      label="Genre"
+                      placeholder="Select genre"
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       isInvalid={Boolean(
-                        formik.errors.updateDays && formik.touched.updateDays
+                        formik.errors.genreId && formik.touched.genreId
                       )}
+                      selectedKeys={[formik.values.genreId]}
                       isDisabled={addNew.isPending}
                     >
-                      {UPDATE_DAYS.map((item) => (
+                      {SELECT_ITEMS.map((item) => (
                         <SelectItem key={item.id} value={item.id.toString()}>
-                          {item.id}
+                          {item.name}
                         </SelectItem>
                       ))}
                     </FlatSelect>
-
-                    <FlatInput
-                      label={"Social Media Handle"}
-                      name={"socialMediaHandle"}
-                      value={formik.values.socialMediaHandle}
+                    <FlatSelect
+                      name="status"
+                      label="Status"
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      error={Boolean(
-                        formik.errors.socialMediaHandle &&
-                          formik.touched.socialMediaHandle
+                      placeholder="Select status"
+                      isInvalid={Boolean(
+                        formik.errors.status && formik.touched.status
                       )}
+                      selectedKeys={[formik.values.status]}
                       isDisabled={addNew.isPending}
-                    />
+                    >
+                      {COMIC_STATUS.map((item) => (
+                        <SelectItem key={item.id} value={item.id.toString()}>
+                          {item.name}
+                        </SelectItem>
+                      ))}
+                    </FlatSelect>
                   </div>
+                  <FlatSelect
+                    label="Update Days"
+                    name="updateDays"
+                    placeholder="Select day"
+                    selectedKeys={[formik.values.updateDays]}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    isInvalid={Boolean(
+                      formik.errors.updateDays && formik.touched.updateDays
+                    )}
+                    isDisabled={addNew.isPending}
+                  >
+                    {UPDATE_DAYS.map((item) => (
+                      <SelectItem key={item.id} value={item.id.toString()}>
+                        {item.id}
+                      </SelectItem>
+                    ))}
+                  </FlatSelect>
 
-                  <div className="w-full xl:w-[40%] flex flex-col gap-1.5">
-                    <label className="">Comic Cover</label>
-                    <InputPicture
-                      formik={formik}
-                      fieldName={"coverImage"}
-                      variant="upload"
-                      emptyPlaceholder={
-                        <div className="flex flex-col gap-3 text-[#000000]">
-                          <p>
-                            {" "}
-                            <span className="text-[var(--green100)]">
-                              Upload image file
-                            </span>{" "}
-                            or drag and drop
-                          </p>
-
-                          <p>
-                            Recommended size is{" "}
-                            <span className="font-semibold">{COMIC_SIZE}</span>{" "}
-                          </p>
-                        </div>
-                      }
-                      placeholder={
-                        <div className="flex flex-col gap-3 text-[#000000]">
-                          <p>
-                            {" "}
-                            <span className="text-[var(--green100)]">
-                              Add new image
-                            </span>{" "}
-                            or drag and drop
-                          </p>
-
-                          <p>
-                            Recommended size is{" "}
-                            <span className="font-semibold">{COMIC_SIZE}</span>{" "}
-                          </p>
-                        </div>
-                      }
-                    />
-                  </div>
+                  <FlatInput
+                    label={"Social Media Handle"}
+                    name={"socialMediaHandle"}
+                    value={formik.values.socialMediaHandle}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={Boolean(
+                      formik.errors.socialMediaHandle &&
+                        formik.touched.socialMediaHandle
+                    )}
+                    isDisabled={addNew.isPending}
+                  />
                 </div>
-                <div className="mt-5 flex flex-col gap-1.5">
-                  <label className="">Comic Banner</label>
+
+                <div className="w-full xl:w-[40%] flex flex-col gap-1.5">
+                  <label className="">Comic Cover</label>
                   <InputPicture
                     formik={formik}
-                    fieldName={"backgroundImage"}
+                    fieldName={"coverImage"}
+                    variant="upload"
                     emptyPlaceholder={
                       <div className="flex flex-col gap-3 text-[#000000]">
                         <p>
@@ -423,7 +388,7 @@ export default function Page({
 
                         <p>
                           Recommended size is{" "}
-                          <span className="font-semibold">{BANNER_SIZE}</span>{" "}
+                          <span className="font-semibold">{COMIC_SIZE}</span>{" "}
                         </p>
                       </div>
                     }
@@ -439,46 +404,85 @@ export default function Page({
 
                         <p>
                           Recommended size is{" "}
-                          <span className="font-semibold">{BANNER_SIZE}</span>{" "}
+                          <span className="font-semibold">{COMIC_SIZE}</span>{" "}
                         </p>
                       </div>
                     }
                   />
                 </div>
-                {/* <InputPicture formik={formik} fieldName={""} /> */}
-                <div className="flex mt-10 gap-5">
-                  <SolidPrimaryButton
-                    className="w-full"
-                    isLoading={addNew.isPending || editComic.isPending}
-                    type="submit"
-                  >
-                    {isEdit ? "Update" : "Create"}
-                  </SolidPrimaryButton>
-                  <Button
-                    onPress={goBack}
-                    className="w-full  rounded-lg"
-                    size="lg"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            </div>
+              </div>
+              <div className="mt-5 flex flex-col gap-1.5">
+                <label className="">Comic Banner</label>
+                <InputPicture
+                  formik={formik}
+                  fieldName={"backgroundImage"}
+                  emptyPlaceholder={
+                    <div className="flex flex-col gap-3 text-[#000000]">
+                      <p>
+                        {" "}
+                        <span className="text-[var(--green100)]">
+                          Upload image file
+                        </span>{" "}
+                        or drag and drop
+                      </p>
+
+                      <p>
+                        Recommended size is{" "}
+                        <span className="font-semibold">{BANNER_SIZE}</span>{" "}
+                      </p>
+                    </div>
+                  }
+                  placeholder={
+                    <div className="flex flex-col gap-3 text-[#000000]">
+                      <p>
+                        {" "}
+                        <span className="text-[var(--green100)]">
+                          Add new image
+                        </span>{" "}
+                        or drag and drop
+                      </p>
+
+                      <p>
+                        Recommended size is{" "}
+                        <span className="font-semibold">{BANNER_SIZE}</span>{" "}
+                      </p>
+                    </div>
+                  }
+                />
+              </div>
+              {/* <InputPicture formik={formik} fieldName={""} /> */}
+              <div className="flex mt-10 gap-5">
+                <SolidPrimaryButton
+                  className="w-full"
+                  isLoading={addNew.isPending || editComic.isPending}
+                  type="submit"
+                >
+                  {isEdit ? "Update" : "Create"}
+                </SolidPrimaryButton>
+                <Button
+                  onPress={goBack}
+                  className="w-full  rounded-lg"
+                  size="lg"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
-        <CheckCountry
-          isOpen={isOpen}
-          onClose={onClose}
-          onOpenChange={onOpenChange}
-        />
-        <AddStrips
-          comicId={newUpload?.comicId || null}
-          uuid={newUpload?.uuid || null}
-          isOpen={isAddOpen}
-          onClose={onAddClose}
-          onOpenChange={onAddOpenChange}
-        />
-      </>
-    );
-  }
+      </div>
+      <CheckCountry
+        isOpen={isOpen}
+        onClose={onClose}
+        onOpenChange={onOpenChange}
+      />
+      <AddStrips
+        comicId={newUpload?.comicId || null}
+        uuid={newUpload?.uuid || null}
+        isOpen={isAddOpen}
+        onClose={onAddClose}
+        onOpenChange={onAddOpenChange}
+      />
+    </>
+  );
 }

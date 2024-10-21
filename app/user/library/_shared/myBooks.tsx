@@ -10,9 +10,11 @@ import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
 import Link from "next/link";
 import PaginationCustom from "@/app/_shared/sort/pagination";
 import LoadingLibraryItems from "./loadingLibraryItem";
+import { usePathname } from "next/navigation";
 
 const MyBooksTab = () => {
   const [loading,setLoading]=useState(true)
+  const pathname=usePathname()
   const [comics, setComics] = useState<any[]>([]);
   const [pagination, setPagination] = useState({ page: 1, total: 1 });
   const { token } = useSelector(selectAuthState);
@@ -21,7 +23,7 @@ const MyBooksTab = () => {
     queryFn: () =>
       getRequestProtected(
         `/my-libraries/comics?page=${pagination.page}&limit=6`,
-        token
+        token,pathname
       ),
     enabled: token !== null,
   });

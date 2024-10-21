@@ -32,7 +32,7 @@ const InputPictureFloating = ({
   };
   const isError=fieldError?fieldError:Boolean(formik?.errors[fieldName])
   return (
-    <div className={`flex md:hidden fixed bottom-[25%] right-[50px] bg-[#ffffff] p-3 rounded-full outline ${
+    <div className={`flex sm:hidden fixed bottom-[25%] right-[50px] bg-[#ffffff] p-3 rounded-full outline ${
       isError && " outline-danger"
     }`}>
       <DragNDropTyped

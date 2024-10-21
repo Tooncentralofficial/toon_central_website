@@ -21,18 +21,20 @@ import { Button, MenuItem, Select } from "@nextui-org/react";
 import { useSelector } from "react-redux";
 import {
   selectAuthState,
+  updateProfile,
   updateSuccess,
 } from "@/lib/slices/auth-slice";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
+import { usePathname } from "next/navigation";
 
 export default function DetailsTab() {
   const queryClient = useQueryClient();
+  const pathname = usePathname();
   const dispatch = useDispatch();
   const [profile, setProfile] = useState<any>(null);
   const [countries, setCountries] = useState<any>([]);
   const { user, userType, token } = useSelector(selectAuthState);
-  console.log("profile", user);
   const initialValues = useMemo(() => {
     let vals = {
       photo: profile?.photo || user?.photo || "",
@@ -56,7 +58,7 @@ export default function DetailsTab() {
 
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: ["user_details"],
-    queryFn: () => getRequestProtected("/profile", token),
+    queryFn: () => getRequestProtected("/profile", token, pathname),
     enabled: token !== null,
   });
 
@@ -78,27 +80,6 @@ export default function DetailsTab() {
       console.log(typeof countriesData?.data[0].id);
     }
   }, [isSuccess, isLoading, isFetching, countriesSuccess]);
-
-  useEffect(() => {
-    if (profile && token) {
-      const updateData = {
-        user: {
-          photo: profile?.photo || user?.photo,
-          first_name: profile?.firstName || user?.first_name,
-          last_name: profile?.lastName || user?.pholast_nameto,
-          phone: profile?.phone || user?.photo,
-          username: profile?.username || user?.username,
-          country_id: profile?.countryId || user?.country_id,
-
-          email: profile?.email || user?.email,
-          welcome_note: profile?.welcomeNote || user?.welcome_note,
-        },
-        // token: token,
-        // userType: profile?.userType?.slug || userType,
-      };
-      dispatch(updateSuccess(updateData));
-    }
-  }, [profile]);
 
   const validationSchema = Yup.object().shape({
     welcomeNote: Yup.string().required(" is required"),
@@ -135,13 +116,11 @@ export default function DetailsTab() {
 
   const updateUser = useMutation({
     mutationFn: (data: any) =>
-      patchRequestProtected(data, "profile/update", token || ""),
+      patchRequestProtected(data, "profile/update", token || "", pathname),
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {
-        queryClient.invalidateQueries({
-          queryKey: ["user_details"],
-        });
+        dispatch(updateProfile(null));
         toast(message, {
           toastId: "profile",
           type: "success",
@@ -163,7 +142,13 @@ export default function DetailsTab() {
 
   const updateProfilePicture = useMutation({
     mutationFn: (data: any) =>
-      postRequestProtected(data, "/profile/upload-image", token || "", "form"),
+      postRequestProtected(
+        data,
+        "/profile/upload-image",
+        token || "",
+        pathname,
+        "form"
+      ),
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {

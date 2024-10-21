@@ -6,6 +6,7 @@ import { getRequestProtected } from "@/app/utils/queries/requests";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 const Page = ({
@@ -15,12 +16,13 @@ const Page = ({
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) => {
+  const pathname=usePathname()
   const { uid, chapter } = searchParams;
   const [episode, setEpisode] = useState<any[]>([]);
   const { token } = useSelector(selectAuthState);
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [`comic_${uid}`],
-    queryFn: () => getRequestProtected(`/comics/${uid}/view`, token),
+    queryFn: () => getRequestProtected(`/comics/${uid}/view`, token,pathname),
     enabled: token !== null,
   });
   useEffect(() => {

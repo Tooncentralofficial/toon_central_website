@@ -8,6 +8,7 @@ import { selectAuthState } from "@/lib/slices/auth-slice";
 import { Button } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -19,7 +20,7 @@ const Page = ({
   searchParams: { uid: string | undefined; chapterSlug: string | undefined };
 }) => {
   const { uid, chapterSlug } = searchParams;
-
+  const pathname=usePathname()
   //chapter state and update
   const [chapter, setChapter] = useState(parseInt(chapterSlug || "0") + 1);
   const [episode, setEpisode] = useState<any[]>([]);
@@ -27,7 +28,7 @@ const Page = ({
   const { token }: any = useSelector(selectAuthState);
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [`comic_${uid}`],
-    queryFn: () => getRequestProtected(`/comics/${uid}/view`, token),
+    queryFn: () => getRequestProtected(`/comics/${uid}/view`, token,pathname),
     enabled: token !== null,
   });
   useEffect(() => {
@@ -42,7 +43,7 @@ const Page = ({
     setSubscribing(true);
     const { data, message, success } = await getRequestProtected(
       `/comics/${uid}/subscribe`,
-      token
+      token,pathname
     );
 
     if (success) {

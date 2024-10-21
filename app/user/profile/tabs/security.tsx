@@ -15,17 +15,19 @@ import { Button } from "@nextui-org/react";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function SecurityTab() {
   const [profile, setProfile] = useState<any>({});
   const { user, userType, token } = useSelector(selectAuthState);
+  const pathname=usePathname()
   const initialValues = {
     password: "",
     confirmedPassword: "",
   };
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: ["user_details"],
-    queryFn: () => getRequestProtected("/profile", token),
+    queryFn: () => getRequestProtected("/profile", token,pathname),
   });
   useEffect(() => {
     if (isSuccess) {
@@ -59,7 +61,7 @@ export default function SecurityTab() {
 
   const updatePassword = useMutation({
     mutationFn: (data: any) =>
-      patchRequestProtected(data, "/profile/change-password", token || ""),
+      patchRequestProtected(data, "/profile/change-password", token || "",pathname),
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {
@@ -84,7 +86,7 @@ export default function SecurityTab() {
 
   const updateProfilePicture = useMutation({
     mutationFn: (data: any) =>
-      postRequestProtected(data, "/profile/upload-image", token || "", "form"),
+      postRequestProtected(data, "/profile/upload-image", token || "",pathname, "form"),
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {

@@ -38,7 +38,7 @@ const CardTitleBottom = ({
         <Link
           href={`${
             cardData?.uuid
-              ? `/comics/${cardData?.title}?uid=${cardData?.uuid}`
+              ? `/comics/${cardData?.uuid}`
               : ""
           }`}
         >
