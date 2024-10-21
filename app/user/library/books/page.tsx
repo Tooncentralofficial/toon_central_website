@@ -26,6 +26,10 @@ const Page = ({
   const [comic, setComic] = useState(null);
   const { uuid, id } = searchParams;
   console.log("search", searchParams);
+  const uuid2 = new URLSearchParams(window.location.search).get("uuid");
+  const id2 = new URLSearchParams(window.location.search).get("id");
+  console.log("u;uid",uuid2)
+  console.log("id",id2)
   const pathname = usePathname();
   const { token } = useSelector(selectAuthState);
   const { data, isLoading, isFetching, isSuccess } = useQuery({
