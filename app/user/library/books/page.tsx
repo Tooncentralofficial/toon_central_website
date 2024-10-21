@@ -21,7 +21,7 @@ const Page = ({
   searchParams,
 }: {
   params: { slug: string };
-  searchParams: { uuid: string; id: number };
+  searchParams: { uuid: any; id: any };
 }) => {
   const [comic, setComic] = useState(null);
   const { uuid, id } = searchParams;
@@ -35,8 +35,8 @@ const Page = ({
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [`comic_${uuid}`],
     queryFn: () =>
-      getRequestProtected(`/my-libraries/comics/${id}/get`, token, pathname),
-    enabled: token !== null && id !== null,
+      getRequestProtected(`/my-libraries/comics/${Number(id)}/get`, token, pathname),
+    enabled: token !== null && id !== null && id !==undefined,
   });
   useEffect(() => {
     if (isSuccess) {
