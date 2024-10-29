@@ -157,6 +157,20 @@ const NavHome = () => {
                 </Link>
               </NavbarMenuItem>
             ))}
+            <div className="mt-10 w-full flex">
+              <Button
+                as={Link}
+                className={`${!token && "bg-transparent min-w-0 px-0"} ${
+                  token &&
+                  "bg-[var(--green100)] text-white px-[18px] py-[10px] rounded-[8px]"
+                } w-full`}
+                href={token ? "/creator/new" : "/creator"}
+                variant="flat"
+                onClick={() => handleToggle()}
+              >
+                Publish
+              </Button>
+            </div>
           </div>
         </NavbarMenu>
         <NavbarContent className="" justify="end">
@@ -277,7 +291,7 @@ const NavHome = () => {
               </NavbarItem>
             </div>
 
-            <NavbarItem className="h-full items-start">
+            <NavbarItem className="hidden lg:flex h-full items-start">
               <Button
                 as={Link}
                 className={`${!token && "bg-transparent min-w-0 px-0"} ${

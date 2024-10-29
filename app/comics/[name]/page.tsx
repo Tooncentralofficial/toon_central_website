@@ -15,6 +15,7 @@ export interface ViewComicProps {
   uid: any;
   data: any;
   isLoading: boolean;
+  queryKey:string
 }
 const Page = ({
   params,
@@ -27,8 +28,9 @@ const Page = ({
   const [comic, setComic] = useState(null);
   const { name } = params;
   const { token } = useSelector(selectAuthState);
+  const queryKey=`comic_${name}`
   const { data, isLoading, isFetching, isSuccess } = useQuery({
-    queryKey: [`comic_${name}`],
+    queryKey: [queryKey],
     queryFn: () => getRequestProtected(`/comics/${name}/view`, token,pathname),
     enabled: token !== null,
   });
@@ -52,8 +54,8 @@ const Page = ({
             </div>
           ) : (
             <>
-              <ComicOverview uid={name} data={comic} isLoading={isLoading} />
-              <ComicTabs uid={name} data={comic} isLoading={isLoading} />
+              <ComicOverview uid={name} data={comic} isLoading={isLoading} queryKey={queryKey} />
+              <ComicTabs uid={name} data={comic} isLoading={isLoading}  queryKey={queryKey} />
             </>
           )}
         </div>
