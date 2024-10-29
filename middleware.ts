@@ -46,8 +46,8 @@ export const config = {
   matcher: [
     "/",
     "/auth/:path*",
-    "/comics/:path*",
     "/creator/:path*",
     "/user/:path*",
   ],
 };
+// "/comics/:path*",

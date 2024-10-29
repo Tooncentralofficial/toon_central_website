@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import LibraryBookOverview from "./_shared/overview";
 import { usePathname } from "next/navigation";
+import { prevRoutes } from "@/lib/session/prevRoutes";
 
 export interface ViewComicProps {
   uid: any;
@@ -32,16 +33,14 @@ const Page = ({
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [`comic_${uuid2}`,id2],
     queryFn: () =>
-      getRequestProtected(`/my-libraries/comics/${Number(id2)}/get`, token, pathname),
+      getRequestProtected(`/my-libraries/comics/${Number(id2)}/get`, token, prevRoutes().library),
     enabled: token !== null 
   });
   useEffect(() => {
     if (isSuccess) {
       console.log(data);
       setComic(data?.data || null);
-    } else {
-      console.log("erre", data);
-    }
+    } 
   }, [data, isFetching, isSuccess]);
   return (
     <main>
