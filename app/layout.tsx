@@ -23,15 +23,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Script
+          id="toon0"
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6644042584456078"
           crossOrigin="anonymous"
         ></Script>
         <Script
+          id="toon1"
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-RZFRHC7QTN"
         >
-          <Script>
+          <Script id="toon2">
             {` window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
