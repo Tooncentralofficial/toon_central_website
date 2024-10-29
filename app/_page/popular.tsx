@@ -59,8 +59,8 @@ const Popular = () => {
                     <div className="h-full overflow-hidden w-auto relative">
                       <Image
                         src={`${
-                          item?.coverImage ||
-                          "/static/images/cards/comic_banner.png"
+                          item?.backgroundImage ||
+                          ""
                         }`}
                         alt={`${item?.title || "toon_central"}`}
                         width={200}
@@ -82,7 +82,7 @@ const Popular = () => {
                             <div className="flex items-center gap-[2.5px] text-sm font-light">
                               <EyeFilled /> {parseArray(item?.likesAndViews?.views).length}
                             </div>
-                            <Dot />
+                            {/* <Dot /> */}
                             {/* <div className="flex items-center gap-[2.5px] text-sm font-light">
                               <HeartTwoTone /> 1k
                             </div> */}

@@ -70,7 +70,7 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
         <div className="flex gap-6">
           <div className="w-[20%] h-[120px] md:h-[240px] min-w-[120px] max-w-[240px] rounded-lg overflow-hidden">
             <Image
-              src={`${data?.backgroundImage || data?.coverImage || ""}`}
+              src={`${data?.coverImage || ""}`}
               alt={`${data?.title || "toon_central"}`}
               width={200}
               height={240}

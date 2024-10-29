@@ -15,7 +15,7 @@ const CardTitleTop = ({
     <div className="h-[200px] md:h-[260px]  rounded-[8px] overflow-hidden">
       <div className="h-full w-auto relative">
         <Image
-          src={`${cardData?.backgroundImage || ""}`}
+          src={`${cardData?.coverImage || ""}`}
           alt={`${cardData?.title || "toon_central"}`}
           width={200}
           height={240}
