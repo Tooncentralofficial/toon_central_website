@@ -37,7 +37,7 @@ const CardTitleTop = ({
           <div className="absolute top-0 left-0  h-full w-full flex flex-col justify-between  p-4 bg-[#FCFCFD10] ">
             <div>
               <div className="font-bold text-md">{cardData?.title}</div>
-              <Likes />
+              <Likes likesNViews={cardData?.likesAndViews} />
             </div>
             <div>{cardData?.genre?.name}</div>
           </div>

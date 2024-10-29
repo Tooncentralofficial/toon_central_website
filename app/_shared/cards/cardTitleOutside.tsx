@@ -35,7 +35,7 @@ const CardTitleOutside = ({
             }`}
           >
             <div className="absolute top-0 left-0  h-full w-full flex flex-col justify-end p-4 bg-[#FCFCFD10] ">
-              <Likes />
+              <Likes likesNViews={cardData?.likesAndViews} />
             </div>
           </Link>
         </div>

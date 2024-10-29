@@ -46,7 +46,7 @@ const CardTitleBottom = ({
             <div>
               <div className="font-bold text-xl">{cardData?.title}</div>
               <div className="flex justify-between">
-                <Likes />
+                <Likes likesNViews={cardData?.likesAndViews} />
                 {expand && (
                   <motion.a
                     href=""

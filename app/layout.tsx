@@ -27,6 +27,18 @@ export default function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6644042584456078"
           crossOrigin="anonymous"
         ></Script>
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-RZFRHC7QTN"
+        >
+          <Script>
+            {` window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RZFRHC7QTN');`}
+          </Script>
+        </Script>
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

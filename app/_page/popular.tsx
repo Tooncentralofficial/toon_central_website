@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { dummyItems } from "../_shared/data";
 import { Skeleton } from "@nextui-org/react";
 import "../popular.css";
+import { parseArray } from "@/helpers/parsArray";
 const Popular = () => {
   let sliderRef: any = useRef(null);
   const settings = {
@@ -79,15 +80,15 @@ const Popular = () => {
                           </div>
                           <div className="flex items-center gap-[9px] my-4">
                             <div className="flex items-center gap-[2.5px] text-sm font-light">
-                              <EyeFilled /> 100
+                              <EyeFilled /> {parseArray(item?.likesAndViews?.views).length}
                             </div>
                             <Dot />
-                            <div className="flex items-center gap-[2.5px] text-sm font-light">
+                            {/* <div className="flex items-center gap-[2.5px] text-sm font-light">
                               <HeartTwoTone /> 1k
-                            </div>
+                            </div> */}
                             <Dot />
                             <div className="flex items-center gap-[2.5px] text-sm font-light">
-                              <ThumbsSolid /> 100
+                              <ThumbsSolid /> {parseArray(item?.likesAndViews?.likes).length}
                             </div>
                           </div>
                           <div>{item?.genre?.name}</div>
