@@ -5,13 +5,19 @@ import Slider from "react-slick";
 import Image from "next/image";
 import EllipseGray from "../_shared/ellipse/ellipseGray";
 import H2SectionTitle from "../_shared/layout/h2SectionTitle";
-import { Dot, EyeFilled, HeartTwoTone, ThumbsSolid } from "../_shared/icons/icons";
+import {
+  Dot,
+  EyeFilled,
+  HeartTwoTone,
+  ThumbsSolid,
+} from "../_shared/icons/icons";
 import { getRequest } from "../utils/queries/requests";
 import { useQuery } from "@tanstack/react-query";
 import { dummyItems } from "../_shared/data";
 import { Skeleton } from "@nextui-org/react";
 import "../popular.css";
 import { parseArray } from "@/helpers/parsArray";
+import { useRouter } from "next/navigation";
 const Popular = () => {
   let sliderRef: any = useRef(null);
   const settings = {
@@ -36,6 +42,11 @@ const Popular = () => {
       setCarouselItems(data?.data?.comics || dummyItems);
     }
   }, [isLoading, isFetching, data]);
+  const router = useRouter();
+
+  const goToComic = (uuid: string | undefined) => {
+    router.push(uuid ? `/comics/${uuid}` : "");
+  };
   return (
     <div className="parent-wrap py-10 relative">
       <div className="child-wrap flex w-full flex-col">
@@ -58,10 +69,7 @@ const Popular = () => {
                   ) : (
                     <div className="h-full overflow-hidden w-auto relative">
                       <Image
-                        src={`${
-                          item?.backgroundImage ||
-                          ""
-                        }`}
+                        src={`${item?.backgroundImage || ""}`}
                         alt={`${item?.title || "toon_central"}`}
                         width={200}
                         height={290}
@@ -75,12 +83,16 @@ const Popular = () => {
                       />
                       <div className="absolute top-0 left-0  h-full w-full flex flex-col  p-4 justify-center bg-[#0D111D70] ">
                         <div className="">
-                          <div className="font-bold text-[48px] uppercase">
+                          <div
+                            className="font-bold text-[48px] uppercase cursor-pointer "
+                            onClick={() => goToComic(item?.uuid)}
+                          >
                             {item?.title}
                           </div>
                           <div className="flex items-center gap-[9px] my-4">
                             <div className="flex items-center gap-[2.5px] text-sm font-light">
-                              <EyeFilled /> {parseArray(item?.likesAndViews?.views).length}
+                              <EyeFilled />{" "}
+                              {parseArray(item?.likesAndViews?.views).length}
                             </div>
                             {/* <Dot /> */}
                             {/* <div className="flex items-center gap-[2.5px] text-sm font-light">
@@ -88,7 +100,8 @@ const Popular = () => {
                             </div> */}
                             <Dot />
                             <div className="flex items-center gap-[2.5px] text-sm font-light">
-                              <ThumbsSolid /> {parseArray(item?.likesAndViews?.likes).length}
+                              <ThumbsSolid />{" "}
+                              {parseArray(item?.likesAndViews?.likes).length}
                             </div>
                           </div>
                           <div>{item?.genre?.name}</div>
