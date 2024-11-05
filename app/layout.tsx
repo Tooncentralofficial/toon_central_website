@@ -8,8 +8,8 @@ import ClientLayout from "./clientLayout";
 import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
-export const DEFAULT_OG_URL =
-  "https://opengraph.b-cdn.net/production/images/c0948aa8-0335-4725-81fe-83d4992053f5.png?token=Wcdq71h3QMCLQaiVDnyOV43iKrK7BQM33Xcn-W9lkg0&height=705&width=1200&expires=33266806045";
+export const DEFAULT_OG_URL =  `https://tooncentralhub.com/opengraph-image.png`
+  
 //TODO: add satochi font
 export const metadata: Metadata = {
   title: "Toon Central - Giving Africa a voice",
