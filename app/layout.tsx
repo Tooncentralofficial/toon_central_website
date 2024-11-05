@@ -11,7 +11,39 @@ const inter = Inter({ subsets: ["latin"] });
 //TODO: add satochi font
 export const metadata: Metadata = {
   title: "Toon Central - Giving Africa a voice",
-  description: "Discover Toon Central, the pioneering comic platform showcasing the black narrative with vibrant artistry and storytelling. Join a world where Marafiki (creators) bring stories ( Mafiki ) to life, combining African culture with innovative visuals, and connect with a community passionate about Afrocentric comics and animations. Dive into Toon Central today!",
+  description:
+    "Discover Toon Central, the pioneering comic platform showcasing the black narrative with vibrant artistry and storytelling. Join a world where Marafiki (creators) bring stories ( Mafiki ) to life, combining African culture with innovative visuals, and connect with a community passionate about Afrocentric comics and animations. Dive into Toon Central today!",
+  openGraph: {
+    title: "Toon Central - Giving Africa a voice",
+    description:
+      "Discover Toon Central, the pioneering comic platform showcasing the black narrative with vibrant artistry and storytelling. Join a world where Marafiki (creators) bring stories ( Mafiki ) to life, combining African culture with innovative visuals, and connect with a community passionate about Afrocentric comics and animations. Dive into Toon Central today!",
+    url: "https://tooncentralhub.com/",
+    type: "website",
+    images: [
+      {
+        url: "https://opengraph.b-cdn.net/production/images/c0948aa8-0335-4725-81fe-83d4992053f5.png?token=Wcdq71h3QMCLQaiVDnyOV43iKrK7BQM33Xcn-W9lkg0&height=705&width=1200&expires=33266806045",
+        width: 1200,
+        height: 705,
+        alt: "Toon Central - Giving Africa a voice",
+      },
+    ],
+  },
+  
+  twitter: {
+    card: "summary_large_image",
+    site: "@tooncentralhub",
+    title: "Toon Central - Giving Africa a voice",
+    description:
+      "Discover Toon Central, the pioneering comic platform showcasing the black narrative with vibrant artistry and storytelling. Join a world where Marafiki (creators) bring stories ( Mafiki ) to life, combining African culture with innovative visuals, and connect with a community passionate about Afrocentric comics and animations. Dive into Toon Central today!",
+    images: [
+      {
+        url: "https://opengraph.b-cdn.net/production/images/c0948aa8-0335-4725-81fe-83d4992053f5.png?token=Wcdq71h3QMCLQaiVDnyOV43iKrK7BQM33Xcn-W9lkg0&height=705&width=1200&expires=33266806045",
+        width: 1200,
+        height: 705,
+        alt: "Toon Central - Giving Africa a voice",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
