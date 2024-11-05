@@ -9,7 +9,27 @@ import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 export const DEFAULT_OG_URL =  `https://tooncentralhub.com/opengraph-image.png`
-  
+
+const images = [
+  {
+    url: DEFAULT_OG_URL,
+    width: 1200,
+    height: 630,
+    alt:  "Toon Central Comic Hub",
+  },
+  {
+    url: DEFAULT_OG_URL,
+    width: 800,
+    height: 420,
+    alt:  "Toon Central Comic Hub",
+  },
+  {
+    url: DEFAULT_OG_URL,
+    width: 600,
+    height: 315,
+    alt:  "Toon Central Comic Hub",
+  },
+];
 //TODO: add satochi font
 export const metadata: Metadata = {
   title: "Toon Central - Giving Africa a voice",
@@ -21,14 +41,7 @@ export const metadata: Metadata = {
       "Discover Toon Central, the pioneering comic platform showcasing the black narrative with vibrant artistry and storytelling. Join a world where Marafiki (creators) bring stories ( Mafiki ) to life, combining African culture with innovative visuals, and connect with a community passionate about Afrocentric comics and animations. Dive into Toon Central today!",
     url: "https://tooncentralhub.com/",
     type: "website",
-    images: [
-      {
-        url: DEFAULT_OG_URL,
-        width: 1200,
-        height: 705,
-        alt: "Toon Central - Giving Africa a voice",
-      },
-    ],
+    images: images
   },
 
   twitter: {
@@ -37,14 +50,7 @@ export const metadata: Metadata = {
     title: "Toon Central - Giving Africa a voice",
     description:
       "Discover Toon Central, the pioneering comic platform showcasing the black narrative with vibrant artistry and storytelling. Join a world where Marafiki (creators) bring stories ( Mafiki ) to life, combining African culture with innovative visuals, and connect with a community passionate about Afrocentric comics and animations. Dive into Toon Central today!",
-    images: [
-      {
-        url: DEFAULT_OG_URL,
-        width: 1200,
-        height: 705,
-        alt: "Toon Central - Giving Africa a voice",
-      },
-    ],
+    images: images
   },
 };
 
