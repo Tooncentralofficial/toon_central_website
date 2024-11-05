@@ -3,7 +3,7 @@ import React from "react";
 import { Skeleton, Tab, Tabs } from "@nextui-org/react";
 import Chapters from "./tabItems/chapters";
 import Comments from "./tabItems/comments";
-import { ViewComicProps } from "../page";
+import { ViewComicProps } from "../pageClient";
 
 export interface ComicTab{
   uid:any

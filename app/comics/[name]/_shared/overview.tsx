@@ -5,7 +5,7 @@ import { GreenUser } from "@/app/_shared/icons/icons";
 import { Button, Skeleton } from "@nextui-org/react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { ViewComicProps } from "../page";
+import { ViewComicProps } from "../pageClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getRequestProtected } from "@/app/utils/queries/requests";
 import { useSelector } from "react-redux";

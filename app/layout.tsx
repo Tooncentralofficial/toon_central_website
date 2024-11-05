@@ -10,8 +10,8 @@ import Script from "next/script";
 const inter = Inter({ subsets: ["latin"] });
 //TODO: add satochi font
 export const metadata: Metadata = {
-  title: "Toon Central",
-  description: "Afro Comics Hub",
+  title: "Toon Central - Giving Africa a voice",
+  description: "Discover Toon Central, the pioneering comic platform showcasing the black narrative with vibrant artistry and storytelling. Join a world where Marafiki (creators) bring stories ( Mafiki ) to life, combining African culture with innovative visuals, and connect with a community passionate about Afrocentric comics and animations. Dive into Toon Central today!",
 };
 
 export default function RootLayout({
