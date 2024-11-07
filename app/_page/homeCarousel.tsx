@@ -21,7 +21,7 @@ function HomeCarousel() {
   const [currentGroup, setCurrentGroup] = useState(0);
   const { data, isFetching, isLoading, isError, isSuccess } = useQuery({
     queryKey: ["carousel"],
-    queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
+    queryFn: () => getRequest("/home/top-carousel?page=1&limit=20"),
   });
   const swiper = useSwiper();
   console.log(data);
