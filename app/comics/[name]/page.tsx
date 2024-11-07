@@ -14,7 +14,7 @@ export const generateMetadata = async ({
     `/comics/${params?.name}/view`
   ).then((data) => {
     if (data?.success) {
-      // Extract title, description, and image URL from the response
+      // Extract title, description, and image URL from the respons
       let d = {
         title: data?.data?.title,
         description: data?.data?.description,
