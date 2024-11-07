@@ -98,7 +98,7 @@ const LibraryBookOverview = ({
             <div className=" flex gap-6">
               <div className="base:w-full sm:w-[30%] min-w-[120px] max-w-[241px] h-[140px] md:h-[271px] rounded-lg overflow-hidden">
                 <Image
-                  src={`${data?.backgroundImage || data?.coverImage || ""}`}
+                  src={`${ data?.coverImage|| ""}`}
                   alt={`${data?.title || "toon_central"}`}
                   width={200}
                   height={271}
