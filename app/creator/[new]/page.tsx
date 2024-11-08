@@ -42,7 +42,6 @@ export default function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const { user, userType, token } = useSelector(selectAuthState);
-  console.log("user", user);
   const router = useRouter();
   const { comicId }: any = searchParams;
   const [comicData, setComicData] = useState<Comic | null>();
@@ -132,7 +131,6 @@ export default function Page({
     initialValues,
     validationSchema,
     onSubmit: (values) => {
-      console.log(values);
       let formData = new FormData();
       formData?.append("backgroundImage", values.backgroundImage);
       formData?.append("coverImage", values.coverImage);

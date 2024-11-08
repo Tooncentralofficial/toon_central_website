@@ -17,7 +17,6 @@ export default async function Page({
     .get(`/onboard/verify?verification_code=${verification_code}`)
     .then((data) => data)
     .catch((error: any) => {
-      console.log("error verifying", error?.response);
       return null;
     });
 

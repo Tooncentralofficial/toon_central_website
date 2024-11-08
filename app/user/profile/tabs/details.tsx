@@ -77,7 +77,6 @@ export default function DetailsTab() {
     }
     if (countriesSuccess) {
       setCountries(countriesData?.data);
-      console.log(typeof countriesData?.data[0].id);
     }
   }, [isSuccess, isLoading, isFetching, countriesSuccess]);
 
@@ -107,7 +106,6 @@ export default function DetailsTab() {
     validationSchema: photoValidation,
     enableReinitialize: true,
     onSubmit: (values) => {
-      console.log(values);
       let formData = new FormData();
       formData.append("photo", values.photo);
       updateProfilePicture.mutate(formData);

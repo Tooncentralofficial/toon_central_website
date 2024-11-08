@@ -54,12 +54,10 @@ export const updateProfile = createAsyncThunk(
         user: user,
         token: token,
       };
-      console.log("payloadtoupd",payload)
       // TODO:UPDATE REM fix
       const remember = true;
       await UpdateUser(payload, remember);
     }
-    console.log("updateres",response)
     return response;
   }
 );

@@ -35,14 +35,10 @@ const Page = ({
   });
   useEffect(() => {
     if (isSuccess) {
-      console.log(data);
+   
       setComic(data?.data || null);
-    }else{
-      console.log("erre",data);
     }
   }, [data, isFetching, isSuccess]);
-  console.log(data);
-  ("AppHttpControllersComicController::getComicsById(): Argument #2 ($comicId) must be of type int, string given, called in /home/tooncent/devapi.tooncentralhub.com/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php on line 46");
   return (
     <main>
       <div className="parent-wrap py-10">
