@@ -15,7 +15,7 @@ const CardTitleOutside = ({
       <div className="h-[260px] md:h-[320px]  rounded-[8px] overflow-hidden">
         <div className="h-full w-auto relative">
           <Image
-            src={`${cardData?.backgroundImage || ""}`}
+            src={`${cardData?.coverImage || ""}`}
             alt={`${cardData?.title || "toon_central"}`}
             width={200}
             height={240}
@@ -35,7 +35,7 @@ const CardTitleOutside = ({
             }`}
           >
             <div className="absolute top-0 left-0  h-full w-full flex flex-col justify-end p-4 bg-[#FCFCFD10] ">
-              <Likes />
+              <Likes likesNViews={cardData?.likesAndViews} />
             </div>
           </Link>
         </div>

@@ -24,7 +24,7 @@ export default function Page({
 }) {
   const pathname = usePathname();
   const { user, userType, token } = useSelector(selectAuthState);
-  const { comicId, uuid }: any = searchParams;
+  const comicId = new URLSearchParams(window.location.search).get("comicId");
   const initialValues = {
     title: "",
     description: "",

@@ -51,89 +51,89 @@ const MyBooksTab = () => {
     <div>
       <div className="flex items-center h-full justify-between lg:justify-end gap-6 mb-[60px]">
         <div className="flex flex-col h-full w-full items-center justify-center">
-          {loading && (
-           <LoadingLibraryItems/>
-          ) }
-          {!loading&&comics.length!=0&&<>
-            <div className="w-full flex flex-col gap-8 ">
-                  {comics?.map((item, i) => (
-                    <div
-                      key={i}
-                      className="flex flex-col gap-[18px] bg-[var(--bg-secondary)] rounded-[8px] p-6 lg:p-9"
-                    >
-                      <div className=" flex gap-6">
-                        <div className="base:w-full sm:w-[30%] min-w-[120px] max-w-[241px] h-[140px] md:h-[271px] rounded-lg overflow-hidden">
-                          <Image
-                            src={`${
-                              item?.backgroundImage || item?.coverImage || ""
-                            }`}
-                            alt={`${item?.title || "toon_central"}`}
-                            width={200}
-                            height={271}
-                            style={{
-                              objectFit: "cover",
-                              maxWidth: "100%",
-                              width: "100%",
-                              height: "100%",
-                            }}
-                            unoptimized
-                          />
+          {loading && <LoadingLibraryItems />}
+          {!loading && comics.length != 0 && (
+            <>
+              <div className="w-full flex flex-col gap-8 ">
+                {comics?.map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col gap-[18px] bg-[var(--bg-secondary)] rounded-[8px] p-6 lg:p-9"
+                  >
+                    <div className=" flex gap-6">
+                      <div className="base:w-full sm:w-[30%] min-w-[120px] max-w-[241px] h-[140px] md:h-[271px] rounded-lg overflow-hidden">
+                        <Image
+                          src={`${
+                            item?.coverImage || item?.backgroundImage || ""
+                          }`}
+                          alt={`${item?.title || "toon_central"}`}
+                          width={200}
+                          height={271}
+                          style={{
+                            objectFit: "cover",
+                            maxWidth: "100%",
+                            width: "100%",
+                            height: "100%",
+                          }}
+                          unoptimized
+                        />
+                      </div>
+                      <div className="w-[80%] ">
+                        <p className="text-gray font-bold mb-2">
+                          Continue writing
+                        </p>
+                        <p className="text-2xl font-semibold lg:text-4xl uppercase">
+                          {item?.title}
+                        </p>
+                        <div className="flex flex-col sm:flex-row text-gray text-xs md:text-base gap-1 sm:gap-6 justify-between w-full max-w-[460px] py-3">
+                          <span>
+                            {" "}
+                            Published : {formatDate(item?.createdAt)}
+                          </span>
+                          <span>
+                            {" "}
+                            Published : {formatDate(item?.updatedAt)}
+                          </span>
+                          <span>
+                            {" "}
+                            Episodes : {parseArray(item?.episodes).length}
+                          </span>
                         </div>
-                        <div className="w-[80%] ">
-                          <p className="text-gray font-bold mb-2">
-                            Continue writing
-                          </p>
-                          <p className="text-2xl font-semibold lg:text-4xl uppercase">
-                            {item?.title}
-                          </p>
-                          <div className="flex flex-col sm:flex-row text-gray text-xs md:text-base gap-1 sm:gap-6 justify-between w-full max-w-[460px] py-3">
-                            <span>
-                              {" "}
-                              Published : {formatDate(item?.createdAt)}
-                            </span>
-                            <span>
-                              {" "}
-                              Published : {formatDate(item?.updatedAt)}
-                            </span>
-                            <span>
-                              {" "}
-                              Episodes : {parseArray(item?.episodes).length}
-                            </span>
-                          </div>
 
-                          <div className="hidden md:block ">
-                        <p className="text-gray text-lg mb-7">
-                          {item?.description}
-                        </p>
-                        <SolidPrimaryButton
-                          className="w-max"
-                          disabled={item?.uuid}
-                          as={Link}
-                          href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
-                        >
-                         Add EPISODE
-                        </SolidPrimaryButton>
-                      </div>
+                        <div className="hidden md:block ">
+                          <p className="text-gray text-lg mb-7">
+                            {item?.description}
+                          </p>
+                          <SolidPrimaryButton
+                            className="w-max"
+                            disabled={item?.uuid}
+                            as={Link}
+                            href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
+                          >
+                            Add EPISODE
+                          </SolidPrimaryButton>
                         </div>
-                      </div>
-                      <div className="md:hidden ">
-                        <p className="text-gray text-base mb-7">
-                          {item?.description}
-                        </p>
-                        <SolidPrimaryButton
-                          className="w-max"
-                          disabled={item?.uuid}
-                          as={Link}
-                          href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
-                        >
-                         Add EPISODE
-                        </SolidPrimaryButton>
                       </div>
                     </div>
-                  ))}
-                </div>
-            </>}
-            {!loading&&comics.length==0&&<NotFound/>}
+                    <div className="md:hidden ">
+                      <p className="text-gray text-base mb-7">
+                        {item?.description}
+                      </p>
+                      <SolidPrimaryButton
+                        className="w-max"
+                        disabled={item?.uuid}
+                        as={Link}
+                        href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
+                      >
+                        Add EPISODE
+                      </SolidPrimaryButton>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+          {!loading && comics.length == 0 && <NotFound />}
         </div>
       </div>
       <PaginationCustom

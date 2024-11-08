@@ -15,7 +15,7 @@ const CardTitleTop = ({
     <div className="h-[200px] md:h-[260px]  rounded-[8px] overflow-hidden">
       <div className="h-full w-auto relative">
         <Image
-          src={`${cardData?.backgroundImage || ""}`}
+          src={`${cardData?.coverImage || ""}`}
           alt={`${cardData?.title || "toon_central"}`}
           width={200}
           height={240}
@@ -37,7 +37,7 @@ const CardTitleTop = ({
           <div className="absolute top-0 left-0  h-full w-full flex flex-col justify-between  p-4 bg-[#FCFCFD10] ">
             <div>
               <div className="font-bold text-md">{cardData?.title}</div>
-              <Likes />
+              <Likes likesNViews={cardData?.likesAndViews} />
             </div>
             <div>{cardData?.genre?.name}</div>
           </div>

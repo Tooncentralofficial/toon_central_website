@@ -8,19 +8,20 @@ import { useQuery } from "@tanstack/react-query";
 import { dummyItems } from "../_shared/data";
 import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
 import "swiper/css";
-import {motion} from "framer-motion"
+import { motion } from "framer-motion";
 import Curve from "../_shared/curve";
+import EllipseGray, { Ellipse } from "../_shared/ellipse/ellipseGray";
 export const staticCardItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 function HomeCarousel() {
   const [carouselItems, setCarouselItems] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [hoverIndex,setHoverIndex] = useState(-1)
+  const [hoverIndex, setHoverIndex] = useState(-1);
   const [slidesPerPage, setSlidesPerPage] = useState(5);
-  const swiperRef:any = useRef(null);
+  const swiperRef: any = useRef(null);
   const [currentGroup, setCurrentGroup] = useState(0);
   const { data, isFetching, isLoading, isError, isSuccess } = useQuery({
     queryKey: ["carousel"],
-    queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
+    queryFn: () => getRequest("/home/top-carousel?page=1&limit=20"),
   });
   const swiper =useSwiper()
   useEffect(() => {
@@ -28,13 +29,12 @@ function HomeCarousel() {
       setCarouselItems(data?.data?.comics || dummyItems);
     }
   }, [isLoading, isFetching, data]);
-   useEffect(() => {
-     
-     if (swiperRef.current) {
-       const { slidesPerView } = swiperRef.current.params;
-       setSlidesPerPage(slidesPerView);
-     }
-   }, [swiperRef.current, currentSlide]);
+  useEffect(() => {
+    if (swiperRef.current) {
+      const { slidesPerView } = swiperRef.current.params;
+      setSlidesPerPage(slidesPerView);
+    }
+  }, [swiperRef.current, currentSlide]);
   let sliderRef: any = useRef();
    const handleSlideChange = (swiper:any) => {
      // Calculate the current group index
@@ -85,7 +85,7 @@ function HomeCarousel() {
   //     </div>
   //   );
   // };
-  
+
   var settings = {
     dots: false,
     infinite: true,
@@ -94,7 +94,7 @@ function HomeCarousel() {
     slidesToScroll: 5,
     initialSlide: 0,
     arrows: false,
-    beforeChange:(current :number,next :number)=>setCurrentSlide(next),
+    beforeChange: (current: number, next: number) => setCurrentSlide(next),
     responsive: [
       {
         breakpoint: 1400,
@@ -142,10 +142,12 @@ function HomeCarousel() {
     "#664147",
   ];
   return (
-    <div className="parent-wrap bg-[--homeCouroselbg] py-7  backdrop-blur-sm hover:backdrop-blur-lg transition-colors duration-400 ease-in-out">
+    <div className="parent-wrap bg-[--homeCouroselbg] py-6  backdrop-blur-sm hover:backdrop-blur-lg transition-colors duration-400 ease-in-out relative">
+      {/* <Ellipse /> */}
       <div className="child-wrap-sm home-slick-cont relative">
         <div className="relative">
           <Curve />
+
           <Swiper
             slidesPerView={5}
             spaceBetween={5}

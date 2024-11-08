@@ -75,7 +75,7 @@ export default function Page() {
                         <div className="font-bold text-xl">
                           {newTrending[0]?.title}
                         </div>
-                        <Likes />
+                        <Likes likesNViews={newTrending[0]?.likesAndViews} />
                       </div>
                       <div>
                         <SolidPrimaryButton size="md">Add</SolidPrimaryButton>
@@ -173,7 +173,7 @@ export default function Page() {
                         <div className="font-bold text-xl">
                           {mostRead[0]?.title}
                         </div>
-                        <Likes />
+                        <Likes likesNViews={mostRead[0]?.likesAndViews}/>
                       </div>
                       <div>
                         <SolidPrimaryButton size="md">Add</SolidPrimaryButton>

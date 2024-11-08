@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import LibraryBookOverview from "./_shared/overview";
 import { usePathname } from "next/navigation";
+import { prevRoutes } from "@/lib/session/prevRoutes";
 
 export interface ViewComicProps {
   uid: any;
@@ -21,17 +22,19 @@ const Page = ({
   searchParams,
 }: {
   params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { uuid: any; id: any };
 }) => {
   const [comic, setComic] = useState(null);
-  const { uuid, id } = searchParams;
+  const uuid2 = new URLSearchParams(window.location.search).get("uuid");
+  const id2 = new URLSearchParams(window.location.search).get("id");
+
   const pathname = usePathname();
   const { token } = useSelector(selectAuthState);
   const { data, isLoading, isFetching, isSuccess } = useQuery({
-    queryKey: [`comic_${uuid}`],
+    queryKey: [`comic_${uuid2}`,id2],
     queryFn: () =>
-      getRequestProtected(`/my-libraries/comics/${id}/get`, token, pathname),
-    enabled: token !== null,
+      getRequestProtected(`/my-libraries/comics/${Number(id2)}/get`, token, prevRoutes().library),
+    enabled: token !== null 
   });
   useEffect(() => {
     if (isSuccess) {
@@ -45,16 +48,16 @@ const Page = ({
         <div className="child-wrap">
           <BackButton />
           <LibraryBookOverview
-            uid={uuid}
+            uid={uuid2}
             data={comic}
             isLoading={isLoading}
-            comicId={id}
+            comicId={id2}
           />
           <ComicTabs
-            uid={uuid}
+            uid={uuid2}
             data={comic}
             isLoading={isLoading}
-            comicId={id}
+            comicId={id2}
           />
         </div>
       </div>

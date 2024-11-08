@@ -1,65 +1,89 @@
-"use client";
+import { Metadata } from "next";
+import PageClient from "./pageClient";
+import { getRequest } from "@/app/utils/queries/requests";
+import { DEFAULT_OG_URL } from "@/app/layout";
 
-import React, { useEffect, useState } from "react";
-import ComicOverview from "./_shared/overview";
-import ComicTabs from "./_shared/tabs";
-import BackButton from "@/app/_shared/layout/back";
-import { getRequestProtected } from "@/app/utils/queries/requests";
-import { useQuery } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
-import { selectAuthState } from "@/lib/slices/auth-slice";
-import NotFound from "@/app/user/library/_shared/notFound";
-import { usePathname } from "next/navigation";
-
-export interface ViewComicProps {
-  uid: any;
-  data: any;
-  isLoading: boolean;
-}
-const Page = ({
-  params,
-  searchParams,
-}: {
+type Props = {
   params: { name: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) => {
-  const pathname=usePathname()
-  const [comic, setComic] = useState(null);
-  const { name } = params;
-  const { token } = useSelector(selectAuthState);
-  const { data, isLoading, isFetching, isSuccess } = useQuery({
-    queryKey: [`comic_${name}`],
-    queryFn: () => getRequestProtected(`/comics/${name}/view`, token,pathname),
-    enabled: token !== null,
-  });
-  useEffect(() => {
-    if (isSuccess) setComic(data?.data || null);
-  }, [data, isFetching, isSuccess]);
-  const ErrorComp = () => {
-    if (data?.data?.action == "SHOW_COMING_SOON_SCREEN")
-      return <NotFound title="Coming soon" desc="This comic will soon be published and made available for your viewing. Kindly check back some other time" />;
-    if (data?.success == false) return <NotFound title="Comic not found" desc="We can't find the comic you're looking for"/>;
-    return <NotFound title="Comic not found" desc="We can't find the comic you're looking for"/>;
-  };
-  return (
-    <main>
-      <div className="parent-wrap py-10">
-        <div className="child-wrap">
-          <BackButton />
-          {!isLoading && data?.success == false ? (
-            <div className="mt-10 flex justify-center min-h-dvh">
-              <ErrorComp />
-            </div>
-          ) : (
-            <>
-              <ComicOverview uid={name} data={comic} isLoading={isLoading} />
-              <ComicTabs uid={name} data={comic} isLoading={isLoading} />
-            </>
-          )}
-        </div>
-      </div>
-    </main>
-  );
 };
 
-export default Page;
+export const generateMetadata = async ({
+  params,
+}: Props): Promise<Metadata> => {
+  const { title, description, bgUrl, logoUrl } = await getRequest(
+    `/comics/${params?.name}/view`
+  ).then((data) => {
+    if (data?.success) {
+      // Extract title, description, and image URL from the respons
+      let d = {
+        title: data?.data?.title,
+        description: data?.data?.description,
+        bgUrl: data?.data?.backgroundImage,
+        logoUrl: data?.data?.coverImage,
+      };
+      return d;
+    }
+    return {
+      title: "",
+      description: "",
+      bgUrl: DEFAULT_OG_URL,
+      logoUrl: DEFAULT_OG_URL,
+    };
+  });
+
+  const images = [
+    {
+      url: bgUrl || DEFAULT_OG_URL,
+      width: 1200,
+      height: 630,
+      alt: title || "Toon Central Comic",
+    },
+    {
+      url: bgUrl || DEFAULT_OG_URL,
+      width: 800,
+      height: 420,
+      alt: title || "Toon Central Comic",
+    },
+    {
+      url: bgUrl || DEFAULT_OG_URL,
+      width: 600,
+      height: 315,
+      alt: title || "Toon Central Comic",
+    },
+  ];
+
+  return {
+    title: `Toon Central - ${title}`,
+    description:
+      description || `Discover Toon Central, the pioneering comic platform`,
+
+    openGraph: {
+      title: `Toon Central - ${title}`,
+      description:
+        description ||
+        `Discover Toon Central, the pioneering comic platform showcasing Afrocentric comics.`,
+      url: `https://tooncentralhub.com/comics/${params.name}`,
+      type: "website",
+      images: images,
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      site: "@tooncentralhub",
+      title: `Toon Central - ${title}`,
+      description:
+        description ||
+        `Discover Toon Central, the pioneering comic platform showcasing Afrocentric comics.`,
+      images: images,
+    },
+  };
+};
+export default async function Page({ params }: Props) {
+  return (
+    <PageClient
+      params={{
+        name: params.name,
+      }}
+    />
+  );
+}

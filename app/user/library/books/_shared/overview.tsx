@@ -17,6 +17,7 @@ import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
 import Link from "next/link";
 import { LoadingLibraryItem } from "../../_shared/loadingLibraryItem";
 import { Button } from "@nextui-org/react";
+import { prevRoutes } from "@/lib/session/prevRoutes";
 
 const LibraryBookOverview = ({
   uid,
@@ -25,12 +26,9 @@ const LibraryBookOverview = ({
   comicId,
 }: ViewComicProps) => {
   const disabled = useMemo(() => data?.episodes?.length <= 0, [data]);
-  const pathname = usePathname();
+
   const [isLiked, setIsLiked] = useState(false);
-  const router = useRouter();
-  const { user, token } = useSelector(selectAuthState);
-  const readChapter = () =>
-    router.push(`${pathname}/chapter?chapter=${0}&uid=${uid}`);
+  const { token } = useSelector(selectAuthState);
   const {
     data: likeResponse,
     isSuccess: isLikeSuccess,
@@ -38,7 +36,8 @@ const LibraryBookOverview = ({
     isLoading: isLiking,
   } = useQuery({
     queryKey: ["like"],
-    queryFn: () => getRequestProtected(`/comics/${uid}/like`, token,pathname),
+    queryFn: () =>
+      getRequestProtected(`/comics/${uid}/like`, token, prevRoutes().library),
     enabled: isLiked != false,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
@@ -65,7 +64,7 @@ const LibraryBookOverview = ({
         null,
         `/my-libraries/comics/${data?.id}/toggle`,
         token || "",
-        pathname,
+        prevRoutes().library,
         "json"
       ),
     onSuccess(data, variables, context) {
@@ -99,7 +98,7 @@ const LibraryBookOverview = ({
             <div className=" flex gap-6">
               <div className="base:w-full sm:w-[30%] min-w-[120px] max-w-[241px] h-[140px] md:h-[271px] rounded-lg overflow-hidden">
                 <Image
-                  src={`${data?.backgroundImage || data?.coverImage || ""}`}
+                  src={`${ data?.coverImage|| ""}`}
                   alt={`${data?.title || "toon_central"}`}
                   width={200}
                   height={271}
@@ -135,13 +134,13 @@ const LibraryBookOverview = ({
                       Edit
                     </SolidPrimaryButton>
                     <Button
-                    isDisabled={!data?.id}
-                      onClick={() => publish()}
+                      isDisabled={data?.statusId == 1}
+                      onClick={() => data?.statusId == 0 && publish()}
                       className="  rounded-lg"
                       size="lg"
                       isLoading={isPublishing}
                     >
-                      Publish
+                      {data?.statusId == 1 ? "Published" : "Publish"}
                     </Button>
                   </div>
                 </div>

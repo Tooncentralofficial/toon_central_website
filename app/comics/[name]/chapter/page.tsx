@@ -4,11 +4,13 @@ import { BXSLeft, BXSRight } from "@/app/_shared/icons/icons";
 import BackButton from "@/app/_shared/layout/back";
 import { getRequestProtected } from "@/app/utils/queries/requests";
 import { parseArray } from "@/helpers/parsArray";
+import { prevRoutes } from "@/lib/session/prevRoutes";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { Button } from "@nextui-org/react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -20,44 +22,60 @@ const Page = ({
   searchParams: { uid: string | undefined; chapterSlug: string | undefined };
 }) => {
   const { uid, chapterSlug } = searchParams;
-  const pathname=usePathname()
+  const pathname = usePathname();
+  const queryClient = useQueryClient();
+  const router = useRouter();
   //chapter state and update
   const [chapter, setChapter] = useState(parseInt(chapterSlug || "0") + 1);
   const [episode, setEpisode] = useState<any[]>([]);
-  const [subscribing, setSubscribing] = useState(false);
-  const { token }: any = useSelector(selectAuthState);
+  const { user, token }: any = useSelector(selectAuthState);
+
+  const comicQueryKey = `comic_${uid}`;
+
   const { data, isLoading, isFetching, isSuccess } = useQuery({
-    queryKey: [`comic_${uid}`],
-    queryFn: () => getRequestProtected(`/comics/${uid}/view`, token,pathname),
+    queryKey: [comicQueryKey],
+    queryFn: () => getRequestProtected(`/comics/${uid}/view`, token, pathname),
     enabled: token !== null,
   });
+
   useEffect(() => {
     if (isSuccess) setEpisode(parseArray(data?.data?.episodes));
   }, [data, isFetching, isSuccess]);
 
-  //  const {data:likeData,refetch:likeComic}=useQuery({
-  //     queryKey:["like"],
-  //     queryFn:()=>{}
-  //   })
-  const subscribe = async () => {
-    setSubscribing(true);
-    const { data, message, success } = await getRequestProtected(
-      `/comics/${uid}/subscribe`,
-      token,pathname
-    );
-
-    if (success) {
-      toast(message, {
-        toastId: "view_comic",
-        type: "success",
-      });
-    } else {
-      toast(message, {
-        toastId: "view_comic",
+  const { mutate: likeComic, isPending } = useMutation({
+    mutationKey: ["like"],
+    mutationFn: () =>
+      getRequestProtected(`/comics/${uid}/like`, token, prevRoutes(uid).comic),
+    onSuccess: (data) => {
+      if (data?.success) {
+        toast(data?.message, {
+          toastId: `toast_${uid}`,
+          type: "success",
+        });
+        queryClient.invalidateQueries({
+          queryKey: [comicQueryKey],
+        });
+        return;
+      }
+      toast(data?.message, {
+        toastId: `toast_${uid}`,
         type: "error",
       });
+    },
+    onError(error, variables, context) {
+      toast("Failed to like", {
+        toastId: `toast_${uid}`,
+        type: "error",
+      });
+    },
+  });
+
+  const subscribe = () => {
+    if (!token) {
+      router.push(`/auth/login?previous=${prevRoutes(uid).comic}`);
+      return;
     }
-    setSubscribing(false);
+    likeComic();
   };
   const prevChapter = () => {
     if (chapter > 1) {
@@ -76,6 +94,11 @@ const Page = ({
     () => chapter >= parseArray(data?.data?.episodes).length,
     [chapter, data]
   );
+  const subscribed = useMemo(() => {
+    return parseArray(data?.data?.likesAndViews?.likes).some((value) => {
+      return value?.user_id === user?.id;
+    });
+  }, [user, data]);
   return (
     <main>
       <div className="parent-wrap py-10">
@@ -92,7 +115,7 @@ const Page = ({
               </button>
               Chapter {chapter}
               <button
-              disabled={nextDisabled}
+                disabled={nextDisabled}
                 className={`${nextDisabled ? "text-[#475467]" : ""}`}
                 onClick={() => nextChapter()}
               >
@@ -100,12 +123,12 @@ const Page = ({
               </button>
             </div>
             <Button
-              isLoading={subscribing}
+              isLoading={isPending}
               onClick={() => subscribe()}
               className="bg-[#475467] font-bold"
               size="sm"
             >
-              Subscribe
+              {subscribed ? "Unsubscribe" : "Subscribe"}
             </Button>
           </div>
           <div className="my-10">
@@ -113,7 +136,7 @@ const Page = ({
               {parseArray(episode[chapter - 1]?.comic_images).map(
                 (image, i) => (
                   <Image
-                  key={i}
+                    key={i}
                     src={`${image?.image || ""}`}
                     alt="iamge"
                     width={500}

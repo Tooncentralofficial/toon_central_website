@@ -22,7 +22,7 @@ const CardTitleBottom = ({
     >
       <div className="h-full overflow-hidden w-auto relative">
         <Image
-          src={`${cardData?.backgroundImage || cardData?.coverImage || ""}`}
+          src={`${cardData?.coverImage || ""}`}
           alt={`${cardData?.title || "toon_central"}`}
           width={200}
           height={260}
@@ -46,7 +46,7 @@ const CardTitleBottom = ({
             <div>
               <div className="font-bold text-xl">{cardData?.title}</div>
               <div className="flex justify-between">
-                <Likes />
+                <Likes likesNViews={cardData?.likesAndViews} />
                 {expand && (
                   <motion.a
                     href=""

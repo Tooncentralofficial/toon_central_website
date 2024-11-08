@@ -29,6 +29,7 @@ import { Comic } from "@/helpers/types";
 import CheckCountry from "./modals/checkCountry";
 import AddStrips from "./modals/addStrips";
 import { parseArray } from "@/helpers/parsArray";
+import { prevRoutes } from "@/lib/session/prevRoutes";
 
 interface NewUpload {
   uuid: string | null;
@@ -79,7 +80,7 @@ export default function Page({
       getRequestProtected(
         `my-libraries/comics/${comicId}/get`,
         token,
-        pathname
+        prevRoutes().library
       ),
     enabled: isEdit,
   });
@@ -154,7 +155,7 @@ export default function Page({
         data,
         "/my-libraries/comics/create",
         token || "",
-        pathname,
+        prevRoutes().library,
         "form"
       ),
     onSuccess(data, variables, context) {
@@ -193,7 +194,7 @@ export default function Page({
         data,
         `/my-libraries/comics/${comicId}/update`,
         token || "",
-        pathname
+        prevRoutes().library
       ),
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;

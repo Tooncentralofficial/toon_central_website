@@ -20,6 +20,8 @@ export async function middleware(request: NextRequest) {
   const checkUnProtectedRoutes = () => {
     if (pathname.startsWith("/auth"))
       return NextResponse.redirect(new URL("/", request.url));
+    // if (pathname===("/user/library/books"))
+    //   return NextResponse.redirect(new URL("/user/library", request.url));
   };
   
 
@@ -44,8 +46,8 @@ export const config = {
   matcher: [
     "/",
     "/auth/:path*",
-    "/comics/:path*",
     "/creator/:path*",
     "/user/:path*",
   ],
 };
+// "/comics/:path*",

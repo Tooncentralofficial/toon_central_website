@@ -19,4 +19,21 @@ const EllipseGray = () => {
   );
 };
 
+export const Ellipse = () => {
+  return (
+    <div className="absolute h-[46px] top-[-12%] left-0 w-full z-10">
+      <svg
+        width="1440"
+        height="63"
+        viewBox="0 0 1440 63"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ width: "100%", height: "max-content" }}
+      >
+        <ellipse cx="720" cy="31.5" rx="720" ry="31.5" fill="#6D2445" />
+      </svg>
+    </div>
+  );
+};
+
 export default EllipseGray;
