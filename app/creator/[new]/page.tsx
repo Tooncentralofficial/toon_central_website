@@ -238,11 +238,12 @@ export default function Page({
   const editComic = useMutation({
     mutationKey: ["patch_comic"],
     mutationFn: (data: any) =>
-      patchRequestProtected(
+      postRequestProtected(
         data,
-        `/my-libraries/comics/${comicId}/update`,
+        `/my-libraries/comics/${comicId}/update?_method=PATCH`,
         token || "",
-        prevRoutes().library
+        prevRoutes().library,
+        "form"
       ),
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
