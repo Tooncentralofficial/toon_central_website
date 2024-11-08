@@ -132,7 +132,6 @@ export default function Page({
     initialValues,
     validationSchema,
     onSubmit: (values) => {
-      console.log(values);
       let formData = new FormData();
       formData?.append("backgroundImage", values.backgroundImage);
       formData?.append("coverImage", values.coverImage);

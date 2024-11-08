@@ -19,9 +19,10 @@ const Page = ({
   searchParams,
 }: {
   params: { slug: string };
-  searchParams: { uid: string | undefined; chapterSlug: string | undefined };
+  searchParams: { uid: string | undefined; chapter: string | undefined };
 }) => {
-  const { uid, chapterSlug } = searchParams;
+  
+  const { uid, chapter:chapterSlug } = searchParams;
   const pathname = usePathname();
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -37,6 +38,7 @@ const Page = ({
     queryFn: () => getRequestProtected(`/comics/${uid}/view`, token, pathname),
     enabled: token !== null,
   });
+
 
   useEffect(() => {
     if (isSuccess) setEpisode(parseArray(data?.data?.episodes));
