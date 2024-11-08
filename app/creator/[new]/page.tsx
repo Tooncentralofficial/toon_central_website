@@ -24,7 +24,7 @@ import { Button, Select, SelectItem, useDisclosure } from "@nextui-org/react";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Comic } from "@/helpers/types";
 import CheckCountry from "./modals/checkCountry";
 import AddStrips from "./modals/addStrips";
@@ -45,14 +45,62 @@ export default function Page({
   const { user, userType, token } = useSelector(selectAuthState);
   const router = useRouter();
   const { comicId }: any = searchParams;
-  const [comicData, setComicData] = useState<Comic | null>();
-
   const pathname = usePathname();
 
-  const isEdit = pathname.includes("edit");
+  const isEdit = useMemo(()=>pathname.includes("edit")
+  ,[pathname])
+
+  //chck for edit
+  useEffect(() => {
+    if (pathname.includes("/edit") && !comicId) {
+      router.push("/user/library");
+    }
+  }, [pathname, comicId]);
 
   const BANNER_SIZE = "1952 x 587";
   const COMIC_SIZE = "1080 x 1080";
+  const SELECT_ITEMS = [
+    {
+      id: 1,
+      name: "Action",
+      description: "",
+      slug: "action",
+    },
+    {
+      id: 2,
+      name: "Comedy",
+      description: "",
+      slug: "comedy",
+    },
+    {
+      id: 3,
+      name: "Sci-Fi",
+      description: "",
+      slug: "sci_fi",
+    },
+  ];
+  const UPDATE_DAYS = [
+    { id: "Monday" },
+    { id: "Tuesday" },
+    { id: "Wednesday" },
+    { id: "Thursday" },
+    { id: "Friday" },
+    { id: "Saturday" },
+    { id: "Sunday" },
+  ];
+  const COMIC_STATUS = [
+    {
+      id: "ONGOING",
+      name: "Ongoing",
+    },
+    {
+      id: "COMPLETED",
+      name: "Completed",
+    },
+  ];
+
+  const [comicData, setComicData] = useState<Comic | null>();
+
   const { onClose, isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
     onClose: onAddClose,
@@ -141,7 +189,7 @@ export default function Page({
       formData?.append("status", values.status);
       formData?.append("updateDays", values.updateDays);
       formData?.append("socialMediaHandle", values.socialMediaHandle);
-      isEdit ? editComic.mutate(values) : addNew.mutate(formData);
+      isEdit ? editComic.mutate(formData) : addNew.mutate(formData);
     },
     enableReinitialize: true,
   });
@@ -218,50 +266,11 @@ export default function Page({
     },
   });
 
-  function addMoreStrips(data: NewUpload) {
-    setNewUpload({ comicId: data.comicId, uuid: data.uuid });
-    if (data?.comicId && data?.uuid) onAddOpen();
-  }
+  // function addMoreStrips(data: NewUpload) {
+  //   setNewUpload({ comicId: data.comicId, uuid: data.uuid });
+  //   if (data?.comicId && data?.uuid) onAddOpen();
+  // }
 
-  const SELECT_ITEMS = [
-    {
-      id: 1,
-      name: "Action",
-      description: "",
-      slug: "action",
-    },
-    {
-      id: 2,
-      name: "Comedy",
-      description: "",
-      slug: "comedy",
-    },
-    {
-      id: 3,
-      name: "Sci-Fi",
-      description: "",
-      slug: "sci_fi",
-    },
-  ];
-  const UPDATE_DAYS = [
-    { id: "Monday" },
-    { id: "Tuesday" },
-    { id: "Wednesday" },
-    { id: "Thursday" },
-    { id: "Friday" },
-    { id: "Saturday" },
-    { id: "Sunday" },
-  ];
-  const COMIC_STATUS = [
-    {
-      id: "ONGOING",
-      name: "Ongoing",
-    },
-    {
-      id: "COMPLETED",
-      name: "Completed",
-    },
-  ];
   const goBack = () => router.back();
   function addPart(uid: string, comicId: string) {
     router.push(`/user/library/books/addpart?uuid${uid}&comicId=${comicId}`);

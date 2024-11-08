@@ -15,7 +15,6 @@ const InputPictureMultiple = () => {
       ]);
     }
   };
-  console.log(selectedFiles)
   return (
     <div
       className="grid

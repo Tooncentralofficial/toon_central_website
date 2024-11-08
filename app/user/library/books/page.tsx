@@ -38,9 +38,9 @@ const Page = ({
   });
   useEffect(() => {
     if (isSuccess) {
-      console.log(data);
+   
       setComic(data?.data || null);
-    } 
+    }
   }, [data, isFetching, isSuccess]);
   return (
     <main>

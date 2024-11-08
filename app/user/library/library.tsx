@@ -30,7 +30,6 @@ export default function Library() {
     const selectedTab = tabs.find((tab) => tab.id === key);
     if (selectedTab) {
       setSelectedTabIndex(selectedTab.tabIndex);
-      console.log("Selected Tab Index:", selectedTab.tabIndex);
     }
   };
   return (

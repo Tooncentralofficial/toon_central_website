@@ -23,8 +23,7 @@ function HomeCarousel() {
     queryKey: ["carousel"],
     queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
   });
-  const swiper = useSwiper();
-  console.log(data);
+  const swiper =useSwiper()
   useEffect(() => {
     if (isSuccess) {
       setCarouselItems(data?.data?.comics || dummyItems);
@@ -37,21 +36,19 @@ function HomeCarousel() {
     }
   }, [swiperRef.current, currentSlide]);
   let sliderRef: any = useRef();
-  const handleSlideChange = (swiper: any) => {
-    // Calculate the current group index
-    const groupIndex = Math.floor(
-      swiper.realIndex / swiper.params.slidesPerGroup
-    );
-    console.log(groupIndex);
-    setCurrentGroup(groupIndex);
-  };
+   const handleSlideChange = (swiper:any) => {
+     // Calculate the current group index
+     const groupIndex = Math.floor(
+       swiper.realIndex / swiper.params.slidesPerGroup
+     );
+     setCurrentGroup(groupIndex);
+   };
   const next = () => {
     sliderRef.slickNext();
   };
   const previous = () => {
     sliderRef.slickPrev();
   };
-  console.log(currentSlide);
   const handleNext = () => {
     if (swiperRef.current) {
       swiperRef.current.slideNext();

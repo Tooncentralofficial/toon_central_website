@@ -29,7 +29,6 @@ const SetPassword = ({
     user_type:2,
     confirmed_password: "",
   };
-  console.log("verification code", verification_code);
 
   const validationSchema = Yup.object().shape({
     password: Yup.string().required("Password is required"),
@@ -42,7 +41,6 @@ const SetPassword = ({
     initialValues,
     validationSchema,
     onSubmit: (values) => {
-      console.log("values", values);
       setPassword.mutate(values);
     },
   });

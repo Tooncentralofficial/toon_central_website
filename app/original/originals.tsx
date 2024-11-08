@@ -65,9 +65,9 @@ export default function Originals() {
                 tabContent: "px-4 py-0",
                 // tabContent: "group-data-[selected=true]:text-[#06b6d4]"
               }}
-              onSelectionChange={(tab: React.Key) => {
-                console.log(tab);
-              }}
+              // onSelectionChange={(tab: React.Key) => {
+              //   console.log(tab);
+              // }}
             >
               {categories.map((item, i) => (
                 <Tab className="p-0" key={item.label} title={item.label} />
