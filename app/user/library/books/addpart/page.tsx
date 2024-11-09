@@ -1,11 +1,11 @@
 "use client";
 import H2SectionTitle from "@/app/_shared/layout/h2SectionTitle";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { postRequestProtected } from "@/app/utils/queries/requests";
+import { postRequest, postRequestProtected } from "@/app/utils/queries/requests";
 import { FlatInput } from "@/app/_shared/inputs_actions/inputFields";
 import InputPicture from "@/app/_shared/inputs_actions/inputPicture";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
@@ -15,6 +15,7 @@ import { selectAuthState } from "@/lib/slices/auth-slice";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { generateUrl } from "@/helpers/parseImage";
 import InputPictureFloating from "@/app/_shared/inputs_actions/inputPictureFloating";
+import axios from "axios";
 export default function Page({
   params,
   searchParams,
@@ -25,6 +26,7 @@ export default function Page({
   const pathname = usePathname();
   const { user, userType, token } = useSelector(selectAuthState);
   const comicId = new URLSearchParams(window.location.search).get("comicId");
+  const [imageUrls,setImageUrls ] = useState([])
   const initialValues = {
     title: "",
     description: "",
@@ -43,7 +45,8 @@ export default function Page({
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
+      console.log(values)
       const formData = new FormData();
       formData?.append("title", values.title);
       formData?.append("description", values.description);
@@ -51,12 +54,31 @@ export default function Page({
       values.comicImages.map((image, i) => {
         formData.append(`comicImage[${i}][image]`, image);
       });
-      publishChapter.mutate(formData);
+
+      publishhh.mutate(formData);
+      //  const updatedValues = {
+      //    ...values,
+      //    comicImages: imageUrls, // Replace comicImages with URLs
+      //  };
+      //  console.log(updatedValues)
+      // publishChapter.mutate(updatedValues);
+      
     },
     enableReinitialize: true,
   });
-  const addImage = (file: File) => {
-    formik.setFieldValue("comicImages", [...formik.values.comicImages, file]);
+  // const addImage = (file: FileList) => {
+  //   console.log(file)
+    
+  //   formik.setFieldValue("comicImages", [...formik.values.comicImages, file]);
+  // };
+  const addImage = (fileList: FileList) => {
+    if (fileList) {
+      const filesArray = Array.from(fileList); // Convert FileList to an array
+      formik.setFieldValue("comicImages", [
+        ...formik.values.comicImages,
+        ...filesArray,
+      ]);
+    }
   };
 
   const removeImage = (index: number) => {
@@ -69,6 +91,7 @@ export default function Page({
     const images = formik.values.comicImages.map((imageFile) =>
       generateUrl(imageFile)
     );
+    console.log(images)
     return images;
   }, [formik.values.comicImages]);
   const router = useRouter();
@@ -104,6 +127,37 @@ export default function Page({
       });
     },
   });
+  const publishhh = useMutation({
+    mutationKey: [`comic${comicId}_upload_picture`],
+    mutationFn: (data: any) => axios.post("/api/upload", data),
+    onSuccess(data) {
+      const imageUrls = data?.data?.message; 
+      // setImageUrls(data?.data?.message);
+      if (imageUrls){
+        const updatedValues = {
+          ...formik.values,
+          comicImages: imageUrls, // Replace Formik comicImages with the new URLs
+        };
+        console.log(updatedValues)
+        const formData = new FormData();
+        formData?.append("title", updatedValues.title);
+        formData?.append("description", updatedValues.description);
+        formData?.append("thumbnail", updatedValues.thumbnail);
+        updatedValues.comicImages.map((imageUrl:string, i:number) => {
+          formData.append(`comicImage[${i}][image]`, imageUrl);
+        });
+        publishChapter.mutate(updatedValues)
+      }
+      
+    },
+    onError(error, variables, context) {
+      toast("Some error occured. Contact help !", {
+        toastId: "add_Images",
+        type: "error",
+      });
+    },
+  });
+
   return (
     <main className="">
       <div className="parent-wrap min-h-dvh   py-10">
@@ -175,7 +229,8 @@ export default function Page({
                       fieldError={Boolean(
                         formik.errors.comicImages && formik.touched.comicImages
                       )}
-                      onChange={(file) => addImage(file)}
+                      multiple
+                      onChange={(file:any ) => addImage(file)}
                       fieldName={"comicImages"}
                       variant="add"
                       emptyPlaceholder={
@@ -217,12 +272,12 @@ export default function Page({
                 </div>
               </div>
             </div>
-            <InputPictureFloating
+            {/* <InputPictureFloating
               formik={formik}
               fieldError={Boolean(formik.errors.comicImages)}
               onChange={(file) => addImage(file)}
               fieldName={"comicImages"}
-            />
+            /> */}
             <div className="flex mt-10 gap-5">
               <SolidPrimaryButton
                 className="w-full"

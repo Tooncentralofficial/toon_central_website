@@ -17,6 +17,7 @@
     "@tanstack/react-query-devtools": "^5.45.1",
     "@types/react-slick": "^0.23.13",
     "axios": "^1.7.2",
+    "cloudinary": "^2.5.1",
     "formik": "^2.4.5",
     "framer-motion": "^11.2.6",
     "hamburger-react": "^2.5.1",
