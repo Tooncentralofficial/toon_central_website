@@ -9,6 +9,7 @@ const InputPictureFloating = ({
   fieldName,
   fieldError,
   submitOnChange,
+  multiple,
   isLoading,
   onChange,
 }: {
@@ -16,6 +17,7 @@ const InputPictureFloating = ({
   fieldName: any;
   submitOnChange?: boolean;
   onChange?: (file: File) => void;
+  multiple?:boolean
   isLoading?: boolean;
   fieldError?: boolean;
 }) => {
@@ -39,6 +41,7 @@ const InputPictureFloating = ({
         handleChange={handleChange}
         name="image"
         types={fileTypes}
+        multiple ={multiple || false}
       >
         <div className="flex items-center gap-1">
           <div className="w-[40px] h-[40px]">

@@ -17,6 +17,7 @@ const InputPicture = ({
   emptyPlaceholder = "Upload Image file or drag and drop",
   placeholder = "Add new",
   maxSize = MAX_SIZE,
+  multiple
 }: {
   formik: any;
   fieldName: any;
@@ -28,6 +29,7 @@ const InputPicture = ({
   emptyPlaceholder?: React.ReactNode;
   placeholder?: React.ReactNode;
   maxSize?: number;
+  multiple?:boolean
 }) => {
   const [sizeError, setSizeError] = useState(false);
   const { src, isFile } = parseImageSrc(formik.values[fieldName]);
@@ -75,6 +77,7 @@ const InputPicture = ({
       types={fileTypes}
       maxSize={maxSize}
       onSizeError={() => setSizeError(true)}
+      multiple= {multiple ||false}
     >
       <div
         className={`bg-[#D9D9D9] outline w-full rounded-[8px] border h-[250px] flex-1 flex overflow-hidden ${
