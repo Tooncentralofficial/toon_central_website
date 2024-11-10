@@ -26,7 +26,8 @@ export default function Page({
   const pathname = usePathname();
   const { user, userType, token } = useSelector(selectAuthState);
   const comicId = new URLSearchParams(window.location.search).get("comicId");
-  const [imageUrls,setImageUrls ] = useState([])
+  const [isLoading,setisLoading] = useState<boolean>(false)
+
   const initialValues = {
     title: "",
     description: "",
@@ -56,6 +57,7 @@ export default function Page({
       });
 
       publishhh.mutate(formData);
+      setisLoading(true)
       //  const updatedValues = {
       //    ...values,
       //    comicImages: imageUrls, // Replace comicImages with URLs
@@ -106,6 +108,7 @@ export default function Page({
         "form"
       ),
     onSuccess(data, variables, context) {
+      setisLoading(false)
       const { success, message, data: resData } = data;
       if (success) {
         toast("Chapter added", {
@@ -136,7 +139,7 @@ export default function Page({
       if (imageUrls){
         const updatedValues = {
           ...formik.values,
-          comicImages: imageUrls, // Replace Formik comicImages with the new URLs
+          comicImages: imageUrls,
         };
         console.log(updatedValues)
         const formData = new FormData();
@@ -146,7 +149,7 @@ export default function Page({
         updatedValues.comicImages.map((imageUrl:string, i:number) => {
           formData.append(`comicImage[${i}][image]`, imageUrl);
         });
-        publishChapter.mutate(updatedValues)
+        publishChapter.mutate(formData)
       }
       
     },
@@ -281,7 +284,7 @@ export default function Page({
             <div className="flex mt-10 gap-5">
               <SolidPrimaryButton
                 className="w-full"
-                isLoading={publishChapter.isPending}
+                isLoading={isLoading}
                 type="submit"
               >
                 Add Chapter
