@@ -9,6 +9,7 @@ cloudinary.config({
   api_key: apiKey,
   api_secret: apiSecret,
 });
+ 
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   console.log("hello world");
