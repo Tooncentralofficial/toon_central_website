@@ -43,7 +43,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   } catch (error) {
     console.error("Error uploading to Cloudinary:", error);
     return NextResponse.json(
-      { error: error },
+      { error: error, apikey: process.env.CLOUDINARY_API_KEY },
       { status: 500 }
     );
   }
