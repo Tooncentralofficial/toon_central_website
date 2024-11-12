@@ -45,7 +45,7 @@ const Chapters = ({ uid, data, comicId }: ComicTab) => {
           <SolidPrimaryButton
           className="w-full"
             as={Link}
-            href={`/user/library/books/addpart?uuid${uid}&comicId=${comicId}`}
+            href={`/user/library/books/addpart?uuid=${uid}&comicId=${comicId}`}
           >
             Add Episode
           </SolidPrimaryButton>

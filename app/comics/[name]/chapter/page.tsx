@@ -134,7 +134,7 @@ const Page = ({
             </Button>
           </div>
           <div className="my-10">
-            <div className="flex flex-col items-center gap-6 lg:gap-8">
+            <div className="flex flex-col items-center gap-0 lg:gap-0">
               {parseArray(episode[chapter - 1]?.comic_images).map(
                 (image, i) => (
                   <Image

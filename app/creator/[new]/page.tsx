@@ -274,7 +274,7 @@ export default function Page({
 
   const goBack = () => router.back();
   function addPart(uid: string, comicId: string) {
-    router.push(`/user/library/books/addpart?uuid${uid}&comicId=${comicId}`);
+    router.push(`/user/library/books/addpart?uuid=${uid}&comicId=${comicId}`);
   }
   // if (userType !== "user") {
   //   router.push("/creator");
