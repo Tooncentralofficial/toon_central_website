@@ -99,7 +99,7 @@ const Page = () => {
             name="email"
             label="Email"
             labelPlacement="outside"
-            placeholder=" toonscentral@gmail.com"
+            placeholder=" tooncentral@gmail.com"
             onChange={formik.handleChange}
             isInvalid={Boolean(formik.touched.email && formik.errors.email)}
             errorMessage={formik.errors.email}

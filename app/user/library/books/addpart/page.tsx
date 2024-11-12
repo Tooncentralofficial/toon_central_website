@@ -26,6 +26,7 @@ export default function Page({
   const pathname = usePathname();
   const { user, userType, token } = useSelector(selectAuthState);
   const comicId = new URLSearchParams(window.location.search).get("comicId");
+  const uId = new URLSearchParams(window.location.search).get("uuid");
   const [isLoading,setisLoading] = useState<boolean>(false)
 
   const initialValues = {
@@ -115,7 +116,7 @@ export default function Page({
           toastId: "add_comic",
           type: "success",
         });
-        router.push("/user/library");
+        router.push(`/user/library/books?uuid=${uId}&id=${comicId}`);
       } else {
         toast(message, {
           toastId: "add_comic",
@@ -128,6 +129,7 @@ export default function Page({
         toastId: "add_comic",
         type: "error",
       });
+      setisLoading(false);
     },
   });
   const publishhh = useMutation({
