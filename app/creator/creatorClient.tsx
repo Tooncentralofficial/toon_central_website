@@ -3,7 +3,7 @@
 import { Button } from "@nextui-org/react";
 import Image from "next/image";
 import Link from "next/link";
-import { Steps, Steps2 } from "../_shared/icons/icons";
+import { Steps, Steps2,Steps3 } from "../_shared/icons/icons";
 import Footer from "../_shared/layout/footer";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
@@ -75,7 +75,7 @@ const tokenState = token === undefined
       <div className="parent-wrap py-10">
         <div className="child-wrap relative flex w-full flex-col items-center">
           <div className="mt-[150px] sm:mt-[120px] md:mt-[60px] lg:mt-[unset] "></div>
-          <Steps2 />
+          <Steps3 />
           <div className="absolute top-0 right-0 flex flex-col gap-2 px-6">
             <h2 className="text-2xl">How it works </h2>
             <p className=" max-w-[300px] font-bold text-[#969AA0]">

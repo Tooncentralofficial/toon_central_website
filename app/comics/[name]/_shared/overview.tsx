@@ -94,7 +94,7 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
             <div className="flex flex-col lg:flex-row lg:w-[60%] justify-between gap-2">
               {data?.publishedByToonCentral === 1 && (
                 <div className="flex gap-4">
-                  <span>ToonsCentral</span> <GreenUser />
+                  <span>ToonCentral</span> <GreenUser />
                 </div>
               )}
 

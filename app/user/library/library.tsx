@@ -4,6 +4,8 @@ import { Tab, Tabs } from "@nextui-org/react";
 import GenreTab from "./_shared/myBooks";
 import MyBooksTab from "./_shared/myBooks";
 import NotFound from "./_shared/notFound";
+import LoadingLibraryItems from "./_shared/loadingLibraryItem";
+import MyFavourites from "./_shared/favourites";
 
 export default function Library() {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -22,7 +24,7 @@ export default function Library() {
     {
       id: "favorites",
       label: "Favourites",
-      content: <></>,
+      content:<MyFavourites />,
       tabIndex: 1,
     },
   ];

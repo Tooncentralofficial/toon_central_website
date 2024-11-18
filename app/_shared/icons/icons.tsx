@@ -18,6 +18,7 @@ import Calendar from "@/public/static/svg/calendar.svg";
 
 import Steps from "@/public/static/svg/steps.svg"
 import Steps2 from "@/public/static/svg/steps2.svg"
+import Steps3 from "@/public/static/svg/steps3.svg"
 import BellIcon from "@/public/static/svg/bell.svg"
 import UploadIcon from "@/public/static/svg/arrows/upload.svg"
 import NoRecord from "@/public/static/svg/no_record.svg"
@@ -39,7 +40,8 @@ export {
 
 export {
   Steps,
-  Steps2
+  Steps2,
+  Steps3
 }
 
 //arrows
