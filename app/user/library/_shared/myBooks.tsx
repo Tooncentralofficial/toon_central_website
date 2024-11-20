@@ -1,6 +1,9 @@
-import { getRequestProtected } from "@/app/utils/queries/requests";
+import {
+  deleteRequestProtected,
+  getRequestProtected,
+} from "@/app/utils/queries/requests";
 import { selectAuthState } from "@/lib/slices/auth-slice";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import NotFound from "./notFound";
@@ -11,23 +14,66 @@ import Link from "next/link";
 import PaginationCustom from "@/app/_shared/sort/pagination";
 import LoadingLibraryItems from "./loadingLibraryItem";
 import { usePathname } from "next/navigation";
+import { Button } from "@nextui-org/react";
+import { toast } from "react-toastify";
 
 const MyBooksTab = () => {
-  const [loading,setLoading]=useState(true)
-  const pathname=usePathname()
+  const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
   const [comics, setComics] = useState<any[]>([]);
   const [pagination, setPagination] = useState({ page: 1, total: 1 });
+  const [deletingComic, setDeletingComic] = useState<string | null>(null);
   const { token } = useSelector(selectAuthState);
+  const queryKey = "delete_comic"
+  const queryClient = useQueryClient()
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [`my_library`, pagination],
     queryFn: () =>
       getRequestProtected(
         `/my-libraries/comics?page=${pagination.page}&limit=6`,
-        token,pathname
+        token,
+        pathname
       ),
     enabled: token !== null,
   });
 
+  const { mutate: deleteComic} = useMutation({
+    mutationKey: [queryKey],
+    mutationFn: (id) =>
+      deleteRequestProtected(
+        `/my-libraries/comics/${id}/delete`,
+        token,
+        pathname
+      ),
+    onSuccess(data, variables, context) {
+      const { success, message, data: resData } = data;
+      console.log(resData)
+      if (success) {
+        toast(message, {
+          toastId: "comic_Delete",
+          type: "success",
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['my_library'],
+        });
+        return
+      } else {
+        toast(message, {
+          toastId: "comic_delete",
+          type: "error",
+        });
+      }
+    },
+    onError(error, variables, context) {
+      toast("Some error occured. Contact help !", {
+        toastId: "comic_delete",
+        type: "error",
+      });
+    },
+    onSettled(){
+      setDeletingComic(null)
+    }
+  });
   useEffect(() => {
     if (isSuccess) {
       setComics(parseArray(data?.data?.comics));
@@ -44,9 +90,9 @@ const MyBooksTab = () => {
     }));
   };
 
-  useEffect(()=>{
-    !isLoading&&setTimeout(()=>setLoading(false),500)
-  },[isLoading,isFetching])
+  useEffect(() => {
+    !isLoading && setTimeout(() => setLoading(false), 500);
+  }, [isLoading, isFetching]);
   return (
     <div>
       <div className="flex items-center h-full justify-between lg:justify-end gap-6 mb-[60px]">
@@ -104,14 +150,27 @@ const MyBooksTab = () => {
                           <p className="text-gray text-lg mb-7">
                             {item?.description}
                           </p>
-                          <SolidPrimaryButton
-                            className="w-max"
-                            disabled={item?.uuid}
-                            as={Link}
-                            href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
-                          >
-                            Add EPISODE
-                          </SolidPrimaryButton>
+                          <div className="flex gap-14">
+                            <SolidPrimaryButton
+                              className="w-max"
+                              disabled={item?.uuid}
+                              as={Link}
+                              href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
+                            >
+                              Add EPISODE
+                            </SolidPrimaryButton>
+                            <Button
+                              onClick={() => {
+                                setDeletingComic(item.id);
+                                deleteComic(item?.id);
+                              }}
+                              className=" rounded-lg bg-default-300"
+                              size="lg"
+                              isLoading={deletingComic === item?.id}
+                            >
+                              Delete
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -119,14 +178,16 @@ const MyBooksTab = () => {
                       <p className="text-gray text-base mb-7">
                         {item?.description}
                       </p>
-                      <SolidPrimaryButton
-                        className="w-max"
-                        disabled={item?.uuid}
-                        as={Link}
-                        href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
-                      >
-                        Add EPISODE
-                      </SolidPrimaryButton>
+                      <div>
+                        <SolidPrimaryButton
+                          className="w-max"
+                          disabled={item?.uuid}
+                          as={Link}
+                          href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
+                        >
+                          Add EPISODE
+                        </SolidPrimaryButton>
+                      </div>
                     </div>
                   </div>
                 ))}
