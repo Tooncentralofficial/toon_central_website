@@ -169,6 +169,32 @@ export const patchRequestProtected = async (
     );
   }
 };
+export const deleteRequestProtected = async (
+  url: string,
+  token: any,
+  prevClientUrl: string
+) => {
+  try {
+    const response = await axiosPrivateInstance(token, "json").delete(url);
+    if (response.data?.status) {
+      return SuccessResponse(response?.data?.data, response?.data?.message);
+    } else {
+      return FailedResponse(
+        response?.data?.message || "Some error occured",
+        response?.data
+      );
+    }
+  } catch (error: any) {
+    console.log("err", error?.response);
+    if (error?.response?.status === 401) {
+      return await LogoutUser(prevClientUrl);
+    }
+    return FailedResponse(
+      error?.response?.data?.message || "Some error occured",
+      error?.response?.data
+    );
+  }
+};
 // let errResponse =
 // err.response?.status == undefined
 //   ? navigator.onLine

@@ -18,20 +18,25 @@ const MyFavourites = () => {
   const [comics, setComics] = useState<any[]>([]);
   const [pagination, setPagination] = useState({ page: 1, total: 1 });
   const { token } = useSelector(selectAuthState);
+  // const { data, isLoading, isFetching, isSuccess } = useQuery({
+  //   queryKey: [`my_library`, pagination],
+  //   queryFn: () =>
+  //     getRequestProtected(
+  //       `/my-libraries/comics?page=${pagination.page}&limit=6`,
+  //       token,
+  //       pathname
+  //     ),
+  //   enabled: token !== null,
+  // });
   const { data, isLoading, isFetching, isSuccess } = useQuery({
-    queryKey: [`my_library`, pagination],
-    queryFn: () =>
-      getRequestProtected(
-        `/my-libraries/comics?page=${pagination.page}&limit=6`,
-        token,
-        pathname
-      ),
+    queryKey: [`my_likes`],
+    queryFn: () => getRequestProtected(`/user-likes`, token, pathname),
     enabled: token !== null,
   });
-
   useEffect(() => {
     if (isSuccess) {
-      setComics(parseArray(data?.data?.comics));
+      console.log(parseArray(data?.data));
+      setComics(parseArray(data?.data));
       setPagination((prevState) => ({
         page: data?.data?.pagination?.currentPage || 1,
         total: data?.data?.pagination?.totalPages || 1,
@@ -65,9 +70,11 @@ const MyFavourites = () => {
                       <div className="base:w-full sm:w-[30%] min-w-[120px] max-w-[241px] h-[140px] md:h-[271px] rounded-lg overflow-hidden">
                         <Image
                           src={`${
-                            item?.coverImage || item?.backgroundImage || ""
+                            item?.comic?.cover_image ||
+                            item?.comic?.background_image ||
+                            ""
                           }`}
-                          alt={`${item?.title || "toon_central"}`}
+                          alt={`${item?.comic?.title || "toon_central"}`}
                           width={200}
                           height={271}
                           style={{
@@ -84,47 +91,48 @@ const MyFavourites = () => {
                           Continue writing
                         </p>
                         <p className="text-2xl font-semibold lg:text-4xl uppercase">
-                          {item?.title}
+                          {item?.comic?.title}
                         </p>
                         <div className="flex flex-col sm:flex-row text-gray text-xs md:text-base gap-1 sm:gap-6 justify-between w-full max-w-[460px] py-3">
                           <span>
                             {" "}
-                            Published : {formatDate(item?.createdAt)}
+                            Published : {formatDate(item?.comic?.created_at)}
                           </span>
                           <span>
                             {" "}
-                            Published : {formatDate(item?.updatedAt)}
+                            Published : {formatDate(item?.comic?.updated_at)}
                           </span>
-                          <span>
+                          {/* <span>
                             {" "}
-                            Episodes : {parseArray(item?.episodes).length}
-                          </span>
+                            Episodes :{" "}
+                            {parseArray(item?.comic?.episodes).length}
+                          </span> */}
                         </div>
 
                         <div className="hidden md:block ">
                           <p className="text-gray text-lg mb-7">
-                            {item?.description}
+                            {item?.comic?.description}
                           </p>
                           <SolidPrimaryButton
                             className="w-max"
-                            disabled={item?.uuid}
+                            disabled={item?.comic?.uuid}
                             as={Link}
-                            href={``}
+                            href={`/comics/${item?.comic?.uuid}`}
                           >
-                          Read
+                            Read
                           </SolidPrimaryButton>
                         </div>
                       </div>
                     </div>
                     <div className="md:hidden ">
                       <p className="text-gray text-base mb-7">
-                        {item?.description}
+                        {item?.comic?.description}
                       </p>
                       <SolidPrimaryButton
                         className="w-max"
-                        disabled={item?.uuid}
+                        disabled={item?.comic?.uuid}
                         as={Link}
-                        href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
+                        href={`/user/library/books?uuid=${item?.comic?.uuid}&id=${item?.comic?.id}`}
                       >
                         Add EPISODE
                       </SolidPrimaryButton>
