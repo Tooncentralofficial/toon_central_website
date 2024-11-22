@@ -23,7 +23,6 @@ const Popular = () => {
   
   const [carouselItems, setCarouselItems] = useState<any[]>([]);
   const infinite = useMemo(() => carouselItems.length > 1, [carouselItems]);
-  console.log(infinite)
   const settings = {
     dots: true,
     infinite: infinite,
