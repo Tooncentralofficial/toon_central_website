@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Slider from "react-slick";
 import Image from "next/image";
 import EllipseGray from "../_shared/ellipse/ellipseGray";
@@ -20,9 +20,12 @@ import { parseArray } from "@/helpers/parsArray";
 import { useRouter } from "next/navigation";
 const Popular = () => {
   let sliderRef: any = useRef(null);
+  
+  const [carouselItems, setCarouselItems] = useState<any[]>([]);
+  const infinite = useMemo(() => carouselItems.length > 1, [carouselItems]);
   const settings = {
     dots: true,
-    infinite: true,
+    infinite: infinite,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
@@ -30,7 +33,6 @@ const Popular = () => {
     autoplay: true,
     arrows: false,
   };
-  const [carouselItems, setCarouselItems] = useState<any[]>([]);
   const { data, isFetching, isLoading, isError, isSuccess } = useQuery({
     queryKey: ["popular_by_toon"],
     queryFn: () =>
