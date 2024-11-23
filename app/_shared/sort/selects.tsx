@@ -8,11 +8,12 @@ const SelectFilter = ({ ...props }: SelectProps) => {
       labelPlacement="outside"
       radius="sm"
       aria-label="sort by"
-      placeholder="Sort"
-      className="max-w-[150px]"
+      placeholder={props.placeholder||"Sort"}
+      className={`max-w-[150px] ${props.className}`}
       classNames={{
         trigger: "capitalize bg-[var(--bg-secondary)]",
         popoverContent: "bg-[var(--bg-secondary)]",
+        ...props.classNames
       }}
       listboxProps={{
         itemClasses: {

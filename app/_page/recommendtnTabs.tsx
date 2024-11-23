@@ -4,7 +4,7 @@ import { Tabs, Tab, SelectItem } from "@nextui-org/react";
 import TopRecommendations from "./topRecommendations";
 import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "../utils/queries/requests";
-import { Filters ,SelectFilters} from "../_shared/sort/filters";
+import { Filters, SelectFilters } from "../_shared/sort/filters";
 import SelectFilter from "../_shared/sort/selects";
 import SelectFilterClone from "../_shared/sort/selectclone";
 
@@ -73,10 +73,30 @@ export default function RecommendtnTabs() {
       ),
     },
   ];
-
+  const handleSelectionChange = (e: any) => {
+    setFilter(e.target.value);
+  };
   return (
     <div className="parent-wrap py-10">
-      <div className="child-wrap min-h-[520px] flex w-full flex-col">
+      <div className="child-wrap min-h-[520px] flex w-full flex-col relative">
+        <div className="lg:absolute lg:top-[10px] lg:right-[80px] lg:w-32 flex justify-end items-center w-full gap-5">
+          <SelectFilter
+            className="lg:hidden"
+            placeholder="Genres"
+            selectedKeys={[filter]}
+            onChange={handleSelectionChange}
+          >
+            {tabs.map((tab, i) => (
+              <SelectItem key={tab?.id}>{tab?.label}</SelectItem>
+            ))}
+          </SelectFilter>
+
+          <SelectFilterClone placeholder="Days">
+            {SelectFilters.map((filter, i) => (
+              <SelectItem key={filter}>{filter}</SelectItem>
+            ))}
+          </SelectFilterClone>
+        </div>
         <Tabs
           aria-label="Dynamic tabs"
           items={tabs}
@@ -99,13 +119,6 @@ export default function RecommendtnTabs() {
             </Tab>
           )}
         </Tabs>
-      </div>
-      <div className="w-32 absolute right-[80px] hidden lg:inline-flex">
-        <SelectFilterClone placeholder="Days">
-          {SelectFilters.map((filter, i) => (
-            <SelectItem key={filter}>{filter}</SelectItem>
-          ))}
-        </SelectFilterClone>
       </div>
     </div>
   );

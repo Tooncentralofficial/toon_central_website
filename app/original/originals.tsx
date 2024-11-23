@@ -52,7 +52,7 @@ export default function Originals() {
   return (
     <div className="parent-wrap py-10">
       <div className="child-wrap min-h-screen  w-full">
-        <div className="flex items-center justify-between gap-6">
+        <div className="flex items-center justify-end lg:justify-between gap-5 lg:gap-6">
           <div>
             <Tabs
               aria-label="genres_tab"
@@ -60,8 +60,9 @@ export default function Originals() {
               classNames={{
                 tabList: "bg-[var(--bg-secondary)] px-2.5 py-2.5 ",
                 tab: "text-[#FCFCFD] h-[40px]",
-                //base: "hidden lg:inline-flex",
-                cursor: "w-full h-full group-data-[selected=true]:bg-[var(--bg-tab-cursor)]",
+                base: "hidden lg:inline-flex",
+                cursor:
+                  "w-full h-full group-data-[selected=true]:bg-[var(--bg-tab-cursor)]",
                 tabContent: "px-4 py-0",
                 // tabContent: "group-data-[selected=true]:text-[#06b6d4]"
               }}
@@ -74,6 +75,15 @@ export default function Originals() {
               ))}
             </Tabs>
           </div>
+          <SelectFilter
+            className="lg:hidden"
+            selectedKeys={[filter]}
+            onChange={handleSelectionChange}
+          >
+            {categories.map((filter, i) => (
+              <SelectItem key={filter.label}>{filter.label}</SelectItem>
+            ))}
+          </SelectFilter>
           <SelectFilter
             selectedKeys={[filter]}
             onChange={handleSelectionChange}
