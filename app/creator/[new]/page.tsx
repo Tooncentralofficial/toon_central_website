@@ -30,6 +30,7 @@ import CheckCountry from "./modals/checkCountry";
 import AddStrips from "./modals/addStrips";
 import { parseArray } from "@/helpers/parsArray";
 import { prevRoutes } from "@/lib/session/prevRoutes";
+import { SELECT_ITEMS } from "@/app/utils/constants/constants";
 
 interface NewUpload {
   uuid: string | null;
@@ -47,8 +48,7 @@ export default function Page({
   const { comicId }: any = searchParams;
   const pathname = usePathname();
 
-  const isEdit = useMemo(()=>pathname.includes("edit")
-  ,[pathname])
+  const isEdit = useMemo(() => pathname.includes("edit"), [pathname]);
 
   //chck for edit
   useEffect(() => {
@@ -59,26 +59,7 @@ export default function Page({
 
   const BANNER_SIZE = "1952 x 587";
   const COMIC_SIZE = "1080 x 1080";
-  const SELECT_ITEMS = [
-    {
-      id: 1,
-      name: "Action",
-      description: "",
-      slug: "action",
-    },
-    {
-      id: 2,
-      name: "Comedy",
-      description: "",
-      slug: "comedy",
-    },
-    {
-      id: 3,
-      name: "Sci-Fi",
-      description: "",
-      slug: "sci_fi",
-    },
-  ];
+  
   const UPDATE_DAYS = [
     { id: "Monday" },
     { id: "Tuesday" },
