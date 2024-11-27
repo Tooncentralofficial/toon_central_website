@@ -155,6 +155,7 @@ function HomeCarousel() {
               clickable: true,
             }}
             loop={true}
+            autoplay= {true}
             navigation={true}
             slidesPerGroup={5}
             className="mySwiper"

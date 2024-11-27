@@ -5,7 +5,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { postRequest, postRequestProtected } from "@/app/utils/queries/requests";
+import {
+  postRequest,
+  postRequestProtected,
+} from "@/app/utils/queries/requests";
 import { FlatInput } from "@/app/_shared/inputs_actions/inputFields";
 import InputPicture from "@/app/_shared/inputs_actions/inputPicture";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
@@ -16,6 +19,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { generateUrl } from "@/helpers/parseImage";
 import InputPictureFloating from "@/app/_shared/inputs_actions/inputPictureFloating";
 import axios from "axios";
+import DraggableImage from "./_shared/draggableimage";
 export default function Page({
   params,
   searchParams,
@@ -27,7 +31,7 @@ export default function Page({
   const { user, userType, token } = useSelector(selectAuthState);
   const comicId = new URLSearchParams(window.location.search).get("comicId");
   const uId = new URLSearchParams(window.location.search).get("uuid");
-  const [isLoading,setisLoading] = useState<boolean>(false)
+  const [isLoading, setisLoading] = useState<boolean>(false);
 
   const initialValues = {
     title: "",
@@ -48,7 +52,7 @@ export default function Page({
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      console.log(values)
+      console.log(values);
       const formData = new FormData();
       formData?.append("title", values.title);
       formData?.append("description", values.description);
@@ -58,20 +62,19 @@ export default function Page({
       });
 
       publishhh.mutate(formData);
-      setisLoading(true)
+      setisLoading(true);
       //  const updatedValues = {
       //    ...values,
       //    comicImages: imageUrls, // Replace comicImages with URLs
       //  };
       //  console.log(updatedValues)
       // publishChapter.mutate(updatedValues);
-      
     },
     enableReinitialize: true,
   });
   // const addImage = (file: FileList) => {
   //   console.log(file)
-    
+
   //   formik.setFieldValue("comicImages", [...formik.values.comicImages, file]);
   // };
   const addImage = (fileList: FileList) => {
@@ -83,7 +86,15 @@ export default function Page({
       ]);
     }
   };
+  const moveImage = (dragIndex: number, hoverIndex: number) => {
+    const newFiles = [...formik.values.comicImages];
+    const draggedItem = newFiles[dragIndex];
 
+    newFiles.splice(dragIndex, 1);
+    newFiles.splice(hoverIndex, 0, draggedItem);
+
+    formik.setFieldValue("comicImages",newFiles);
+  };
   const removeImage = (index: number) => {
     formik.setFieldValue(
       "comicImages",
@@ -94,7 +105,6 @@ export default function Page({
     const images = formik.values.comicImages.map((imageFile) =>
       generateUrl(imageFile)
     );
-    console.log(images)
     return images;
   }, [formik.values.comicImages]);
   const router = useRouter();
@@ -109,7 +119,7 @@ export default function Page({
         "form"
       ),
     onSuccess(data, variables, context) {
-      setisLoading(false)
+      setisLoading(false);
       const { success, message, data: resData } = data;
       if (success) {
         toast("Chapter added", {
@@ -136,24 +146,23 @@ export default function Page({
     mutationKey: [`comic${comicId}_upload_picture`],
     mutationFn: (data: any) => axios.post("/api/upload", data),
     onSuccess(data) {
-      const imageUrls = data?.data?.message; 
+      const imageUrls = data?.data?.message;
       // setImageUrls(data?.data?.message);
-      if (imageUrls){
+      if (imageUrls) {
         const updatedValues = {
           ...formik.values,
           comicImages: imageUrls,
         };
-        console.log(updatedValues)
+        console.log(updatedValues);
         const formData = new FormData();
         formData?.append("title", updatedValues.title);
         formData?.append("description", updatedValues.description);
         formData?.append("thumbnail", updatedValues.thumbnail);
-        updatedValues.comicImages.map((imageUrl:string, i:number) => {
+        updatedValues.comicImages.map((imageUrl: string, i: number) => {
           formData.append(`comicImage[${i}][image]`, imageUrl);
         });
-        publishChapter.mutate(formData)
+        publishChapter.mutate(formData);
       }
-      
     },
     onError(error, variables, context) {
       toast("Some error occured. Contact help !", {
@@ -235,7 +244,7 @@ export default function Page({
                         formik.errors.comicImages && formik.touched.comicImages
                       )}
                       multiple
-                      onChange={(file:any ) => addImage(file)}
+                      onChange={(file: any) => addImage(file)}
                       fieldName={"comicImages"}
                       variant="add"
                       emptyPlaceholder={
@@ -257,22 +266,30 @@ export default function Page({
                   </div>
 
                   {addedImages.map((value, i) => (
-                    <div
-                      key={i}
-                      className="relative h-[260px] md:h-[312px]  w-full rounded-[8px] overflow-hidden"
-                    >
-                      <img
-                        src={value}
-                        alt=""
-                        className="w-full h-full object-cover"
+                    <div key={i}>
+                      <DraggableImage
+                        value={value}
+                        removeImage={removeImage}
+                        i={i}
+                        moveImage={moveImage}
                       />
-                      <div
-                        onClick={() => removeImage(i)}
-                        className="cursor-pointer absolute top-0 right-0 bg-[#ffffff] rounded-[50%] p-2 w-[20px] h-[20px] flex items-center justify-center text-[#000000]"
-                      >
-                        x
-                      </div>
                     </div>
+                    // <div
+                    //   key={i}
+                    //   className="relative h-[260px] md:h-[312px]  w-full rounded-[8px] overflow-hidden"
+                    // >
+                    //   <img
+                    //     src={value}
+                    //     alt=""
+                    //     className="w-full h-full object-cover"
+                    //   />
+                    //   <div
+                    //     onClick={() => removeImage(i)}
+                    //     className="cursor-pointer absolute top-0 right-0 bg-[#ffffff] rounded-[50%] p-2 w-[20px] h-[20px] flex items-center justify-center text-[#000000]"
+                    //   >
+                    //     x
+                    //   </div>
+                    // </div>
                   ))}
                 </div>
               </div>
