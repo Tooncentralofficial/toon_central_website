@@ -46,6 +46,7 @@ export default function Originals() {
       page: page,
     }));
   };
+  console.log(filter)
   const handleSelectionChange = (e: any) => {
     setFilter(e.target.value);
   };
@@ -57,6 +58,7 @@ export default function Originals() {
             <Tabs
               aria-label="genres_tab"
               items={categories}
+              onSelectionChange={(key)=>console.log(key)}
               classNames={{
                 tabList: "bg-[var(--bg-secondary)] px-2.5 py-2.5 ",
                 tab: "text-[#FCFCFD] h-[40px]",
