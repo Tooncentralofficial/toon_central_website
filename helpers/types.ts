@@ -20,6 +20,7 @@ interface User {
   last_name: string;
   email: string;
   username: string;
+  photo:string
   // Add any other relevant fields if needed
 }
 
@@ -46,4 +47,14 @@ export interface Comic {
   userId: string;
   uuid: string;
   socialMediaHandle:string
+}
+
+export interface ComicComment {
+  id: number;
+  comicId: number;
+  userId: number;
+  comment: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  user: User;
 }
