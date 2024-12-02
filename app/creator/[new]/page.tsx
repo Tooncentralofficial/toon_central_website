@@ -59,7 +59,7 @@ export default function Page({
 
   const BANNER_SIZE = "1952 x 587";
   const COMIC_SIZE = "1080 x 1080";
-  
+
   const UPDATE_DAYS = [
     { id: "Monday" },
     { id: "Tuesday" },
@@ -81,7 +81,7 @@ export default function Page({
   ];
 
   const [comicData, setComicData] = useState<Comic | null>();
-
+  const [genreData, setgenreData] = useState([]);
   const { onClose, isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
     onClose: onAddClose,
@@ -89,15 +89,24 @@ export default function Page({
     onOpen: onAddOpen,
     onOpenChange: onAddOpenChange,
   } = useDisclosure();
-  useEffect(() => {
-    setTimeout(() => {
-      if (!user?.country_id) {
-        onOpen();
-      } else {
-        onClose();
-      }
-    }, 2000);
-  }, [user?.country_id]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     if (!user?.country_id) {
+  //       onOpen();
+  //     } else {
+  //       onClose();
+  //     }
+  //   }, 2000);
+  // }, [user?.country_id]);
+  const {
+    data: genreResponse,
+    isSuccess: genreSuccess,
+    isLoading: genreLoading,
+  } = useQuery({
+    queryKey: [`fetch_genre`],
+    queryFn: () => getRequest(`genres/pull/list`),
+  });
+  console.log(genreResponse);
 
   const {
     data: comicResponse,
@@ -113,7 +122,11 @@ export default function Page({
       ),
     enabled: isEdit,
   });
-
+  useEffect(() => {
+    if (genreSuccess && genreResponse?.data) {
+      setgenreData(genreResponse.data);
+    }
+  }, [genreSuccess, genreResponse]);
   useEffect(() => {
     if (iscomicSuccess) {
       setComicData(comicResponse?.data);
@@ -308,11 +321,11 @@ export default function Page({
                         formik.errors.genreId && formik.touched.genreId
                       )}
                       selectedKeys={[formik.values.genreId]}
-                      isDisabled={addNew.isPending}
+                      isDisabled={genreLoading}
                     >
-                      {SELECT_ITEMS.map((item) => (
-                        <SelectItem key={item.id} value={item.id.toString()}>
-                          {item.name}
+                      {genreData.map((item: any) => (
+                        <SelectItem key={item?.id} value={item?.id.toString()}>
+                          {item?.name}
                         </SelectItem>
                       ))}
                     </FlatSelect>

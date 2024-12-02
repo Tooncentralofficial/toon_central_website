@@ -23,7 +23,7 @@ export default function Page() {
     queryFn: () =>
       getRequest("/trending/new-and-trending?filter=all&page=1&limit=50"),
   });
-
+  
   const {
     data: readComics,
     isLoading: loadingRead,
