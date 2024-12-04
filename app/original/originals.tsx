@@ -58,7 +58,7 @@ export default function Originals() {
             <Tabs
               aria-label="genres_tab"
               items={categories}
-              onSelectionChange={(key)=>console.log(key)}
+              onSelectionChange={(key:any)=>setFilter(key)}
               classNames={{
                 tabList: "bg-[var(--bg-secondary)] px-2.5 py-2.5 ",
                 tab: "text-[#FCFCFD] h-[40px]",

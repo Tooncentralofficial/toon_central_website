@@ -106,7 +106,6 @@ export default function Page({
     queryKey: [`fetch_genre`],
     queryFn: () => getRequest(`genres/pull/list`),
   });
-  console.log(genreResponse);
 
   const {
     data: comicResponse,
