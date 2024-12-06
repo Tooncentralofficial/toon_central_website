@@ -19,6 +19,13 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         "footer-texture": "url(/static/images/toon_lg.png)",
       },
+      screens: {
+        xs: "480px", // Extra-small devices (e.g., smaller phones)
+        sm: "640px", // Small devices (e.g., phones)
+        md: "768px", // Medium devices (e.g., tablets)
+        lg: "1024px", // Large devices (e.g., laptops)
+        xl: "1280px", // Extra large
+      },
     },
   },
   plugins: [

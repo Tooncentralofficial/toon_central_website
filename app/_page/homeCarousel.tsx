@@ -23,6 +23,7 @@ function HomeCarousel() {
     queryKey: ["carousel"],
     queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
   });
+  console.log(data)
   const swiper =useSwiper()
   useEffect(() => {
     if (isSuccess) {

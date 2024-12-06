@@ -58,3 +58,13 @@ export interface ComicComment {
   updatedAt: string; // ISO date string
   user: User;
 }
+export interface ComicFormValues {
+  backgroundImage: File | string; 
+  coverImage: File | string;
+  title: string;
+  description: string;
+  genreId: string[]; 
+  status: string; 
+  updateDays: string; 
+  socialMediaHandle: string;
+}

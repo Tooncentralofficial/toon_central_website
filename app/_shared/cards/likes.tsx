@@ -11,10 +11,10 @@ const Likes = ({ likesNViews }: { likesNViews: any }) => {
       <div className="flex items-center gap-[2.5px] text-sm font-light">
         <EyeFilled /> {views}
       </div>
-      {/* <Dot /> */}
-      {/* <div className="flex items-center gap-[2.5px] text-sm font-light">
+      <Dot />
+      <div className="flex items-center gap-[2.5px] text-sm font-light">
         <HeartTwoTone /> 1k
-      </div> */}
+      </div>
       <Dot />
       <div className="flex items-center gap-[2.5px] text-sm font-light">
         <ThumbsSolid /> {likes}

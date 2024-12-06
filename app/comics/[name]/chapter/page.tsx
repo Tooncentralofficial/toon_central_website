@@ -30,7 +30,17 @@ const Page = ({
   const [chapter, setChapter] = useState(parseInt(chapterSlug || "0") + 1);
   const [episode, setEpisode] = useState<any[]>([]);
   const { user, token }: any = useSelector(selectAuthState);
+   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
+   
+   useEffect(() => {
+     const handleResize = () => {
+       setIsMobile(window.innerWidth < 600);
+     };
+     window.addEventListener("resize", handleResize);
+     return () => window.removeEventListener("resize", handleResize);
+   }, []);
+  
   const comicQueryKey = `comic_${uid}`;
 
   const { data, isLoading, isFetching, isSuccess } = useQuery({
@@ -104,7 +114,7 @@ const Page = ({
   return (
     <main>
       <div className="parent-wrap py-10">
-        <div className="child-wrap min-h-screen">
+        <div className="min-h-screen   w-[100%] max-w-[1400px] px-[5px] sm:px-[5px] md:px-[10px] lg:px-[25px] xl:px-[25px]  ">
           <div className="flex items-center justify-between">
             <BackButton />
             <div className="flex items-center gap-4">
@@ -133,7 +143,7 @@ const Page = ({
               {subscribed ? "Unsubscribe" : "Subscribe"}
             </Button>
           </div>
-          <div className="my-10">
+          <div className="my-10 sm:my-1 md:my-2">
             <div className="flex flex-col items-center gap-0 lg:gap-0">
               {parseArray(episode[chapter - 1]?.comic_images).map(
                 (image, i) => (
@@ -144,7 +154,7 @@ const Page = ({
                     width={500}
                     height={600}
                     style={{
-                      width: "80%",
+                      width: isMobile ? "98%" : "80%",
                       height: "auto",
                       objectFit: "cover",
                       maxWidth: "100%",

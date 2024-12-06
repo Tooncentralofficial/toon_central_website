@@ -24,8 +24,8 @@ import { Button, Select, SelectItem, useDisclosure } from "@nextui-org/react";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { Comic } from "@/helpers/types";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { Comic, ComicFormValues } from "@/helpers/types";
 import CheckCountry from "./modals/checkCountry";
 import AddStrips from "./modals/addStrips";
 import { parseArray } from "@/helpers/parsArray";
@@ -150,7 +150,8 @@ export default function Page({
     coverImage: comicData?.coverImage || "",
     title: comicData?.title || "",
     description: comicData?.description || "",
-    genreId: comicData?.genreId || "",
+    // genreId: comicData?.genreId || [],
+    genreId: Array.isArray(comicData?.genreId) ? comicData.genreId : [],
     status: comicData?.status || "",
     updateDays: comicData?.updateDays || "",
     socialMediaHandle: comicData?.socialMediaHandle || "",
@@ -160,7 +161,7 @@ export default function Page({
     coverImage: Yup.mixed().required(" is required"),
     title: Yup.string().required(" is required"),
     description: Yup.string().required(" is required"),
-    genreId: Yup.string().required(" is required"),
+    genreId: Yup.array().required(" is required"),
     status: Yup.string().required(" is required"),
     updateDays: Yup.string().required(" is required"),
     socialMediaHandle: Yup.string().required(" is required"),
@@ -172,16 +173,21 @@ export default function Page({
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: (values) => {
+    onSubmit: (values: ComicFormValues) => {
+      console.log(values);
       let formData = new FormData();
       formData?.append("backgroundImage", values.backgroundImage);
       formData?.append("coverImage", values.coverImage);
       formData?.append("title", values.title);
       formData?.append("description", values.description);
-      formData?.append("genreId", values.genreId);
+      // formData?.append("genreId", values.genreId);
       formData?.append("status", values.status);
       formData?.append("updateDays", values.updateDays);
       formData?.append("socialMediaHandle", values.socialMediaHandle);
+      // formData?.append("genreId",values?.genreId)
+      values?.genreId?.map((val: any, i: number) => {
+        formData.append(`genreId`, val);
+      });
       isEdit ? editComic.mutate(formData) : addNew.mutate(formData);
     },
     enableReinitialize: true,
@@ -314,12 +320,19 @@ export default function Page({
                       name="genreId"
                       label="Genre"
                       placeholder="Select genre"
-                      onChange={formik.handleChange}
+                      onChange={(option: ChangeEvent<HTMLSelectElement>) =>
+                        formik.setFieldValue(
+                          "genreId",
+                          option.target.value.split(",")
+                        )
+                      }
                       onBlur={formik.handleBlur}
+                      selectionMode="multiple"
                       isInvalid={Boolean(
                         formik.errors.genreId && formik.touched.genreId
                       )}
-                      selectedKeys={[formik.values.genreId]}
+                      selectedKeys={formik.values.genreId}
+                    
                       isDisabled={genreLoading}
                     >
                       {genreData.map((item: any) => (

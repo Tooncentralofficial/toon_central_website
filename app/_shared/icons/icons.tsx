@@ -23,6 +23,9 @@ import BellIcon from "@/public/static/svg/bell.svg"
 import UploadIcon from "@/public/static/svg/arrows/upload.svg"
 import NoRecord from "@/public/static/svg/no_record.svg"
 import SearchIcon from "@/public/static/svg/search.svg"
+import RemoveBox from "@/public/static/svg/remove_box.svg"
+import VerticalMenu from "@/public/static/svg/linear_menu.svg"
+import HeartIcon from "@/public/static/svg/heart_icon.svg"
 export {
   ToonCentralIcon,
   ThumbsSolid,
@@ -35,7 +38,10 @@ export {
   BellIcon,
   UploadIcon,
   NoRecord,
-  RoundUploadIcon
+  RoundUploadIcon,
+  RemoveBox,
+  VerticalMenu,
+  HeartIcon
 };
 
 export {
