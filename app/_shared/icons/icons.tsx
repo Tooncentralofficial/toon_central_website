@@ -27,7 +27,7 @@ import RemoveBox from "@/public/static/svg/remove_box.svg";
 import VerticalMenu from "@/public/static/svg/linear_menu.svg";
 import HeartIcon from "@/public/static/svg/heart_icon.svg";
 import CommentPop from "@/public/static/svg/commentspop.svg";
-import ColouredThumbsupSolid from "@/public/static/svg/ColorThumbsSolid.svg";
+import ColouredThumbsupSolid from "@/public/static/svg/colorthumbssolid.svg";
 import Googleplay from "@/public/static/svg/google_banner.svg";
 import Appstore from "@/public/static/svg/appstore_banner.svg";
 // import socials
