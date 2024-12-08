@@ -11,9 +11,10 @@ import LoadingTitleOutside from "../_shared/cards/loadingTitleOutside";
 import { dummyItems } from "../_shared/data";
 const Originals = () => {
   const { sm, base } = UseTailwindMediaQuery();
+  const originalsqueryKey = "originals";
   const [cardItems, setCardItems] = useState([]);
   const { isLoading, isFetching, data, isSuccess } = useQuery({
-    queryKey: ["originals"],
+    queryKey: [originalsqueryKey],
     queryFn: () =>
       getRequest("/home/toon-central-originals?filter=all&page=1&limit=5"),
   });
@@ -48,7 +49,7 @@ const Originals = () => {
                 <>
                   {responsiveCardItems.map((item: any, i: number) => (
                     <div key={i}>
-                      <CardTitleOutside cardData={item} index={i} />
+                      <CardTitleOutside cardData={item} index={i} queryKey={originalsqueryKey} />
                     </div>
                   ))}
                 </>

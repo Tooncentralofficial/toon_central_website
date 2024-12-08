@@ -10,8 +10,9 @@ import { useEffect, useState } from "react";
 
 const Trending = () => {
   const [cardItems, setCardItems] = useState([]);
+  const trendingQueryKey = "trending"
   const { isLoading, isFetching, data, isSuccess } = useQuery({
-    queryKey: ["trending"],
+    queryKey: [trendingQueryKey],
     queryFn: () => getRequest("/home/trending?filter=all&page=1&limit=10"),
   });
   useEffect(() => {
@@ -19,6 +20,7 @@ const Trending = () => {
       setCardItems(data?.data?.comics || []);
     }
   }, [isLoading, isFetching, data]);
+
   return (
     <div className="parent-wrap py-10">
       <div className="child-wrap ">
@@ -33,7 +35,8 @@ const Trending = () => {
                   {" "}
                   {cardItems.map((item: any, i: number) => (
                     <div key={i}>
-                      <CardTitleTop cardData={item} index={i} />
+                      <CardTitleTop 
+                      cardData={item} index={i} queryKey={trendingQueryKey}  />
                     </div>
                   ))}
                 </>

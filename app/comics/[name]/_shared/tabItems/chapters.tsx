@@ -9,6 +9,7 @@ import { ComicTab } from "../tabs";
 
 const Chapters = ({uid, data }: ComicTab) => {
   const chapters:any[] = useMemo(() => data?.episodes || [], [data]);
+  const comicId = data?.id
   return (
     <div>
       <div className="flex items-center flex-wrap gap-2">
@@ -22,7 +23,7 @@ const Chapters = ({uid, data }: ComicTab) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {chapters?.map((item:any, i:number) => (
             <div key={i}>
-              <ChapterLink uid={uid} index={i}  image={item?.thumbnail ||data?.backgroundImage||""} chapter={item} />
+              <ChapterLink uid={uid} index={i}  image={item?.thumbnail ||data?.backgroundImage||""} chapter={item} comicId={comicId} />
             </div>
           ))}
         </div>

@@ -15,13 +15,15 @@ import { toast } from "react-toastify";
 import { parseArray } from "@/helpers/parsArray";
 
 const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
+  console.log(data)
   const disabled = useMemo(() => data?.episodes?.length <= 0, [data]);
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const router = useRouter();
+  const comicId = data?.id
   const { user, token } = useSelector(selectAuthState);
   const readChapter = () =>
-    router.push(`${pathname}/chapter?chapter=${0}&uid=${uid}`);
+    router.push(`${pathname}/chapter?chapter=${0}&uid=${uid}&comicid=${comicId}`);
 
   const { mutate: likeComic, isPending } = useMutation({
     mutationKey: ["like"],

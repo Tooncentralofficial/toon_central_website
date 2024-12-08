@@ -19,8 +19,9 @@ function HomeCarousel() {
   const [slidesPerPage, setSlidesPerPage] = useState(5);
   const swiperRef: any = useRef(null);
   const [currentGroup, setCurrentGroup] = useState(0);
+  const carouselQueryKey = "carousel";
   const { data, isFetching, isLoading, isError, isSuccess } = useQuery({
-    queryKey: ["carousel"],
+    queryKey: [carouselQueryKey],
     queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
   });
   console.log(data)
@@ -239,6 +240,7 @@ function HomeCarousel() {
                   <CardTitleBottom
                     cardData={item}
                     index={i}
+                    queryKey={carouselQueryKey}
                     expand={
                       hoverIndex === i ||
                       (hoverIndex === -1 && i === currentSlide)

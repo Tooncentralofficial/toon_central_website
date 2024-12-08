@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  getRequestProtected,
   postRequest,
   postRequestProtected,
 } from "@/app/utils/queries/requests";
@@ -20,6 +21,8 @@ import { generateUrl } from "@/helpers/parseImage";
 import InputPictureFloating from "@/app/_shared/inputs_actions/inputPictureFloating";
 import axios from "axios";
 import DraggableImage from "./_shared/draggableimage";
+import { prevRoutes } from "@/lib/session/prevRoutes";
+import { parseArray } from "@/helpers/parsArray";
 export default function Page({
   params,
   searchParams,
@@ -28,16 +31,37 @@ export default function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const pathname = usePathname();
+  const { uid, comicId, chapterid } = searchParams;
   const { user, userType, token } = useSelector(selectAuthState);
-  const comicId = new URLSearchParams(window.location.search).get("comicId");
-  const uId = new URLSearchParams(window.location.search).get("uuid");
+  // const comicId = new URLSearchParams(window.location.search).get("comicId");
+  
   const [isLoading, setisLoading] = useState<boolean>(false);
 
+  const querykey= `comic_episode${comicId}`
+  const {
+    data,
+    isSuccess,
+    isLoading: isepisodeLoading,
+  } = useQuery({
+    queryKey: [querykey],
+    queryFn: () =>
+      getRequestProtected(
+        `/my-libraries/chapters/${chapterid}/comic/${comicId}/get`,
+        token,
+        pathname
+      ),
+  });
+  const images = useMemo(
+    () => parseArray(data?.data?.comicImages).map((val) => val.image),
+    [data?.data?.comicImages]
+  );
+  console.log(images)
+
   const initialValues = {
-    title: "",
-    description: "",
-    thumbnail: "",
-    comicImages: [],
+    title: data?.data?.title || "" ,
+    description: data?.data?.description|| "",
+    thumbnail: data?.data?.thumbnail || "",
+    comicImages:images || [],
   };
   const validationSchema = Yup.object().shape({
     title: Yup.string().required(" is required"),
@@ -57,29 +81,19 @@ export default function Page({
       formData?.append("title", values.title);
       formData?.append("description", values.description);
       formData?.append("thumbnail", values.thumbnail);
-      values.comicImages.map((image, i) => {
+      values.comicImages.map((image:any, i:number) => {
         formData.append(`comicImage[${i}][image]`, image);
       });
 
       publishhh.mutate(formData);
       setisLoading(true);
-      //  const updatedValues = {
-      //    ...values,
-      //    comicImages: imageUrls, // Replace comicImages with URLs
-      //  };
-      //  console.log(updatedValues)
-      // publishChapter.mutate(updatedValues);
     },
     enableReinitialize: true,
   });
-  // const addImage = (file: FileList) => {
-  //   console.log(file)
 
-  //   formik.setFieldValue("comicImages", [...formik.values.comicImages, file]);
-  // };
   const addImage = (fileList: FileList) => {
     if (fileList) {
-      const filesArray = Array.from(fileList); // Convert FileList to an array
+      const filesArray = Array.from(fileList);
       formik.setFieldValue("comicImages", [
         ...formik.values.comicImages,
         ...filesArray,
@@ -98,11 +112,11 @@ export default function Page({
   const removeImage = (index: number) => {
     formik.setFieldValue(
       "comicImages",
-      formik.values.comicImages.filter((_, i) => i !== index)
+      formik.values.comicImages.filter((_:any, i:number) => i !== index)
     );
   };
   const addedImages = useMemo(() => {
-    const images = formik.values.comicImages.map((imageFile) =>
+    const images = formik.values.comicImages.map((imageFile:any) =>
       generateUrl(imageFile)
     );
     return images;
@@ -126,7 +140,7 @@ export default function Page({
           toastId: "add_comic",
           type: "success",
         });
-        router.push(`/user/library/books?uuid=${uId}&id=${comicId}`);
+        router.push(`/user/library/books?uuid=${uid}&id=${comicId}`);
       } else {
         toast(message, {
           toastId: "add_comic",
@@ -265,7 +279,7 @@ export default function Page({
                     />
                   </div>
 
-                  {addedImages.map((value, i) => (
+                  {addedImages.map((value:any, i:number) => (
                     <div key={i}>
                       <DraggableImage
                         value={value}

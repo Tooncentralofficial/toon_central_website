@@ -186,7 +186,7 @@ export default function Page({
       formData?.append("socialMediaHandle", values.socialMediaHandle);
       // formData?.append("genreId",values?.genreId)
       values?.genreId?.map((val: any, i: number) => {
-        formData.append(`genreId`, val);
+        formData.append(`genreId[${i}]`, val);
       });
       isEdit ? editComic.mutate(formData) : addNew.mutate(formData);
     },

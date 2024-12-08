@@ -10,13 +10,17 @@ const ChapterLink = ({
   uid,
   index,
   image,
+  comicId,
   chapter,
 }: {
   uid:any
   index: number;
   image: string;
+  comicId:string;
   chapter: any;
 }) => {
+  console.log(chapter)
+  const sanitizedSlug = chapter?.slug.replace(/\s+/g, "-");
   const [show,setShow]= useState<boolean>(false)
   const router = useRouter();
   const readChapter = () =>
@@ -47,7 +51,12 @@ const ChapterLink = ({
       </div>
       {show && (
         <div className="absolute w-[10rem] h-[7rem] bg-[#151d29b9] flex flex-col gap-1 rounded-md left-3">
-          <p className="hover:bg-[#05834B] pl-3">Edit</p>
+          <p
+            className="hover:bg-[#05834B] pl-3"
+            onClick={() => router.push(`/user/library/books/addpart?uuid=${uid}&comicId=${comicId}&chapterid=${chapter.id}`)}
+          >
+            Edit
+          </p>
           <p className="hover:bg-[#05834B] pl-3">View mobile</p>
           <p className="hover:bg-[#05834B] pl-3">Delete</p>
         </div>
