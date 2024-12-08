@@ -5,12 +5,14 @@ import { ComicComment } from "@/helpers/types";
 import Image from "next/image";
 import React from "react";
 
-const Comment = ({data}:{data:ComicComment}) => {
+const Comment = ({data,username,photo,comment,createdAt}:{data:ComicComment,username?:string,photo?:string,comment?:string,createdAt?:string}) => {
+  console.log(data)
+
   return (
     <div className="flex items-center gap-4">
       <div className="w-[30px] h-[30px] rounded-lg overflow-hidden">
         <img
-          src={data?.user?.photo}
+          src={photo?photo:data?.user?.photo}
           width={30}
           height={30}
           alt={"title"}
@@ -23,11 +25,11 @@ const Comment = ({data}:{data:ComicComment}) => {
         />
       </div>
       <div>
-        <div className="flex items-center gap-2 text-[#969AA0]">
-          <span>{data.user.username}</span><Dot/>
-          <span className="text-xs">{formatDate(  data.createdAt)}</span>
+        <div className="flex items-center mt-5 gap-2 text-[#969AA0]">
+          <span>{username?username:data?.user?.username}</span><Dot/>
+          <span className="text-xs">{formatDate( createdAt?createdAt: data?.createdAt || data?.created_at)}</span>
         </div>
-        <p className="font-semibold text-[#FCFCFD]">{data.comment}</p>
+        <p className="font-semibold text-[#FCFCFD]">{comment?comment:data?.comment}</p>
       </div>
     </div>
   );

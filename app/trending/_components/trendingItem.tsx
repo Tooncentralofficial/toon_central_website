@@ -1,4 +1,4 @@
-import { AddBox } from "@/app/_shared/icons/icons";
+import { AddBox, RemoveBox } from "@/app/_shared/icons/icons";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
@@ -65,7 +65,15 @@ const TrendingItem = ({ data }: { data: any }) => {
         </div>
         <span>{data.title} </span>
       </div>
-      {subscribed  ? ""  : <div onClick={()=>likeComic()}><AddBox /></div>}
+      {subscribed ? (
+        <div onClick={() => likeComic()}>
+          <RemoveBox />
+        </div>
+      ) : (
+        <div onClick={() => likeComic()}>
+          <AddBox />
+        </div>
+      )}
     </div>
   );
 };

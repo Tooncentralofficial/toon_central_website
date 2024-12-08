@@ -7,7 +7,7 @@ import { ComicTab } from "../tabs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FlatInput } from "@/app/_shared/inputs_actions/inputFields";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getRequestProtected, postRequestProtected } from "@/app/utils/queries/requests";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
@@ -21,20 +21,23 @@ const Comments = ({ data }: ComicTab) => {
   const comments: any[] = useMemo(() => data?.comments || [], [data]);
   const [comment, setComment] = useState<string>("");
   const [commentData,setCommentData] = useState([])
+  const queryClient = useQueryClient();
+  const querykey = `fetchcomment_${data?.id}`
+  
   const {
     data: commentResponse,
     isSuccess: isCommentSuccess,
     isLoading: isCommentLoading,
   } = useQuery({
-    queryKey: [`fetchcomment_${data?.id}`],
+    queryKey: [querykey],
     queryFn: () =>
       getRequestProtected(
         `comments/${data?.id}?page=1&limit=10`,
         token,
         prevRoutes().library
       ),
+    staleTime: 0,
   });
-  console.log(commentData)
   const addComment = useMutation({
     mutationKey: ["add_comment"],
     mutationFn: () =>
@@ -48,11 +51,16 @@ const Comments = ({ data }: ComicTab) => {
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {
+         queryClient.invalidateQueries({
+           queryKey: [querykey],
+         });
+         queryClient.refetchQueries({ queryKey: [querykey] });
         setComment("")
         toast(message, {
           toastId: "add_comment",
           type: "success",
         });
+       ;
       } else {
         toast(message, {
           toastId: "add_comment",
@@ -94,9 +102,9 @@ const Comments = ({ data }: ComicTab) => {
       </div>
       <div className="pb-10">
         <div className="grid grid-cols-1 gap-8">
-          {commentData.map((item, i) => (
+          {commentData?.map((item:any, i) => (
             <div key={i}>
-              <Comment data={item} />
+              <Comment data={item} createdAt={item?.created_at} />
             </div>
           ))}
         </div>

@@ -7,10 +7,13 @@ const link = `/comics/0`;
 const CardTitleTop = ({
   cardData,
   index,
+  queryKey,
 }: {
   cardData: any;
   index: number;
+  queryKey?:string
 }) => {
+  console.log(cardData)
   return (
     <div className="h-[200px] md:h-[260px]  rounded-[8px] overflow-hidden">
       <div className="h-full w-auto relative">
@@ -27,17 +30,15 @@ const CardTitleTop = ({
           }}
           //unoptimized
         />
-        <Link
-          href={`${
-            cardData?.uuid
-              ? `/comics/${cardData?.uuid}`
-              : ""
-          }`}
-        >
+        <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
           <div className="absolute top-0 left-0  h-full w-full flex flex-col justify-between  p-4 bg-[#FCFCFD10] ">
             <div>
               <div className="font-bold text-md">{cardData?.title}</div>
-              <Likes likesNViews={cardData?.likesAndViews} />
+              <Likes
+                likesNViews={cardData?.likesAndViews}
+                queryKey={queryKey}
+                uid={cardData?.uuid}
+              />
             </div>
             <div>{cardData?.genre?.name}</div>
           </div>

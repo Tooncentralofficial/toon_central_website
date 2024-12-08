@@ -35,6 +35,7 @@ const Chapters = ({ uid, data, comicId }: ComicTab) => {
                 index={i}
                 image={item?.thumbnail ||data?.backgroundImage||""}
                 chapter={item}
+                comicId={comicId}
               />
             </div>
           ))}

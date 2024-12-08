@@ -8,11 +8,13 @@ const CardTitleBottom = ({
   index,
   cardWidth,
   expand,
+  queryKey
 }: {
   cardData: any;
   index: number;
   cardWidth?:string;
   expand?:boolean;
+  queryKey?:string
 }) => {
   return (
     <div
@@ -46,7 +48,7 @@ const CardTitleBottom = ({
             <div>
               <div className="font-bold text-xl">{cardData?.title}</div>
               <div className="flex justify-between">
-                <Likes likesNViews={cardData?.likesAndViews} />
+                <Likes likesNViews={cardData?.likesAndViews} queryKey={queryKey} uid={cardData?.uuid} />
                 {expand && (
                   <motion.a
                     href=""

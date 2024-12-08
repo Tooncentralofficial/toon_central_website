@@ -7,16 +7,18 @@ const ChapterLink = ({
   uid,
   index,
   image,
+  comicId,
   chapter,
 }: {
   uid:any
   index: number;
   image: string;
+  comicId:string;
   chapter: any;
 }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const readChapter = () => router.push(`${pathname}/chapter?chapter=${index}&uid=${uid}`);
+  const readChapter = () => router.push(`${pathname}/chapter?chapter=${index}&uid=${uid}&comicid=${comicId}`);
   return (
     <div className="flex gap-4">
       <div className="w-[60px] h-[60px] rounded-lg overflow-hidden">

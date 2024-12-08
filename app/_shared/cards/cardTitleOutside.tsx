@@ -6,9 +6,11 @@ import Likes from "./likes";
 const CardTitleOutside = ({
   cardData,
   index,
+  queryKey,
 }: {
   cardData: any;
   index: number;
+  queryKey?:string
 }) => {
   return (
     <div>
@@ -27,15 +29,13 @@ const CardTitleOutside = ({
             }}
             unoptimized
           />
-          <Link
-            href={`${
-              cardData?.uuid
-                ? `/comics/${cardData?.uuid}`
-                : ""
-            }`}
-          >
+          <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
             <div className="absolute top-0 left-0  h-full w-full flex flex-col justify-end p-4 bg-[#FCFCFD10] ">
-              <Likes likesNViews={cardData?.likesAndViews} />
+              <Likes
+                likesNViews={cardData?.likesAndViews}
+                queryKey={queryKey}
+                uid={cardData?.uuid}
+              />
             </div>
           </Link>
         </div>

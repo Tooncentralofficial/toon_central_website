@@ -27,6 +27,18 @@ export default function Library() {
       content:<MyFavourites />,
       tabIndex: 1,
     },
+    {
+      id: "continue_reading",
+      label: "Continue Reading",
+      content:<MyFavourites />,
+      tabIndex: 2,
+    },
+    {
+      id: "subscribtion",
+      label: "Subscription",
+      content:<MyFavourites />,
+      tabIndex: 3,
+    },
   ];
   const handleTabChange = (key: string) => {
     const selectedTab = tabs.find((tab) => tab.id === key);

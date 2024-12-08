@@ -1,6 +1,9 @@
 export const generateUrl = (file: any) => {
   try {
-    return URL.createObjectURL(file);
+     if (file instanceof File) {
+       return URL.createObjectURL(file)
+     }
+     return file;
   } catch {
     return "";
   }

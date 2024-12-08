@@ -9,6 +9,7 @@ import { ToastContainer } from "react-toastify";
 import { Store } from "./store";
 import { Provider } from "react-redux";
 import { useEffect } from "react";
+import Mainfooter from "@/app/_shared/layout/footermain";
 // import { Provider } from "react-redux";
 // import { Store } from "./store";
 
@@ -69,6 +70,7 @@ export default function AppProvider({
             <ToastContainer />
             <ReactQueryDevtools initialIsOpen={false} />
           </motion.div>
+          <Mainfooter />
         </QueryClientProvider>
       </Provider>
     </NextUIProvider>
