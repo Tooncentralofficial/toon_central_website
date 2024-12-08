@@ -44,6 +44,7 @@ const Page = ({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  const commentQueryString = `getcomment`;
 
   const comicQueryKey = `comic_${uid}`;
 
@@ -52,23 +53,6 @@ const Page = ({
     queryFn: () => getRequestProtected(`/comics/${uid}/view`, token, pathname),
     enabled: token !== null,
   });
-  console.log(chapterSlug)
-  console.log(comicid)
-  const {
-    data: commentResponse,
-    isSuccess: isCommentSuccess,
-    isLoading: isCommentLoading,
-  } = useQuery({
-    queryKey: ["getcomment"],
-    queryFn: () =>
-      getRequestProtected(
-        `episode-comments/${comicid}?page=1&limit=10`,
-        token,
-        prevRoutes().library
-      ),
-    staleTime: 0,
-  });
-  console.log(commentResponse)
   useEffect(() => {
     if (isSuccess) setEpisode(parseArray(data?.data?.episodes));
   }, [data, isFetching, isSuccess]);
@@ -122,9 +106,9 @@ const Page = ({
       const { success, message, data: resData } = data;
       if (success) {
         queryClient.invalidateQueries({
-          queryKey: [comicQueryKey],
+          queryKey: [commentQueryString],
         });
-        queryClient.refetchQueries({ queryKey: [comicQueryKey] });
+        queryClient.refetchQueries({ queryKey: [commentQueryString] });
         setTypedComment("");
         toast(message, {
           toastId: "add_comment",
@@ -261,7 +245,9 @@ const Page = ({
               >
                 <CommentPopUp
                   closePopup={toggleCommentPopup}
-                  episodeComments={episode?.[chapter-1]?.episode_comments}
+                  episodeComments={episode?.[chapter - 1]?.episode_comments}
+                  comicId={episode?.[chapter - 1]?.id}
+                  queryString={commentQueryString}
                 />
               </motion.div>
             )}

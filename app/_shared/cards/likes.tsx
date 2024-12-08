@@ -17,7 +17,7 @@ const Likes = ({ likesNViews,queryKey,uid }: { likesNViews: any ,queryKey?:strin
     return parseArray(likesNViews?.likes).some((value) => {
       return value?.user_id === user?.id;
     });
-  },[])
+  },[likesNViews])
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const { mutate: likeComic, isPending } = useMutation({
