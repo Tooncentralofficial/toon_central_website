@@ -77,6 +77,7 @@ const Page = ({
         type: "error",
       });
     },
+    
     onError(error, variables, context) {
       toast("Failed to like", {
         toastId: `toast_${uid}`,
