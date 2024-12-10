@@ -205,6 +205,23 @@ const Page = ({
                   />
                 )
               )}
+              <div className="flex items-center gap-4 mt-10">
+                <button
+                  disabled={backDisabled}
+                  className={`${backDisabled ? "text-[#475467]" : ""}`}
+                  onClick={() => prevChapter()}
+                >
+                  <BXSLeft />
+                </button>
+                Chapter {chapter}
+                <button
+                  disabled={nextDisabled}
+                  className={`${nextDisabled ? "text-[#475467]" : ""}`}
+                  onClick={() => nextChapter()}
+                >
+                  <BXSRight />
+                </button>
+              </div>
             </div>
           </div>
         </div>

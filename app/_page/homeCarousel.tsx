@@ -7,6 +7,7 @@ import { getRequest } from "../utils/queries/requests";
 import { useQuery } from "@tanstack/react-query";
 import { dummyItems } from "../_shared/data";
 import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
+import { Autoplay} from "swiper/modules"
 import "swiper/css";
 import { motion } from "framer-motion";
 import Curve from "../_shared/curve";
@@ -16,6 +17,7 @@ function HomeCarousel() {
   const [carouselItems, setCarouselItems] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [hoverIndex, setHoverIndex] = useState(-1);
+  const [isHovering,setIsHovering]=useState(false)
   const [slidesPerPage, setSlidesPerPage] = useState(5);
   const swiperRef: any = useRef(null);
   const [currentGroup, setCurrentGroup] = useState(0);
@@ -24,7 +26,6 @@ function HomeCarousel() {
     queryKey: [carouselQueryKey],
     queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
   });
-  console.log(data)
   const swiper =useSwiper()
   useEffect(() => {
     if (isSuccess) {
@@ -45,6 +46,15 @@ function HomeCarousel() {
      );
      setCurrentGroup(groupIndex);
    };
+     useEffect(() => {
+       if (swiperRef.current) {
+         if (isHovering) {
+           swiperRef.current.autoplay.stop();
+         } else {
+           swiperRef.current.autoplay.start();
+         }
+       }
+     }, [isHovering]);
   const next = () => {
     sliderRef.slickNext();
   };
@@ -151,15 +161,20 @@ function HomeCarousel() {
           <Curve />
 
           <Swiper
+            modules={[Autoplay]}
             slidesPerView={5}
             spaceBetween={5}
             pagination={{
               clickable: true,
             }}
             loop={true}
-            autoplay= {true}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+            }}
             navigation={true}
             slidesPerGroup={5}
+            slidesPerGroupAuto={true}
             className="mySwiper"
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
@@ -223,6 +238,7 @@ function HomeCarousel() {
                     duration: 0.5,
                   }}
                   onMouseOver={() => {
+                    setIsHovering(true)
                     document.documentElement.style.setProperty(
                       "--homeCouroselbg",
                       color[i]
@@ -234,6 +250,7 @@ function HomeCarousel() {
                     }
                   }}
                   onMouseOut={() => {
+                    setIsHovering(false)
                     setHoverIndex(-1);
                   }}
                 >

@@ -12,6 +12,7 @@ import RecommendtnTabs from "./_page/recommendtnTabs";
 import Trending from "./_page/trending";
 import Footer from "./_shared/layout/footer";
 import { getRequest } from "./utils/queries/requests";
+import MainfooterWithDelay from "./_shared/layout/footermain";
 
 export default async function Home() {
   const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ export default async function Home() {
         <Trending />
         <Originals />
         <Footer />
+        <MainfooterWithDelay />
       </main>
     </HydrationBoundary>
   );

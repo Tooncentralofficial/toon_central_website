@@ -86,7 +86,10 @@ export default function RootLayout({
           gtag('config', 'G-RZFRHC7QTN');
         `}
         </Script>
-        <ClientLayout>{children}</ClientLayout>
+        <ClientLayout>{children}
+          
+        </ClientLayout>
+
       </body>
     </html>
   );
