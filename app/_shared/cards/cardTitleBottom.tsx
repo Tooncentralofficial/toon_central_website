@@ -57,7 +57,7 @@ const CardTitleBottom = ({
                     transition={{ duration: 0.3, delay: 0.2 }}
                     className="bg-[--green100] px-4 py-1 rounded-[4px]"
                   >
-                    Favourite
+                    Subscribe
                   </motion.a>
                 )}
               </div>
