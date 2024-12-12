@@ -31,6 +31,7 @@ export default function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const pathname = usePathname();
+  console.log(searchParams)
   const { uuid, comicId, chapterid } = searchParams;
   const { user, userType, token } = useSelector(selectAuthState);
   const [isLoading, setisLoading] = useState<boolean>(false);
@@ -179,8 +180,12 @@ export default function Page({
         updatedValues.comicImages.map((imageUrl: string, i: number) => {
           formData.append(`comicImage[${i}][image]`, imageUrl);
         });
-
-        publishChapter.mutate(formData);
+        if(comicId){
+          publishChapter.mutate(formData);
+        }else{
+          console.log("comicId not available")
+        }
+        
       }
     },
     onError(error, variables, context) {
