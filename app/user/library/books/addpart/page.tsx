@@ -31,11 +31,10 @@ export default function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const pathname = usePathname();
-  console.log(searchParams)
+  console.log(searchParams);
   const { uuid, comicId, chapterid } = searchParams;
   const { user, userType, token } = useSelector(selectAuthState);
   const comicid = new URLSearchParams(window.location.search).get("comicId");
-  console.log(comicid)
   const [isLoading, setisLoading] = useState<boolean>(false);
 
   const querykey = `comic_episode${comicId}`;
@@ -126,7 +125,7 @@ export default function Page({
   }, [formik.values.comicImages]);
   const router = useRouter();
   const publishChapter = useMutation({
-    mutationKey: [`comic_post_chapter`],
+    mutationKey: [`comic${comicid}_post_chapter`],
     mutationFn: (data: any) =>
       postRequestProtected(
         data,
@@ -182,12 +181,7 @@ export default function Page({
         updatedValues.comicImages.map((imageUrl: string, i: number) => {
           formData.append(`comicImage[${i}][image]`, imageUrl);
         });
-        if(comicId){
-          publishChapter.mutate(formData);
-        }else{
-          console.log("comicId not available")
-        }
-        
+        publishChapter.mutate(formData);
       }
     },
     onError(error, variables, context) {
