@@ -180,9 +180,8 @@ export default function Page({
           formData.append(`comicImage[${i}][image]`, imageUrl);
         });
 
-        
+        publishChapter.mutate(formData);
       }
-      publishChapter.mutate(formData);
     },
     onError(error, variables, context) {
       toast("Some error occured. Contact help !", {
