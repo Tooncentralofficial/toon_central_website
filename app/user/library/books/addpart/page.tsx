@@ -35,7 +35,7 @@ export default function Page({
   const { user, userType, token } = useSelector(selectAuthState);
   const [isLoading, setisLoading] = useState<boolean>(false);
 
-  const querykey= `comic_episode${comicId}`
+  const querykey = `comic_episode${comicId}`;
   const {
     data,
     isSuccess,
@@ -56,10 +56,10 @@ export default function Page({
   );
 
   const initialValues = {
-    title: data?.data?.title || "" ,
-    description: data?.data?.description|| "",
+    title: data?.data?.title || "",
+    description: data?.data?.description || "",
     thumbnail: data?.data?.thumbnail || "",
-    comicImages:images || [],
+    comicImages: images || [],
   };
   const validationSchema = Yup.object().shape({
     title: Yup.string().required(" is required"),
@@ -80,7 +80,6 @@ export default function Page({
       formData?.append("thumbnail", values.thumbnail);
       values.comicImages.forEach((image: any, i: number) => {
         if (typeof image === "string") {
-          
           formData.append(`comicImage[${i}][image]`, image);
         } else if (image instanceof File) {
           formData.append(`comicImage[${i}][image]`, image);
@@ -108,16 +107,16 @@ export default function Page({
     newFiles.splice(dragIndex, 1);
     newFiles.splice(hoverIndex, 0, draggedItem);
 
-    formik.setFieldValue("comicImages",newFiles);
+    formik.setFieldValue("comicImages", newFiles);
   };
   const removeImage = (index: number) => {
     formik.setFieldValue(
       "comicImages",
-      formik.values.comicImages.filter((_:any, i:number) => i !== index)
+      formik.values.comicImages.filter((_: any, i: number) => i !== index)
     );
   };
   const addedImages = useMemo(() => {
-    const images = formik.values.comicImages.map((imageFile:any) =>
+    const images = formik.values.comicImages.map((imageFile: any) =>
       generateUrl(imageFile)
     );
     return images;
@@ -180,13 +179,10 @@ export default function Page({
         updatedValues.comicImages.map((imageUrl: string, i: number) => {
           formData.append(`comicImage[${i}][image]`, imageUrl);
         });
-        if (chapterid){
-          editComic.mutate(formData)
-        }else{
-          publishChapter.mutate(formData);
-        }
+
         
       }
+      publishChapter.mutate(formData);
     },
     onError(error, variables, context) {
       toast("Some error occured. Contact help !", {
@@ -195,41 +191,41 @@ export default function Page({
       });
     },
   });
-  const editComic = useMutation({
-    mutationKey: [`comic${comicId}_edit_chapter`],
-    mutationFn: (data: any) =>
-      postRequestProtected(
-        data,
-        `/my-libraries/comics/${comicId}/update?_method=PATCH`,
-        token || "",
-        pathname,
-        "form"
-      ),
-    onSuccess(data, variables, context) {
-      setisLoading(false);
-      const { success, message, data: resData } = data;
-      if (success) {
-        toast("Chapter added", {
-          toastId: "add_comic",
-          type: "success",
-        });
-        router.push(`/user/library/books?uuid=${uuid}&id=${comicId}`);
-      } else {
-        toast(message, {
-          toastId: "add_comic",
-          type: "error",
-        });
-      }
-    },
-    onError(error, variables, context) {
-      toast("Some error occured. Contact help !", {
-        toastId: "add_comic",
-        type: "error",
-      });
-      setisLoading(false);
-    },
-  
-  });
+  // const editComic = useMutation({
+  //   mutationKey: [`comic${comicId}_edit_chapter`],
+  //   mutationFn: (data: any) =>
+  //     postRequestProtected(
+  //       data,
+  //       `/my-libraries/comics/${comicId}/update?_method=PATCH`,
+  //       token || "",
+  //       pathname,
+  //       "form"
+  //     ),
+  //   onSuccess(data, variables, context) {
+  //     setisLoading(false);
+  //     const { success, message, data: resData } = data;
+  //     if (success) {
+  //       toast("Chapter added", {
+  //         toastId: "add_comic",
+  //         type: "success",
+  //       });
+  //       router.push(`/user/library/books?uuid=${uuid}&id=${comicId}`);
+  //     } else {
+  //       toast(message, {
+  //         toastId: "add_comic",
+  //         type: "error",
+  //       });
+  //     }
+  //   },
+  //   onError(error, variables, context) {
+  //     toast("Some error occured. Contact help !", {
+  //       toastId: "add_comic",
+  //       type: "error",
+  //     });
+  //     setisLoading(false);
+  //   },
+
+  // });
 
   return (
     <main className="">
@@ -324,7 +320,7 @@ export default function Page({
                     />
                   </div>
 
-                  {addedImages.map((value:any, i:number) => (
+                  {addedImages.map((value: any, i: number) => (
                     <div key={i}>
                       <DraggableImage
                         value={value}
