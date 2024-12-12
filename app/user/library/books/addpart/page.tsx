@@ -140,7 +140,7 @@ export default function Page({
           toastId: "add_comic",
           type: "success",
         });
-        router.push(`/user/library/books?uuid=${uuid}&id=${comicId}`);
+        // router.push(`/user/library/books?uuid=${uuid}&id=${comicId}`);
       } else {
         toast(message, {
           toastId: "add_comic",
