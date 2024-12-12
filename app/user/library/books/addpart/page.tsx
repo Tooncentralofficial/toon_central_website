@@ -31,14 +31,10 @@ export default function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const pathname = usePathname();
-  const { uid, comicId, chapterid } = searchParams;
+  const { uuid, comicId, chapterid } = searchParams;
   const { user, userType, token } = useSelector(selectAuthState);
-  // const comicId = new URLSearchParams(window.location.search).get("comicId");
-  if(chapterid){
-    console.log("huh?")
-  }else{
-    console.log("yeahh")
-  }
+  console.log(uuid)
+  console.log(comicId)
   const [isLoading, setisLoading] = useState<boolean>(false);
 
   const querykey= `comic_episode${comicId}`
@@ -60,7 +56,6 @@ export default function Page({
     () => parseArray(data?.data?.comicImages).map((val) => val.image),
     [data?.data?.comicImages]
   );
-  console.log(images)
 
   const initialValues = {
     title: data?.data?.title || "" ,
@@ -81,7 +76,6 @@ export default function Page({
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      console.log(values);
       const formData = new FormData();
       formData?.append("title", values.title);
       formData?.append("description", values.description);
@@ -136,7 +130,7 @@ export default function Page({
     mutationFn: (data: any) =>
       postRequestProtected(
         data,
-        `/my-libraries/chapters/comic/${comicId}/create`,
+        `/my-libraries/chapters/comic/+${comicId}/create`,
         token || "",
         pathname,
         "form"
@@ -149,7 +143,7 @@ export default function Page({
           toastId: "add_comic",
           type: "success",
         });
-        router.push(`/user/library/books?uuid=${uid}&id=${comicId}`);
+        router.push(`/user/library/books?uuid=${uuid}&id=${comicId}`);
       } else {
         toast(message, {
           toastId: "add_comic",
@@ -181,7 +175,6 @@ export default function Page({
             ...imageUrls,
           ],
         };
-        console.log(updatedValues);
         const formData = new FormData();
         formData?.append("title", updatedValues.title);
         formData?.append("description", updatedValues.description);
@@ -222,7 +215,7 @@ export default function Page({
           toastId: "add_comic",
           type: "success",
         });
-        router.push(`/user/library/books?uuid=${uid}&id=${comicId}`);
+        router.push(`/user/library/books?uuid=${uuid}&id=${comicId}`);
       } else {
         toast(message, {
           toastId: "add_comic",
