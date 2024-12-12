@@ -35,6 +35,7 @@ export default function Page({
   const { uuid, comicId, chapterid } = searchParams;
   const { user, userType, token } = useSelector(selectAuthState);
   const comicid = new URLSearchParams(window.location.search).get("comicId");
+  const uuId= new URLSearchParams(window.location.search).get("uuid");
   const [isLoading, setisLoading] = useState<boolean>(false);
 
   const querykey = `comic_episode${comicId}`;
@@ -142,7 +143,7 @@ export default function Page({
           toastId: "add_comic",
           type: "success",
         });
-        // router.push(`/user/library/books?uuid=${uuid}&id=${comicId}`);
+        router.push(`/user/library/books?uuid=${uuId}&id=${comicid}`);
       } else {
         toast(message, {
           toastId: "add_comic",
