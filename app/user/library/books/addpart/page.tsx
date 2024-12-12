@@ -33,8 +33,6 @@ export default function Page({
   const pathname = usePathname();
   const { uuid, comicId, chapterid } = searchParams;
   const { user, userType, token } = useSelector(selectAuthState);
-  console.log(uuid)
-  console.log(comicId)
   const [isLoading, setisLoading] = useState<boolean>(false);
 
   const querykey= `comic_episode${comicId}`
@@ -130,7 +128,7 @@ export default function Page({
     mutationFn: (data: any) =>
       postRequestProtected(
         data,
-        `/my-libraries/chapters/comic/+${comicId}/create`,
+        `/my-libraries/chapters/comic/${comicId}/create`,
         token || "",
         pathname,
         "form"
