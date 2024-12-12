@@ -124,7 +124,7 @@ export default function Page({
   }, [formik.values.comicImages]);
   const router = useRouter();
   const publishChapter = useMutation({
-    mutationKey: [`comic${comicId}_post_chapter`],
+    mutationKey: [`comic_post_chapter`],
     mutationFn: (data: any) =>
       postRequestProtected(
         data,
