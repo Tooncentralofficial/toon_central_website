@@ -21,7 +21,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const data = await req.formData();
     const comicImages: any = [];
     Array.from(data.entries()).forEach(([key, value]) => {
-      if (key.startsWith("comicImage")) {
+      if (key.startsWith("comicImage") && typeof value !== "string") {
+        console.log(comicImages);
         comicImages.push(value);
       }
     });

@@ -35,7 +35,6 @@ const MyFavourites = () => {
   });
   useEffect(() => {
     if (isSuccess) {
-      console.log(parseArray(data?.data));
       setComics(parseArray(data?.data));
       setPagination((prevState) => ({
         page: data?.data?.pagination?.currentPage || 1,

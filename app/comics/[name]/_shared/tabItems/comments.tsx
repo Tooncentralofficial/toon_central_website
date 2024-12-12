@@ -23,16 +23,17 @@ const Comments = ({ data }: ComicTab) => {
   const [commentData,setCommentData] = useState([])
   const queryClient = useQueryClient();
   const querykey = `fetchcomment_${data?.id}`
-  
+  const [pagination, setPagination] = useState({ page: 1, total: 1 });
+  console.log(pagination)
   const {
     data: commentResponse,
     isSuccess: isCommentSuccess,
     isLoading: isCommentLoading,
   } = useQuery({
-    queryKey: [querykey],
+    queryKey: [querykey,pagination.page],
     queryFn: () =>
       getRequestProtected(
-        `comments/${data?.id}?page=1&limit=10`,
+        `comments/${data?.id}?page=${pagination.page}&limit=5`,
         token,
         prevRoutes().library
       ),
@@ -51,9 +52,9 @@ const Comments = ({ data }: ComicTab) => {
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {
-         queryClient.invalidateQueries({
-           queryKey: [querykey],
-         });
+          queryClient.invalidateQueries({
+            queryKey: [`fetchcomment_${data?.id}`],
+          });
          queryClient.refetchQueries({ queryKey: [querykey] });
         setComment("")
         toast(message, {
@@ -77,9 +78,21 @@ const Comments = ({ data }: ComicTab) => {
   });
   useEffect(()=>{
     if(isCommentSuccess){
-      setCommentData(commentResponse?.data?.comic_comments);
+      console.log("lime")
+      setCommentData(commentResponse?.data?.comic_comments || []);
+      setPagination(() => ({
+        page: commentResponse?.data?.pagination?.currentPage || 1,
+        total: commentResponse?.data?.pagination?.totalPages || 1,
+      }));
     }
-  },[isCommentLoading,isCommentSuccess])
+  },[isCommentLoading,isCommentSuccess,commentData,pagination.page])
+  const changePage = (page: number) => {
+    console.log(page)
+    setPagination((prevState) => ({
+      ...prevState,
+      page: page,
+    }));
+  };
   return (
     <div>
       <div className="w-[37rem] flex gap-5">
@@ -88,7 +101,6 @@ const Comments = ({ data }: ComicTab) => {
           name={"title"}
           value={comment}
           onChange={(e: any) => setComment(e.target.value)}
-          
         />
         <div className="mt-7">
           <SolidPrimaryButton
@@ -102,14 +114,18 @@ const Comments = ({ data }: ComicTab) => {
       </div>
       <div className="pb-10">
         <div className="grid grid-cols-1 gap-8">
-          {commentData?.map((item:any, i) => (
+          {commentData?.map((item: any, i) => (
             <div key={i}>
               <Comment data={item} createdAt={item?.created_at} />
             </div>
           ))}
         </div>
       </div>
-      {/* <PaginationCustom page={1} total={1} /> */}
+      <PaginationCustom
+        onChange={changePage}
+        total={pagination.total}
+        page={pagination.page}
+      />
     </div>
   );
 };

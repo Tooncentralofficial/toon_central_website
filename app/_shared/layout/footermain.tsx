@@ -1,4 +1,5 @@
-import React from 'react'
+"use client";
+import React, { useEffect, useState } from 'react'
 import { Appstore, Facebook, Googleplay, Insta, Linkedin, ToonCentralIcon, Twitter } from '../icons/icons';
 
 const Mainfooter = () => {
@@ -39,5 +40,19 @@ const Mainfooter = () => {
     </div>
   );
 }
+const MainfooterWithDelay = ({ delay = 2000 }: { delay?: number }) => {
+  const [isVisible, setIsVisible] = useState(false);
 
-export default Mainfooter
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, delay);
+
+    
+    return () => clearTimeout(timer);
+  }, [delay]);
+
+  return isVisible ? <Mainfooter /> : null;
+};
+
+export default MainfooterWithDelay;

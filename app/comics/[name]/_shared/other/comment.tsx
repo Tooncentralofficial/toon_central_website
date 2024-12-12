@@ -6,7 +6,6 @@ import Image from "next/image";
 import React from "react";
 
 const Comment = ({data,username,photo,comment,createdAt}:{data:ComicComment,username?:string,photo?:string,comment?:string,createdAt?:string}) => {
-  console.log(data)
 
   return (
     <div className="flex items-center gap-4">

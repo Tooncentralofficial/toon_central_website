@@ -13,7 +13,6 @@ const CardTitleTop = ({
   index: number;
   queryKey?:string
 }) => {
-  console.log(cardData)
   return (
     <div className="h-[200px] md:h-[260px]  rounded-[8px] overflow-hidden">
       <div className="h-full w-auto relative">

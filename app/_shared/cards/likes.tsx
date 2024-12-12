@@ -50,8 +50,9 @@ const Likes = ({ likesNViews,queryKey,uid }: { likesNViews: any ,queryKey?:strin
   const { mutate: favorite } = useMutation({
     mutationKey: ["favorite"],
     mutationFn: () =>
-      getRequestProtected(`/comics/${uid}/subscribe`, token, pathname),
+      getRequestProtected(`/comics/${uid}/add-to-favourite`, token, pathname),
     onSuccess: (data) => {
+      console.log(data)
       if (data?.success) {
         toast(data?.message, {
           toastId: `toast_${uid}`,
@@ -83,7 +84,11 @@ const Likes = ({ likesNViews,queryKey,uid }: { likesNViews: any ,queryKey?:strin
         <EyeFilled /> {views}
       </div>
       <Dot />
-      <div className="flex items-center gap-[2.5px] text-sm font-light">
+      <div className="flex items-center gap-[2.5px] text-sm font-light" onClick={(e)=>{
+        e.preventDefault()
+        e.stopPropagation()
+        favorite()
+      }}>
         <HeartTwoTone /> 1k
       </div>
       <Dot />

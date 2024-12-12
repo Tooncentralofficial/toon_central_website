@@ -34,7 +34,11 @@ export default function Page({
   const { uid, comicId, chapterid } = searchParams;
   const { user, userType, token } = useSelector(selectAuthState);
   // const comicId = new URLSearchParams(window.location.search).get("comicId");
-  
+  if(chapterid){
+    console.log("huh?")
+  }else{
+    console.log("yeahh")
+  }
   const [isLoading, setisLoading] = useState<boolean>(false);
 
   const querykey= `comic_episode${comicId}`
@@ -43,13 +47,14 @@ export default function Page({
     isSuccess,
     isLoading: isepisodeLoading,
   } = useQuery({
-    queryKey: [querykey],
+    queryKey: [`comic_episode${chapterid}`],
     queryFn: () =>
       getRequestProtected(
         `/my-libraries/chapters/${chapterid}/comic/${comicId}/get`,
         token,
         pathname
       ),
+    enabled: chapterid !== null && undefined && "",
   });
   const images = useMemo(
     () => parseArray(data?.data?.comicImages).map((val) => val.image),
@@ -81,10 +86,14 @@ export default function Page({
       formData?.append("title", values.title);
       formData?.append("description", values.description);
       formData?.append("thumbnail", values.thumbnail);
-      values.comicImages.map((image:any, i:number) => {
-        formData.append(`comicImage[${i}][image]`, image);
+      values.comicImages.forEach((image: any, i: number) => {
+        if (typeof image === "string") {
+          
+          formData.append(`comicImage[${i}][image]`, image);
+        } else if (image instanceof File) {
+          formData.append(`comicImage[${i}][image]`, image);
+        }
       });
-
       publishhh.mutate(formData);
       setisLoading(true);
     },
@@ -165,7 +174,12 @@ export default function Page({
       if (imageUrls) {
         const updatedValues = {
           ...formik.values,
-          comicImages: imageUrls,
+          comicImages: [
+            ...formik.values.comicImages.filter(
+              (image) => typeof image === "string"
+            ),
+            ...imageUrls,
+          ],
         };
         console.log(updatedValues);
         const formData = new FormData();
@@ -175,7 +189,12 @@ export default function Page({
         updatedValues.comicImages.map((imageUrl: string, i: number) => {
           formData.append(`comicImage[${i}][image]`, imageUrl);
         });
-        publishChapter.mutate(formData);
+        if (chapterid){
+          editComic.mutate(formData)
+        }else{
+          publishChapter.mutate(formData);
+        }
+        
       }
     },
     onError(error, variables, context) {
@@ -184,6 +203,41 @@ export default function Page({
         type: "error",
       });
     },
+  });
+  const editComic = useMutation({
+    mutationKey: [`comic${comicId}_edit_chapter`],
+    mutationFn: (data: any) =>
+      postRequestProtected(
+        data,
+        `/my-libraries/comics/${comicId}/update?_method=PATCH`,
+        token || "",
+        pathname,
+        "form"
+      ),
+    onSuccess(data, variables, context) {
+      setisLoading(false);
+      const { success, message, data: resData } = data;
+      if (success) {
+        toast("Chapter added", {
+          toastId: "add_comic",
+          type: "success",
+        });
+        router.push(`/user/library/books?uuid=${uid}&id=${comicId}`);
+      } else {
+        toast(message, {
+          toastId: "add_comic",
+          type: "error",
+        });
+      }
+    },
+    onError(error, variables, context) {
+      toast("Some error occured. Contact help !", {
+        toastId: "add_comic",
+        type: "error",
+      });
+      setisLoading(false);
+    },
+  
   });
 
   return (
