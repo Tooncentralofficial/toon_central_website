@@ -19,7 +19,6 @@ const ChapterLink = ({
   comicId:string;
   chapter: any;
 }) => {
-  console.log(chapter)
   const sanitizedSlug = chapter?.slug.replace(/\s+/g, "-");
   const [show,setShow]= useState<boolean>(false)
   const router = useRouter();

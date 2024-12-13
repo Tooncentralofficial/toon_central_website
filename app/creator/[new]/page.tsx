@@ -119,9 +119,10 @@ export default function Page({
         token,
         prevRoutes().library
       ),
-    enabled: isEdit,
+    enabled: (isEdit && token!== null),
   });
   useEffect(() => {
+    console.log(formik.values.genreId)
     if (genreSuccess && genreResponse?.data) {
       setgenreData(genreResponse.data);
     }
@@ -151,11 +152,14 @@ export default function Page({
     title: comicData?.title || "",
     description: comicData?.description || "",
     // genreId: comicData?.genreId || [],
-    genreId: Array.isArray(comicData?.genreId) ? comicData.genreId : [],
+    genreId: Array.isArray(comicData?.genres.map((item) => item.genre_id))
+      ? comicData?.genres.map((item) => item.genre_id.toString())
+      : [],
     status: comicData?.status || "",
     updateDays: comicData?.updateDays || "",
     socialMediaHandle: comicData?.socialMediaHandle || "",
   };
+  console.log(comicData?.genres.map((item) => item.genre_id));
   const validationSchema = Yup.object().shape({
     backgroundImage: Yup.mixed().required(" is required"),
     coverImage: Yup.mixed().required(" is required"),
@@ -173,8 +177,7 @@ export default function Page({
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: (values: ComicFormValues) => {
-      console.log(values);
+    onSubmit: (values:any) => {
       let formData = new FormData();
       formData?.append("backgroundImage", values.backgroundImage);
       formData?.append("coverImage", values.coverImage);
@@ -207,6 +210,7 @@ export default function Page({
       ),
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
+      console.log(data)
       if (success) {
         toast("Comic added", {
           toastId: "add_comic",
@@ -227,6 +231,7 @@ export default function Page({
       }
     },
     onError(error, variables, context) {
+      console.log(error)
       toast("Some error occured. Contact help !", {
         toastId: "add_comic",
         type: "error",
@@ -332,7 +337,7 @@ export default function Page({
                         formik.errors.genreId && formik.touched.genreId
                       )}
                       selectedKeys={formik.values.genreId}
-                    
+                      value={formik.values.genreId}
                       isDisabled={genreLoading}
                     >
                       {genreData.map((item: any) => (
