@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react'
 import { Appstore, Facebook, Googleplay, Insta, Linkedin, ToonCentralIcon, Twitter } from '../icons/icons';
+import Link from 'next/link';
 
 const Mainfooter = () => {
   return (
@@ -20,8 +21,13 @@ const Mainfooter = () => {
             <p>About us </p>
             <p>Feedback</p>
             <p>Help</p>
-            <p>Terms </p>
-            <p>Privacy </p>
+
+            <Link href={"terms"}>
+              <p>Terms </p>
+            </Link>
+            <Link href={"policies"}>
+              <p>Privacy </p>
+            </Link>
             <p>Contact</p>
           </div>
           <div className="flex gap-5 md:gap-5 lg:gap-10 justify-center md:justify-normal">
