@@ -35,7 +35,10 @@ export default function Page({
   const { uuid, comicId, chapterid } = searchParams;
   const { user, userType, token } = useSelector(selectAuthState);
   const comicid = new URLSearchParams(window.location.search).get("comicId");
-  const uuId= new URLSearchParams(window.location.search).get("uuid");
+  const uuId = new URLSearchParams(window.location.search).get("uuid");
+  const episodeId = new URLSearchParams(window.location.search).get(
+    "chapterid"
+  );
   const [isLoading, setisLoading] = useState<boolean>(false);
 
   const querykey = `comic_episode${comicId}`;
@@ -49,9 +52,9 @@ export default function Page({
       getRequestProtected(
         `/my-libraries/chapters/${chapterid}/comic/${comicId}/get`,
         token,
-        pathname
+        prevRoutes(uuid).comic
       ),
-    enabled: chapterid !== null && undefined && "",
+    enabled: chapterid !== null && (token !== null),
   });
   const images = useMemo(
     () => parseArray(data?.data?.comicImages).map((val) => val.image),
@@ -182,7 +185,12 @@ export default function Page({
         updatedValues.comicImages.map((imageUrl: string, i: number) => {
           formData.append(`comicImage[${i}][image]`, imageUrl);
         });
-        publishChapter.mutate(formData);
+        if (chapterid){
+          editComic.mutate(formData)
+        }else{
+          publishChapter.mutate(formData);
+        }
+        
       }
     },
     onError(error, variables, context) {
@@ -192,41 +200,41 @@ export default function Page({
       });
     },
   });
-  // const editComic = useMutation({
-  //   mutationKey: [`comic${comicId}_edit_chapter`],
-  //   mutationFn: (data: any) =>
-  //     postRequestProtected(
-  //       data,
-  //       `/my-libraries/comics/${comicId}/update?_method=PATCH`,
-  //       token || "",
-  //       pathname,
-  //       "form"
-  //     ),
-  //   onSuccess(data, variables, context) {
-  //     setisLoading(false);
-  //     const { success, message, data: resData } = data;
-  //     if (success) {
-  //       toast("Chapter added", {
-  //         toastId: "add_comic",
-  //         type: "success",
-  //       });
-  //       router.push(`/user/library/books?uuid=${uuid}&id=${comicId}`);
-  //     } else {
-  //       toast(message, {
-  //         toastId: "add_comic",
-  //         type: "error",
-  //       });
-  //     }
-  //   },
-  //   onError(error, variables, context) {
-  //     toast("Some error occured. Contact help !", {
-  //       toastId: "add_comic",
-  //       type: "error",
-  //     });
-  //     setisLoading(false);
-  //   },
+  const editComic = useMutation({
+    mutationKey: [`comic${episodeId}_edit_chapter`],
+    mutationFn: (data: any) =>
+      postRequestProtected(
+        data,
+        `/my-libraries/chapters/${episodeId}/comic/${comicid}/update?_method=PATCH`,
+        token || "",
+        pathname,
+        "form"
+      ),
+    onSuccess(data, variables, context) {
+      setisLoading(false);
+      const { success, message, data: resData } = data;
+      if (success) {
+        toast("Chapter added", {
+          toastId: "add_comic",
+          type: "success",
+        });
+        router.push(`/user/library/books?uuid=${uuid}&id=${comicId}`);
+      } else {
+        toast(message, {
+          toastId: "add_comic",
+          type: "error",
+        });
+      }
+    },
+    onError(error, variables, context) {
+      toast("Some error occured. Contact help !", {
+        toastId: "add_comic",
+        type: "error",
+      });
+      setisLoading(false);
+    },
 
-  // });
+  });
 
   return (
     <main className="">

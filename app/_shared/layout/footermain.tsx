@@ -22,7 +22,7 @@ const Mainfooter = () => {
             <p>Help</p>
             <p>Terms </p>
             <p>Privacy </p>
-            <p>Contant</p>
+            <p>Contact</p>
           </div>
           <div className="flex gap-5 md:gap-5 lg:gap-10 justify-center md:justify-normal">
             <Facebook />
