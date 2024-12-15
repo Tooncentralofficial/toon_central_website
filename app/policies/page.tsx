@@ -4,6 +4,12 @@ import MyBooksTab from "../user/library/_shared/myBooks";
 import MyFavourites from "../user/library/_shared/favourites";
 import { useState } from "react";
 import Policies from "./_shared/tabs/policies";
+import Cookiepolicies from "./_shared/tabs/cookiepolicy";
+import DMCApolicy from "./_shared/tabs/dmcapolicy";
+import GDPRPolicy from "./_shared/tabs/gdprpolicy";
+import Copyrightpolicy from "./_shared/tabs/copyrightpolicy";
+import Returnpolicy from "./_shared/tabs/returnpolicy";
+import Disclamer from "./_shared/tabs/disclamer";
 
 export default function Page() {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -15,28 +21,46 @@ export default function Page() {
   }[] = [
     {
       id: "polices",
-      label: "Polices",
+      label: "Privacy policy",
       content: <Policies />,
       tabIndex: 0,
     },
     {
-      id: "favorites",
-      label: "Favourites",
-      content: <MyFavourites />,
+      id: "cookiepolicy",
+      label: "Cookie policy",
+      content: <Cookiepolicies />,
       tabIndex: 1,
     },
     {
-      id: "continue_reading",
-      label: "Continue Reading",
-      content: <MyFavourites />,
+      id: "dmcapolicy",
+      label: "DMCA policy",
+      content: <DMCApolicy />,
       tabIndex: 2,
     },
     {
-      id: "subscribtion",
-      label: "Subscription",
-      content: <MyFavourites />,
+      id: "gdprpolicy",
+      label: "GDPRPolicy",
+      content: <GDPRPolicy />,
       tabIndex: 3,
     },
+    {
+      id: "copyrightpolicy",
+      label: "Copyright policy",
+      content: <Copyrightpolicy/>,
+      tabIndex: 4,
+    },
+    {
+      id: "returnpolicy",
+      label: "Return policy",
+      content: <Returnpolicy/>,
+      tabIndex: 5,
+    },
+    {
+      id: "disclamer",
+      label: "Disclamer",
+      content: <Disclamer/>,
+      tabIndex: 6,
+    }
   ];
   const handleTabChange = (key: string) => {
     const selectedTab = tabs.find((tab) => tab.id === key);

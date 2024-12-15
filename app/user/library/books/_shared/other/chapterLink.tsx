@@ -56,7 +56,7 @@ const ChapterLink = ({
           >
             Edit
           </p>
-          <p className="hover:bg-[#05834B] pl-3">View mobile</p>
+          {/* <p className="hover:bg-[#05834B] pl-3">View mobile</p> */}
           <p className="hover:bg-[#05834B] pl-3">Delete</p>
         </div>
       )}
