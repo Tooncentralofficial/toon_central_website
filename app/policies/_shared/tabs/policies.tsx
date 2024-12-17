@@ -6,10 +6,10 @@ const Policies = () => {
       <div className="child-wrap mt-5">
         <h4 className="text-xl lg:text-[40px] mb-8">Privacy Policy</h4>
         <p>
-          Toon Central ("we," "us," or "our") is committed to protecting your
+          Toon Central (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) is committed to protecting your
           privacy. This Privacy Policy explains how we collect, use, disclose,
           and protect your personal information when you use our website,
-          products, or services ("Services"). By accessing or using the
+          products, or services (&quot;Services&quot;). By accessing or using the
           Services, you agree to the practices outlined in this Privacy Policy.
         </p>
 
@@ -17,22 +17,22 @@ const Policies = () => {
           <h4>DEFINITIONS</h4>
           <ul className="list-disc pl-6">
             <li>
-              <strong>"Toon Central"</strong> refers to our Nigerian-based
+              <strong>&quot;Toon Central&quot;</strong> refers to our Nigerian-based
               company specializing in comic production, with services available
               nationally and internationally.
             </li>
             <li>
-              <strong>"Personal Information"</strong> refers to any information
+              <strong>&quot;Personal Information&quot;</strong> refers to any information
               that can identify an individual, such as name, email address,
               billing details, and IP address.
             </li>
             <li>
-              <strong>"Non-Personal Information"</strong> includes data that
+              <strong>&quot;Non-Personal Information&quot;</strong> includes data that
               does not identify an individual directly, such as browser type,
               device information, and usage data.
             </li>
             <li>
-              <strong>"Processing"</strong> refers to any action performed on
+              <strong>&quot;Processing&quot;</strong> refers to any action performed on
               Personal Information, such as collecting, storing, or sharing it.
             </li>
           </ul>
@@ -240,7 +240,7 @@ const Policies = () => {
               <li>
                 <strong>Opt-Out of Marketing:</strong>
                 You can unsubscribe from promotional emails by clicking the
-                "Unsubscribe" link or contacting us.
+                &quot;Unsubscribe&quot; link or contacting us.
               </li>
             </ul>
             <p className="mt-2">
@@ -280,7 +280,7 @@ const Policies = () => {
             <h5>CHANGES TO THIS PRIVACY POLICY</h5>
             <p>
               We reserve the right to update this Privacy Policy at any time.
-              Changes will be posted on our website with the "Last Updated"
+              Changes will be posted on our website with the &quot;Last Updated&quot;
               date. Your continued use of our Services constitutes acceptance of
               the revised Privacy Policy.
             </p>

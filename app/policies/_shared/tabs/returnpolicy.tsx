@@ -28,21 +28,21 @@ const Returnpolicy = () => {
             <h4>DEFINITIONS</h4>
             <ul className="list-disc pl-6">
               <li>
-                <strong>"Toon Central":</strong> Refers to our company, a
+                <strong>&quot;Toon Central&quot;:</strong> Refers to our company, a
                 Nigeria-based entity specializing in comic production with
                 national and international operations.
               </li>
               <li>
-                <strong>"Customer" or "You":</strong> Refers to any individual
+                <strong>&quot;Customer&quot; or &quot;You&quot;:</strong> Refers to any individual
                 or entity purchasing products or services from Toon Central.
               </li>
               <li>
-                <strong>"Product":</strong> Refers to physical or digital goods
+                <strong>&quot;Product&quot;:</strong> Refers to physical or digital goods
                 offered by Toon Central, including but not limited to comics,
                 merchandise, artwork, and digital downloads.
               </li>
               <li>
-                <strong>"Service":</strong> Refers to non-tangible offerings by
+                <strong>&quot;Service&quot;:</strong> Refers to non-tangible offerings by
                 Toon Central, such as subscriptions, licensing, or digital
                 access to content.
               </li>

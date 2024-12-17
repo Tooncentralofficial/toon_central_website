@@ -5,8 +5,8 @@ export default function Page() {
         <h3 className="text-xl lg:text-[40px]">Terms of Service</h3>
         <p className="mt-3">
           Welcome to Toon Central, a Nigerian-based company specializing in
-          comic production. These Terms of Service ("Terms") govern your use of
-          our website, products, and services (collectively, the "Services"). By
+          comic production. These Terms of Service (&quot;Terms&quot;) govern your use of
+          our website, products, and services (collectively, the &quot;Services&quot;). By
           accessing or using any part of our Services, you agree to be bound by
           these Terms. If you do not agree, you must refrain from using our
           Services.
@@ -15,21 +15,21 @@ export default function Page() {
           <h4>DEFINITIONS</h4>
           <ul className="list-disc pl-6">
             <li>
-              <span className="font-bold">"Toon Central" </span> refers to the
+              <span className="font-bold">&quot;Toon Central&quot; </span> refers to the
               Nigerian company with its principal office at [Insert Address],
               which creates, publishes, and licenses comic-related content
             </li>
             <li>
-              <span className="font-bold">"Services"</span> include, but are not
+              <span className="font-bold">&quot;Services&quot;</span> include, but are not
               limited to, our website, digital content, comic books,
               merchandise, subscription services, and licensing opportunities.
             </li>
             <li>
-              <span className="font-bold">"User"</span> refers to any individual
+              <span className="font-bold">&quot;User&quot;</span> refers to any individual
               or entity accessing our Services.
             </li>
             <li>
-              <span className="font-bold">"Content"</span> means all materials
+              <span className="font-bold">&quot;Content&quot;</span> means all materials
               available through our Services, including text, graphics, comics,
               designs, illustrations, logos, trademarks, and other intellectual
               property.
@@ -145,7 +145,7 @@ export default function Page() {
           <ul className="list-disc pl-6">
             <li>
               <span className="font-bold">Submission</span>: Users may submit
-              comments, reviews, or other content ("User Content") to the
+              comments, reviews, or other content (&quot;User Content&quot;) to the
               Services
             </li>
             <li>
@@ -183,7 +183,7 @@ export default function Page() {
           <h4> DISCLAIMER OF WARRANTIES</h4>
           <ul className="list-disc pl-6">
             <li>
-              The Services are provided on an "AS IS" and "AS AVAILABLE" basis
+              The Services are provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis
               without warranties of any kind, express or implied
             </li>
             <li>
@@ -290,7 +290,7 @@ export default function Page() {
         <div className="mt-5">
           <h4>Exhibit A: Licensing Agreement</h4>
           <p>
-            If you are interested in commercially licensing Toon Central's
+            If you are interested in commercially licensing Toon Central&apos;s
             Content, please review our
             <a href="/licensing-agreement" className="text-blue-500 underline">
               Licensing Agreement

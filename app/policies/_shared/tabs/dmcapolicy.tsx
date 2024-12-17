@@ -54,7 +54,7 @@ const DMCApolicy = () => {
                 <li>
                   <strong>Identification of the Infringing Material:</strong> A
                   link to or description of where the infringing material is
-                  located on Toon Central's website or platform.
+                  located on Toon Central&aposs website or platform.
                 </li>
                 <li>
                   <strong>Contact Information:</strong> Your name, address,

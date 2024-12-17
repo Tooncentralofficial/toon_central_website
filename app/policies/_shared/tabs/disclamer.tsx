@@ -14,7 +14,7 @@ const Disclamer = () => {
           <p>
             Welcome to Toon Central, a Nigerian-based company specializing in
             comic production with national and international operations. This
-            Disclaimer applies to all users of Toon Central's website, services,
+            Disclaimer applies to all users of Toon Central&aposs website, services,
             and products, including physical goods, digital content, and any
             associated platforms. By accessing or using our services, you agree
             to the terms outlined in this Disclaimer.
@@ -22,7 +22,7 @@ const Disclamer = () => {
           <p>
             This document is intended to limit liability, clarify
             responsibilities, and set expectations regarding the use of Toon
-            Central's website, products, and services. If you do not agree to
+            Central&aposs website, products, and services. If you do not agree to
             this Disclaimer, please discontinue use of our services immediately.
           </p>
 
@@ -54,7 +54,7 @@ const Disclamer = () => {
               <li>
                 <strong>Ownership:</strong> All comics, artwork, characters,
                 designs, trademarks, logos, and other intellectual property
-                displayed on Toon Central's website or associated platforms are
+                displayed on Toon Central&aposs website or associated platforms are
                 the exclusive property of Toon Central. Unauthorized use,
                 reproduction, or distribution of this material is strictly
                 prohibited and may result in legal action.
@@ -81,7 +81,7 @@ const Disclamer = () => {
             <ul className="list-disc pl-6">
               <li>
                 <strong>Use of Services:</strong> Toon Central provides its
-                services "as is" and "as available" without warranties of any
+                services &quot;as is&quot; and &quot;as available&quot; without warranties of any
                 kind, either express or implied. We are not liable for:
                 <ul className="list-disc pl-6">
                   <li>Errors, omissions, or inaccuracies in our content.</li>
@@ -97,7 +97,7 @@ const Disclamer = () => {
               </li>
               <li>
                 <strong>User Responsibility:</strong> Users are solely
-                responsible for how they use Toon Central's services. We are not
+                responsible for how they use Toon Central&aposs services. We are not
                 liable for any direct, indirect, incidental, or consequential
                 damages resulting from your reliance on our content or products.
               </li>

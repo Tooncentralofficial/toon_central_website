@@ -17,8 +17,8 @@ const Copyrightpolicy = () => {
             respecting the intellectual property of others. This Copyright
             Policy outlines our rights regarding the use of our content and how
             we handle copyright infringement claims. By using our website,
-            services, or content ("Services"), you agree to comply with this
-            policy.
+            services, or content &quot;Services&quot;, you agree to comply with
+            this policy.
           </p>
 
           {/* Definitions */}
@@ -26,22 +26,22 @@ const Copyrightpolicy = () => {
             <h4>DEFINITIONS</h4>
             <ul className="list-disc pl-6">
               <li>
-                <strong>"Toon Central":</strong> Refers to our company, with its
+                <strong>&quot;Toon Central&quot;:</strong> Refers to our company, with its
                 principal office in Nigeria, specializing in the creation,
                 publication, and distribution of comics and related materials.
               </li>
               <li>
-                <strong>"Content":</strong> Includes all materials owned by or
+                <strong>&quot;Content&quot;:</strong> Includes all materials owned by or
                 licensed to Toon Central, including but not limited to comics,
                 artwork, illustrations, graphics, text, videos, trademarks, and
                 other intellectual property.
               </li>
               <li>
-                <strong>"User":</strong> Any individual or entity accessing our
+                <strong>&quot;User&quot;:</strong> Any individual or entity accessing our
                 website or Services.
               </li>
               <li>
-                <strong>"Infringing Content":</strong> Any content that violates
+                <strong>&quot;Infringing Content&quot;:</strong> Any content that violates
                 our copyrights or the copyrights of others.
               </li>
             </ul>
