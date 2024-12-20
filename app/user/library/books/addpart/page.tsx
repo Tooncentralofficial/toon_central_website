@@ -185,7 +185,7 @@ export default function Page({
         updatedValues.comicImages.map((imageUrl: string, i: number) => {
           formData.append(`comicImage[${i}][image]`, imageUrl);
         });
-        if (chapterid){
+        if (episodeId){
           editComic.mutate(formData)
         }else{
           publishChapter.mutate(formData);
