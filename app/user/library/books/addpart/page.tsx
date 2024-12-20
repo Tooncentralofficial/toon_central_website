@@ -47,14 +47,14 @@ export default function Page({
     isSuccess,
     isLoading: isepisodeLoading,
   } = useQuery({
-    queryKey: [`comic_episode${chapterid}`],
+    queryKey: [`comic_episode${chapterid}`,episodeId],
     queryFn: () =>
       getRequestProtected(
-        `/my-libraries/chapters/${chapterid}/comic/${comicId}/get`,
+        `/my-libraries/chapters/${episodeId}/comic/${comicid}/get`,
         token,
         prevRoutes(uuid).comic
       ),
-    enabled: chapterid !== null && (token !== null),
+    enabled: episodeId !== null && (token !== null),
   });
   const images = useMemo(
     () => parseArray(data?.data?.comicImages).map((val) => val.image),
