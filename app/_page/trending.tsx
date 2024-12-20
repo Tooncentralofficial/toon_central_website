@@ -15,6 +15,7 @@ const Trending = () => {
     queryKey: [trendingQueryKey],
     queryFn: () => getRequest("/home/trending?filter=all&page=1&limit=10"),
   });
+  console.log(data)
   useEffect(() => {
     if (isSuccess) {
       setCardItems(data?.data?.comics || []);

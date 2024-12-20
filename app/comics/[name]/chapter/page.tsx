@@ -56,7 +56,7 @@ const Page = ({
   useEffect(() => {
     if (isSuccess) setEpisode(parseArray(data?.data?.episodes));
   }, [data, isFetching, isSuccess]);
-  
+  const currentEpisodeId  =data?.data?.episodes?.[chapter-1]?.id 
   const { mutate: likeComic, isPending } = useMutation({
     mutationKey: ["like"],
     mutationFn: () =>
@@ -93,6 +93,17 @@ const Page = ({
     }
     likeComic();
   };
+  const { data: episodeCount } = useQuery({
+    queryKey: ["episdodelive",currentEpisodeId],
+    queryFn: () =>
+      getRequestProtected(
+        `comics/${uid}/episode/${currentEpisodeId}/get`,
+        token,
+        pathname
+      ),
+    enabled: token !== null,
+  });
+  console.log(episodeCount)
   const addEpisodeComment = useMutation({
     mutationKey: ["add_episode_comment"],
     mutationFn: () =>

@@ -28,6 +28,7 @@ const PageClient = ({ params }: { params: { name: string } }) => {
     queryFn: () => getRequestProtected(`/comics/${name}/view`, token, pathname),
     enabled: token !== null,
   });
+  
   useEffect(() => {
     if (isSuccess) setComic(data?.data || null);
   }, [data, isFetching, isSuccess]);

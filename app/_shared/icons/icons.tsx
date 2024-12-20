@@ -28,6 +28,7 @@ import VerticalMenu from "@/public/static/svg/linear_menu.svg";
 import HeartIcon from "@/public/static/svg/heart_icon.svg";
 import CommentPop from "@/public/static/svg/commentspop.svg";
 import ColouredThumbsupSolid from "@/public/static/svg/colorthumbssolid.svg";
+import ColoredEyeFilled from "@/public/static/svg/colored_eye_filled.svg"
 import Googleplay from "@/public/static/svg/google_banner.svg";
 import Appstore from "@/public/static/svg/appstore_banner.svg";
 // import socials
@@ -55,6 +56,7 @@ export {
   ColouredThumbsupSolid,
   Googleplay,
   Appstore,
+  ColoredEyeFilled
 };
 
 export { Steps, Steps2, Steps3 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { parseArray } from "@/helpers/parsArray";
-import { ColouredThumbsupSolid, Dot, EyeFilled, HeartTwoTone, ThumbsSolid } from "../icons/icons";
+import { ColoredEyeFilled, ColouredThumbsupSolid, Dot, EyeFilled, HeartTwoTone, ThumbsSolid } from "../icons/icons";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { useSelector } from "react-redux";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,6 +18,11 @@ const Likes = ({ likesNViews,queryKey,uid }: { likesNViews: any ,queryKey?:strin
       return value?.user_id === user?.id;
     });
   },[likesNViews])
+  const isViewd = useMemo(() => {
+    return parseArray(likesNViews?.views).some((value) => {
+      return value?.user_id === user?.id;
+    });
+  }, [likesNViews]);
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const { mutate: likeComic, isPending } = useMutation({
@@ -75,20 +80,26 @@ const Likes = ({ likesNViews,queryKey,uid }: { likesNViews: any ,queryKey?:strin
       });
     },
   });
-  console.log(likesNViews)
   let views = parseArray(likesNViews?.views).length;
   let likes = parseArray(likesNViews?.likes).length;
   return (
     <div className="flex items-center gap-[9px]">
-      <div className="flex items-center gap-[2.5px] text-sm font-light">
-        <EyeFilled /> {views}
+      <div
+        className={`flex items-center gap-[2.5px] text-sm font-light ${
+          isViewd ? "text-[#05834B]" : ""
+        }`}
+      >
+        {isViewd ? <ColoredEyeFilled /> : <EyeFilled />} {views}
       </div>
       <Dot />
-      <div className="flex items-center gap-[2.5px] text-sm font-light" onClick={(e)=>{
-        e.preventDefault()
-        e.stopPropagation()
-        favorite()
-      }}>
+      <div
+        className="flex items-center gap-[2.5px] text-sm font-light"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          favorite();
+        }}
+      >
         <HeartTwoTone /> 1k
       </div>
       <Dot />

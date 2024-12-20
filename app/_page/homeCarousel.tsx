@@ -14,7 +14,7 @@ import Curve from "../_shared/curve";
 import EllipseGray, { Ellipse } from "../_shared/ellipse/ellipseGray";
 export const staticCardItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 function HomeCarousel() {
-  const [carouselItems, setCarouselItems] = useState([]);
+  const [carouselItems, setCarouselItems] = useState<any>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [hoverIndex, setHoverIndex] = useState(-1);
   const [isHovering,setIsHovering]=useState(false)
@@ -97,7 +97,7 @@ function HomeCarousel() {
   //     </div>
   //   );
   // };
-
+  console.log(carouselItems)
   var settings = {
     dots: false,
     infinite: true,
@@ -154,11 +154,32 @@ function HomeCarousel() {
     "#664147",
   ];
   return (
-    <div className="parent-wrap bg-[--homeCouroselbg] py-6  backdrop-blur-sm hover:backdrop-blur-lg transition-colors duration-400 ease-in-out relative">
+    <div
+      className="parent-wrap bg-[--homeCouroselbg] py-6  backdrop-blur-sm hover:backdrop-blur-lg transition-colors duration-400 ease-in-out relative"
+      style={{
+        backgroundImage:
+          hoverIndex !== -1 && carouselItems[hoverIndex]?.backgroundImage
+            ? `url(${carouselItems[hoverIndex]?.backgroundImage})`
+            : `url(${carouselItems[currentSlide]?.backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       {/* <Ellipse /> */}
       <div className="child-wrap-sm home-slick-cont relative">
         <div className="relative">
-          <Curve />
+          <Curve
+            backgroundImage={
+              hoverIndex !== -1 && carouselItems[hoverIndex]?.backgroundImage
+                ? `url(${carouselItems[hoverIndex].backgroundImage})`
+                : `url(${carouselItems[currentSlide]?.backgroundImage})`
+            }
+            activeImage={
+              hoverIndex !== -1 && carouselItems[hoverIndex]?.backgroundImage
+                ? carouselItems[hoverIndex].backgroundImage
+                : carouselItems[currentSlide]?.backgroundImage
+            }
+          />
 
           <Swiper
             modules={[Autoplay]}
@@ -206,7 +227,7 @@ function HomeCarousel() {
               },
             }}
           >
-            {carouselItems.map((item, i) => (
+            {carouselItems.map((item: any, i: number) => (
               <SwiperSlide key={i}>
                 <motion.div
                   key={i}
@@ -238,7 +259,7 @@ function HomeCarousel() {
                     duration: 0.5,
                   }}
                   onMouseOver={() => {
-                    setIsHovering(true)
+                    setIsHovering(true);
                     document.documentElement.style.setProperty(
                       "--homeCouroselbg",
                       color[i]
@@ -250,7 +271,7 @@ function HomeCarousel() {
                     }
                   }}
                   onMouseOut={() => {
-                    setIsHovering(false)
+                    setIsHovering(false);
                     setHoverIndex(-1);
                   }}
                 >
