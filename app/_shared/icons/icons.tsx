@@ -31,11 +31,13 @@ import ColouredThumbsupSolid from "@/public/static/svg/colorthumbssolid.svg";
 import ColoredEyeFilled from "@/public/static/svg/colored_eye_filled.svg"
 import Googleplay from "@/public/static/svg/google_banner.svg";
 import Appstore from "@/public/static/svg/appstore_banner.svg";
+import Seeall from "@/public/static/svg/see_all_icon.svg"
 // import socials
 import Twitter from "@/public/static/svg/socials/twitter.svg";
 import Facebook from "@/public/static/svg/socials/faceboook.svg";
 import Linkedin from "@/public/static/svg/socials/linkedin.svg";
 import Insta from "@/public/static/svg/socials/insta.svg";
+
 export {
   ToonCentralIcon,
   ThumbsSolid,
@@ -56,7 +58,7 @@ export {
   ColouredThumbsupSolid,
   Googleplay,
   Appstore,
-  ColoredEyeFilled
+  ColoredEyeFilled,Seeall
 };
 
 export { Steps, Steps2, Steps3 };

@@ -15,6 +15,7 @@ console.log(backgroundImage)
         backgroundImage: backgroundImage,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
+        
       }}
     >
       <svg
@@ -40,7 +41,7 @@ console.log(backgroundImage)
             height="100%"
           >
             <image
-              href= {activeImage} // Adjust the path to your image
+              href={activeImage} // Adjust the path to your image
               x="0"
               y="0"
               width="1242"

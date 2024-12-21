@@ -14,7 +14,7 @@ const CardTitleTop = ({
   queryKey?:string
 }) => {
   return (
-    <div className="h-[200px] md:h-[260px]  rounded-[8px] overflow-hidden">
+    <div className="h-[150px] md:h-[260px]  rounded-[8px] overflow-hidden">
       <div className="h-full w-auto relative">
         <Image
           src={`${cardData?.coverImage || ""}`}

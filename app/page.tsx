@@ -13,6 +13,7 @@ import Trending from "./_page/trending";
 import Footer from "./_shared/layout/footer";
 import { getRequest } from "./utils/queries/requests";
 import MainfooterWithDelay from "./_shared/layout/footermain";
+import PopularByToons from "./_page/popularbytoons";
 
 export default async function Home() {
   const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ export default async function Home() {
         <RecommendtnTabs />
         <Popular />
         <Trending />
+        <PopularByToons />
         <Originals />
         <Footer />
         <MainfooterWithDelay />

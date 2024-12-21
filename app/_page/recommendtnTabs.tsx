@@ -7,6 +7,7 @@ import { getRequest } from "../utils/queries/requests";
 import { Filters, SelectFilters } from "../_shared/sort/filters";
 import SelectFilter from "../_shared/sort/selects";
 import SelectFilterClone from "../_shared/sort/selectclone";
+import H2SectionTitle from "../_shared/layout/h2SectionTitle";
 
 export interface RecommendedTabProps {
   isLoading: boolean;
@@ -79,7 +80,7 @@ export default function RecommendtnTabs() {
   return (
     <div className="parent-wrap py-10">
       <div className="child-wrap min-h-[520px] flex w-full flex-col relative">
-        <div className="lg:absolute lg:top-[10px] lg:right-[80px] lg:w-32 flex justify-end items-center w-full gap-5">
+        <div className="lg:absolute lg:top-[10px] lg:right-[80px] lg:w-32 hidden lg:flex justify-end items-center w-full gap-5 ">
           <SelectFilter
             className="lg:hidden"
             placeholder="Genres"
@@ -97,6 +98,7 @@ export default function RecommendtnTabs() {
             ))}
           </SelectFilterClone>
         </div>
+        <H2SectionTitle title="Top recommended" />
         <Tabs
           aria-label="Dynamic tabs"
           items={tabs}

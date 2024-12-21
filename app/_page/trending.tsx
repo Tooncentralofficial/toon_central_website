@@ -7,6 +7,8 @@ import { getRequest } from "../utils/queries/requests";
 import LoadingTitleTop from "../_shared/cards/loadingTitleTop";
 import { dummyItems } from "../_shared/data";
 import { useEffect, useState } from "react";
+import { Seeall } from "../_shared/icons/icons";
+import Link from "next/link";
 
 const Trending = () => {
   const [cardItems, setCardItems] = useState([]);
@@ -16,6 +18,26 @@ const Trending = () => {
     queryFn: () => getRequest("/home/trending?filter=all&page=1&limit=10"),
   });
   console.log(data)
+  const [sliced, setSliced] = useState<number>(10);
+  useEffect(() => {
+    const updateSliced = () => {
+      if (window.matchMedia("(max-width: 540px)").matches) {
+        setSliced(3);
+      } else if (window.matchMedia("(max-width: 1024px)").matches) {
+        setSliced(6);
+      } else {
+        setSliced(10);
+      }
+    };
+
+    updateSliced();
+
+    const resizeListener = () => updateSliced();
+    window.addEventListener("resize", resizeListener);
+    return () => {
+      window.removeEventListener("resize", resizeListener);
+    };
+  }, []);
   useEffect(() => {
     if (isSuccess) {
       setCardItems(data?.data?.comics || []);
@@ -25,8 +47,13 @@ const Trending = () => {
   return (
     <div className="parent-wrap py-10">
       <div className="child-wrap ">
-        <H2SectionTitle title="Trending" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+        <div className=" flex justify-between items-center">
+          <H2SectionTitle title="Trending" />
+          <Link href={"/trending"}>
+            <Seeall />
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
           {isLoading ? (
             dummyItems.map((item, i) => <LoadingTitleTop key={i} />)
           ) : (
@@ -34,10 +61,13 @@ const Trending = () => {
               {cardItems?.length > 0 ? (
                 <>
                   {" "}
-                  {cardItems.map((item: any, i: number) => (
+                  {cardItems.slice(0, sliced).map((item: any, i: number) => (
                     <div key={i}>
-                      <CardTitleTop 
-                      cardData={item} index={i} queryKey={trendingQueryKey}  />
+                      <CardTitleTop
+                        cardData={item}
+                        index={i}
+                        queryKey={trendingQueryKey}
+                      />
                     </div>
                   ))}
                 </>
