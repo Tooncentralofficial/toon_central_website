@@ -218,7 +218,7 @@ function HomeCarousel() {
           {/* <Ellipse /> */}
           <div className="child-wrap-sm home-slick-cont relative">
             <div className="relative">
-              <Curve
+            {/* <Curve
                 backgroundImage={
                   hoverIndex !== -1 &&
                   carouselItems[hoverIndex]?.backgroundImage
@@ -231,7 +231,7 @@ function HomeCarousel() {
                     ? carouselItems[hoverIndex].backgroundImage
                     : carouselItems[currentSlide]?.backgroundImage
                 }
-              />
+              /> */}
 
               <Swiper
                 modules={[Autoplay]}
