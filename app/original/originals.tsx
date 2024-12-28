@@ -27,7 +27,7 @@ export default function Originals() {
     queryKey: ["all_originals", pagination.page, filter],
     queryFn: () =>
       getRequest(
-        `/originals/pull/all?filter=${filter}&page=${pagination.page}&limit=30`
+        `/originals/pull/all?tab=${filter}&page=${pagination.page}&limit=30`
       ),
   });
   useEffect(() => {

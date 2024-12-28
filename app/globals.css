@@ -104,3 +104,17 @@ body {
     text-wrap: balance;
   }
 }
+.horizontal-scroll {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
+.scroll-item {
+  flex: 0 0 auto;
+  margin-right: 16px; /* Spacing between items */
+  width: 40px; /* Item width */
+  height: 40px; /* Item height */
+  border-radius: 50%;
+}

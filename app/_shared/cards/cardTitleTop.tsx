@@ -37,6 +37,7 @@ const CardTitleTop = ({
                 likesNViews={cardData?.likesAndViews}
                 queryKey={queryKey}
                 uid={cardData?.uuid}
+                favourites={cardData?.favourites}
               />
             </div>
             <div>{cardData?.genre?.name}</div>

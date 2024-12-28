@@ -87,7 +87,7 @@ const Popular = () => {
     },
   });
   return (
-    <div className="parent-wrap py-10 relative">
+    <div className="parent-wrap pt-10 relative">
       <div className="child-wrap flex w-full flex-col">
         <H2SectionTitle title="Popular by ToonCentral" />
         <div className=" slider-container">

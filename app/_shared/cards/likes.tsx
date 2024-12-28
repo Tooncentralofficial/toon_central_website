@@ -1,7 +1,18 @@
 "use client";
 
 import { parseArray } from "@/helpers/parsArray";
-import { ColoredEyeFilled, ColouredThumbsupSolid, Dot, EyeFilled, HeartTwoTone, ThumbsSolid } from "../icons/icons";
+import {
+  ColoredEyeFilled,
+  ColouredThumbsupSolid,
+  Dot,
+  EyeFilled,
+  HeartTwoTone,
+  ThumbsSolid,
+  ColoredTwotone,
+  SmallEyeIcon,
+  SmallFaves,
+  LikesSmall,
+} from "../icons/icons";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { useSelector } from "react-redux";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -10,16 +21,32 @@ import { usePathname } from "next/navigation";
 import { toast } from "react-toastify";
 import { useMemo } from "react";
 
-const Likes = ({ likesNViews,queryKey,uid }: { likesNViews: any ,queryKey?:string|undefined,uid?:string}) => {
-  const { user, token } = useSelector
-  (selectAuthState);
-  const isLiked = useMemo(()=>{
+const Likes = ({
+  likesNViews,
+  queryKey,
+  uid,
+  favourites,
+  small,
+}: {
+  likesNViews: any;
+  queryKey?: string | undefined;
+  uid?: string;
+  favourites?: string;
+  small?: boolean;
+}) => {
+  const { user, token } = useSelector(selectAuthState);
+  const isLiked = useMemo(() => {
     return parseArray(likesNViews?.likes).some((value) => {
       return value?.user_id === user?.id;
     });
-  },[likesNViews])
+  }, [likesNViews]);
   const isViewd = useMemo(() => {
     return parseArray(likesNViews?.views).some((value) => {
+      return value?.user_id === user?.id;
+    });
+  }, [likesNViews]);
+  const isFaved = useMemo(() => {
+    return parseArray(favourites).some((value) => {
       return value?.user_id === user?.id;
     });
   }, [likesNViews]);
@@ -57,7 +84,7 @@ const Likes = ({ likesNViews,queryKey,uid }: { likesNViews: any ,queryKey?:strin
     mutationFn: () =>
       getRequestProtected(`/comics/${uid}/add-to-favourite`, token, pathname),
     onSuccess: (data) => {
-      console.log(data)
+      console.log(data);
       if (data?.success) {
         toast(data?.message, {
           toastId: `toast_${uid}`,
@@ -82,29 +109,51 @@ const Likes = ({ likesNViews,queryKey,uid }: { likesNViews: any ,queryKey?:strin
   });
   let views = parseArray(likesNViews?.views).length;
   let likes = parseArray(likesNViews?.likes).length;
+  let fav = parseArray(favourites).length;
+
   return (
-    <div className="flex items-center gap-[9px]">
+    <div
+      className={`flex items-center gap-[9px] $${
+        small ? "gap-2" : "gap-[9px]"
+      } `}
+    >
       <div
-        className={`flex items-center gap-[2.5px] text-sm font-light ${
+        className={`flex items-center gap-[2.5px] text-xs font-light ${
           isViewd ? "text-[#05834B]" : ""
         }`}
       >
-        {isViewd ? <ColoredEyeFilled /> : <EyeFilled />} {views}
+        {isViewd ? (
+          <ColoredEyeFilled />
+        ) : small ? (
+          <SmallEyeIcon />
+        ) : (
+          <EyeFilled />
+        )}
+        {views}
       </div>
       <Dot />
       <div
-        className="flex items-center gap-[2.5px] text-sm font-light"
+        className={`flex items-center gap-[2.5px] text-xs font-light ${
+          isFaved ? "text-[#05834B]" : ""
+        } `}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
           favorite();
         }}
       >
-        <HeartTwoTone /> 1k
+        {isFaved ? (
+          <ColoredTwotone />
+        ) : small ? (
+          <SmallFaves />
+        ) : (
+          <HeartTwoTone />
+        )}{" "}
+        {fav}
       </div>
       <Dot />
       <div
-        className={`flex items-center gap-[2.5px] text-sm font-light hover:cursor-pointer ${
+        className={`flex items-center gap-[2.5px] text-xs font-light hover:cursor-pointer ${
           isLiked ? "text-[#05834B]" : ""
         } `}
         onClick={(e) => {
@@ -114,7 +163,14 @@ const Likes = ({ likesNViews,queryKey,uid }: { likesNViews: any ,queryKey?:strin
           console.log(likesNViews);
         }}
       >
-        {isLiked ? <ColouredThumbsupSolid /> : <ThumbsSolid />} {likes}
+        {isLiked ? (
+          <ColouredThumbsupSolid />
+        ) : small ? (
+          <LikesSmall />
+        ) : (
+          <ThumbsSolid />
+        )}{" "}
+        {likes}
       </div>
     </div>
   );

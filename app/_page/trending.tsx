@@ -45,8 +45,8 @@ const Trending = () => {
   }, [isLoading, isFetching, data]);
 
   return (
-    <div className="parent-wrap py-10">
-      <div className="child-wrap ">
+    <div className="parent-wrap py-10 hidden">
+      <div className="child-wrap hidden md:block">
         <div className=" flex justify-between items-center">
           <H2SectionTitle title="Trending" />
           <Link href={"/trending"}>

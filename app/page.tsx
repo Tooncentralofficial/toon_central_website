@@ -14,6 +14,9 @@ import Footer from "./_shared/layout/footer";
 import { getRequest } from "./utils/queries/requests";
 import MainfooterWithDelay from "./_shared/layout/footermain";
 import PopularByToons from "./_page/popularbytoons";
+import HorizontalScroll from "./_page/test";
+import CardTitleInMobile from "./_shared/cards/cardTitleinMobile";
+import TodaysPicks from "./_page/todaysPicks";
 
 export default async function Home() {
   const queryClient = new QueryClient();
@@ -36,8 +39,10 @@ export default async function Home() {
         <RecommendtnTabs />
         <Popular />
         <Trending />
+        <TodaysPicks />
         <PopularByToons />
         <Originals />
+        {/* <HorizontalScroll /> */}
         <Footer />
         <MainfooterWithDelay />
       </main>
