@@ -145,11 +145,19 @@ const Page = ({
     if (chapter > 1) {
       setChapter((prev) => prev - 1);
     }
+    
   };
   const nextChapter = () => {
     if (chapter < parseArray(data?.data?.episodes).length) {
       setChapter((prev) => prev + 1);
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, 50);
     }
+    
   };
 
   const backDisabled = useMemo(() => chapter <= 1, [chapter]);
