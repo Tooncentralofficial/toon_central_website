@@ -26,6 +26,7 @@ const HorizontalScroll = () => {
     queryFn: () => getRequest(`/genres/comic/1/all?page=${1}&limit${2}`),
   });
   console.log(data)
+  // jnfv
   useEffect(() => {
     if (isSuccess) {
       setActionItems(data?.data?.comics || []);
