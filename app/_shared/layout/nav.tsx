@@ -45,6 +45,15 @@ import { getRequest } from "@/app/utils/queries/requests";
 import { parseArray } from "@/helpers/parsArray";
 import { motion } from "framer-motion";
 import SearchModal from "./search";
+import {
+  HomeIcon,
+  HomeIconColored,
+  GenresIcon,
+  GenresIconColored,
+  TrendingIcon,
+  OriginalIcon,
+  OriginalIconColored,
+} from "../icons/icons";
 const menuItems: { name: string; link: string }[] = [
   {
     name: "home",
@@ -66,6 +75,44 @@ const menuItems: { name: string; link: string }[] = [
     name: "Creator101",
     link: "/creator",
   },
+];
+const menuItemsmob: { name: string; link: string }[] = [
+  
+  {
+    name: "Creator101",
+    link: "/creator",
+  },
+  {
+    name:"Notification",
+    link:"/notification"
+  }
+];
+const menuItemsMobile: { name: string; link: string ,icon:string,active:string}[] = [
+  {
+    name: "home",
+    link: "/",
+    icon:HomeIcon,
+    active:HomeIconColored
+  },
+  {
+    name: "genres",
+    link: "/genres",
+    icon:GenresIcon,
+    active:GenresIconColored
+  },
+  {
+    name: "Original",
+    link: "/original",
+    icon:OriginalIcon,
+    active:OriginalIconColored
+  },
+  {
+    name: "Trending",
+    link: "/trending",
+    icon:TrendingIcon,
+    active:TrendingIcon
+  },
+  
 ];
 
 const NavHome = () => {
@@ -100,113 +147,117 @@ const NavHome = () => {
       <Navbar
         isBlurred={false}
         shouldHideOnScroll
-        className="bg-[var(--bg-menu-cont)] py-6"
-        height="44px"
+        className="bg-[var(--bg-menu-cont)] py-6 flex"
+        height={"5.5rem"}
         maxWidth="2xl"
         isMenuOpen={isSide && !lg}
         classNames={{
           menu: "bg-[var(--bg-menu-cont)]",
         }}
       >
-        <NavbarContent className="lg:flex pr-3" justify="center">
-          <NavbarBrand className="items-start">
-            <Link href="/">
-              <ToonCentralIcon />
-            </Link>
-          </NavbarBrand>
-        </NavbarContent>
-
-        <NavbarContent className="hidden lg:flex gap-8" justify="center">
-          {menuItems.map((item, i) => (
-            <NavbarItem key={i}>
-              <Link href={item.link}>
-                <div className="relative capitalize">
-                  {item.name}
-                  <div
-                    className={`${
-                      item.link === pathname ? "flex" : "hidden"
-                    } absolute bottom-[-28px] left-0 h-[5px] w-full rounded-[2px] bg-[var(--cursor-color)] mt-5`}
-                  ></div>
-                </div>
-              </Link>
-            </NavbarItem>
-          ))}
-        </NavbarContent>
-
-        <NavbarMenu>
-          <div
-            className="
-        py-[60px] h-full flex flex-col gap-4"
-          >
-            {menuItems.map((item, index) => (
-              <NavbarMenuItem key={`${item}-${index}`}>
-                <Link
-                  className="w-full capitalize"
-                  color={
-                    index === 2
-                      ? "warning"
-                      : index === menuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                  }
-                  onClick={() => setIsSide(false)}
-                  href={item.link}
-                  // size="lg"
-                >
-                  {item.name}
+        <div className="w-full h-full flex flex-col">
+          <div className="flex w-full h-full">
+            <NavbarContent className="lg:flex pr-3" justify="center">
+              <NavbarBrand className="items-start">
+                <Link href="/">
+                  <ToonCentralIcon />
                 </Link>
-              </NavbarMenuItem>
-            ))}
-            <div className="mt-10 w-full flex">
-              <Button
-                as={Link}
-                className={`${!token && "bg-transparent min-w-0 px-0"} ${
-                  token &&
-                  "bg-[var(--green100)] text-white px-[18px] py-[10px] rounded-[8px]"
-                } w-full`}
-                href={token ? "/creator/new" : "/creator"}
-                variant="flat"
-                onClick={() => handleToggle()}
-              >
-                Publish
-              </Button>
-            </div>
-          </div>
-        </NavbarMenu>
-        <NavbarContent className="" justify="end">
-          <NavbarContent className="flex" justify="end">
-            <NavbarItem className="flex items-center gap-4">
-              <button onClick={onOpen}>
-                <SearchIcon />
-              </button>
-              <Divider
-                orientation="vertical"
-                className="h-[36px] border-white"
-              />
-            </NavbarItem>
+              </NavbarBrand>
+            </NavbarContent>
 
-            <div className={`${token ? "flex" : "hidden"} gap-4 items-center`}>
-              <div className="hidden sm:flex gap-4 items-center">
-                {token && (
-                  <NavbarItem as={Link} href="/user/library">
+            <NavbarContent className="hidden lg:flex gap-8" justify="center">
+              {menuItems.map((item, i) => (
+                <NavbarItem key={i}>
+                  <Link href={item.link}>
                     <div className="relative capitalize">
-                      My Library
+                      {item.name}
                       <div
                         className={`${
-                          "/user/library" === pathname ? "flex" : "hidden"
+                          item.link === pathname ? "flex" : "hidden"
                         } absolute bottom-[-28px] left-0 h-[5px] w-full rounded-[2px] bg-[var(--cursor-color)] mt-5`}
                       ></div>
                     </div>
-                  </NavbarItem>
-                )}
+                  </Link>
+                </NavbarItem>
+              ))}
+            </NavbarContent>
 
-                <Divider
-                  orientation="vertical"
-                  className="h-[36px] border-white"
-                />
+            <NavbarMenu>
+              <div
+                className="
+        py-[60px] h-full flex flex-col gap-4"
+              >
+                {menuItemsmob.map((item, index) => (
+                  <NavbarMenuItem key={`${item}-${index}`}>
+                    <Link
+                      className="w-full capitalize"
+                      color={
+                        index === 2
+                          ? "warning"
+                          : index === menuItems.length - 1
+                          ? "danger"
+                          : "foreground"
+                      }
+                      onClick={() => setIsSide(false)}
+                      href={item.link}
+                      // size="lg"
+                    >
+                      {item.name}
+                    </Link>
+                  </NavbarMenuItem>
+                ))}
+                <div className="mt-10 w-full flex">
+                  <Button
+                    as={Link}
+                    className={`${!token && "bg-transparent min-w-0 px-0"} ${
+                      token &&
+                      "bg-[var(--green100)] text-white px-[18px] py-[10px] rounded-[8px]"
+                    } w-full`}
+                    href={token ? "/creator/new" : "/creator"}
+                    variant="flat"
+                    onClick={() => handleToggle()}
+                  >
+                    Publish
+                  </Button>
+                </div>
               </div>
+            </NavbarMenu>
+            <NavbarContent className="" justify="end">
+              <NavbarContent className="flex" justify="end">
+                <NavbarItem className="flex items-center gap-4">
+                  <button onClick={onOpen}>
+                    <SearchIcon />
+                  </button>
+                  <Divider
+                    orientation="vertical"
+                    className="h-[36px] border-white"
+                  />
+                </NavbarItem>
 
-              {/* <NavbarItem>
+                <div
+                  className={`${token ? "flex" : "hidden"} gap-4 items-center`}
+                >
+                  <div className="hidden sm:flex gap-4 items-center">
+                    {token && (
+                      <NavbarItem as={Link} href="/user/library">
+                        <div className="relative capitalize">
+                          My Library
+                          <div
+                            className={`${
+                              "/user/library" === pathname ? "flex" : "hidden"
+                            } absolute bottom-[-28px] left-0 h-[5px] w-full rounded-[2px] bg-[var(--cursor-color)] mt-5`}
+                          ></div>
+                        </div>
+                      </NavbarItem>
+                    )}
+
+                    <Divider
+                      orientation="vertical"
+                      className="h-[36px] border-white"
+                    />
+                  </div>
+
+                  {/* <NavbarItem>
       <Dropdown>
         <DropdownTrigger>
           <Button className="bg-transparent" isIconOnly>
@@ -236,101 +287,123 @@ const NavHome = () => {
       </Dropdown>
     </NavbarItem> */}
 
-              <NavbarItem>
-                <Dropdown>
-                  <DropdownTrigger>
+                  <NavbarItem>
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button
+                          className="bg-transparent p-0 min-w-0"
+                          disableAnimation
+                        >
+                          <div className="flex items-center gap-0.5">
+                            <User
+                              //    as={Button}
+                              //  isIconOnly
+                              name=""
+                              avatarProps={{
+                                src: `${
+                                  user?.photo ||
+                                  "https://avatars.githubusercontent.com/u/30373425?v=4"
+                                }`,
+                              }}
+                              // className="p-0 min-w-0 rounded-[50%]"
+                            />
+
+                            <DownMenuArrow />
+                          </div>
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu aria-label="Notification">
+                        <DropdownItem key="profile" className="h-14 gap-2">
+                          <p className="font-semibold">Signed in as</p>
+                          <p className="font-semibold">{user?.email}</p>
+                        </DropdownItem>
+                        <DropdownItem as={Link} href="/user/profile" key="1">
+                          Profile
+                        </DropdownItem>
+                        <DropdownItem
+                          className="flex sm:hidden"
+                          as={Link}
+                          href="/user/library"
+                          key="2"
+                        >
+                          Library
+                        </DropdownItem>
+
+                        <DropdownItem
+                          key="2"
+                          className="text-white bg-danger text-center"
+                          color="danger"
+                          onClick={logout}
+                        >
+                          Logout
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
+                  </NavbarItem>
+                </div>
+
+                <NavbarItem className="hidden lg:flex h-full items-start mt-10">
+                  <Button
+                    as={Link}
+                    className={`${!token && "bg-transparent min-w-0 px-0"} ${
+                      token &&
+                      "bg-[var(--green100)] text-white px-[18px] py-[10px] rounded-[8px]"
+                    }`}
+                    href={token ? "/creator/new" : "/creator"}
+                    variant="flat"
+                  >
+                    Publish
+                  </Button>
+                </NavbarItem>
+
+                {!token && (
+                  <NavbarItem className="h-full">
                     <Button
-                      className="bg-transparent p-0 min-w-0"
-                      disableAnimation
-                    >
-                      <div className="flex items-center gap-0.5">
-                        <User
-                          //    as={Button}
-                          //  isIconOnly
-                          name=""
-                          avatarProps={{
-                            src: `${
-                              user?.photo ||
-                              "https://avatars.githubusercontent.com/u/30373425?v=4"
-                            }`,
-                          }}
-                          // className="p-0 min-w-0 rounded-[50%]"
-                        />
-
-                        <DownMenuArrow />
-                      </div>
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu aria-label="Notification">
-                    <DropdownItem key="profile" className="h-14 gap-2">
-                      <p className="font-semibold">Signed in as</p>
-                      <p className="font-semibold">{user?.email}</p>
-                    </DropdownItem>
-                    <DropdownItem as={Link} href="/user/profile" key="1">
-                      Profile
-                    </DropdownItem>
-                    <DropdownItem
-                      className="flex sm:hidden"
                       as={Link}
-                      href="/user/library"
-                      key="2"
+                      className="bg-[var(--green100)] text-white px-[18px] py-[10px] rounded-[8px]"
+                      href="/auth/signup"
+                      variant="flat"
                     >
-                      Library
-                    </DropdownItem>
-
-                    <DropdownItem
-                      key="2"
-                      className="text-white bg-danger text-center"
-                      color="danger"
-                      onClick={logout}
-                    >
-                      Logout
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              </NavbarItem>
-            </div>
-
-            <NavbarItem className="hidden lg:flex h-full items-start">
-              <Button
-                as={Link}
-                className={`${!token && "bg-transparent min-w-0 px-0"} ${
-                  token &&
-                  "bg-[var(--green100)] text-white px-[18px] py-[10px] rounded-[8px]"
-                }`}
-                href={token ? "/creator/new" : "/creator"}
-                variant="flat"
-              >
-                Publish
-              </Button>
-            </NavbarItem>
-
-            {!token && (
-              <NavbarItem className="h-full">
-                <Button
-                  as={Link}
-                  className="bg-[var(--green100)] text-white px-[18px] py-[10px] rounded-[8px]"
-                  href="/auth/signup"
-                  variant="flat"
-                >
-                  Get Started
-                </Button>
-              </NavbarItem>
-            )}
-          </NavbarContent>
-          <div className="lg:hidden">
-            <Hamburger
-              direction="right"
-              toggled={isSide}
-              toggle={handleToggle}
-            />
-          </div>
-          {/* <NavbarMenuToggle isSelected={isSide} className="lg:hidden h-full font-[#ffffff] outline flex justify-center " icon={<Hamburger
+                      Get Started
+                    </Button>
+                  </NavbarItem>
+                )}
+              </NavbarContent>
+              <div className="hidden lg:hidden">
+                <Hamburger
+                  direction="right"
+                  toggled={isSide}
+                  toggle={handleToggle}
+                />
+              </div>
+              {/* <NavbarMenuToggle isSelected={isSide} className="lg:hidden h-full font-[#ffffff] outline flex justify-center " icon={<Hamburger
           direction="right"
           toggled={isSide}
           toggle={handleToggle}
         />}/> */}
-        </NavbarContent>
+            </NavbarContent>
+          </div>
+          <div className="block md:hidden w-full h-full pt-3 pb-5 ">
+            <div className="flex justify-between items-center w-full  ">
+              {menuItemsMobile.map((item, i) => (
+                <NavbarItem key={i} className="flex-shrink-0">
+                  <Link href={item.link}>
+                    <div>
+                      {item.link === pathname ? <item.active /> : <item.icon />}
+                    </div>
+                  </Link>
+                </NavbarItem>
+              ))}
+              <div className="flex-shrink-0">
+                <Hamburger
+                  direction="right"
+                  toggled={isSide}
+                  toggle={handleToggle}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </Navbar>
       <SearchModal
         isOpen={isOpen}

@@ -5,6 +5,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { VerticalMenu } from "@/app/_shared/icons/icons";
 import React, { useState } from "react";
+import { deleteRequestProtected } from "@/app/utils/queries/requests";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
+import { selectAuthState } from "@/lib/slices/auth-slice";
+import { prevRoutes } from "@/lib/session/prevRoutes";
+import { toast } from "react-toastify";
 
 const ChapterLink = ({
   uid,
@@ -21,10 +27,44 @@ const ChapterLink = ({
 }) => {
   console.log(chapter)
   const sanitizedSlug = chapter?.slug.replace(/\s+/g, "-");
+  const { user, userType, token } = useSelector(selectAuthState);
   const [show,setShow]= useState<boolean>(false)
   const router = useRouter();
+
   const readChapter = () =>
-    router.push(`/comics/${uid}/chapter?chapter=${index}&uid=${uid}`);
+    router.push(
+      `/comics/${uid}/chapter?chapter=${index}&uid=${uid}&comicid=${comicId}`
+    );
+  
+  const deleteEpisode = useMutation({
+    mutationKey: [`comic${comicId}_delete_episode`],
+    mutationFn: () =>
+      deleteRequestProtected(
+        `/my-libraries/chapters/${chapter?.id}/comic/${comicId}/delete`,
+        token || "",
+        prevRoutes().library
+      ),
+    onSuccess(data, variables, context) {
+      const { success, message, data: resData } = data;
+      if (success) {
+        toast("Episode Deleted", {
+          toastId: "delete_episode",
+          type: "success",
+        });
+      } else {
+        toast(message, {
+          toastId: "delete_episode",
+          type: "error",
+        });
+      }
+    },
+    onError(error, variables, context) {
+      toast("Some error occured. Contact help !", {
+        toastId: "delete_episode",
+        type: "error",
+      });
+    },
+  });
   return (
     <div className="flex gap-4 relative">
       <div className="w-[60px] h-[60px] rounded-lg overflow-hidden">
@@ -57,8 +97,8 @@ const ChapterLink = ({
           >
             Edit
           </p>
-          <p className="hover:bg-[#05834B] pl-3">View mobile</p>
-          <p className="hover:bg-[#05834B] pl-3">Delete</p>
+          {/* <p className="hover:bg-[#05834B] pl-3">View mobile</p> */}
+          <p className="hover:bg-[#05834B] pl-3" onClick={()=>deleteEpisode.mutate()}>Delete</p>
         </div>
       )}
     </div>

@@ -37,18 +37,17 @@ const CardTitleBottom = ({
           unoptimized
           priority
         />
-        <Link
-          href={`${
-            cardData?.uuid
-              ? `/comics/${cardData?.uuid}`
-              : ""
-          }`}
-        >
+        <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
           <div className="absolute top-0 left-0  h-full w-full flex flex-col  p-4 justify-end bg-[#0D111D70] ">
             <div>
               <div className="font-bold text-xl">{cardData?.title}</div>
               <div className="flex justify-between">
-                <Likes likesNViews={cardData?.likesAndViews} queryKey={queryKey} uid={cardData?.uuid} />
+                <Likes
+                  likesNViews={cardData?.likesAndViews}
+                  queryKey={queryKey}
+                  uid={cardData?.uuid}
+                  favourites={cardData?.favourites}
+                />
                 {expand && (
                   <motion.a
                     href=""

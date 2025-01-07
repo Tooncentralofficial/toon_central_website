@@ -35,6 +35,7 @@ const CardTitleOutside = ({
                 likesNViews={cardData?.likesAndViews}
                 queryKey={queryKey}
                 uid={cardData?.uuid}
+                favourites={cardData?.favourites}
               />
             </div>
           </Link>

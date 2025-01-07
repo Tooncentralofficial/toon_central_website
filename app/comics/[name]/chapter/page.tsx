@@ -56,7 +56,7 @@ const Page = ({
   useEffect(() => {
     if (isSuccess) setEpisode(parseArray(data?.data?.episodes));
   }, [data, isFetching, isSuccess]);
-  
+  const currentEpisodeId  =data?.data?.episodes?.[chapter-1]?.id 
   const { mutate: likeComic, isPending } = useMutation({
     mutationKey: ["like"],
     mutationFn: () =>
@@ -93,6 +93,17 @@ const Page = ({
     }
     likeComic();
   };
+  const { data: episodeCount } = useQuery({
+    queryKey: ["episdodelive",currentEpisodeId],
+    queryFn: () =>
+      getRequestProtected(
+        `comics/${uid}/episode/${currentEpisodeId}/get`,
+        token,
+        pathname
+      ),
+    enabled: token !== null,
+  });
+  console.log(episodeCount)
   const addEpisodeComment = useMutation({
     mutationKey: ["add_episode_comment"],
     mutationFn: () =>
@@ -134,11 +145,19 @@ const Page = ({
     if (chapter > 1) {
       setChapter((prev) => prev - 1);
     }
+    
   };
   const nextChapter = () => {
     if (chapter < parseArray(data?.data?.episodes).length) {
       setChapter((prev) => prev + 1);
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, 50);
     }
+    
   };
 
   const backDisabled = useMemo(() => chapter <= 1, [chapter]);

@@ -40,6 +40,7 @@ export interface Comic {
   id: number;
   likesAndViews: any; // You can replace `any` with the specific type if you have one
   publishedByToonCentral: string;
+  genres:ComicGenre[]
   statusId: string;
   title: string;
   updatedAt: string;
@@ -47,6 +48,16 @@ export interface Comic {
   userId: string;
   uuid: string;
   socialMediaHandle:string
+}
+
+interface ComicGenre {
+  id: number; // Unique ID for this genre entry
+  comic_id: number; // ID of the comic this genre belongs to
+  genre_id: number; // ID of the genre
+  genre: {
+    id: number; // ID of the genre
+    name: string; // Name of the genre
+  };
 }
 
 export interface ComicComment {
@@ -60,12 +71,13 @@ export interface ComicComment {
   created_at:string
 }
 export interface ComicFormValues {
-  backgroundImage: File | string; 
+  backgroundImage: File | string;
   coverImage: File | string;
   title: string;
   description: string;
-  genreId: string[]; 
-  status: string; 
-  updateDays: string; 
+  genreId: string[];
+  status: string;
+  updateDays: string;
   socialMediaHandle: string;
+  genres: ComicGenre[];
 }
