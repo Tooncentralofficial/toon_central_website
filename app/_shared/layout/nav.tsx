@@ -357,7 +357,7 @@ const NavHome = () => {
                 </NavbarItem>
 
                 {!token && (
-                  <NavbarItem className="h-full">
+                  <NavbarItem className="h-full mt-10">
                     <Button
                       as={Link}
                       className="bg-[var(--green100)] text-white px-[18px] py-[10px] rounded-[8px]"
