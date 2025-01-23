@@ -2,20 +2,57 @@
 import Image from "next/image";
 import Likes from "./likes";
 import Link from "next/link";
-import {motion} from "framer-motion"
+import { motion } from "framer-motion";
+import { getRequestProtected } from "@/app/utils/queries/requests";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
+import { selectAuthState } from "@/lib/slices/auth-slice";
+import { usePathname } from "next/navigation";
+import { toast } from "react-toastify";
 const CardTitleBottom = ({
   cardData,
   index,
   cardWidth,
   expand,
-  queryKey
+  queryKey,
 }: {
   cardData: any;
   index: number;
-  cardWidth?:string;
-  expand?:boolean;
-  queryKey?:string
+  cardWidth?: string;
+  expand?: boolean;
+  queryKey?: string;
 }) => {
+  const { user, token } = useSelector(selectAuthState);
+  const uid= cardData?.uuid;
+const queryClient = useQueryClient();
+const pathname = usePathname();
+  const { mutate: subscibe, isPending } = useMutation({
+    mutationKey: ["subscribe"],
+    mutationFn: () =>
+      getRequestProtected(`/comics/${uid}/subscribe`, token, pathname),
+    onSuccess: (data) => {
+      if (data?.success) {
+        toast(data?.message, {
+          toastId: `toast_${uid}`,
+          type: "success",
+        });
+        queryClient.invalidateQueries({
+          queryKey: [queryKey],
+        });
+        return;
+      }
+      toast(data?.message, {
+        toastId: `toast_${uid}`,
+        type: "error",
+      });
+    },
+    onError(error, variables, context) {
+      toast("Failed to subscribe", {
+        toastId: `toast_${uid}`,
+        type: "error",
+      });
+    },
+  });
   return (
     <div
       className={`h-[260px] rounded-[10px] overflow-hidden`}
@@ -50,11 +87,16 @@ const CardTitleBottom = ({
                 />
                 {expand && (
                   <motion.a
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      subscibe()
+                    }}
                     href=""
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3, delay: 0.2 }}
-                    className="bg-[--green100] px-4 py-1 rounded-[4px]"
+                    className="bg-[--green100] px-4 py-1 rounded-[4px] hover:cursor-pointer"
                   >
                     Subscribe
                   </motion.a>

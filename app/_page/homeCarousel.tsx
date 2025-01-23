@@ -216,7 +216,7 @@ function HomeCarousel() {
             }}
           />
           {/* <Ellipse /> */}
-          <div className="child-wrap-sm home-slick-cont relative">
+          <div className="child-wrap-sm home-slick-cont relative ">
             <div className="relative">
             {/* <Curve
                 backgroundImage={

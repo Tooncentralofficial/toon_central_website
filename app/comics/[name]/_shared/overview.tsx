@@ -90,7 +90,12 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
               {data?.title}
             </p>
             <div className="py-3">
-              <Likes likesNViews={data?.likesAndViews} />
+              <Likes
+                likesNViews={data?.likesAndViews}
+                queryKey={queryKey}
+                uid={data?.uuid}
+                favourites={data?.favourites}
+              />
             </div>
 
             <div className="flex flex-col lg:flex-row lg:w-[60%] justify-between gap-2">

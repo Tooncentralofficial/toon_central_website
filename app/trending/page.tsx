@@ -123,10 +123,12 @@ export default function Page() {
                     height={200}
                     alt={`${newTrending[0]?.title || "toon_central"}`}
                     style={{
+                      objectPosition:"top top",
                       objectFit: "cover",
                       width: "100%",
                       maxWidth: "100%",
                       height: "100%",
+                      transform: "rotate(180deg)",
                     }}
                     unoptimized
                     priority
@@ -173,7 +175,7 @@ export default function Page() {
                         <div className="font-bold text-xl">
                           {mostRead[0]?.title}
                         </div>
-                        <Likes likesNViews={mostRead[0]?.likesAndViews}/>
+                        <Likes likesNViews={mostRead[0]?.likesAndViews} />
                       </div>
                       <div>
                         <SolidPrimaryButton size="md">Add</SolidPrimaryButton>
