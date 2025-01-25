@@ -5,12 +5,15 @@ import CardTitleTop from "../_shared/cards/cardTitleTop";
 import { RecommendedTabProps } from "./recommendtnTabs";
 import { dummyItems } from "../_shared/data";
 import LoadingTitleTop from "../_shared/cards/loadingTitleTop";
+import ModalContainer from "../_shared/modals/modalcont";
+import { useDisclosure } from "@nextui-org/react";
 
 const TopRecommendations = ({
   isLoading,
   isFetching,
   data,
 }: RecommendedTabProps) => {
+  const { onClose, onOpen, isOpen, onOpenChange } = useDisclosure();
   const cardItems = useMemo(() => data, [isLoading, isFetching, data]);
   const [sliced, setSliced] = useState<number>(10);
   useEffect(() => {
@@ -42,7 +45,7 @@ const TopRecommendations = ({
           {cardItems?.length > 0 ? (
             <>
               {cardItems.slice(0, sliced).map((item: any, i: number) => (
-                <div key={i} >
+                <div key={i}>
                   <CardTitleTop cardData={item} index={i} />
                 </div>
               ))}
@@ -52,6 +55,14 @@ const TopRecommendations = ({
           )}
         </>
       )}
+      {/* <div onClick={onOpen}>sjdbkf</div> */}
+      <ModalContainer
+        isOpen={isOpen}
+        onClose={onClose}
+        onOpenChange={onOpenChange}
+      >
+        <div>sbdhkjs</div>
+      </ModalContainer>
     </div>
   );
 };

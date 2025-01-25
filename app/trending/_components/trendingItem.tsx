@@ -18,7 +18,7 @@ interface Genre {
   updated_at: string; // Timestamp for the last update
 }
 
-interface ComicGenre {
+export interface ComicGenre {
   id: number; // Unique identifier for the comic-genre relationship
   comic_id: number; // Associated comic ID
   genre_id: number; // Genre ID

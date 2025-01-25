@@ -1,8 +1,8 @@
 "use client";
 
 import Likes from "@/app/_shared/cards/likes";
-import { GreenUser } from "@/app/_shared/icons/icons";
-import { Button, Skeleton } from "@nextui-org/react";
+import { GreenUser, SearchIcon, ShareIcon } from "@/app/_shared/icons/icons";
+import { Button, Skeleton, useDisclosure } from "@nextui-org/react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { ViewComicProps } from "../pageClient";
@@ -13,9 +13,13 @@ import { selectAuthState } from "@/lib/slices/auth-slice";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { parseArray } from "@/helpers/parsArray";
+import { ComicGenre } from "@/app/trending/_components/trendingItem";
+import SearchModal from "@/app/_shared/layout/search";
+import ShareModal from "@/app/_shared/modals/shareModal";
 
 const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
   console.log(data)
+  const { onClose, onOpen, isOpen, onOpenChange } = useDisclosure();
   const disabled = useMemo(() => data?.episodes?.length <= 0, [data]);
   const queryClient = useQueryClient();
   const pathname = usePathname();
@@ -98,14 +102,33 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
               />
             </div>
 
-            <div className="flex flex-col lg:flex-row lg:w-[60%] justify-between gap-2">
-              {data?.publishedByToonCentral === 1 && (
+            <div className="flex flex-col mt-1 lg:flex-row lg:w-[70%]  gap-2 justify-between ">
+              {data?.publishedByToonCentral === 1 ? (
                 <div className="flex gap-4">
                   <span>ToonCentral</span> <GreenUser />
                 </div>
+              ) : (
+                <div className="flex gap-4">
+                  <span>{data?.user.username}</span>
+                  <GreenUser />
+                </div>
               )}
-
-              <span>{data?.genre?.name}</span>
+              <span className="flex">
+                {data?.genres.map((item: ComicGenre, i: number) => (
+                  <p
+                    key={i}
+                    className={`text-[#FCFCFD] text-[1] ${
+                      i < data.genres.length - 1 && "mr-1"
+                    }`}
+                  >
+                    {item.genre.name}
+                    {i < data.genres.length - 1 && ","}
+                  </p>
+                ))}
+              </span>
+              <span className="flex gap-4 cursor-pointer " onClick={onOpen}>
+                <ShareIcon /> <p>share </p>
+              </span>
             </div>
             <div className="hidden lg:block pt-8 text-lg">
               <p className="text-gray underline">Episode Update Bi-weekly</p>
@@ -142,6 +165,11 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
             </Button>
           </div>
         </div>
+        <ShareModal
+          isOpen={isOpen}
+          onClose={onClose}
+          onOpenChange={onOpenChange}
+        />
       </div>
     </Skeleton>
   );

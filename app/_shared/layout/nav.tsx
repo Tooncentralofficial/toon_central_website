@@ -141,7 +141,7 @@ const NavHome = () => {
   });
 
   const handleToggle = () => setIsSide(!isSide);
-  const { sm, lg } = UseTailwindMediaQuery();
+  const { sm,md, lg } = UseTailwindMediaQuery();
 
   const { onClose, onOpen, isOpen, onOpenChange } = useDisclosure();
 
@@ -151,7 +151,7 @@ const NavHome = () => {
         isBlurred={false}
         shouldHideOnScroll
         className="bg-[var(--bg-menu-cont)] py-10 flex"
-        height={"5.5rem"}
+        height={md ? "3rem" : "4rem"}
         maxWidth="2xl"
         isMenuOpen={isSide && !lg}
         classNames={{
@@ -209,7 +209,7 @@ const NavHome = () => {
                     </Link>
                   </NavbarMenuItem>
                 ))}
-                <div className="mt-10 w-full flex">
+                <div className=" w-full flex ">
                   <Button
                     as={Link}
                     className={`${!token && "bg-transparent min-w-0 px-0"} ${
@@ -315,7 +315,7 @@ const NavHome = () => {
                   </NavbarItem>
                 </div>
 
-                <NavbarItem className="hidden lg:flex h-full items-start mt-10">
+                <NavbarItem className="hidden lg:flex h-full items-center">
                   <Button
                     as={Link}
                     className={`${!token && "bg-transparent min-w-0 px-0"} ${
@@ -330,7 +330,7 @@ const NavHome = () => {
                 </NavbarItem>
 
                 {!token && (
-                  <NavbarItem className="h-full mt-1">
+                  <NavbarItem className="h-full flex items-center">
                     <Button
                       as={Link}
                       className="bg-[var(--green100)] text-white px-[18px] py-[10px] rounded-[8px]"

@@ -13,13 +13,13 @@ import SelectFilter from "../_shared/sort/selects";
 
 export default function Originals() {
   const [pagination, setPagination] = useState({ page: 1, total: 1 });
-  const [filter, setFilter] = useState<Filters>("all");
+  const [filter, setFilter] = useState<Filters>("ongoing");
   const categories = [
     {
-      label: "Completed",
+      label: "Ongoing",
     },
     {
-      label: "Ongoing",
+      label: "Completed",
     },
   ];
   const [comics, setComics] = useState([]);
@@ -58,7 +58,9 @@ export default function Originals() {
             <Tabs
               aria-label="genres_tab"
               items={categories}
+              selectedKey={filter}
               onSelectionChange={(key:any)=>setFilter(key)}
+              defaultSelectedKey={filter}
               classNames={{
                 tabList: "bg-[var(--bg-secondary)] px-2.5 py-2.5 ",
                 tab: "text-[#FCFCFD] h-[40px]",
@@ -71,6 +73,7 @@ export default function Originals() {
               // onSelectionChange={(tab: React.Key) => {
               //   console.log(tab);
               // }}
+              
             >
               {categories.map((item, i) => (
                 <Tab className="p-0" key={item.label} title={item.label} />
