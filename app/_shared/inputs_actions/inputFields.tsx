@@ -71,6 +71,7 @@ interface CustomInputProps {
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   error?:boolean;
   isDisabled?:boolean
+  placecolor ?:boolean
 }
 
 export const FlatInput: React.FC<CustomInputProps> = ({
@@ -82,15 +83,16 @@ export const FlatInput: React.FC<CustomInputProps> = ({
   onChange,
   onBlur,
   error,
-  isDisabled
+  isDisabled,
+  placecolor
 }) => {
   return (
-    <div  className="w-full flex flex-col gap-1.5">
+    <div className="w-full flex flex-col gap-1.5">
       <label>{label}</label>
       <div
-        className={`w-full rounded-[8px] overflow-hidden border ${
+        className={`w-full rounded-[8px] overflow-hidden border  ${
           error ? "border-danger" : "border-transparent"
-        }`}
+        } `}
       >
         <input
           type={type}
@@ -98,10 +100,13 @@ export const FlatInput: React.FC<CustomInputProps> = ({
           value={value}
           onChange={onChange}
           onBlur={onBlur}
-          className={`w-full py-[10px] px-6 bg-[#D9D9D9] rounded-[8px] text-[#8C8C8C] focus:text-[#000000]`}
+          className={`w-full py-[10px] px-6 bg-[#D9D9D9] rounded-[8px] text-[#8C8C8C] focus:text-[#000000] pr-16 ${
+            placecolor
+              ? " placeholder:text-[#05834B]"
+              : "placeholder:text-[#8C8C8C]"
+          }`}
           placeholder={placeholder}
           disabled={isDisabled}
-
         />
       </div>
       {/* {Boolean(error) && <div className="text-danger">{error}</div>} */}

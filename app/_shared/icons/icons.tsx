@@ -51,6 +51,9 @@ import OriginalIcon from "@/public/static/svg/original.svg";
 import OriginalIconColored from "@/public/static/svg/original_colored.svg";
 import ShareIcon from "@/public/static/svg/shareicon.svg";
 import Copyicon from "@/public/static/svg/copyicon.svg"
+import CommentIcon from "@/public/static/svg/commentprofile.svg"
+import Mobilecommenticon from "@/public/static/svg/mobilecommenticon.svg"
+import Sendicon from "@/public/static/svg/sendicon.svg"
 export {
   ToonCentralIcon,
   ThumbsSolid,
@@ -78,7 +81,7 @@ export {
   SmallFaves,
   LikesSmall,
   ShareIcon,
-  Copyicon
+  Copyicon,CommentIcon,Mobilecommenticon,Sendicon
 };
 
 export { Steps, Steps2, Steps3 };
@@ -92,6 +95,7 @@ export {
   BXSRight,
   DownMenuArrow,
   SearchIcon,
+  
 };
 
 //socials
