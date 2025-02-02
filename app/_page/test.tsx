@@ -6,35 +6,55 @@ import image from "@/public/static/images/comics/new_0.png";
 import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "../utils/queries/requests";
 import { Comic } from "@/helpers/types";
+import Link from "next/link";
+import Image from "next/image";
 
 const HorizontalScroll = () => {
-  const [actionItems, setActionItems] = useState([]);
-
+  const [actionItems, setActionItems] = useState<Comic[]>([]);
+  const [ComedyItems, setComedyItems] = useState<Comic[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [comedyPage, setComedyPage] = useState<number>(1);
   const fetchMoreData = () => {
-    // Simulate API call
-    setTimeout(() => {
-      setActionItems((prevItems) => [...prevItems]);
-    }, 1500);
+    setPage((prev) => prev + 1);
   };
-  const { data:genreList } = useQuery({
+  console.log(page)
+  const fetchMoreComedyData = () => {
+    setComedyPage((prev) => prev + 1);
+  };
+  const { data: genreList } = useQuery({
     queryKey: ["all_genres"],
     queryFn: () => getRequest("/genres/pull/list"),
   });
 
   const { data, isLoading, isFetching, isSuccess } = useQuery({
-    queryKey: [`genre_action`],
-    queryFn: () => getRequest(`/genres/comic/1/all?page=${1}&limit${2}`),
+    queryKey: [`genre_action`, page],
+    queryFn: () => getRequest(`/genres/comic/1/all?page=${page}&limit=${6}`),
   });
-  console.log(data)
-  // jnfv
+  const {
+    data: comedyData,
+    isLoading: comedyIsLoading,
+    isFetching: comedyIsFetching,
+    isSuccess: comedyIsSuccess,
+  } = useQuery({
+    queryKey: [`genre_comedy`, comedyPage],
+    queryFn: () =>
+      getRequest(`/genres/comic/3/all?page=${comedyPage}&limit=${5}`),
+  });
+  
+  console.log(data);
   useEffect(() => {
     if (isSuccess) {
-      setActionItems(data?.data?.comics || []);
+      setActionItems((prev) => [...prev, ...data.data.comics]);
     }
   }, [isFetching, isLoading, data]);
-  console.log(actionItems)
+  useEffect(() => {
+    if (comedyIsSuccess) {
+      setComedyItems((prev) => [...prev, ...comedyData.data.comics]);
+    }
+  }, [comedyIsLoading, comedyIsFetching, comedyIsSuccess]);
+  console.log(data?.data?.pagination?.totalPages);
   return (
-    <div className="parent-wrap py-10 block md:hidden " >
+    <div className="parent-wrap py-10 block md:hidden ">
       <div className="child-wrap">
         <H2SectionTitle title="Favourites Genre" />
         <div className=" bg-[#151D29] rounded-lg p-5">
@@ -51,22 +71,34 @@ const HorizontalScroll = () => {
             <InfiniteScroll
               dataLength={actionItems.length}
               next={fetchMoreData}
-              hasMore={true}
+              hasMore={page < data?.data?.pagination?.totalPages}
               scrollableTarget="scrollable-div"
-              loader={<h4>Loading...</h4>} // Add a loader
+              loader={
+               
+                  <h4>Loading...</h4>
+               
+              } // Add a loader
               className="horizontal-scroll"
             >
-              {actionItems.map((_:Comic, index) => (
-                <div
+              {actionItems.map((actionComic: Comic, index) => (
+                <Link
                   key={index}
-                  className={`scroll-item`}
-                  style={{
-                    backgroundImage: `url(${_?.coverImage})`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: "cover",
-                    backgroundPosition:"center"
-                  }}
-                ></div>
+                  href={`${
+                    actionComic?.uuid ? `/comics/${actionComic?.uuid}` : ""
+                  }`}
+                >
+                  <div className="scroll-item overflow-hidden">
+                    <img
+                      src={actionComic?.backgroundImage}
+                      alt="sdp"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                </Link>
               ))}
             </InfiniteScroll>
           </div>
@@ -84,22 +116,31 @@ const HorizontalScroll = () => {
           >
             <InfiniteScroll
               dataLength={actionItems.length}
-              next={fetchMoreData}
+              next={fetchMoreComedyData}
               hasMore={true}
               scrollableTarget="scrollable-div"
               loader={<h4>Loading...</h4>} // Add a loader
               className="horizontal-scroll"
             >
-              {actionItems.map((_:Comic, index) => (
-                <div
+              {ComedyItems.map((comedyComic: Comic, index) => (
+                <Link
+                  href={`${
+                    comedyComic?.uuid ? `/comics/${comedyComic?.uuid}` : ""
+                  }`}
                   key={index}
-                  className={`scroll-item`}
-                  style={{
-                    backgroundImage: `url(${image.src})`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: "cover",
-                  }}
-                ></div>
+                >
+                  <div className="scroll-item overflow-hidden">
+                    <img
+                      src={comedyComic?.backgroundImage}
+                      alt="sdp"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                </Link>
               ))}
             </InfiniteScroll>
           </div>

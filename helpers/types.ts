@@ -14,14 +14,26 @@ interface Genre {
   created_at: string;
 }
 
-interface User {
+export interface User {
   id: number;
   first_name: string;
   last_name: string;
   email: string;
   username: string;
-  photo:string
-  // Add any other relevant fields if needed
+  photo: string;
+  phone: string;
+  country_id: number;
+  currency_id: number;
+  user_type_id: number;
+  is_blocked: boolean;
+  is_email_verified: boolean;
+  is_official_user: boolean;
+  is_suspended: boolean;
+  created_at: string; // ISO date string
+  updated_at: string; // ISO date string
+  deleted_at: string | null;
+  welcome_note: string;
+  
 }
 
 export interface Comic {
