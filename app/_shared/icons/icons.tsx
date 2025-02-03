@@ -29,13 +29,13 @@ import HeartIcon from "@/public/static/svg/heart_icon.svg";
 import CommentPop from "@/public/static/svg/commentspop.svg";
 import ColouredThumbsupSolid from "@/public/static/svg/colorthumbssolid.svg";
 import ColoredEyeFilled from "@/public/static/svg/colored_eye_filled.svg";
-import SmallEyeIcon from "@/public/static/svg/smallview.svg"
+import SmallEyeIcon from "@/public/static/svg/smallview.svg";
 import ColoredTwotone from "@/public/static/svg/coloredtwotone.svg";
 import Googleplay from "@/public/static/svg/google_banner.svg";
 import Appstore from "@/public/static/svg/appstore_banner.svg";
 import Seeall from "@/public/static/svg/see_all_icon.svg";
-import SmallFaves from "@/public/static/svg/smallfav.svg"
-import LikesSmall from "@/public/static/svg/likesmall.svg"
+import SmallFaves from "@/public/static/svg/smallfav.svg";
+import LikesSmall from "@/public/static/svg/likesmall.svg";
 // import socials
 import Twitter from "@/public/static/svg/socials/twitter.svg";
 import Facebook from "@/public/static/svg/socials/faceboook.svg";
@@ -49,6 +49,11 @@ import GenresIconColored from "@/public/static/svg/genres_colored.svg";
 import TrendingIcon from "@/public/static/svg/trending.svg";
 import OriginalIcon from "@/public/static/svg/original.svg";
 import OriginalIconColored from "@/public/static/svg/original_colored.svg";
+import ShareIcon from "@/public/static/svg/shareicon.svg";
+import Copyicon from "@/public/static/svg/copyicon.svg"
+import CommentIcon from "@/public/static/svg/commentprofile.svg"
+import Mobilecommenticon from "@/public/static/svg/mobilecommenticon.svg"
+import Sendicon from "@/public/static/svg/sendicon.svg"
 export {
   ToonCentralIcon,
   ThumbsSolid,
@@ -72,7 +77,11 @@ export {
   ColoredEyeFilled,
   Seeall,
   ColoredTwotone,
-  SmallEyeIcon,SmallFaves,LikesSmall
+  SmallEyeIcon,
+  SmallFaves,
+  LikesSmall,
+  ShareIcon,
+  Copyicon,CommentIcon,Mobilecommenticon,Sendicon
 };
 
 export { Steps, Steps2, Steps3 };
@@ -86,6 +95,7 @@ export {
   BXSRight,
   DownMenuArrow,
   SearchIcon,
+  
 };
 
 //socials

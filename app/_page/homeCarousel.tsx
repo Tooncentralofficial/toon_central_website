@@ -12,8 +12,11 @@ import "swiper/css";
 import { motion } from "framer-motion";
 import Curve from "../_shared/curve";
 import EllipseGray, { Ellipse } from "../_shared/ellipse/ellipseGray";
+import ModalContainer from "../_shared/modals/modalcont";
+import { useDisclosure } from "@nextui-org/react";
 export const staticCardItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 function HomeCarousel() {
+  
   const [carouselItems, setCarouselItems] = useState<any>([]);
   const [screenSize, setScreenSize] = useState<string>("");
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -192,9 +195,7 @@ function HomeCarousel() {
                     cardData={item}
                     index={i}
                     queryKey={carouselQueryKey}
-                    expand={
-                      true
-                    }
+                    expand={true}
                   />
                 </motion.div>
               </SwiperSlide>
@@ -216,9 +217,9 @@ function HomeCarousel() {
             }}
           />
           {/* <Ellipse /> */}
-          <div className="child-wrap-sm home-slick-cont relative">
+          <div className="child-wrap-sm home-slick-cont relative ">
             <div className="relative">
-            {/* <Curve
+              {/* <Curve
                 backgroundImage={
                   hoverIndex !== -1 &&
                   carouselItems[hoverIndex]?.backgroundImage
@@ -345,6 +346,7 @@ function HomeCarousel() {
               <ArrowCircle type="right" />
             </div>
           </div>
+          
         </div>
       )}
     </>

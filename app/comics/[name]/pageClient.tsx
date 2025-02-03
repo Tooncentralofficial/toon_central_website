@@ -10,6 +10,8 @@ import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import NotFound from "@/app/user/library/_shared/notFound";
 import { usePathname } from "next/navigation";
+import OtherBooks from "./_shared/otherbooks";
+import YouLike from "./_shared/youlike";
 
 export interface ViewComicProps {
   uid: any;
@@ -28,7 +30,8 @@ const PageClient = ({ params }: { params: { name: string } }) => {
     queryFn: () => getRequestProtected(`/comics/${name}/view`, token, pathname),
     enabled: token !== null,
   });
-  
+  const creator = data?.data.user;
+
   useEffect(() => {
     if (isSuccess) setComic(data?.data || null);
   }, [data, isFetching, isSuccess]);
@@ -77,6 +80,8 @@ const PageClient = ({ params }: { params: { name: string } }) => {
                 isLoading={isLoading}
                 queryKey={queryKey}
               />
+              <OtherBooks creator={creator} />
+              <YouLike uuid={data?.data?.uuid} />
             </>
           )}
         </div>

@@ -1,7 +1,15 @@
 "use client";
-import React, { useEffect, useState } from 'react'
-import { Appstore, Facebook, Googleplay, Insta, Linkedin, ToonCentralIcon, Twitter } from '../icons/icons';
-import Link from 'next/link';
+import React, { useEffect, useState } from "react";
+import {
+  Appstore,
+  Facebook,
+  Googleplay,
+  Insta,
+  Linkedin,
+  ToonCentralIcon,
+  Twitter,
+} from "../icons/icons";
+import Link from "next/link";
 
 const Mainfooter = () => {
   return (
@@ -28,7 +36,9 @@ const Mainfooter = () => {
             <Link href={"/policies"}>
               <p>Privacy </p>
             </Link>
-            <p>Contact</p>
+            <Link href={"/contactus"}>
+              <p>Contact</p>
+            </Link>
           </div>
           <div className="flex gap-5 md:gap-5 lg:gap-10 justify-center md:justify-normal">
             <Facebook />
@@ -45,7 +55,7 @@ const Mainfooter = () => {
       </div>
     </div>
   );
-}
+};
 const MainfooterWithDelay = ({ delay = 2000 }: { delay?: number }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -54,7 +64,6 @@ const MainfooterWithDelay = ({ delay = 2000 }: { delay?: number }) => {
       setIsVisible(true);
     }, delay);
 
-    
     return () => clearTimeout(timer);
   }, [delay]);
 

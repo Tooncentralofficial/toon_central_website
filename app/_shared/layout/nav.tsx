@@ -77,42 +77,45 @@ const menuItems: { name: string; link: string }[] = [
   },
 ];
 const menuItemsmob: { name: string; link: string }[] = [
-  
   {
     name: "Creator101",
     link: "/creator",
   },
   {
-    name:"Notification",
-    link:"/notification"
-  }
+    name: "Notification",
+    link: "/notification",
+  },
 ];
-const menuItemsMobile: { name: string; link: string ,icon:string,active:string}[] = [
+const menuItemsMobile: {
+  name: string;
+  link: string;
+  icon: string;
+  active: string;
+}[] = [
   {
     name: "home",
     link: "/",
-    icon:HomeIcon,
-    active:HomeIconColored
+    icon: HomeIcon,
+    active: HomeIconColored,
   },
   {
     name: "genres",
     link: "/genres",
-    icon:GenresIcon,
-    active:GenresIconColored
+    icon: GenresIcon,
+    active: GenresIconColored,
   },
   {
     name: "Original",
     link: "/original",
-    icon:OriginalIcon,
-    active:OriginalIconColored
+    icon: OriginalIcon,
+    active: OriginalIconColored,
   },
   {
     name: "Trending",
     link: "/trending",
-    icon:TrendingIcon,
-    active:TrendingIcon
+    icon: TrendingIcon,
+    active: TrendingIcon,
   },
-  
 ];
 
 const NavHome = () => {
@@ -138,7 +141,7 @@ const NavHome = () => {
   });
 
   const handleToggle = () => setIsSide(!isSide);
-  const { sm, lg } = UseTailwindMediaQuery();
+  const { sm,md, lg } = UseTailwindMediaQuery();
 
   const { onClose, onOpen, isOpen, onOpenChange } = useDisclosure();
 
@@ -147,8 +150,8 @@ const NavHome = () => {
       <Navbar
         isBlurred={false}
         shouldHideOnScroll
-        className="bg-[var(--bg-menu-cont)] py-6 flex"
-        height={"5.5rem"}
+        className="bg-[var(--bg-menu-cont)] py-10 flex"
+        height={md ? "3rem" : "4rem"}
         maxWidth="2xl"
         isMenuOpen={isSide && !lg}
         classNames={{
@@ -165,7 +168,7 @@ const NavHome = () => {
               </NavbarBrand>
             </NavbarContent>
 
-            <NavbarContent className="hidden lg:flex gap-8" justify="center">
+            <NavbarContent className="hidden lg:flex gap-8 " justify="center">
               {menuItems.map((item, i) => (
                 <NavbarItem key={i}>
                   <Link href={item.link}>
@@ -206,7 +209,7 @@ const NavHome = () => {
                     </Link>
                   </NavbarMenuItem>
                 ))}
-                <div className="mt-10 w-full flex">
+                <div className=" w-full flex ">
                   <Button
                     as={Link}
                     className={`${!token && "bg-transparent min-w-0 px-0"} ${
@@ -223,7 +226,7 @@ const NavHome = () => {
               </div>
             </NavbarMenu>
             <NavbarContent className="" justify="end">
-              <NavbarContent className="flex" justify="end">
+              <NavbarContent className="flex " justify="end">
                 <NavbarItem className="flex items-center gap-4">
                   <button onClick={onOpen}>
                     <SearchIcon />
@@ -256,36 +259,6 @@ const NavHome = () => {
                       className="h-[36px] border-white"
                     />
                   </div>
-
-                  {/* <NavbarItem>
-      <Dropdown>
-        <DropdownTrigger>
-          <Button className="bg-transparent" isIconOnly>
-            <BellIcon />
-          </Button>
-        </DropdownTrigger>
-        <DropdownMenu aria-label="Notification">
-          <DropdownItem key="1">
-            Tooncentral Updated Chapter for Red Devils
-          </DropdownItem>
-          <DropdownItem key="2">
-            Tooncentral Updated Chapter for Red Devils
-          </DropdownItem>
-          <DropdownItem key="3">
-            Tooncentral Updated Chapter for Red Devils
-          </DropdownItem>
-          <DropdownItem
-            key="all"
-            className="text-danger text-center"
-            color="danger"
-            as={Link}
-            href="/user/notifications"
-          >
-            See all
-          </DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
-    </NavbarItem> */}
 
                   <NavbarItem>
                     <Dropdown>
@@ -342,7 +315,7 @@ const NavHome = () => {
                   </NavbarItem>
                 </div>
 
-                <NavbarItem className="hidden lg:flex h-full items-start mt-10">
+                <NavbarItem className="hidden lg:flex h-full items-center">
                   <Button
                     as={Link}
                     className={`${!token && "bg-transparent min-w-0 px-0"} ${
@@ -357,7 +330,7 @@ const NavHome = () => {
                 </NavbarItem>
 
                 {!token && (
-                  <NavbarItem className="h-full mt-10">
+                  <NavbarItem className="h-full flex items-center">
                     <Button
                       as={Link}
                       className="bg-[var(--green100)] text-white px-[18px] py-[10px] rounded-[8px]"
@@ -383,7 +356,7 @@ const NavHome = () => {
         />}/> */}
             </NavbarContent>
           </div>
-          <div className="block md:hidden w-full h-full pt-3 pb-5 ">
+          <div className="block md:hidden w-full h-full  pb-5 mt-3">
             <div className="flex justify-between items-center w-full  ">
               {menuItemsMobile.map((item, i) => (
                 <NavbarItem key={i} className="flex-shrink-0">
@@ -415,3 +388,36 @@ const NavHome = () => {
 };
 
 export default NavHome;
+
+
+{
+  /* <NavbarItem>
+      <Dropdown>
+        <DropdownTrigger>
+          <Button className="bg-transparent" isIconOnly>
+            <BellIcon />
+          </Button>
+        </DropdownTrigger>
+        <DropdownMenu aria-label="Notification">
+          <DropdownItem key="1">
+            Tooncentral Updated Chapter for Red Devils
+          </DropdownItem>
+          <DropdownItem key="2">
+            Tooncentral Updated Chapter for Red Devils
+          </DropdownItem>
+          <DropdownItem key="3">
+            Tooncentral Updated Chapter for Red Devils
+          </DropdownItem>
+          <DropdownItem
+            key="all"
+            className="text-danger text-center"
+            color="danger"
+            as={Link}
+            href="/user/notifications"
+          >
+            See all
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+    </NavbarItem> */
+}

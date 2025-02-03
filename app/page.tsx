@@ -42,7 +42,7 @@ export default async function Home() {
         <TodaysPicks />
         <PopularByToons />
         <Originals />
-        {/* <HorizontalScroll /> */}
+        <HorizontalScroll />
         <Footer />
         <MainfooterWithDelay />
       </main>
