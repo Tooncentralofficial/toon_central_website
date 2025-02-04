@@ -15,12 +15,15 @@ const CardTitleBottom = ({
   cardWidth,
   expand,
   queryKey,
+  small
+
 }: {
   cardData: any;
   index: number;
   cardWidth?: string;
   expand?: boolean;
   queryKey?: string;
+  small?:boolean
 }) => {
   const { user, token } = useSelector(selectAuthState);
   const uid= cardData?.uuid;
@@ -55,7 +58,7 @@ const pathname = usePathname();
   });
   return (
     <div
-      className={`h-[260px] rounded-[10px] overflow-hidden`}
+      className={`${small ?"h-[150px]" :"h-[260px]" } md:h-[260px] rounded-[10px] overflow-hidden`}
       style={{ width: cardWidth || "100%" }} // Inline style for dynamic width
       //className="h-[260px] min-w-max w-max  rounded-[8px] overflow-hidden"
     >
@@ -88,9 +91,9 @@ const pathname = usePathname();
                 {expand && (
                   <motion.a
                     onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      subscibe()
+                      e.preventDefault();
+                      e.stopPropagation();
+                      subscibe();
                     }}
                     href=""
                     initial={{ opacity: 0 }}

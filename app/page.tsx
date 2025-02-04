@@ -41,8 +41,8 @@ export default async function Home() {
         <Trending />
         <TodaysPicks />
         <PopularByToons />
-        <Originals />
         <HorizontalScroll />
+        <Originals />
         <Footer />
         <MainfooterWithDelay />
       </main>

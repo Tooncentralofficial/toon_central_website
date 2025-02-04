@@ -16,7 +16,7 @@ const CardTitleInMobile = ({
   queryKey?: string;
 }) => {
   return (
-    <div className="">
+    <div className="rounded-xl">
       <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
         <div
           className={`w-[7.1rem] h-[6.5rem] flex flex-col justify-end pl-1 pb-1`}

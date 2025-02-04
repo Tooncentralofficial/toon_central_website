@@ -1,6 +1,6 @@
 const EllipseGray = () => {
   return (
-    <div className="absolute h-[36px]  top-[80px] left-0 w-full z-10">
+    <div className="absolute h-[36px] top-[87px] md:top-[80px] left-0 w-full z-10">
       <svg
         width="1242"
         height="42"
