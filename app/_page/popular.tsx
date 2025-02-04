@@ -91,7 +91,9 @@ const Popular = () => {
       <div className="child-wrap flex w-full flex-col">
         <H2SectionTitle title="Popular by ToonCentral" />
         <div className=" slider-container">
-          <EllipseGray />
+         
+            <EllipseGray />
+          
           <Slider
             ref={(slider) => {
               sliderRef = slider;

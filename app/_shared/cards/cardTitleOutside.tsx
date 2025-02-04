@@ -14,7 +14,7 @@ const CardTitleOutside = ({
 }) => {
   return (
     <div>
-      <div className="h-[260px] md:h-[320px]  rounded-[8px] overflow-hidden">
+      <div className="h-[110px] md:h-[320px]  rounded-[8px] overflow-hidden">
         <div className="h-full w-auto relative">
           <Image
             src={`${cardData?.coverImage || ""}`}
@@ -30,7 +30,7 @@ const CardTitleOutside = ({
             unoptimized
           />
           <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
-            <div className="absolute top-0 left-0  h-full w-full flex flex-col justify-end p-4 bg-[#FCFCFD10] ">
+            <div className="absolute top-0 left-0 p-1  h-full w-full flex flex-col justify-end sm:p-4 bg-[#FCFCFD10] ">
               <Likes
                 likesNViews={cardData?.likesAndViews}
                 queryKey={queryKey}

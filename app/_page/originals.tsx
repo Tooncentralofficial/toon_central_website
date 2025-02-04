@@ -40,21 +40,29 @@ const Originals = () => {
         <H2SectionTitle title="ToonCentral Original">
           <Link href="/original">See all</Link>
         </H2SectionTitle>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+        <div className="grid grid-cols-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5 gap-1">
           {isLoading ? (
-            dummyItems.slice(0,5).map((item, i) => <LoadingTitleOutside key={i} />)
+            dummyItems
+              .slice(0, 5)
+              .map((item, i) => <LoadingTitleOutside key={i} />)
           ) : (
             <>
               {cardItems?.length > 0 ? (
                 <>
                   {responsiveCardItems.map((item: any, i: number) => (
                     <div key={i}>
-                      <CardTitleOutside cardData={item} index={i} queryKey={originalsqueryKey} />
+                      <CardTitleOutside
+                        cardData={item}
+                        index={i}
+                        queryKey={originalsqueryKey}
+                      />
                     </div>
                   ))}
                 </>
               ) : (
-                dummyItems.slice(0,5).map((item, i) => <LoadingTitleOutside key={i} />)
+                dummyItems
+                  .slice(0, 5)
+                  .map((item, i) => <LoadingTitleOutside key={i} />)
               )}
             </>
           )}

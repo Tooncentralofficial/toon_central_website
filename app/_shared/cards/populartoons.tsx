@@ -7,13 +7,19 @@ const PopularToonscard = ({item,index}:{item:Comic,index:number}) => {
   return (
     <Link href={`${item?.uuid ? `/comics/${item?.uuid}` : ""}`}>
       <div className="flex gap-5">
-        <p className="pr-2">{index + 1}</p>
-        <div className="w-[60px] h-[60px] overflow-hidden rounded-[6px]">
+        <p
+          className={`${
+            index === 0 && "bg-[#05834B] rounded-[50%]"
+          } h-[1.5rem] w-[1.5rem] flex items-center justify-center`}
+        >
+          {index + 1}
+        </p>
+        <div className="w-[45px] h-[45px] overflow-hidden rounded-[6px]">
           <Image
             src={item.coverImage}
             layout="responsive"
-            width={60}
-            height={60}
+            width={40}
+            height={40}
             alt={`item`}
             style={{
               objectFit: "cover",
@@ -24,7 +30,7 @@ const PopularToonscard = ({item,index}:{item:Comic,index:number}) => {
         </div>
         <div>
           <p>{item?.genre?.name} </p>
-          <p className="font-extrabold">{item?.title}</p>
+          <p className="font-bold">{item?.title}</p>
         </div>
       </div>
     </Link>

@@ -73,11 +73,7 @@ const HorizontalScroll = () => {
               next={fetchMoreData}
               hasMore={page < data?.data?.pagination?.totalPages}
               scrollableTarget="scrollable-div"
-              loader={
-               
-                  <h4>Loading...</h4>
-               
-              } // Add a loader
+              loader={<h4>Loading...</h4>}
               className="horizontal-scroll"
             >
               {actionItems.map((actionComic: Comic, index) => (
@@ -117,9 +113,9 @@ const HorizontalScroll = () => {
             <InfiniteScroll
               dataLength={actionItems.length}
               next={fetchMoreComedyData}
-              hasMore={true}
+              hasMore={comedyPage < comedyData?.data?.pagination?.totalPages}
               scrollableTarget="scrollable-div"
-              loader={<h4>Loading...</h4>} // Add a loader
+              loader={<h4>Loading...</h4>}
               className="horizontal-scroll"
             >
               {ComedyItems.map((comedyComic: Comic, index) => (

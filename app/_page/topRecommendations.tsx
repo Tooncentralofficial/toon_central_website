@@ -7,6 +7,7 @@ import { dummyItems } from "../_shared/data";
 import LoadingTitleTop from "../_shared/cards/loadingTitleTop";
 import ModalContainer from "../_shared/modals/modalcont";
 import { useDisclosure } from "@nextui-org/react";
+import CardTitleBottom from "../_shared/cards/cardTitleBottom";
 
 const TopRecommendations = ({
   isLoading,
@@ -46,7 +47,12 @@ const TopRecommendations = ({
             <>
               {cardItems.slice(0, sliced).map((item: any, i: number) => (
                 <div key={i}>
-                  <CardTitleTop cardData={item} index={i} />
+                  <div key={i} className="hidden md:visible">
+                    <CardTitleTop cardData={item} index={i} />
+                  </div>
+                  <div className="visible md:hidden">
+                    <CardTitleBottom cardData={item} index={i} small />
+                  </div>
                 </div>
               ))}
             </>
