@@ -40,7 +40,7 @@ const Originals = () => {
         <H2SectionTitle title="ToonCentral Original">
           <Link href="/original">See all</Link>
         </H2SectionTitle>
-        <div className="grid grid-cols-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5 gap-1">
+        <div className="grid grid-cols-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5 gap-2">
           {isLoading ? (
             dummyItems
               .slice(0, 5)

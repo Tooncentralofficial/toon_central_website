@@ -47,7 +47,7 @@ const TopRecommendations = ({
             <>
               {cardItems.slice(0, sliced).map((item: any, i: number) => (
                 <div key={i}>
-                  <div key={i} className="hidden md:visible">
+                  <div key={i} className="hidden md:block">
                     <CardTitleTop cardData={item} index={i} />
                   </div>
                   <div className="visible md:hidden">

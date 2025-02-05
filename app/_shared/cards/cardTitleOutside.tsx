@@ -30,7 +30,7 @@ const CardTitleOutside = ({
             unoptimized
           />
           <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
-            <div className="absolute top-0 left-0 p-1  h-full w-full flex flex-col justify-end sm:p-4 bg-[#FCFCFD10] ">
+            <div className="hidden absolute top-0 left-0 p-1  h-full w-full md:flex flex-col justify-end sm:p-4 bg-[#FCFCFD10] ">
               <Likes
                 likesNViews={cardData?.likesAndViews}
                 queryKey={queryKey}
