@@ -31,6 +31,12 @@ function HomeCarousel() {
     queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
   });
   const swiper = useSwiper();
+
+  useEffect(() => {
+    if (!swiperRef.current) return; // Ensure swiper is initialized
+    const { slidesPerView } = swiperRef.current.params;
+    setSlidesPerPage(slidesPerView);
+  }, [swiperRef.current]); 
   useEffect(() => {
     if (isSuccess) {
       setCarouselItems(data?.data?.comics || dummyItems);
@@ -280,7 +286,7 @@ function HomeCarousel() {
                   },
                 }}
               >
-                {carouselItems.map((item: any, i: number) => (
+                {carouselItems.slice(0, 7).map((item: any, i: number) => (
                   <SwiperSlide key={i}>
                     <motion.div
                       key={i}
@@ -346,7 +352,6 @@ function HomeCarousel() {
               <ArrowCircle type="right" />
             </div>
           </div>
-          
         </div>
       )}
     </>

@@ -20,7 +20,7 @@ const TopRecommendations = ({
   useEffect(() => {
     const updateSliced = () => {
       if (window.matchMedia("(max-width: 540px)").matches) {
-        setSliced(3);
+        setSliced(4);
       } else if (window.matchMedia("(max-width: 1024px)").matches) {
         setSliced(6);
       } else {

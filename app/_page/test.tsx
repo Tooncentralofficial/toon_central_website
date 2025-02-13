@@ -111,7 +111,7 @@ const HorizontalScroll = () => {
             }}
           >
             <InfiniteScroll
-              dataLength={actionItems.length}
+              dataLength={ComedyItems.length}
               next={fetchMoreComedyData}
               hasMore={comedyPage < comedyData?.data?.pagination?.totalPages}
               scrollableTarget="scrollable-div"

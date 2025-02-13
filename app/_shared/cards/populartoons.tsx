@@ -29,8 +29,8 @@ const PopularToonscard = ({item,index}:{item:Comic,index:number}) => {
           />
         </div>
         <div>
-          <p>{item?.genre?.name} </p>
-          <p className="font-bold">{item?.title}</p>
+          <p className='text-[0.9rem]'>{item?.genre?.name} </p>
+          <p className="text-[1.1rem]">{item?.title}</p>
         </div>
       </div>
     </Link>
