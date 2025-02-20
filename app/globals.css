@@ -18,7 +18,7 @@
     --text-primary: #fcfcfd;
     --bg-tab-cursor:#475467;
     --bg-menu-cont:#0d111da8;
-  --green100: #05834b;
+  --green100: #3EFFA2;
   --gray100: #475467;
   --image-bkg: #d56b6b;
   --homeCouroselbg: #6d2445
@@ -27,7 +27,9 @@
   --bg-secondary: #8e949d;
   --text-primary: #0f0202;
   --bg-tab-cursor:#fcfcfd;
-  --bg-menu-cont:#fcfcfda8; */
+  --bg-menu-cont:#fcfcfda8;
+   --green100: #05834b;
+   */
 }
 
 /* @media (prefers-color-scheme: dark) {
