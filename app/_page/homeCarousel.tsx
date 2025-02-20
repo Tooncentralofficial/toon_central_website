@@ -32,11 +32,7 @@ function HomeCarousel() {
   });
   const swiper = useSwiper();
 
-  useEffect(() => {
-    if (!swiperRef.current) return; // Ensure swiper is initialized
-    const { slidesPerView } = swiperRef.current.params;
-    setSlidesPerPage(slidesPerView);
-  }, [swiperRef.current]); 
+  
   useEffect(() => {
     if (isSuccess) {
       setCarouselItems(data?.data?.comics || dummyItems);
