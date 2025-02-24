@@ -178,7 +178,7 @@ function HomeCarousel() {
   return (
     <>
       {screenSize === "small" ? (
-        <div className="parent-wrap bg-[--homeCouroselbg]  transition-colors duration-400 ease-in-out relative">
+        <div className="parent-wrap  transition-colors duration-400 ease-in-out relative mt-5">
           <Swiper
             modules={[Autoplay]}
             loop={true}
@@ -186,9 +186,11 @@ function HomeCarousel() {
               delay: 3000,
               disableOnInteraction: false,
             }}
-            spaceBetween={15}
+            spaceBetween={9}
             slidesPerGroup={1}
+            slidesPerView={1.2}
             slidesPerGroupAuto={true}
+            centeredSlides={true}
           >
             {carouselItems.map((item: any, i: number) => (
               <SwiperSlide key={i}>
@@ -198,6 +200,7 @@ function HomeCarousel() {
                     index={i}
                     queryKey={carouselQueryKey}
                     expand={true}
+                    
                   />
                 </motion.div>
               </SwiperSlide>
