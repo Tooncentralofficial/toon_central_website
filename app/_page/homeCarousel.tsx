@@ -32,8 +32,6 @@ function HomeCarousel() {
   });
   const swiper = useSwiper();
 
-  // why is the puush not working
-  // new carousel push meant to work
   
   useEffect(() => {
     if (isSuccess) {
