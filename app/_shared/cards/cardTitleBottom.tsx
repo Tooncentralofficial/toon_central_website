@@ -58,7 +58,7 @@ const pathname = usePathname();
   });
   return (
     <div
-      className={`${small ?"h-[110px]" :"h-[260px]" } md:h-[260px] rounded-[10px] overflow-hidden`}
+      className={`${small ?"h-[110px]" :"h-[390px] " } md:h-[260px] rounded-[10px] overflow-hidden`}
       style={{ width: cardWidth || "100%" }} // Inline style for dynamic width
       //className="h-[260px] min-w-max w-max  rounded-[8px] overflow-hidden"
     >
