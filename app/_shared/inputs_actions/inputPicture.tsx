@@ -4,7 +4,7 @@ import { UploadIcon } from "../icons/icons";
 import { RoundUploadIcon } from "../icons/icons";
 import { Skeleton } from "@nextui-org/react";
 import { useState } from "react";
-const fileTypes = ["PNG", "jpeg", "JPEG", "JPG"];
+const fileTypes = ["PNG", "jpeg", "JPEG", "JPG","gif", "GIF", "jpg", "png"];
 const MAX_SIZE = 5;
 const InputPicture = ({
   formik,

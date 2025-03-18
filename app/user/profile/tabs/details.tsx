@@ -27,7 +27,8 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { usePathname } from "next/navigation";
-
+import { DateInput } from "@nextui-org/react";
+import {  parseDate } from "@internationalized/date";
 export default function DetailsTab() {
   const queryClient = useQueryClient();
   const pathname = usePathname();
@@ -35,6 +36,11 @@ export default function DetailsTab() {
   const [profile, setProfile] = useState<any>(null);
   const [countries, setCountries] = useState<any>([]);
   const { user, userType, token } = useSelector(selectAuthState);
+  const parse = (dateString: any): any => {
+    if (!dateString) return null; // Handle undefined or empty values properly
+    const [year, month, day] = dateString.split("-");
+    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  };
   const initialValues = useMemo(() => {
     let vals = {
       photo: profile?.photo || user?.photo || "",
@@ -43,6 +49,7 @@ export default function DetailsTab() {
       phone: profile?.phone || user?.phone || "",
       username: profile?.username || user?.username || "",
       countryId: profile?.countryId || user?.country_id || null,
+      dob: profile?.dob || user?.dob || "",
       email: profile?.email || user?.email || "",
       welcomeNote: profile?.welcomeNote || user?.welcome_note || "",
     };
@@ -85,6 +92,21 @@ export default function DetailsTab() {
     username: Yup.string().required(" is required"),
     // email: Yup.string().required(" is required"),
     phone: Yup.string().required(" is required"),
+    dob: Yup.string()
+      .required("Date of birth is required")
+      .test("is-18", "You must be at least 18 years old", function (value) {
+        const today = new Date();
+        const birthDate = new Date(value);
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDifference = today.getMonth() - birthDate.getMonth();
+        if (
+          monthDifference < 0 ||
+          (monthDifference === 0 && today.getDate() < birthDate.getDate())
+        ) {
+          return age > 18;
+        }
+        return age >= 18;
+      }),
     firstName: Yup.string().required(" is required"),
     lastName: Yup.string().required(" is required"),
     countryId: Yup.number().required("is required"),
@@ -284,6 +306,34 @@ export default function DetailsTab() {
                       }  outline-none`}
                     />
                   </div> */}
+            </div>
+            <div className="flex flex-col sm:flex-row gap-6 justify-between items-start bg-[#FBFBFB] p-4 rounded-[12px]">
+              <div className="flex flex-col gap-2 ">
+                <label className="text-[#272727]">Date of Birth</label>
+                <DateInput
+                  name="dob"
+                  isInvalid={Boolean(formik.touched.dob && formik.errors.dob)}
+                  onChange={(value: any) => {
+                    const formattedDate = new Date(value)
+                      .toISOString()
+                      .split("T")[0];
+                    formik.setFieldValue("dob", formattedDate);
+                  }}
+                  value={
+                    formik.values.dob ? parseDate(formik.values.dob) : undefined
+                  }
+                  
+                  variant="flat"
+                  color="primary"
+                  size="lg"
+                  classNames={{
+                    innerWrapper:
+                      "bg-[#FFFFFF] border-none focus:ring-0 focus:border-none hover:border-none outline-none",
+                    input:
+                      "text-[#000000] bg-[#FFFFFF] border-none focus:ring-0 focus:border-none hover:border-none outline-none",
+                  }}
+                />
+              </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-6 justify-between items-start bg-[#FBFBFB] p-4 rounded-[12px]">
               <div className="flex flex-col gap-2 min-w-[30%] outline">

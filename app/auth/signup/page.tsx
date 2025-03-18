@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { DateInput } from "@nextui-org/react";
 
 const Page = () => {
   const router = useRouter();
@@ -16,10 +17,26 @@ const Page = () => {
     firstName: "",
     lastName: "",
     email: "",
+    dob: "",
   };
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required(" is required"),
     lastName: Yup.string().required("Username is required"),
+    dob: Yup.string()
+      .required("Date of birth is required")
+      .test("is-18", "You must be at least 18 years old", function (value) {
+        const today = new Date();
+        const birthDate = new Date(value);
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDifference = today.getMonth() - birthDate.getMonth();
+        if (
+          monthDifference < 0 ||
+          (monthDifference === 0 && today.getDate() < birthDate.getDate())
+        ) {
+          return age > 18;
+        }
+        return age >= 18;
+      }),
     email: Yup.string()
       .email()
       .required("Email is required")
@@ -38,15 +55,15 @@ const Page = () => {
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {
-        
         toast(message, {
           toastId: "signup",
           type: "success",
         });
         const code = resData;
-        router.push(`/auth/signup/verify?email=${formik.values.email}&verification_code=${code}`);
+        router.push(
+          `/auth/signup/verify?email=${formik.values.email}&verification_code=${code}`
+        );
       } else {
-        
         toast(message, {
           toastId: "signup",
           type: "error",
@@ -54,7 +71,6 @@ const Page = () => {
       }
     },
     onError(error, variables, context) {
-      
       toast("Some error occured. Contact help !", {
         toastId: "signup",
         type: "error",
@@ -94,7 +110,28 @@ const Page = () => {
               //  errorMessage={formik.errors.lastName}
             />
           </div>
-
+          <div>
+            <DateInput
+              className=""
+              label="Date of Birth"
+              labelPlacement="outside"
+              name="dob"
+              isInvalid={Boolean(formik.touched.dob && formik.errors.dob)}
+              errorMessage={formik.errors.dob}
+              onChange={(value: any) => {
+                const formattedDate = new Date(value)
+                  .toISOString()
+                  .split("T")[0];
+                formik.setFieldValue("dob", formattedDate);
+              }}
+              variant="bordered"
+              size="lg"
+              classNames={{
+                innerWrapper: "bg-[var(--bg-secondary)]",
+                input: "text-[#9FA6B2] bg-[var(--bg-secondary)] text-sm",
+              }}
+            />
+          </div>
           <InputOutline
             name="email"
             label="Email"
@@ -120,7 +157,7 @@ const Page = () => {
           />
         </div>
         <SolidPrimaryButton
-         className="w-full mt-6"
+          className="w-full mt-6"
           type="submit"
           isLoading={registerUser.isPending}
         >
