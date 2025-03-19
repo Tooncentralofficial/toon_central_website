@@ -90,7 +90,7 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
             />
           </div>
           <div className="w-[80%] ">
-            <p className="text-2xl font-semibold lg:text-4xl uppercase">
+            <p className="text-[1.5rem] font-semibold lg:text-4xl uppercase">
               {data?.title}
             </p>
             <div className="py-3">
@@ -113,7 +113,7 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
                   <GreenUser />
                 </div>
               )}
-              <span className="flex">
+              <span className="flex flex-wrap text-[0.6rem] md:text-[0.9rem] gap-2">
                 {data?.genres.map((item: ComicGenre, i: number) => (
                   <p
                     key={i}
@@ -130,7 +130,7 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
                 <ShareIcon /> <p>share </p>
               </span>
             </div>
-            <div className="hidden lg:block pt-8 text-lg">
+            <div className="hidden lg:block pt-8 text-[0.9rem]">
               <p className="text-gray underline">Episode Update Bi-weekly</p>
               <p className="text-gray">{data?.description}</p>
             </div>
