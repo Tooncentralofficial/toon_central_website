@@ -4,6 +4,7 @@ import image from "@/public/static/images/comics/new_0.png";
 import { Comic } from '@/helpers/types';
 import Link from 'next/link';
 const PopularToonscard = ({item,index}:{item:Comic,index:number}) => {
+  console.log(item.genres[0].genre.name)
   return (
     <Link href={`${item?.uuid ? `/comics/${item?.uuid}` : ""}`}>
       <div className="flex gap-5">
@@ -29,7 +30,7 @@ const PopularToonscard = ({item,index}:{item:Comic,index:number}) => {
           />
         </div>
         <div>
-          <p className='text-[0.9rem]'>{item?.genre?.name} </p>
+          <p className="text-[0.9rem]">{item.genres[0].genre.name} </p>
           <p className="text-[1.1rem]">{item?.title}</p>
         </div>
       </div>
