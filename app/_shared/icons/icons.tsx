@@ -54,6 +54,7 @@ import Copyicon from "@/public/static/svg/copyicon.svg"
 import CommentIcon from "@/public/static/svg/commentprofile.svg"
 import Mobilecommenticon from "@/public/static/svg/mobilecommenticon.svg"
 import Sendicon from "@/public/static/svg/sendicon.svg"
+import TrendingColored from "@/public/static/svg/trending_colored.svg";
 export {
   ToonCentralIcon,
   ThumbsSolid,
@@ -109,4 +110,5 @@ export {
   TrendingIcon,
   OriginalIcon,
   OriginalIconColored,
+  TrendingColored,
 };

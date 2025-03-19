@@ -43,7 +43,7 @@ const CardTitleOutside = ({
       </div>
       <div className="flex flex-wrap gap-1 items-center justify-between mt-1.5">
         <span className="font-bold text-base">{cardData?.title}</span>
-        <span className="font-light text-xs">{cardData?.genre?.name}</span>
+        <span className="font-light text-xs">{cardData?.genres[0].genre.name}</span>
       </div>
     </div>
   );

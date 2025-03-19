@@ -26,6 +26,7 @@ import {
   DownMenuArrow,
   SearchIcon,
   ToonCentralIcon,
+  TrendingColored,
 } from "../icons/icons";
 import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
@@ -114,7 +115,7 @@ const menuItemsMobile: {
     name: "Trending",
     link: "/trending",
     icon: TrendingIcon,
-    active: TrendingIcon,
+    active: TrendingColored,
   },
 ];
 
