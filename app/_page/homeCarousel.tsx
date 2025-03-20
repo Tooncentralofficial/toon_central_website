@@ -31,8 +31,7 @@ function HomeCarousel() {
     queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
   });
   const swiper = useSwiper();
- //i am just trying to get this shii to redeploy i am so tired
- // hope it works tho
+ 
   
   useEffect(() => {
     if (isSuccess) {
@@ -286,7 +285,7 @@ function HomeCarousel() {
                   },
                 }}
               >
-                {carouselItems.slice(0, 7).map((item: any, i: number) => (
+                {carouselItems.map((item: any, i: number) => (
                   <SwiperSlide key={i}>
                     <motion.div
                       key={i}
