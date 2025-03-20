@@ -50,6 +50,11 @@
   }
 } */
 
+
+.boldtxt {
+  font-family: var(--font-satoshi-bold);
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: var(--bg-primary);
@@ -106,6 +111,12 @@ body {
     text-wrap: balance;
   }
 }
+@layer components {
+  .text-size-1{
+    @apply text-[0.9rem] md:text-[1.2rem]
+  }
+}
+
 .horizontal-scroll {
   display: flex;
   overflow-x: auto;
@@ -119,4 +130,8 @@ body {
   width: 40px; /* Item width */
   height: 40px; /* Item height */
   border-radius: 50%;
+}
+
+p{
+  font-family: var(--font-satoshi-regular);
 }

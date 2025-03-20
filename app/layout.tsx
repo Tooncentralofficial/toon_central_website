@@ -6,9 +6,41 @@ import "slick-carousel/slick/slick-theme.css";
 import "react-toastify/dist/ReactToastify.css";
 import ClientLayout from "./clientLayout";
 import Script from "next/script";
-
+import  localFont  from "next/font/local";
 const inter = Inter({ subsets: ["latin"] });
 export const DEFAULT_OG_URL = `https://tooncentralhub.com/opengraph-image.png`;
+
+
+const satoshi = localFont({
+  src: [
+    {
+      path: "/fonts/Satoshi-Light.otf",
+      weight: "300",
+    },
+
+    {
+      path: "/fonts/Satoshi-Regular.otf",
+      weight: "400",
+    },
+    {
+      path: "/fonts/Satoshi-Bold.otf",
+      weight: "700",
+    },
+  ],
+  variable: "--font-satoshi-bold",
+});
+
+// const satoshiRegular = localFont({
+//   src: "/fonts/Satoshi-Regular.otf",
+//   weight: "400",
+// });
+
+// const satoshiBold = localFont({
+//   src: "./fonts/Satoshi-Bold.otf",
+//   weight: "700",
+//   variable:"--font-satoshi-bold"
+  
+// });
 
 const images = [
   {
@@ -61,7 +93,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={` ${satoshi.className} `}>
         <Script
           id="adsense-script"
           async
