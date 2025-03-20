@@ -130,9 +130,9 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
                 <ShareIcon /> <p>share </p>
               </span>
             </div>
-            <div className="hidden lg:block pt-8 text-[0.9rem]">
+            <div className="hidden lg:block pt-8 text-size-1">
               <p className="text-gray underline">Episode Update Bi-weekly</p>
-              <p className="text-gray">{data?.description}</p>
+              <p className="text-gray ">{data?.description}</p>
             </div>
           </div>
         </div>
