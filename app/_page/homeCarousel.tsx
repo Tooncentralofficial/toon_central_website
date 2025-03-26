@@ -108,18 +108,7 @@ function HomeCarousel() {
       </div>
     );
   };
-  // const ArrowCircle = ({ type }: { type: "left" | "right" }) => {
-  //   return (
-  //     <div
-  //       onClick={type == "left" ? previous : next}
-  //       className={`absolute top-[50%] translate-y-[-50%] ${
-  //         type == "left" ? "left-[-40px]" : "right-[-40px]"
-  //       } rounded-[50%] h-10 w-10 bg-[var(--green100)] hidden md:inline-grid place-items-center cursor-pointer`}
-  //     >
-  //       {type == "left" ? <ArrowLeft /> : <ArrowRight />}
-  //     </div>
-  //   );
-  // };
+  
   var settings = {
     dots: false,
     infinite: true,
@@ -154,13 +143,7 @@ function HomeCarousel() {
           // infinite:true
         },
       },
-      // {
-      //   breakpoint: 0,
-      //   settings: {
-      //     slidesToShow: 1,
-      //     slidesToScroll: 1,
-      //   },
-      // },
+      
     ],
   };
   const color = [
