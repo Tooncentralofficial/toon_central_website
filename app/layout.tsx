@@ -6,10 +6,9 @@ import "slick-carousel/slick/slick-theme.css";
 import "react-toastify/dist/ReactToastify.css";
 import ClientLayout from "./clientLayout";
 import Script from "next/script";
-import  localFont  from "next/font/local";
+import localFont from "next/font/local";
 const inter = Inter({ subsets: ["latin"] });
 export const DEFAULT_OG_URL = `https://tooncentralhub.com/opengraph-image.png`;
-
 
 const satoshi = localFont({
   src: [
@@ -39,7 +38,7 @@ const satoshi = localFont({
 //   src: "./fonts/Satoshi-Bold.otf",
 //   weight: "700",
 //   variable:"--font-satoshi-bold"
-  
+
 // });
 
 const images = [
@@ -93,13 +92,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="monetag" content="b1560b2812f90a46572fbf59094c6458" />
+      </head>
       <body className={` ${satoshi.className} `}>
         <Script
           id="adsense-script"
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6644042584456078"
           crossOrigin="anonymous"
-           strategy="afterInteractive"
+          strategy="afterInteractive"
         />
 
         <Script
@@ -107,10 +109,7 @@ export default function RootLayout({
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-RZFRHC7QTN"
         />
-        <Script
-          id="gtag-setup"
-          strategy="afterInteractive"
-        >
+        <Script id="gtag-setup" strategy="afterInteractive">
           {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
@@ -118,10 +117,7 @@ export default function RootLayout({
           gtag('config', 'G-RZFRHC7QTN');
         `}
         </Script>
-        <ClientLayout>{children}
-          
-        </ClientLayout>
-
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
