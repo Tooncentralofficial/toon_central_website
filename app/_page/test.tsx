@@ -44,12 +44,12 @@ const HorizontalScroll = () => {
   console.log(data);
   useEffect(() => {
     if (isSuccess) {
-      setActionItems((prev) => [...prev, ...data.data.comics]);
+      setActionItems((prev) => [...prev, ...data?.data?.comics || []]);
     }
   }, [isFetching, isLoading, data]);
   useEffect(() => {
     if (comedyIsSuccess) {
-      setComedyItems((prev) => [...prev, ...comedyData.data.comics]);
+      setComedyItems((prev) => [...prev, ...comedyData?.data?.comics || []]);
     }
   }, [comedyIsLoading, comedyIsFetching, comedyIsSuccess]);
   console.log(data?.data?.pagination?.totalPages);
