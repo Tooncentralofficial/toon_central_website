@@ -24,6 +24,7 @@ const Page = ({
   params: { slug: string };
   searchParams: { uid: string | undefined; chapter: string | undefined ;comicid :string};
 }) => {
+  const adLink  =' https://uvoonaix.top/4/9208717'
   const { uid, chapter: chapterSlug,comicid } = searchParams;
   const pathname = usePathname();
   const queryClient = useQueryClient();
@@ -140,14 +141,43 @@ const Page = ({
       });
     },
   });
+  const [hasClicked, setHasClicked] = useState(false);
+  useEffect(() => {
+    const storedClick = localStorage.getItem("hasClickedAd");
+      if (storedClick === "true") {
+        setHasClicked(true);
+      }
+  }, [chapter]);
+
+  // refactor the ad route function
+  const redirectToAd = () => {
+    window.open(adLink, "_blank"); // Redirect to ad
+  };
+  
 
   const prevChapter = () => {
+
+    if (!hasClicked && chapter >3) {
+      localStorage.setItem('hasClickedAd', 'true');
+      setHasClicked(true);
+      redirectToAd();
+      }else {
+        
+        
     if (chapter > 1) {
       setChapter((prev) => prev - 1);
+      localStorage.removeItem("hasClickedAd");
+      setHasClicked(false);
     }
-    
+  }
   };
+  
   const nextChapter = () => {
+    if (!hasClicked && chapter >3) {
+      localStorage.setItem('hasClickedAd', 'true');
+      setHasClicked(true);
+      redirectToAd();
+      }else {
     if (chapter < parseArray(data?.data?.episodes).length) {
       setChapter((prev) => prev + 1);
       setTimeout(() => {
@@ -156,7 +186,10 @@ const Page = ({
           behavior: "smooth",
         });
       }, 50);
+      localStorage.removeItem("hasClickedAd");
+      setHasClicked(false);
     }
+  }
     
   };
 

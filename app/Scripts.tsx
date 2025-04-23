@@ -1,20 +1,15 @@
-import React from 'react'
-import Script from 'next/script'
+"use client";
+import React, { useEffect } from "react";
+import Script from "next/script";
 
 const Scripts = () => {
+  
   return (
     <>
-      <Script
-        id="monetag-ad-script"
-        strategy="afterInteractive"
+     
+      {/* <Script
         dangerouslySetInnerHTML={{
-          __html: `
-            (function(s,u,z,p){
-              s.src = u;
-              s.setAttribute('data-zone', z);
-              p.appendChild(s);
-            })(document.createElement('script'), 'https://shebudriftaiter.net/tag.min.js', 9208595, document.body || document.documentElement);
-          `,
+          __html: `(function(d,z,s){s.src='https://'+d+'/401/'+z;try{(document.body||document.documentElement).appendChild(s)}catch(e){}})('groleegni.net',9248359,document.createElement('script'))`,
         }}
       />
       <Script
@@ -22,9 +17,9 @@ const Scripts = () => {
         strategy="afterInteractive"
         async
         data-cfasync="false"
-      />
+      /> */}
     </>
   );
-}
+};
 
-export default Scripts
+export default Scripts;
