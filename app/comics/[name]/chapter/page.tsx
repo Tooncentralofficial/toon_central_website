@@ -3,7 +3,10 @@ import { dummyItems } from "@/app/_shared/data";
 import { BXSLeft, BXSRight, CommentPop } from "@/app/_shared/icons/icons";
 import { FlatInput } from "@/app/_shared/inputs_actions/inputFields";
 import BackButton from "@/app/_shared/layout/back";
-import { getRequestProtected, postRequestProtected } from "@/app/utils/queries/requests";
+import {
+  getRequestProtected,
+  postRequestProtected,
+} from "@/app/utils/queries/requests";
 import { parseArray } from "@/helpers/parsArray";
 import { prevRoutes } from "@/lib/session/prevRoutes";
 import { selectAuthState } from "@/lib/slices/auth-slice";
@@ -12,20 +15,24 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import CommentPopUp from "../_shared/commentpopup";
-import {motion,AnimatePresence} from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion";
 const Page = ({
   params,
   searchParams,
 }: {
   params: { slug: string };
-  searchParams: { uid: string | undefined; chapter: string | undefined ;comicid :string};
+  searchParams: {
+    uid: string | undefined;
+    chapter: string | undefined;
+    comicid: string;
+  };
 }) => {
-  const adLink  =' https://uvoonaix.top/4/9208717'
-  const { uid, chapter: chapterSlug,comicid } = searchParams;
+  const adLink = " https://uvoonaix.top/4/9208717";
+  const { uid, chapter: chapterSlug, comicid } = searchParams;
   const pathname = usePathname();
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -35,9 +42,9 @@ const Page = ({
   const [typedComment, setTypedComment] = useState<string>("");
   const { user, token }: any = useSelector(selectAuthState);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
- const toggleCommentPopup = () => {
-   setShowCommentPopup((prev) => !prev);
- };
+  const toggleCommentPopup = () => {
+    setShowCommentPopup((prev) => !prev);
+  };
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 600);
@@ -57,7 +64,7 @@ const Page = ({
   useEffect(() => {
     if (isSuccess) setEpisode(parseArray(data?.data?.episodes));
   }, [data, isFetching, isSuccess]);
-  const currentEpisodeId  =data?.data?.episodes?.[chapter-1]?.id 
+  const currentEpisodeId = data?.data?.episodes?.[chapter - 1]?.id;
   const { mutate: likeComic, isPending } = useMutation({
     mutationKey: ["like"],
     mutationFn: () =>
@@ -78,7 +85,7 @@ const Page = ({
         type: "error",
       });
     },
-    
+
     onError(error, variables, context) {
       toast("Failed to like", {
         toastId: `toast_${uid}`,
@@ -86,7 +93,7 @@ const Page = ({
       });
     },
   });
-  
+
   const subscribe = () => {
     if (!token) {
       router.push(`/auth/login?previous=${prevRoutes(uid).comic}`);
@@ -95,7 +102,7 @@ const Page = ({
     likeComic();
   };
   const { data: episodeCount } = useQuery({
-    queryKey: ["episdodelive",currentEpisodeId],
+    queryKey: ["episdodelive", currentEpisodeId],
     queryFn: () =>
       getRequestProtected(
         `comics/${uid}/episode/${currentEpisodeId}/get`,
@@ -104,13 +111,15 @@ const Page = ({
       ),
     enabled: token !== null,
   });
-  console.log(episodeCount)
+  
   const addEpisodeComment = useMutation({
     mutationKey: ["add_episode_comment"],
     mutationFn: () =>
       postRequestProtected(
         { comment: typedComment },
-        `/episode-comments/${data?.data?.episodes?.[chapter-1].id}/add-episode-comment`,
+        `/episode-comments/${
+          data?.data?.episodes?.[chapter - 1].id
+        }/add-episode-comment`,
         token || "",
         prevRoutes().library,
         "json"
@@ -144,57 +153,102 @@ const Page = ({
   const [hasClicked, setHasClicked] = useState(false);
   useEffect(() => {
     const storedClick = localStorage.getItem("hasClickedAd");
-      if (storedClick === "true") {
-        setHasClicked(true);
-      }
+    if (storedClick === "true") {
+      setHasClicked(true);
+    }
   }, [chapter]);
-
-  // refactor the ad route function
   const redirectToAd = () => {
-    window.open(adLink, "_blank"); // Redirect to ad
+    window.open(adLink, "_blank");
   };
-  
-
   const prevChapter = () => {
-
-    if (!hasClicked && chapter >3) {
-      localStorage.setItem('hasClickedAd', 'true');
+    if (!hasClicked && chapter > 3) {
+      localStorage.setItem("hasClickedAd", "true");
       setHasClicked(true);
       redirectToAd();
-      }else {
-        
-        
-    if (chapter > 1) {
-      setChapter((prev) => prev - 1);
-      localStorage.removeItem("hasClickedAd");
-      setHasClicked(false);
+    } else {
+      if (chapter > 1) {
+        setChapter((prev) => prev - 1);
+        localStorage.removeItem("hasClickedAd");
+        setHasClicked(false);
+      }
     }
-  }
   };
-  
+  const animationRef = useRef<number | null>(null);
+  const scrollStep: any = () => {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const windowHeight = window.innerHeight;
+    const fullHeight = document.documentElement.scrollHeight;
+
+    const atBottom = scrollTop + windowHeight >= fullHeight;
+
+    if (atBottom) {
+      setScrolling(false); // Stop scrolling
+      return; // Stop loop
+    }
+
+    window.scrollBy(0, speed);
+    animationRef.current = requestAnimationFrame(scrollStep);
+  };
+
   const nextChapter = () => {
-    if (!hasClicked && chapter >3) {
-      localStorage.setItem('hasClickedAd', 'true');
+    if (!hasClicked && chapter > 3) {
+      localStorage.setItem("hasClickedAd", "true");
       setHasClicked(true);
       redirectToAd();
-      }else {
-    if (chapter < parseArray(data?.data?.episodes).length) {
-      setChapter((prev) => prev + 1);
-      setTimeout(() => {
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        });
-      }, 50);
-      localStorage.removeItem("hasClickedAd");
-      setHasClicked(false);
+    } else {
+      if (chapter < parseArray(data?.data?.episodes).length) {
+        setChapter((prev) => prev + 1);
+        setTimeout(() => {
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        }, 50);
+        localStorage.removeItem("hasClickedAd");
+        setHasClicked(false);
+      }
     }
-  }
-    
   };
-
+  const [scrolling, setScrolling] = useState(false);
+  const [speed, setSpeed] = useState(10);
   const backDisabled = useMemo(() => chapter <= 1, [chapter]);
 
+  useEffect(() => {
+    if (scrolling) {
+      animationRef.current = requestAnimationFrame(scrollStep);
+    } else {
+      if (animationRef.current !== null) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (animationRef.current !== null) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [scrolling, speed]);
+  useEffect(() => {
+    if (!scrolling) return;
+
+    const cancelOnUserInput = () => {
+      setScrolling(false);
+    };
+
+    window.addEventListener("wheel", cancelOnUserInput, { once: true });
+    window.addEventListener("touchstart", cancelOnUserInput, { once: true });
+    window.addEventListener("keydown", cancelOnUserInput, { once: true });
+    window.addEventListener("mousedown", cancelOnUserInput, { once: true });
+
+    return () => {
+      window.removeEventListener("wheel", cancelOnUserInput);
+      window.removeEventListener("touchstart", cancelOnUserInput);
+      window.removeEventListener("keydown", cancelOnUserInput);
+      window.removeEventListener("mousedown", cancelOnUserInput);
+    };
+  }, [scrolling]);
   const nextDisabled = useMemo(
     () => chapter >= parseArray(data?.data?.episodes).length,
     [chapter, data]
@@ -208,6 +262,14 @@ const Page = ({
     <main>
       <div className="parent-wrap py-10">
         <div className="min-h-screen   w-[100%] max-w-[1400px] px-[5px] sm:px-[5px] md:px-[10px] lg:px-[25px] xl:px-[25px]  ">
+          <>
+           {/* TO ADD LATER */}
+            {/* <div className="w-full flex items-center justify-center">
+              <button onClick={() => setScrolling((prev) => !prev)}>
+                lime
+              </button>
+            </div> */}
+          </>
           <div className="flex items-center justify-between">
             <BackButton />
             <div className="flex items-center gap-4">

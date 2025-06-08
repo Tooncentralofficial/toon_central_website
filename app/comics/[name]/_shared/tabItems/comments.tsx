@@ -30,7 +30,7 @@ const Comments = ({ data }: ComicTab) => {
   const[currentEmoji,setCurrentEmoji ]= useState()
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [pagination, setPagination] = useState({ page: 1, total: 1 });
-  console.log(pagination)
+  
   const {
     data: commentResponse,
     isSuccess: isCommentSuccess,
@@ -84,7 +84,6 @@ const Comments = ({ data }: ComicTab) => {
   });
   useEffect(()=>{
     if(isCommentSuccess){
-      console.log("lime")
       setCommentData(commentResponse?.data?.comic_comments || []);
       setPagination(() => ({
         page: commentResponse?.data?.pagination?.currentPage || 1,
@@ -93,7 +92,6 @@ const Comments = ({ data }: ComicTab) => {
     }
   },[isCommentLoading,isCommentSuccess,commentData,pagination.page])
   const changePage = (page: number) => {
-    console.log(page)
     setPagination((prevState) => ({
       ...prevState,
       page: page,

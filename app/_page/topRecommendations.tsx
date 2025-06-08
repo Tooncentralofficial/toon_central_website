@@ -61,7 +61,6 @@ const TopRecommendations = ({
           )}
         </>
       )}
-      {/* <div onClick={onOpen}>sjdbkf</div> */}
       <ModalContainer
         isOpen={isOpen}
         onClose={onClose}

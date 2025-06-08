@@ -10,10 +10,6 @@ import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import { motion } from "framer-motion";
-import Curve from "../_shared/curve";
-import EllipseGray, { Ellipse } from "../_shared/ellipse/ellipseGray";
-import ModalContainer from "../_shared/modals/modalcont";
-import { useDisclosure } from "@nextui-org/react";
 export const staticCardItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 function HomeCarousel() {
   
@@ -30,7 +26,6 @@ function HomeCarousel() {
     queryKey: [carouselQueryKey],
     queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
   });
-  const swiper = useSwiper();
  
   
   useEffect(() => {
@@ -207,21 +202,6 @@ function HomeCarousel() {
           {/* <Ellipse /> */}
           <div className="child-wrap-sm home-slick-cont relative ">
             <div className="relative">
-              {/* <Curve
-                backgroundImage={
-                  hoverIndex !== -1 &&
-                  carouselItems[hoverIndex]?.backgroundImage
-                    ? `url(${carouselItems[hoverIndex].backgroundImage})`
-                    : `url(${carouselItems[currentSlide]?.backgroundImage})`
-                }
-                activeImage={
-                  hoverIndex !== -1 &&
-                  carouselItems[hoverIndex]?.backgroundImage
-                    ? carouselItems[hoverIndex].backgroundImage
-                    : carouselItems[currentSlide]?.backgroundImage
-                }
-              /> */}
-
               <Swiper
                 modules={[Autoplay]}
                 slidesPerView={5}

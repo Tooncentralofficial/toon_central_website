@@ -112,7 +112,6 @@ export default function RecommendtnTabs() {
             cursor:
               "w-full h-full group-data-[selected=true]:bg-[var(--bg-tab-cursor)] group-data-[selected=true]:text-[var(--text-primary)]",
             tabContent: "px-4 py-0",
-            // tabContent: "group-data-[selected=true]:text-[#06b6d4]"
           }}
         >
           {(item) => (

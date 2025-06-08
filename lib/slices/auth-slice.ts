@@ -21,7 +21,6 @@ const userInit: AuthState = {
 
 export const getUser = createAsyncThunk("auth/getuser", async () => {
   const user: any = await retrieveUser();
-  // console.log("retrieved user", user);
   return user;
 });
 
@@ -30,14 +29,14 @@ export const updateProfile = createAsyncThunk(
   async (userUpdates: any, { getState, dispatch }) => {
     const state = getState() as { auth: AuthState };
     const token = state.auth.token;
-    const userType=state.auth.userType
+    const userType = state.auth.userType;
     const response = await getRequestProtected(
       "/profile",
       token,
       window.location.pathname
     );
     if (response?.success) {
-      const{data}=response
+      const { data } = response;
       const user = {
         ...state.auth.user,
         photo: data?.photo,
@@ -50,7 +49,7 @@ export const updateProfile = createAsyncThunk(
         welcome_note: data?.welcomeNote,
       };
       const payload = {
-        userType: userType, 
+        userType: userType,
         user: user,
         token: token,
       };

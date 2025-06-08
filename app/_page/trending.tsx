@@ -17,7 +17,6 @@ const Trending = () => {
     queryKey: [trendingQueryKey],
     queryFn: () => getRequest("/home/trending?filter=all&page=1&limit=10"),
   });
-  console.log(data)
   const [sliced, setSliced] = useState<number>(10);
   useEffect(() => {
     const updateSliced = () => {

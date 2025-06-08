@@ -18,7 +18,6 @@ import SearchModal from "@/app/_shared/layout/search";
 import ShareModal from "@/app/_shared/modals/shareModal";
 
 const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
-  console.log(data)
   const { onClose, onOpen, isOpen, onOpenChange } = useDisclosure();
   const disabled = useMemo(() => data?.episodes?.length <= 0, [data]);
   const queryClient = useQueryClient();

@@ -17,7 +17,6 @@ const HorizontalScroll = () => {
   const fetchMoreData = () => {
     setPage((prev) => prev + 1);
   };
-  console.log(page)
   const fetchMoreComedyData = () => {
     setComedyPage((prev) => prev + 1);
   };
@@ -41,7 +40,7 @@ const HorizontalScroll = () => {
       getRequest(`/genres/comic/3/all?page=${comedyPage}&limit=${5}`),
   });
   
-  console.log(data);
+
   useEffect(() => {
     if (isSuccess) {
       setActionItems((prev) => [...prev, ...data?.data?.comics || []]);
@@ -52,7 +51,6 @@ const HorizontalScroll = () => {
       setComedyItems((prev) => [...prev, ...comedyData?.data?.comics || []]);
     }
   }, [comedyIsLoading, comedyIsFetching, comedyIsSuccess]);
-  console.log(data?.data?.pagination?.totalPages);
   return (
     <div className="parent-wrap py-10 block md:hidden ">
       <div className="child-wrap">

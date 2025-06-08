@@ -84,7 +84,6 @@ const Likes = ({
     mutationFn: () =>
       getRequestProtected(`/comics/${uid}/add-to-favourite`, token, pathname),
     onSuccess: (data) => {
-      console.log(data);
       if (data?.success) {
         toast(data?.message, {
           toastId: `toast_${uid}`,
@@ -160,7 +159,6 @@ const Likes = ({
           e.preventDefault();
           e.stopPropagation();
           likeComic();
-          console.log(likesNViews);
         }}
       >
         {isLiked ? (

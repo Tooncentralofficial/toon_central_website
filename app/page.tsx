@@ -20,18 +20,12 @@ import TodaysPicks from "./_page/todaysPicks";
 
 export default async function Home() {
   const queryClient = new QueryClient();
-  // const getCarousel = await getRequest("/home/top-carousel?page=1&limit=10");
-  // console.log("getCafro", getCarousel?.data?.comics);
+  
 
   await queryClient.prefetchQuery({
     queryKey: ["carousel"],
     queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
   });
-  // await queryClient.prefetchQuery({
-  //   queryKey: ["popular_by_toon"],
-  //   queryFn: () =>
-  //     getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
-  // });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <main>
