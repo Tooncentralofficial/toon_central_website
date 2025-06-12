@@ -31,11 +31,13 @@ const Page = ({
     comicid: string;
   };
 }) => {
-  const adLink = " https://uvoonaix.top/4/9208717";
+  const adLink = "https://otieu.com/4/9441919";
   const { uid, chapter: chapterSlug, comicid } = searchParams;
   const pathname = usePathname();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const fullUrl = pathname + "?" + searchParams.toString();
+  console.log(fullUrl);
   const [chapter, setChapter] = useState(parseInt(chapterSlug || "0") + 1);
   const [episode, setEpisode] = useState<any[]>([]);
   const [showCommentPopup, setShowCommentPopup] = useState(false);
@@ -58,7 +60,7 @@ const Page = ({
 
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [comicQueryKey],
-    queryFn: () => getRequestProtected(`/comics/${uid}/view`, token, pathname),
+    queryFn: () => getRequestProtected(`/comics/${uid}/view`, token, fullUrl),
     enabled: token !== null,
   });
   useEffect(() => {
@@ -68,7 +70,7 @@ const Page = ({
   const { mutate: likeComic, isPending } = useMutation({
     mutationKey: ["like"],
     mutationFn: () =>
-      getRequestProtected(`/comics/${uid}/like`, token, prevRoutes(uid).comic),
+      getRequestProtected(`/comics/${uid}/like`, token, fullUrl),
     onSuccess: (data) => {
       if (data?.success) {
         toast(data?.message, {
@@ -107,7 +109,7 @@ const Page = ({
       getRequestProtected(
         `comics/${uid}/episode/${currentEpisodeId}/get`,
         token,
-        pathname
+        fullUrl
       ),
     enabled: token !== null,
   });
@@ -121,7 +123,7 @@ const Page = ({
           data?.data?.episodes?.[chapter - 1].id
         }/add-episode-comment`,
         token || "",
-        prevRoutes().library,
+        fullUrl,
         "json"
       ),
     onSuccess(data, variables, context) {

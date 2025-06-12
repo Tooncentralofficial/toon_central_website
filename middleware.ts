@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/auth/login", request.url));
     }
 
-    if (pathname.startsWith("/creator/:path"))
+    if (pathname.startsWith("/creator"))
       return NextResponse.redirect(new URL("/creator", request.url));
   };
 
@@ -45,6 +45,7 @@ export const config = {
     "/auth/:path*",
     "/creator/:path*",
     "/user/:path*",
+    "/comics/:path*",
   ],
 };
 // "/comics/:path*",
