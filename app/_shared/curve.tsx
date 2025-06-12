@@ -7,7 +7,6 @@ const Curve = ({ backgroundImage,activeImage  }: { backgroundImage: string ,acti
   const initialPath = `M0 ${height} Q ${width / 2 + 40} ${
     height + 40
   } ${width} ${height}`;
-console.log(backgroundImage)
   return (
     <div
       className=" w-full absolute z-[99] h-5  transition-colors duration-300"

@@ -120,7 +120,14 @@ const menuItemsMobile: {
 ];
 
 const NavHome = () => {
-  const pathname = usePathname();
+  let  pathname = usePathname();
+  const iscomics = usePathname().includes("/comics");
+  if(iscomics) {
+    console.log(pathname)
+    const uuid = pathname.split("/")[2];
+    pathname = `/comics/${uuid}`;
+  }
+ 
   const { user, token } = useSelector(selectAuthState);
   const [isSide, setIsSide] = useState(false);
   const dispatch = useDispatch();

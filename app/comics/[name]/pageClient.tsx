@@ -12,6 +12,7 @@ import NotFound from "@/app/user/library/_shared/notFound";
 import { usePathname } from "next/navigation";
 import OtherBooks from "./_shared/otherbooks";
 import YouLike from "./_shared/youlike";
+import { prevRoutes } from "@/lib/session/prevRoutes";
 
 export interface ViewComicProps {
   uid: any;
@@ -27,7 +28,7 @@ const PageClient = ({ params }: { params: { name: string } }) => {
   const queryKey = `comic_${name}`;
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [queryKey],
-    queryFn: () => getRequestProtected(`/comics/${name}/view`, token, pathname),
+    queryFn: () => getRequestProtected(`/comics/${name}/view`, token, prevRoutes(name).comic),
     enabled: token !== null,
   });
   const creator = data?.data.user;

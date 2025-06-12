@@ -6,7 +6,6 @@ import { useQuery } from '@tanstack/react-query';
 import React from 'react'
 
 const YouLike = ({uuid}:{uuid:string}) => {
-  console.log(uuid)
   const queryKey = "youmaylike";
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [queryKey, uuid],
@@ -15,7 +14,6 @@ const YouLike = ({uuid}:{uuid:string}) => {
         `/genres/comic/${uuid}/you-may-also-like`
       ),
   });
-  console.log(data)
   const comic = data?.data?.comic
   const comics: Comic[] = data?.data?.comics;
   return (

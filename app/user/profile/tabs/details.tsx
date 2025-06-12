@@ -77,7 +77,7 @@ export default function DetailsTab() {
     queryKey: ["countyList"],
     queryFn: () => getRequest("/selectables/countries"),
   });
-  console.log(countriesData)
+  
   useEffect(() => {
     if (isSuccess) {
       setProfile(data?.data);

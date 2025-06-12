@@ -25,7 +25,7 @@ const ChapterLink = ({
   comicId:string;
   chapter: any;
 }) => {
-  console.log(chapter)
+
   const sanitizedSlug = chapter?.slug.replace(/\s+/g, "-");
   const { user, userType, token } = useSelector(selectAuthState);
   const [show,setShow]= useState<boolean>(false)

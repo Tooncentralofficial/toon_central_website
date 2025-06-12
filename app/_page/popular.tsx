@@ -54,7 +54,6 @@ const Popular = () => {
     }
   }, [isLoading, isFetching, data]);
   const router = useRouter();
-  console.log(data);
 
   const goToComic = (uuid: string | undefined) => {
     router.push(uuid ? `/comics/${uuid}` : "");
@@ -138,36 +137,6 @@ const Popular = () => {
                                   uid={item?.uuid}
                                   queryKey={queryKey}
                                 />
-                                {/* <div className="flex items-center gap-[2.5px] text-sm font-light">
-                                  <EyeFilled />{" "}
-                                  {
-                                    parseArray(item?.likesAndViews?.views)
-                                      .length
-                                  }
-                                </div> */}
-                                {/* <Dot /> */}
-                                {/* <div className="flex items-center gap-[2.5px] text-sm font-light">
-                              <HeartTwoTone /> 1k
-                            </div> */}
-                                {/* <Dot />
-                                <div
-                                  className="flex items-center gap-[2.5px] text-sm font-light"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    likeComic(item?.uuid);
-                                  }}
-                                >
-                                  {isLiked ? (
-                                    <ColouredThumbsupSolid />
-                                  ) : (
-                                    <ThumbsSolid />
-                                  )}{" "}
-                                  {
-                                    parseArray(item?.likesAndViews?.likes)
-                                      .length
-                                  }
-                                </div> */}
                               </div>
                               <div>{item?.genre?.name}</div>
                             </div>

@@ -31,7 +31,7 @@ export default function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const pathname = usePathname();
-  console.log(searchParams);
+  
   const { uuid, comicId, chapterid } = searchParams;
   const { user, userType, token } = useSelector(selectAuthState);
   const comicid = new URLSearchParams(window.location.search).get("comicId");

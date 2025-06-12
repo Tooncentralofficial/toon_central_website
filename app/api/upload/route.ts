@@ -12,7 +12,6 @@ cloudinary.config({
  
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
-  console.log("hello world");
   return NextResponse.json({ message: "hello world" });
 }
 
@@ -22,25 +21,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const comicImages: any = [];
     Array.from(data.entries()).forEach(([key, value]) => {
       if (key.startsWith("comicImage") && typeof value !== "string") {
-        console.log(comicImages);
         comicImages.push(value);
       }
     });
-    // const resultArray = await Promise.all(
-    //   comicImages.map(async (comicImage: File) => {
-    //    const arrayBuffer = await comicImage.arrayBuffer()
-    //    const buffer = new Uint32Array(arrayBuffer)
-    //     const result = await cloudinaryUpload(buffer, comicImage.name);
-    //     return result;
-    //   })
-    // );
+ 
     const resultArray = await Promise.all(
       comicImages.map(async (comicImage: File) => {
         const result = await uploadToCloudinary(comicImage);
         return result.secure_url;
       })
     );
-    console.log(resultArray);
+
 
     return NextResponse.json({ message: resultArray });
   } catch (error) {

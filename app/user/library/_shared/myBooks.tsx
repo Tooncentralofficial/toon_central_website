@@ -47,7 +47,6 @@ const MyBooksTab = () => {
       ),
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
-      console.log(resData)
       if (success) {
         toast(message, {
           toastId: "comic_Delete",
