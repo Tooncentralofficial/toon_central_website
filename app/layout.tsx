@@ -8,6 +8,7 @@ import ClientLayout from "./clientLayout";
 import Script from "next/script";
 import localFont from "next/font/local";
 import Scripts from "./Scripts";
+import PropellerAdsScript from "./Scripts";
 const inter = Inter({ subsets: ["latin"] });
 export const DEFAULT_OG_URL = `https://tooncentralhub.com/opengraph-image.png`;
 
@@ -97,14 +98,14 @@ export default function RootLayout({
         <meta name="monetag" content="b1560b2812f90a46572fbf59094c6458" />
       </head>
       <body className={` ${satoshi.className} `}>
-         <Scripts />
-        <Script
+         <PropellerAdsScript />
+        {/* <Script
           id="adsense-script"
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6644042584456078"
           crossOrigin="anonymous"
           strategy="afterInteractive"
-        />
+        /> */}
 
         <Script
           id="gtag-script"
