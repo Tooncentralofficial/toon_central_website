@@ -1,25 +1,29 @@
 "use client";
-import React, { useEffect } from "react";
-import Script from "next/script";
+import { useEffect } from "react";
 
-const Scripts = () => {
-  
-  return (
-    <>
+export default function PropellerAdsScript() {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://groleegni.net/401/9441972";
+    script.async = true;
+
+    try {
+      (document.body || document.documentElement).appendChild(script);
+      console.log("PropellerAds script appended successfully");
+    } catch (e) {
+      console.error("Failed to append PropellerAds script:", e);
+    }
+
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+  }, []);
+
+  return null;
+}
+
+
+//<script>(function(d,z,s){s.src='https://'+d+'/401/'+z;try{(document.body||document.documentElement).appendChild(s)}catch(e){}})('groleegni.net',9441972,document.createElement('script'))</script>
      
-      {/* <Script
-        dangerouslySetInnerHTML={{
-          __html: `(function(d,z,s){s.src='https://'+d+'/401/'+z;try{(document.body||document.documentElement).appendChild(s)}catch(e){}})('groleegni.net',9248359,document.createElement('script'))`,
-        }}
-      />
-      <Script
-        src="https://staupsoaksy.net/act/files/tag.min.js?z=9208589"
-        strategy="afterInteractive"
-        async
-        data-cfasync="false"
-      /> */}
-    </>
-  );
-};
-
-export default Scripts;

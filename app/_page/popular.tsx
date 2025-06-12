@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import Slider from "react-slick";
 import Image from "next/image";
 import EllipseGray from "../_shared/ellipse/ellipseGray";
@@ -101,7 +101,7 @@ const Popular = () => {
           >
             {carouselItems.map((item, i) => {
               return (
-                <>
+                <Fragment key={i}>
                   <div key={i} className="px-2.5">
                     <div className="h-[290px] rounded-[8px] overflow-hidden">
                       {isLoading ? (
@@ -145,7 +145,7 @@ const Popular = () => {
                       )}
                     </div>
                   </div>
-                </>
+                </Fragment>
               );
             })}
           </Slider>
