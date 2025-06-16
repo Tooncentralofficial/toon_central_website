@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 export default function PropellerAdsScript() {
   useEffect(() => {
@@ -20,6 +20,25 @@ export default function PropellerAdsScript() {
       }
     };
   }, []);
+
+  const showAdPopup = useCallback(() => {
+    try {
+      // This will use the PropellerAds popup functionality
+      // You may need to adjust this based on PropellerAds documentation
+      if (window.open) {
+        window.open("https://groleegni.net/401/9441972", "_blank");
+      }
+    } catch (e) {
+      console.error("Failed to show ad popup:", e);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.showPropellerAd = showAdPopup;
+    return () => {
+      delete window.showPropellerAd;
+    };
+  }, [showAdPopup]);
 
   return null;
 }

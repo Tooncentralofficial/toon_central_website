@@ -48,7 +48,7 @@ const CommentPopUp = ({
         <div onClick={closePopup}>
           <ArrowLeft />
         </div>
-        <h3>Comments</h3>
+        <h3>Comments {episdoeComment?.length}</h3>
       </div>
       <div className="mb-5">
         {episdoeComment?.map((item: any,i:number) => (

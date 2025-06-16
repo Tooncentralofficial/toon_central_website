@@ -58,7 +58,7 @@ const Originals = () => {
                       />
                     </div>
                   ))}
-                </>
+                </> 
               ) : (
                 dummyItems
                   .slice(0, 5)

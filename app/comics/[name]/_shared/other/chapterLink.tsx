@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import React from "react";
+import React, { useCallback } from "react";
 
 const ChapterLink = ({
   uid,
@@ -10,15 +10,24 @@ const ChapterLink = ({
   comicId,
   chapter,
 }: {
-  uid:any
+  uid: any;
   index: number;
   image: string;
-  comicId:string;
+  comicId: string;
   chapter: any;
 }) => {
+
+  const adLink = "https://otieu.com/4/9441919";
   const pathname = usePathname();
   const router = useRouter();
-  const readChapter = () => router.push(`${pathname}/chapter?chapter=${index}&uid=${uid}&comicid=${comicId}`);
+  const readChapter = () => {
+    if (index > 3-1) {
+      window.open(adLink, "_blank");
+    }
+    router.push(
+      `${pathname}/chapter?chapter=${index}&uid=${uid}&comicid=${comicId}`
+    );
+  };
   return (
     <div className="flex gap-4">
       <div className="w-[60px] h-[60px] rounded-lg overflow-hidden">
