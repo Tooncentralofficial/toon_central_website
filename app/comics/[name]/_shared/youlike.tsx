@@ -16,21 +16,31 @@ const YouLike = ({uuid}:{uuid:string}) => {
   });
   const comic = data?.data?.comic
   const comics: Comic[] = data?.data?.comics;
+  console.log(comics);
   return (
     <div>
-      <p className="text-[1.5rem]">You may like</p>
-      <Skeleton
-        isLoaded={data !== null}
-        className={`${
-          data == null && "h-[300px]"
-        } bg-secondary my-10 rounded-lg `}
-      >
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 bg-primary">
-          {comics?.map((comic, i) => (
-            <CardTitleOutside cardData={comic} index={i} queryKey={queryKey} key={i} />
-          ))}
+      {comics && (
+        <div>
+          <p className="text-[1.5rem]">You may like</p>
+          <Skeleton
+            isLoaded={data !== null}
+            className={`${
+              data == null && "h-[300px]"
+            } bg-secondary my-10 rounded-lg `}
+          >
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 bg-primary">
+              {comics?.map((comic, i) => (
+                <CardTitleOutside
+                  cardData={comic}
+                  index={i}
+                  queryKey={queryKey}
+                  key={i}
+                />
+              ))}
+            </div>
+          </Skeleton>
         </div>
-      </Skeleton>
+      )}
     </div>
   );
 }

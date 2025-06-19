@@ -16,20 +16,21 @@ const CardTitleOutside = ({
     <div>
       <div className="h-[110px] md:h-[320px]  rounded-[8px] overflow-hidden">
         <div className="h-full w-auto relative">
-          <Image
-            src={`${cardData?.coverImage || ""}`}
-            alt={`${cardData?.title || "toon_central"}`}
-            width={200}
-            height={240}
-            style={{
-              objectFit: "cover",
-              maxWidth: "100%",
-              width: "100%",
-              height: "100%",
-            }}
-            priority
-          />
           <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
+            <Image
+              src={`${cardData?.coverImage || ""}`}
+              alt={`${cardData?.title || "toon_central"}`}
+              width={200}
+              height={240}
+              style={{
+                objectFit: "cover",
+                maxWidth: "100%",
+                width: "100%",
+                height: "100%",
+              }}
+              priority
+            />
+
             <div className="hidden absolute top-0 left-0 p-1  h-full w-full md:flex flex-col justify-end sm:p-4 bg-[#FCFCFD10] ">
               <Likes
                 likesNViews={cardData?.likesAndViews}
@@ -43,7 +44,9 @@ const CardTitleOutside = ({
       </div>
       <div className="flex flex-wrap gap-1 items-center justify-between mt-1.5">
         <span className="font-bold text-base">{cardData?.title}</span>
-        <span className="font-light text-xs">{cardData?.genres[0].genre.name}</span>
+        <span className="font-light text-xs">
+          {cardData?.genres[0].genre.name}
+        </span>
       </div>
     </div>
   );

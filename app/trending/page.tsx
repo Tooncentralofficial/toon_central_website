@@ -9,6 +9,7 @@ import { getRequest } from "../utils/queries/requests";
 import { Skeleton } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import TrendingItem from "./_components/trendingItem";
+import Link from "next/link";
 
 export default function Page() {
   const [newTrending, setNewTrending] = useState<any[]>([]);
@@ -43,6 +44,7 @@ export default function Page() {
       setMostRead(readComics?.data?.comics || []);
     }
   }, [isFetching, fetchingRead, readComics, trendingComics]);
+  console.log(newTrending);
   return (
     <div>
       <div className="parent-wrap py-10">
@@ -88,6 +90,7 @@ export default function Page() {
 
             <div className="hidden md:flex w-full flex-col gap-5">
               <div className="rounded-lg overflow-hidden h-[50%]">
+              <Link href={`/comics/${newTrending[1]?.uuid}`}>
                 <Skeleton
                   isLoaded={!isLoading}
                   className="rounded-lg overflow-hidden h-full"
@@ -97,43 +100,47 @@ export default function Page() {
                     width={200}
                     height={200}
                     alt={`${newTrending[0]?.title || "toon_central"}`}
+                    objectPosition="center bottom"
+                    objectFit="cover"
                     style={{
                       objectFit: "cover",
                       width: "100%",
-                      maxWidth: "100%",
                       height: "100%",
                     }}
                     unoptimized
                     priority
                   />
                 </Skeleton>
+                </Link>
               </div>
               <div className="rounded-lg overflow-hidden h-[50%]">
-                <Skeleton
-                  isLoaded={!isLoading}
-                  className="rounded-lg overflow-hidden h-full"
-                >
-                  <Image
-                    src={`${
-                      newTrending[2]?.coverImage ||
-                      newTrending[1]?.coverImage ||
-                      ""
-                    }`}
-                    width={200}
-                    height={200}
-                    alt={`${newTrending[0]?.title || "toon_central"}`}
-                    style={{
-                      objectPosition:"top top",
-                      objectFit: "cover",
-                      width: "100%",
-                      maxWidth: "100%",
-                      height: "100%",
-                      transform: "rotate(180deg)",
-                    }}
-                    unoptimized
-                    priority
-                  />
-                </Skeleton>
+                <Link href={`/comics/${newTrending[2]?.uuid}`}>
+                  <Skeleton
+                    isLoaded={!isLoading}
+                    className="rounded-lg overflow-hidden h-full"
+                  >
+                    <Image
+                      src={`${
+                        newTrending[2]?.coverImage ||
+                        newTrending[1]?.coverImage ||
+                        ""
+                      }`}
+                      width={200}
+                      height={200}
+                      alt={`${newTrending[0]?.title || "toon_central"}`}
+                      style={{
+                        objectPosition: "center bottom",
+                        objectFit: "cover",
+                        width: "100%",
+                        maxWidth: "100%",
+                        height: "100%",
+                        transform: "rotate(180deg)",
+                      }}
+                      unoptimized
+                      priority
+                    />
+                  </Skeleton>
+                </Link>
               </div>
             </div>
           </div>

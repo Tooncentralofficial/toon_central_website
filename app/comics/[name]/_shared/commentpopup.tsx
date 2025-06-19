@@ -45,13 +45,18 @@ const CommentPopUp = ({
   return (
     <div className="w-full h-[30rem] bg-[#151D29] px-[24px] pt-5 overflow-y-auto">
       <div className="flex gap-2 ">
-        <div onClick={closePopup}>
-          <ArrowLeft />
+        <div className="flex flex-col">
+          <div className="flex gap-2">
+            <div onClick={closePopup}>
+              <ArrowLeft />
+            </div>
+            <h3>Comments </h3>
+          </div>
+          <p className="ml-5"> {episdoeComment?.length} Comment(s)</p>
         </div>
-        <h3>Comments {episdoeComment?.length}</h3>
       </div>
       <div className="mb-5">
-        {episdoeComment?.map((item: any,i:number) => (
+        {episdoeComment?.map((item: any, i: number) => (
           <div key={i}>
             <Comment data={item} />
           </div>

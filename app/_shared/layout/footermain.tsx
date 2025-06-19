@@ -41,10 +41,27 @@ const Mainfooter = () => {
             </Link>
           </div>
           <div className="flex gap-5 md:gap-5 lg:gap-10 justify-center md:justify-normal">
-            <Facebook />
-            <Twitter />
-            <Insta />
-            <Linkedin />
+            <Link
+              href={"https://www.facebook.com/share/18wVBfGfLe/"}
+              target="_blank"
+            >
+              <Facebook />
+            </Link>
+            <Link href={"https://x.com/tooncentralhq?s=21"} target="_blank">
+              <Twitter />
+            </Link>
+            <Link
+              href={"https://www.instagram.com/tooncentralofficial/"}
+              target="_blank"
+            >
+              <Insta />
+            </Link>
+            <Link
+              href={"https://www.linkedin.com/company/toon-central-hub/"}
+              target="_blank"
+            >
+              <Linkedin />
+            </Link>
           </div>
         </div>
         <div className="flex justify-center pt-10">
