@@ -31,44 +31,14 @@ const CardTitleBottom = ({
   const date:number = Date.now();
   const finaltime = date * 9000
   
-  const adLink = process.env.NEXT_PUBLIC_AD_LINK;
+
   const router = useRouter();
   const { user, token } = useSelector(selectAuthState);
   const uid = cardData?.uuid;
   const queryClient = useQueryClient();
   const pathname = usePathname();
-  const [lastClickTime, setLastClickTime] = useState(0);
-  const [hasSeenAd, setHasSeenAd]= useState(false)
-  useEffect(()=>{
-    const storedTime = localStorage.getItem(STORAGE_KEY);
-    if (storedTime) {
-      setLastClickTime(parseInt(storedTime));
-    }
-  },[])
 
-  // const handleClick= ()=>{
-  //   const currentTime = Date.now()
-  //   if (!lastClickTime || currentTime-lastClickTime>COOLDOWN_TIME){
-  //     if(!hasSeenAd){
-  //       window.open(adLink, "_blank");
-  //       setHasSeenAd(true);
-  //       localStorage.setItem(AD_SEEN_KEY, "true");
-  //       router.push(`/comics/${cardData?.uuid}`);
-  //     }else{
-  //       router.push(`/comics/${cardData?.uuid}`);
 
-  //       if(currentTime - (lastClickTime)>COOLDOWN_TIME){
-  //         window.open(adLink, "_blank");
-          
-  //       }
-  //     }
-  //     setLastClickTime(currentTime);
-  //     localStorage.setItem(STORAGE_KEY, currentTime.toString());
-      
-  //   }else{
-  //     router.push(`/comics/${cardData?.uuid}`);
-  //   }
-  // }
   const { mutate: subscibe, isPending } = useMutation({
     mutationKey: ["subscribe"],
     mutationFn: () =>
