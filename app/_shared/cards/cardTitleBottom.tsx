@@ -7,28 +7,68 @@ import { getRequestProtected } from "@/app/utils/queries/requests";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+const COOLDOWN_TIME = 10000; // 10 seconds in milliseconds
+const STORAGE_KEY = "global_comic_click_time";
+const AD_SEEN_KEY = "global_ad_seen";
 const CardTitleBottom = ({
   cardData,
   index,
   cardWidth,
   expand,
   queryKey,
-  small
-
+  small,
 }: {
   cardData: any;
   index: number;
   cardWidth?: string;
   expand?: boolean;
   queryKey?: string;
-  small?:boolean
+  small?: boolean;
 }) => {
+  const date:number = Date.now();
+  const finaltime = date * 9000
+  
+  const adLink = process.env.NEXT_PUBLIC_AD_LINK;
+  const router = useRouter();
   const { user, token } = useSelector(selectAuthState);
-  const uid= cardData?.uuid;
-const queryClient = useQueryClient();
-const pathname = usePathname();
+  const uid = cardData?.uuid;
+  const queryClient = useQueryClient();
+  const pathname = usePathname();
+  const [lastClickTime, setLastClickTime] = useState(0);
+  const [hasSeenAd, setHasSeenAd]= useState(false)
+  useEffect(()=>{
+    const storedTime = localStorage.getItem(STORAGE_KEY);
+    if (storedTime) {
+      setLastClickTime(parseInt(storedTime));
+    }
+  },[])
+
+  // const handleClick= ()=>{
+  //   const currentTime = Date.now()
+  //   if (!lastClickTime || currentTime-lastClickTime>COOLDOWN_TIME){
+  //     if(!hasSeenAd){
+  //       window.open(adLink, "_blank");
+  //       setHasSeenAd(true);
+  //       localStorage.setItem(AD_SEEN_KEY, "true");
+  //       router.push(`/comics/${cardData?.uuid}`);
+  //     }else{
+  //       router.push(`/comics/${cardData?.uuid}`);
+
+  //       if(currentTime - (lastClickTime)>COOLDOWN_TIME){
+  //         window.open(adLink, "_blank");
+          
+  //       }
+  //     }
+  //     setLastClickTime(currentTime);
+  //     localStorage.setItem(STORAGE_KEY, currentTime.toString());
+      
+  //   }else{
+  //     router.push(`/comics/${cardData?.uuid}`);
+  //   }
+  // }
   const { mutate: subscibe, isPending } = useMutation({
     mutationKey: ["subscribe"],
     mutationFn: () =>
@@ -58,7 +98,9 @@ const pathname = usePathname();
   });
   return (
     <div
-      className={`${small ?"h-[110px]" :"h-[390px] " } md:h-[260px] rounded-[10px] overflow-hidden`}
+      className={`${
+        small ? "h-[110px]" : "h-[390px] "
+      } md:h-[260px] rounded-[10px] overflow-hidden`}
       style={{ width: cardWidth || "100%" }} // Inline style for dynamic width
       //className="h-[260px] min-w-max w-max  rounded-[8px] overflow-hidden"
     >
@@ -77,7 +119,9 @@ const pathname = usePathname();
           unoptimized
           priority
         />
-        <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
+        <Link 
+          href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}
+        >
           <div className="absolute top-0 left-0  h-full w-full flex flex-col  p-4 justify-end bg-[#0D111D70] ">
             <div>
               <div className="font-bold text-xl">{cardData?.title}</div>

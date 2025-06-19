@@ -362,8 +362,14 @@ const Page = ({
                 Post
               </div>
             </div>
-            <div onClick={toggleCommentPopup}>
+            <div onClick={toggleCommentPopup} className="flex gap-2 items-center">
               <CommentPop />
+              {episode?.[chapter - 1]?.episode_comments?.length && (
+                <span className="bg-[#05834B] w-5 h-5 rounded-full text-white flex items-center justify-center">
+                  {episode?.[chapter - 1]?.episode_comments?.length}
+                </span>
+              )}
+              {}
             </div>
           </div>
         </div>

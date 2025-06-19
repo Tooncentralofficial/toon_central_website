@@ -196,7 +196,7 @@ const NavHome = () => {
             <NavbarMenu>
               <div
                 className="
-        py-[60px] h-full flex flex-col gap-4"
+        py-[60px] h-full flex flex-col gap-4 mt-10"
               >
                 {menuItemsmob.map((item, index) => (
                   <NavbarMenuItem key={`${item}-${index}`}>

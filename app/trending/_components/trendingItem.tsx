@@ -25,7 +25,6 @@ export interface ComicGenre {
   genre: Genre; // The nested genre object
 }
 const TrendingItem = ({ data }: { data: any }) => {
-  console.log(data);
   const { user, token } = useSelector(selectAuthState);
   const queryClient = useQueryClient();
   const pathname = usePathname();
@@ -104,11 +103,11 @@ const TrendingItem = ({ data }: { data: any }) => {
         </div>
       </div>
       {subscribed ? (
-        <div onClick={() => likeComic()}>
+        <div onClick={() => likeComic()} className={"cursor-pointer"}>
           <RemoveBox />
         </div>
       ) : (
-        <div onClick={() => likeComic()}>
+        <div onClick={() => likeComic()} className={"cursor-pointer"}>
           <AddBox />
         </div>
       )}
