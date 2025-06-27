@@ -35,7 +35,7 @@ const TrendingItem = ({ data }: { data: any }) => {
       getRequestProtected(`/comics/${data.uuid}/like`, token, pathname),
     onSuccess: (data) => {
       if (data?.success) {
-        toast(data?.message, {
+        toast("The comic has been added to library", {
           toastId: `toast_${data.uuid}`,
           type: "success",
         });
