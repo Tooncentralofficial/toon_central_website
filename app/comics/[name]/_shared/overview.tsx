@@ -34,16 +34,21 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
       getRequestProtected(`/comics/${uid}/like`, token, pathname),
     onSuccess: (data) => {
       if (data?.success) {
-        toast(data?.message, {
-          toastId: `toast_${uid}`,
-          type: "success",
-        });
+        toast(
+          data?.message === "you have successfully liked this comic"
+            ? "subscribed"
+            : "unsubscribed",
+          {
+            toastId: `toast_${uid}`,
+            type: "success",
+          }
+        );
         queryClient.invalidateQueries({
           queryKey: [queryKey],
         });
         return;
       }
-      toast(data?.message, {
+      toast(data?.message === "you have successfully liked this comic" ? "subscribed" : "unsubscribed", {
         toastId: `toast_${uid}`,
         type: "error",
       });
