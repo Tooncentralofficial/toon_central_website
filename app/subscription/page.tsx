@@ -4,10 +4,9 @@ import H2SectionTitle from '../_shared/layout/h2SectionTitle';
 import SubPlan from './_components/SubPlan';
 import { CheckIcon} from "@nextui-org/shared-icons"
 import { SubPlans } from '../utils/constants/constants';
-function page() {
+function Page() {
   const [activePlan, setActivePlan] = React.useState(0);
   const [selectedPlanIndex, setSelectedPlanIndex] = React.useState(0);
-  console.log(activePlan)
   return (
     <div className="parent-wrap py-10">
       <div className="child-wrap h-full">
@@ -36,4 +35,4 @@ function page() {
   );
 }
 
-export default page
+export default Page
