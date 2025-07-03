@@ -23,8 +23,9 @@ export interface ComicGenre {
   comic_id: number; // Associated comic ID
   genre_id: number; // Genre ID
   genre: Genre; // The nested genre object
+
 }
-const TrendingItem = ({ data }: { data: any }) => {
+const TrendingItem = ({ data ,refetchTrending}: { data: any,refetchTrending: any }) => {
   const { user, token } = useSelector(selectAuthState);
   const queryClient = useQueryClient();
   const pathname = usePathname();
@@ -35,12 +36,16 @@ const TrendingItem = ({ data }: { data: any }) => {
       getRequestProtected(`/comics/${data.uuid}/like`, token, pathname),
     onSuccess: (data) => {
       if (data?.success) {
-        toast("The comic has been added to library", {
+        toast(data?.message === 'you have successfully liked this comic' ? 'Comic has been added to your library' : 'Comic has been removed from your library', {
           toastId: `toast_${data.uuid}`,
           type: "success",
         });
+        refetchTrending();
         queryClient.invalidateQueries({
           queryKey: [queryKey],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['my_likes'],
         });
         return;
       }
@@ -86,7 +91,7 @@ const TrendingItem = ({ data }: { data: any }) => {
               <p
                 key={i}
                 className={`text-[#FCFCFD] font-extralight text-[0.75rem] ${
-                  i < data.genres.length - 1 && 'mr-1'
+                  i < data.genres.length - 1 && "mr-1"
                 }`}
               >
                 {item.genre.name}
@@ -103,11 +108,17 @@ const TrendingItem = ({ data }: { data: any }) => {
         </div>
       </div>
       {subscribed ? (
-        <div onClick={() => likeComic()} className={"cursor-pointer"}>
+        <div
+          onClick={() => likeComic()}
+          className={"cursor-pointer hover:bg-[#afb0af21] p-2 rounded-full"}
+        >
           <RemoveBox />
         </div>
       ) : (
-        <div onClick={() => likeComic()} className={"cursor-pointer"}>
+        <div
+          onClick={() => likeComic()}
+          className={"cursor-pointer hover:bg-[#afb0af21] p-2 rounded-full"}
+        >
           <AddBox />
         </div>
       )}

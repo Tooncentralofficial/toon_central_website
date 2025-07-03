@@ -112,12 +112,12 @@ const Likes = ({
 
   return (
     <div
-      className={`flex items-center gap-[9px] $${
+      className={`flex items-center gap-[9px]  ${
         small ? "gap-2" : "gap-[9px]"
       } `}
     >
       <div
-        className={`flex items-center gap-[2.5px] text-xs font-light ${
+        className={`flex items-center gap-[2.5px] text-xs font-light cursor-pointer ${
           isViewd ? "text-[#05834B]" : ""
         }`}
       >
@@ -132,7 +132,7 @@ const Likes = ({
       </div>
       <Dot />
       <div
-        className={`flex items-center gap-[2.5px] text-xs font-light ${
+        className={`flex items-center gap-[2.5px] text-xs font-light cursor-pointer ${
           isFaved ? "text-[#05834B]" : ""
         } `}
         onClick={(e) => {

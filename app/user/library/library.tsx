@@ -18,7 +18,7 @@ export default function Library() {
     {
       id: "books",
       label: "My books",
-      content: <MyBooksTab />,
+      content: <MyBooksTab tabName="books" />,
       tabIndex: 0,
     },
     {

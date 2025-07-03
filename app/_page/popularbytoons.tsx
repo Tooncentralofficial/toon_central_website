@@ -26,7 +26,7 @@ const PopularByToons = () => {
     }
   }, [isLoading, isFetching, data]);
   return (
-    <div className="parent-wrap py-10 block md:hidden">
+    <div className="parent-wrap pt-10 md:py-10 md:pt-0  block md:hidden">
       <div className="child-wrap">
         <div className="flex justify-between items-center">
           <H2SectionTitle title="Popular by ToonCentral" />

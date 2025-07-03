@@ -26,10 +26,8 @@ const Mainfooter = () => {
         <div className="flex justify-between pt-16 flex-col md:flex-row gap-10 md:gap-0">
           <ToonCentralIcon />
           <div className="flex gap-3 md:gap-5 lg:gap-10 justify-center md:justify-normal text-tiny md:text-small">
-            <p>About us </p>
+            <Link href={"/about"}>About us </Link>
             <p>Feedback</p>
-            <p>Help</p>
-
             <Link href={"/terms"}>
               <p>Terms </p>
             </Link>

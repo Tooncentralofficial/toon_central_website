@@ -19,6 +19,7 @@ export default function Page() {
     isLoading,
     isFetching,
     isSuccess,
+    refetch: refetchTrending,
   } = useQuery({
     queryKey: ["new_trending"],
     queryFn: () =>
@@ -87,19 +88,54 @@ export default function Page() {
                 </Skeleton>
               </div>
             </div>
+            <div className=" w-full rounded-[8px] overflow-hidden hidden md:flex">
+              <div className="flex w-full h-full  overflow-hidden relative">
+                <Skeleton
+                  isLoaded={!isLoading}
+                  className="w-full overflow-hidden h-full"
+                >
+                  <Image
+                    src={`${newTrending[1]?.coverImage || ""}`}
+                    width={200}
+                    height={496}
+                    alt={`${newTrending[1]?.title || "toon_central"}`}
+                    style={{
+                      width: "100%",
+                      minHeight: "100%",
+                      objectFit: "cover",
+                    }}
+                    unoptimized
+                    priority
+                  />
+                  <div className="absolute top-0 left-0 outline h-full w-full flex flex-col  p-12 justify-end bg-[#0D111D70] ">
+                    <div className="flex gap-7 items-center">
+                      <div>
+                        <div className="font-bold text-xl">
+                          {newTrending[1]?.title}
+                        </div>
+                        <Likes likesNViews={newTrending[1]?.likesAndViews} />
+                      </div>
+                      <div>
+                        <SolidPrimaryButton size="md">Add</SolidPrimaryButton>
+                      </div>
+                    </div>
+                  </div>
+                </Skeleton>
+              </div>
+            </div>
 
             <div className="hidden md:flex w-full flex-col gap-5">
               <div className="rounded-lg overflow-hidden h-[50%]">
-              <Link href={`/comics/${newTrending[1]?.uuid}`}>
+              <Link href={`/comics/${newTrending[2]?.uuid}`}>
                 <Skeleton
                   isLoaded={!isLoading}
                   className="rounded-lg overflow-hidden h-full"
                 >
                   <Image
-                    src={`${newTrending[1]?.coverImage || ""}`}
+                    src={`${newTrending[2]?.coverImage || ""}`}
                     width={200}
                     height={200}
-                    alt={`${newTrending[0]?.title || "toon_central"}`}
+                    alt={`${newTrending[2]?.title || "toon_central"}`}
                     objectPosition="center bottom"
                     objectFit="cover"
                     style={{
@@ -114,20 +150,20 @@ export default function Page() {
                 </Link>
               </div>
               <div className="rounded-lg overflow-hidden h-[50%]">
-                <Link href={`/comics/${newTrending[2]?.uuid}`}>
+                <Link href={`/comics/${newTrending[3]?.uuid}`}>
                   <Skeleton
                     isLoaded={!isLoading}
                     className="rounded-lg overflow-hidden h-full"
                   >
                     <Image
                       src={`${
-                        newTrending[2]?.coverImage ||
-                        newTrending[1]?.coverImage ||
+                        newTrending[3]?.coverImage ||
+                        newTrending[4]?.coverImage ||
                         ""
                       }`}
                       width={200}
                       height={200}
-                      alt={`${newTrending[0]?.title || "toon_central"}`}
+                      alt={`${newTrending[3]?.title || "toon_central"}`}
                       style={{
                         objectPosition: "center bottom",
                         objectFit: "cover",
@@ -148,14 +184,14 @@ export default function Page() {
             {isLoading || newTrending.length == 0 ? (
               <Skeleton className="w-full h-[60px]"></Skeleton>
             ) : (
-              newTrending.map((item, i) => <TrendingItem key={i} data={item} />)
+              newTrending.map((item, i) => <TrendingItem key={i} data={item} refetchTrending={refetchTrending} />)
             )}
           </div>
         </div>
       </div>
       <div className="parent-wrap py-10">
         <div className="child-wrap w-full">
-          <H2SectionTitle title="Most Read Comic" />
+          <H2SectionTitle title="Most Read Comics" />
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex w-full h-[320px] md:h-[500px] rounded-[8px] overflow-hidden">
               <div className="flex w-full h-full  overflow-hidden relative">
@@ -192,11 +228,46 @@ export default function Page() {
                 </Skeleton>
               </div>
             </div>
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-2 gap-6">
+            <div className="flex w-full h-[320px] md:h-[500px] rounded-[8px] overflow-hidden">
+              <div className="flex w-full h-full  overflow-hidden relative">
+                <Skeleton
+                  isLoaded={!loadingRead}
+                  className="w-full overflow-hidden h-full"
+                >
+                  <Image
+                    src={`${mostRead[1]?.coverImage || ""}`}
+                    width={200}
+                    height={496}
+                    alt={`${mostRead[1]?.title || "toon_central"}`}
+                    style={{
+                      width: "100%",
+                      minHeight: "100%",
+                      objectFit: "cover",
+                    }}
+                    unoptimized
+                    priority
+                  />
+                  <div className="absolute top-0 left-0 outline h-full w-full flex flex-col  p-12 justify-end bg-[#0D111D70] ">
+                    <div className="flex gap-7 items-center">
+                      <div>
+                        <div className="font-bold text-xl">
+                          {mostRead[0]?.title}
+                        </div>
+                        <Likes likesNViews={mostRead[0]?.likesAndViews} />
+                      </div>
+                      <div>
+                        <SolidPrimaryButton size="md">Add</SolidPrimaryButton>
+                      </div>
+                    </div>
+                  </div>
+                </Skeleton>
+              </div>
+            </div>
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-6">
               {loadingRead || mostRead.length == 0 ? (
                 <Skeleton className="w-full h-[60px]"></Skeleton>
               ) : (
-                mostRead.map((item, i) => <TrendingItem key={i} data={item} />)
+                mostRead.map((item, i) => <TrendingItem key={i} data={item} refetchTrending={refetchTrending}  />)
               )}
             </div>
           </div>

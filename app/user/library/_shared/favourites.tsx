@@ -32,6 +32,7 @@ const MyFavourites = () => {
     queryKey: [`my_likes`],
     queryFn: () => getRequestProtected(`/user-likes`, token, pathname),
     enabled: token !== null,
+    refetchOnWindowFocus:true
   });
   useEffect(() => {
     if (isSuccess) {
@@ -87,7 +88,7 @@ const MyFavourites = () => {
                       </div>
                       <div className="w-[80%] ">
                         <p className="text-gray font-bold mb-2">
-                          Continue writing
+                          Continue reading
                         </p>
                         <p className="text-2xl font-semibold lg:text-4xl uppercase">
                           {item?.comic?.title}

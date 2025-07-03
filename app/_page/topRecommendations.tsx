@@ -8,6 +8,7 @@ import LoadingTitleTop from "../_shared/cards/loadingTitleTop";
 import ModalContainer from "../_shared/modals/modalcont";
 import { useDisclosure } from "@nextui-org/react";
 import CardTitleBottom from "../_shared/cards/cardTitleBottom";
+import CardTitleOutside from "../_shared/cards/cardTitleOutside";
 
 const TopRecommendations = ({
   isLoading,
@@ -20,7 +21,7 @@ const TopRecommendations = ({
   useEffect(() => {
     const updateSliced = () => {
       if (window.matchMedia("(max-width: 540px)").matches) {
-        setSliced(4);
+        setSliced(6);
       } else if (window.matchMedia("(max-width: 1024px)").matches) {
         setSliced(6);
       } else {
@@ -38,7 +39,7 @@ const TopRecommendations = ({
   }, []);
 
   return (
-    <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+    <div className="grid grid-cols-3 xs:grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
       {isLoading ? (
         dummyItems.map((item, i) => <LoadingTitleTop key={i} />)
       ) : (
@@ -51,7 +52,7 @@ const TopRecommendations = ({
                     <CardTitleTop cardData={item} index={i} />
                   </div>
                   <div className="visible md:hidden">
-                    <CardTitleBottom cardData={item} index={i} small />
+                    <CardTitleOutside cardData={item} index={i} />
                   </div>
                 </div>
               ))}
