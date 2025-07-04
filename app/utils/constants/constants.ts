@@ -1,6 +1,9 @@
-import { ReqResponseType } from "./typess";
+import { ReqResponseType, SubPlansType } from "./typess";
 
-const SuccessResponse = (data?: any, message?: string): ReqResponseType|any => ({
+const SuccessResponse = (
+  data?: any,
+  message?: string
+): ReqResponseType | any => ({
   success: true,
   message: message || "",
   data,
@@ -198,5 +201,46 @@ export const SELECT_ITEMS = [
     name: "Fantasy Romance",
     description: "",
     slug: "fantasy-romance",
+  },
+];
+
+export const SubPlans : SubPlansType[] = [
+  {
+    type: "Free",
+    price: 0,
+    title: "For individuals new to Toon Central’s platform",
+    content: ["Access to Toon Central"],
+  },
+  {
+    type: "Basic",
+    price: 5,
+    title: "Explore Toon Central’s Everyday",
+    content: [
+      "Access to Toon Central",
+      "50 free Credits monthly",
+      "Hide ads",
+      "Episode Discounts",
+    ],
+  },
+  {
+    type: "Standard",
+    price: 10,
+    title: "Explore freely with expanded access",
+    content: [
+      "Everything in basic",
+      "1000 free credits monthly",
+      "Download comics for offline read",
+      "500 free bonus credits",
+    ],
+  },
+  {
+    type: "Premium",
+    price: 20,
+    title: "Best plan to fully and freely explore ToonCentral",
+    content: [
+      "Everything in basic",
+      "10,000 free credits monthly",
+      "Membership access to Toon Centrals creative community",
+    ],
   },
 ];

@@ -2,20 +2,33 @@
 import Image from "next/image";
 import Link from "next/link";
 import Likes from "./likes";
+import { DarkEyeIcon } from "../icons/icons";
 
 const CardTitleOutside = ({
   cardData,
   index,
   queryKey,
+  noTitle
 }: {
   cardData: any;
   index: number;
-  queryKey?:string
+  queryKey?:string;
+  noTitle?:boolean;
 }) => {
+  const  views =cardData?.likesAndViews?.views?.length
   return (
     <div>
-      <div className="h-[110px] md:h-[320px]  rounded-[8px] overflow-hidden">
+      <div className="h-[135px] sm:h-[250px] md:h-[320px]  rounded-[4px] overflow-hidden">
         <div className="h-full w-auto relative">
+          <div className="absolute top-0 left-0 ">
+            <div className="font-bold text-xl  bg-[#3EFFA2] flex md:hidden items-center gap-[0.2rem] m-1 rounded-full px-1 h-3 overflow-hidden ">
+              
+                <p className="text-[6.7px] text-[#061A29] ">{views}</p>
+
+                <DarkEyeIcon />
+             
+            </div>
+          </div>
           <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
             <Image
               src={`${cardData?.coverImage || ""}`}
@@ -43,7 +56,9 @@ const CardTitleOutside = ({
         </div>
       </div>
       <div className="flex flex-wrap gap-1 items-center justify-between mt-1.5">
-        <span className="font-bold text-base">{cardData?.title}</span>
+        {!noTitle && (
+          <span className="font-bold text-base">{cardData?.title}</span>
+        )}
         <span className="font-light text-xs">
           {cardData?.genres[0].genre.name}
         </span>

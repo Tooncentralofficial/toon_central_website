@@ -3,3 +3,10 @@ export type ReqResponseType = {
   data?: any;
   message: string;
 };
+
+export type SubPlansType = {
+  type: string;
+  price: number;
+  title: string;
+  content: string[];
+};

@@ -30,6 +30,7 @@ import CommentPop from "@/public/static/svg/commentspop.svg";
 import ColouredThumbsupSolid from "@/public/static/svg/colorthumbssolid.svg";
 import ColoredEyeFilled from "@/public/static/svg/colored_eye_filled.svg";
 import SmallEyeIcon from "@/public/static/svg/smallview.svg";
+import DarkEyeIcon from  "@/public/static/svg/darkeye.svg";
 import ColoredTwotone from "@/public/static/svg/coloredtwotone.svg";
 import Googleplay from "@/public/static/svg/google_banner.svg";
 import Appstore from "@/public/static/svg/appstore_banner.svg";
@@ -82,7 +83,8 @@ export {
   SmallFaves,
   LikesSmall,
   ShareIcon,
-  Copyicon,CommentIcon,Mobilecommenticon,Sendicon
+  Copyicon,CommentIcon,Mobilecommenticon,Sendicon,
+  DarkEyeIcon
 };
 
 export { Steps, Steps2, Steps3 };

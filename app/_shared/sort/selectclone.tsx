@@ -1,7 +1,7 @@
 import { Select, SelectProps } from "@nextui-org/react";
 import { Calendar } from "../icons/icons";
 
-const SelectFilterClone = ({ ...props }: SelectProps) => {
+const SelectFilterClone = ({ children, ...props }: SelectProps) => {
   return (
     <Select
       {...props}
@@ -19,13 +19,9 @@ const SelectFilterClone = ({ ...props }: SelectProps) => {
           base: "capitalize data-[selectable=true]:focus:bg-[var(--green100)]",
         },
       }}
-      startContent={
-        <div>
-          <Calendar />
-        </div>
-      }
+      startContent={<Calendar />}
     >
-      {props.children}
+      {children}
     </Select>
   );
 };

@@ -19,7 +19,7 @@ const TodaysPicks = () => {
     }
   }, [isLoading, isFetching, data]);
   return (
-    <div className="parent-wrap py-10 block md:hidden">
+    <div className="parent-wrap py-10 block ">
       <div className="child-wrap ">
         <H2SectionTitle title="Today's Picks">
           <Link href="/original">See all</Link>

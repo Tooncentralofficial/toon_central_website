@@ -17,7 +17,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@nextui-org/react";
 import { toast } from "react-toastify";
 
-const MyBooksTab = () => {
+const MyBooksTab = ({tabName}: {tabName: string}) => {
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
   const [comics, setComics] = useState<any[]>([]);
@@ -125,7 +125,7 @@ const MyBooksTab = () => {
                       </div>
                       <div className="w-[80%] ">
                         <p className="text-gray font-bold mb-2">
-                          Continue writing
+                          {tabName === "books" ? "Continue Editing" : "Continue reading"}
                         </p>
                         <p className="text-2xl font-semibold lg:text-4xl uppercase">
                           {item?.title}

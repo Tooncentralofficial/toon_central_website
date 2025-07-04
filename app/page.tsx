@@ -17,6 +17,7 @@ import PopularByToons from "./_page/popularbytoons";
 import HorizontalScroll from "./_page/test";
 import CardTitleInMobile from "./_shared/cards/cardTitleinMobile";
 import TodaysPicks from "./_page/todaysPicks";
+import TodaysPicksMobile from "./_page/todaysPicksMobile";
 
 export default async function Home() {
   const queryClient = new QueryClient();
@@ -33,7 +34,8 @@ export default async function Home() {
         <RecommendtnTabs />
         <Popular />
         <Trending />
-        <TodaysPicks />
+        {/* <TodaysPicks /> */}
+        <TodaysPicksMobile />
         <PopularByToons />
         <HorizontalScroll />
         <Originals />

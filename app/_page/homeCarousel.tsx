@@ -104,43 +104,7 @@ function HomeCarousel() {
     );
   };
   
-  var settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 5,
-    slidesToScroll: 5,
-    initialSlide: 0,
-    arrows: false,
-    beforeChange: (current: number, next: number) => setCurrentSlide(next),
-    responsive: [
-      {
-        breakpoint: 1400,
-        settings: {
-          slidesToShow: 4,
-          slidesToScroll: 4,
-          infinite: true,
-        },
-      },
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
-        },
-      },
-      {
-        breakpoint: 700,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-          initialSlide: 2,
-          // infinite:true
-        },
-      },
-      
-    ],
-  };
+
   const color = [
     "#21D19F",
     "#AB2346",
