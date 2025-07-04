@@ -309,6 +309,14 @@ const NavHome = () => {
                         >
                           Library
                         </DropdownItem>
+                        <DropdownItem
+                          className="flex sm:hidden"
+                          as={Link}
+                          href="/subscription"
+                          key="2"
+                        >
+                          subscriptions
+                        </DropdownItem>
 
                         <DropdownItem
                           key="2"
