@@ -23,6 +23,7 @@ export interface ModalBaseProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenChange: () => void;
+  comicImageUrl: string;
 }
 
 const icons = [
@@ -31,12 +32,17 @@ const icons = [
   { label: "Linkedin", icon: Linkedin },
   { label: "Instagram", icon: Insta },
 ];
-const ShareModal = ({ isOpen, onClose, onOpenChange }: ModalBaseProps) => {
+const ShareModal = ({
+  isOpen,
+  onClose,
+  onOpenChange,
+  comicImageUrl,
+}: ModalBaseProps) => {
   const pathname = usePathname();
   const currentUrl = `${PUBLICURL || "http://localhost:3000"}${pathname}`;
   const [copied, setCopiedId] = useState<string>();
   const [copiedText, setCopiedText] = useState<string>(currentUrl);
-
+  console.log(currentUrl)
   return (
     <ModalContainer
       isOpen={isOpen}
@@ -44,18 +50,21 @@ const ShareModal = ({ isOpen, onClose, onOpenChange }: ModalBaseProps) => {
       onOpenChange={onOpenChange}
     >
       <div className="">
-        <div className="flex gap-5 ">
-          <div className="w-[5rem] h[5rem] rounded-2xl overflow-auto">
-            <Image
-              src={shareimg}
-              alt="shareimage"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "center center ",
-              }}
-            />
+        <div className="flex gap-5 items-center">
+          <div className="w-[5rem] h-[5rem] rounded-2xl  overflow-auto relative ">
+            <div
+              style={{  width: "100%", height: "100%" }}
+            >
+              <Image
+                src={comicImageUrl} // no "url()" here
+                alt="shareimage"
+                fill
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "center",
+                }}
+              />
+            </div>
           </div>
           <p className="mt-2 "> Share to your social network</p>
         </div>

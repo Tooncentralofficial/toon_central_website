@@ -173,6 +173,7 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
           isOpen={isOpen}
           onClose={onClose}
           onOpenChange={onOpenChange}
+          comicImageUrl={data?.coverImage}
         />
       </div>
     </Skeleton>
