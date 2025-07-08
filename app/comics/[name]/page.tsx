@@ -7,6 +7,16 @@ type Props = {
   params: { name: string };
 };
 
+// export async function generateStaticParams() {
+//   const response = await getRequest("/comics/pull/all"); // adjust API endpoint if needed
+//   const comics = response?.data || [];
+
+//   return comics.map((comic: { slug: string }) => ({
+//     name: comic.slug,
+//   }));
+// }
+
+
 export const generateMetadata = async ({
   params,
 }: Props): Promise<Metadata> => {
@@ -30,22 +40,21 @@ export const generateMetadata = async ({
       logoUrl: DEFAULT_OG_URL,
     };
   });
-
   const images = [
     {
-      url: bgUrl || DEFAULT_OG_URL,
+      url: logoUrl || DEFAULT_OG_URL,
       width: 1200,
       height: 630,
       alt: title || "Toon Central Comic",
     },
     {
-      url: bgUrl || DEFAULT_OG_URL,
+      url: logoUrl || DEFAULT_OG_URL,
       width: 800,
       height: 420,
       alt: title || "Toon Central Comic",
     },
     {
-      url: bgUrl || DEFAULT_OG_URL,
+      url: logoUrl || DEFAULT_OG_URL,
       width: 600,
       height: 315,
       alt: title || "Toon Central Comic",
