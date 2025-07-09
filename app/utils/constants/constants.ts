@@ -244,3 +244,39 @@ export const SubPlans : SubPlansType[] = [
     ],
   },
 ];
+
+
+export const issues = [
+  {
+    id: 1,
+    name: "Billing and Payment",
+  },
+  {
+    id: 2,
+    name: "Account Management",
+  },
+  {
+    id: 3,
+    name: "Content Issues",
+  },
+  {
+    id: 4,
+    name: "General Feedback",
+  },
+]
+
+
+export const loginMethods = [
+  {
+    id: 1,
+    name: "Email",
+  },
+  {
+    id: 2,
+    name: "Google",
+  },
+  {
+    id: 3,
+    name: "Facebook",
+  },
+]

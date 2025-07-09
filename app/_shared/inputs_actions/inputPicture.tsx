@@ -22,7 +22,7 @@ const InputPicture = ({
   formik: any;
   fieldName: any;
   submitOnChange?: boolean;
-  onChange?: (file: File) => void;
+  onChange?: (file: File | File[]) => void;
   isLoading?: boolean;
   fieldError?: boolean;
   variant?: "empty" | "add" | "upload";
@@ -40,17 +40,42 @@ const InputPicture = ({
   //     : URL.createObjectURL(formik.values[fieldName])
   //   : "";
 
-  const handleChange = (file: any) => {
+  const handleChange = (files: File | File[] | FileList) => {
     setSizeError(false);
+
+    // Normalize to an array of File objects
+    const normalizeFiles = (input: File | File[] | FileList): File[] => {
+      if (input instanceof FileList) {
+        return Array.from(input);
+      }
+      if (Array.isArray(input)) {
+        return input.flatMap((item) =>
+          item instanceof FileList ? Array.from(item) : item
+        );
+      }
+      return [input];
+    };
+
+    const newFiles = normalizeFiles(files);
+
     if (onChange) {
-      onChange(file);
+      onChange(newFiles);
     } else {
-      formik.setFieldValue(fieldName, file);
+      if (multiple) {
+        const existingFiles = Array.isArray(formik.values[fieldName])
+          ? formik.values[fieldName]
+          : [];
+        formik.setFieldValue(fieldName, [...existingFiles, ...newFiles]);
+      } else {
+        formik.setFieldValue(fieldName, newFiles[0]);
+      }
     }
+
     if (submitOnChange) {
       formik.handleSubmit();
     }
   };
+  
   const isError = fieldError ? fieldError : Boolean(formik?.errors[fieldName]);
   const Icon = () => {
     switch (variant) {
