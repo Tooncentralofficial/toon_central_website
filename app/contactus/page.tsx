@@ -30,10 +30,10 @@ export default function page() {
               For help with our platform, questions, or general feedback, email
               us at{" "}
               <a
-                href="mailto:support@tooncentral.com"
+                href="tooncentralhub@gmail.com"
                 className="text-blue-600 underline"
               >
-                support@tooncentral.com
+                tooncentralhub@gmail.com
               </a>
               .
             </p>
@@ -47,10 +47,10 @@ export default function page() {
               For IP business, rights, and licensing opportunities, contact us
               at{" "}
               <a
-                href="mailto:ip@tooncentral.com"
+                href="tooncentralhub@gmail.com"
                 className="text-blue-600 underline"
               >
-                ip@tooncentral.com
+                tooncentralhub@gmail.com
               </a>
               .
             </p>
@@ -64,10 +64,10 @@ export default function page() {
               Interested in advertising or partnership opportunities? Reach out
               to us at{" "}
               <a
-                href="mailto:ads@tooncentral.com"
+                href="tooncentralhub@gmail.com"
                 className="text-blue-600 underline"
               >
-                ads@tooncentral.com
+                tooncentralhub@gmail.com
               </a>
               .
             </p>
@@ -80,10 +80,10 @@ export default function page() {
             <p className="text-gray-700">
               For press or media-related inquiries, email us at{" "}
               <a
-                href="mailto:press@tooncentral.com"
+                href="tooncentralhub@gmail.com"
                 className="text-blue-600 underline"
               >
-                press@tooncentral.com
+                tooncentralhub@gmail.com
               </a>
               .
             </p>
@@ -110,17 +110,17 @@ export default function page() {
               Have an amazing idea or comic you’d like to pitch to us? We’d love
               to hear from you! Send your pitches to{" "}
               <a
-                href="mailto:toooncentralhub@gmail.com"
+                href="tooncentralhub@gmail.com"
                 className="text-blue-600 underline"
               >
-                toooncentralhub@gmail.com
+                tooncentralhub@gmail.com
               </a>{" "}
               or{" "}
               <a
-                href="mailto:tcadmin@tooncentralhub.com"
+                href="tooncentralhub@gmail.com"
                 className="text-blue-600 underline"
               >
-                tcadmin@tooncentralhub.com
+                tooncentralhub@gmail.com
               </a>
               .
             </p>

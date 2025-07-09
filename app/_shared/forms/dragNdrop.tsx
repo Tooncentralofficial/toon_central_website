@@ -44,6 +44,12 @@ function DragNDropTyped({
   onDraggingStateChange,
   dropMessageStyle,
 }: FileUploadProps) {
+  // const handleFileChange = (file: File | FileList) => {
+  //   console.log("DragNDropTyped received files:", file);
+  //   if (handleChange) {
+  //     handleChange(file);
+  //   }
+  // };
   return (
     <FileUploader
       name={name}
