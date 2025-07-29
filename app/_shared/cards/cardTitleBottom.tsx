@@ -28,12 +28,24 @@ const CardTitleBottom = ({
   queryKey?: string;
   small?: boolean;
 }) => {
+
+  
+
   const date:number = Date.now();
   const finaltime = date * 9000
   
   // const adLink = process.env.NEXT_PUBLIC_AD_LINK;
   const router = useRouter();
   const { user, token } = useSelector(selectAuthState);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  useEffect(() => {
+    if (user) {
+      const isUserSubscribed = cardData?.likesAndViews?.likes?.some(
+        (like: any) => like.user_id === user.id
+      );
+      setIsSubscribed(isUserSubscribed);
+    }
+  }, [user, cardData]);
   const uid = cardData?.uuid;
   const queryClient = useQueryClient();
   const pathname = usePathname();
@@ -69,6 +81,7 @@ const CardTitleBottom = ({
   //     router.push(`/comics/${cardData?.uuid}`);
   //   }
   // }
+  
   const { mutate: subscibe, isPending } = useMutation({
     mutationKey: ["subscribe"],
     mutationFn: () =>
@@ -79,9 +92,10 @@ const CardTitleBottom = ({
           toastId: `toast_${uid}`,
           type: "success",
         });
-        queryClient.invalidateQueries({
-          queryKey: [queryKey],
-        });
+        setIsSubscribed(!isSubscribed);
+        // queryClient.invalidateQueries({
+        //   queryKey: [queryKey],
+        // });
         return;
       }
       toast(data?.message, {
@@ -132,7 +146,7 @@ const CardTitleBottom = ({
                   uid={cardData?.uuid}
                   favourites={cardData?.favourites}
                 />
-                {expand && (
+                {expand && user?.id && ( //check if user is logged in and expand is true
                   <motion.a
                     onClick={(e) => {
                       e.preventDefault();
@@ -144,8 +158,8 @@ const CardTitleBottom = ({
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3, delay: 0.2 }}
                     className="bg-[--green100] px-4 py-1 rounded-[4px] hover:cursor-pointer"
-                  >
-                    Subscribe
+                  >{/*check if logged in user is subscibed to this comic */}
+                    {isSubscribed? "Unsubscribe" : "Subscribe"} {/*if subscribed then show unsubscribe else subscribe*/}
                   </motion.a>
                 )}
               </div>
