@@ -22,9 +22,12 @@ function HomeCarousel() {
   const swiperRef: any = useRef(null);
   const [currentGroup, setCurrentGroup] = useState(0);
   const carouselQueryKey = "carousel";
+  // reduce the time to fetch new data not cached data
   const { data, isFetching, isLoading, isError, isSuccess } = useQuery({
     queryKey: [carouselQueryKey],
     queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
+    staleTime:10000,
+    refetchOnMount:"always"
   });
  
   
