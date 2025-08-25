@@ -24,13 +24,35 @@ export const generateMetadata = async ({
     `/comics/${params?.name}/view`
   ).then((data) => {
     if (data?.success) {
-      // Extract title, description, and image URL from the respons
-      let d = {
+      console.log("the data",{
         title: data?.data?.title,
         description: data?.data?.description,
         bgUrl: data?.data?.backgroundImage,
         logoUrl: data?.data?.coverImage,
+      });
+      const cleanImageUrl = (url: string) => {
+        if (!url) return DEFAULT_OG_URL;
+        if (url.startsWith("https://res.cloudinary.com")) {
+          return url;
+        }
+        if (url.includes("https://res.cloudinary.com")) {
+          const cloudinaryIndex = url.indexOf("https://res.cloudinary.com");
+          return url.substring(cloudinaryIndex);
+        }
+        if (url.startsWith("/")) {
+          return `https://tooncentralhub.com${url}`;
+        }
+
+        return url;
       };
+
+      let d = {
+        title: data?.data?.title,
+        description: data?.data?.description,
+        bgUrl: cleanImageUrl(data?.data?.backgroundImage),
+        logoUrl: cleanImageUrl(data?.data?.coverImage),
+      };
+      console.log("data",d);
       return d;
     }
     return {
