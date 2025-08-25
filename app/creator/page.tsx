@@ -27,6 +27,9 @@ export const metadata: Metadata = {
   title: "Toon Central - Endless Comics, Endless stories.",
   description:
     " Read Anywhere. Create Anytime. Get started with us to unlock a world of comics and creativity",
+  alternates:{
+      canonical:"https://tooncentralhub.com/creator"
+    },
   openGraph: {
     title: "Toon Central - creator hub",
     description:
@@ -43,6 +46,10 @@ export const metadata: Metadata = {
       " Read Anywhere. Create Anytime. Get started with us to unlock a world of comics and creativity",
     images: images,
   },
+  robots: {
+    index:true,
+    follow:true,
+  }
 };
 
 
