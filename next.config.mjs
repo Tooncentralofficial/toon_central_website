@@ -2,9 +2,7 @@
 const nextConfig = {
   trailingSlash: false,
   async redirects() {
-    return [
-     
-    ];
+    return [];
   },
   async headers() {
     return [
@@ -14,6 +12,14 @@ const nextConfig = {
           {
             key: "X-Robots-Tag",
             value: "index, follow",
+          },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, must-revalidate",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
           },
         ],
       },
@@ -32,7 +38,11 @@ const nextConfig = {
         hostname: "res.cloudinary.com",
         port: "",
       },
-      
+      {
+        protocol: "https",
+        hostname: "tooncentralhub.com",
+        port: "",
+      },
     ],
     minimumCacheTTL: 60,
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
