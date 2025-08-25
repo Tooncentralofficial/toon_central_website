@@ -16,43 +16,19 @@ const alternate = "https://tooncentralhub.com/static/images/login.png";
 //   }));
 // }
 
-
 export const generateMetadata = async ({
   params,
 }: Props): Promise<Metadata> => {
-  const { title, description, bgUrl, logoUrl } = await getRequest(
-    `/comics/${params?.name}/view`
-  ).then((data) => {
+  const { title, description, bgUrl, logoUrl } = await getRequest(`
+    /comics/${params?.name}/view `).then((data) => {
     if (data?.success) {
-      console.log("the data",{
+      // Extract title, description, and image URL from the response data
+      let d = {
         title: data?.data?.title,
         description: data?.data?.description,
         bgUrl: data?.data?.backgroundImage,
         logoUrl: data?.data?.coverImage,
-      });
-      const cleanImageUrl = (url: string) => {
-        if (!url) return DEFAULT_OG_URL;
-        if (url.startsWith("https://res.cloudinary.com")) {
-          return url;
-        }
-        if (url.includes("https://res.cloudinary.com")) {
-          const cloudinaryIndex = url.indexOf("https://res.cloudinary.com");
-          return url.substring(cloudinaryIndex);
-        }
-        if (url.startsWith("/")) {
-          return `https://tooncentralhub.com${url}`;
-        }
-
-        return url;
       };
-
-      let d = {
-        title: data?.data?.title,
-        description: data?.data?.description,
-        bgUrl: cleanImageUrl(data?.data?.backgroundImage),
-        logoUrl: cleanImageUrl(data?.data?.coverImage),
-      };
-      console.log("data",d);
       return d;
     }
     return {
@@ -62,21 +38,22 @@ export const generateMetadata = async ({
       logoUrl: DEFAULT_OG_URL,
     };
   });
+
   const images = [
     {
-      url: alternate,
+      url: bgUrl || DEFAULT_OG_URL,
       width: 1200,
       height: 630,
       alt: title || "Toon Central Comic",
     },
     {
-      url: alternate,
+      url: bgUrl || DEFAULT_OG_URL,
       width: 800,
       height: 420,
       alt: title || "Toon Central Comic",
     },
     {
-      url: alternate,
+      url: bgUrl || DEFAULT_OG_URL,
       width: 600,
       height: 315,
       alt: title || "Toon Central Comic",
@@ -86,25 +63,24 @@ export const generateMetadata = async ({
   return {
     title: `Toon Central - ${title}`,
     description:
-      description || `Discover Toon Central, the pioneering comic platform`,
+      description || "Discover Toon Central, the pioneering comic platform",
 
     openGraph: {
       title: `Toon Central - ${title}`,
       description:
         description ||
-        `Discover Toon Central, the pioneering comic platform showcasing Afrocentric comics.`,
-      url: `https://tooncentralhub.com/comics/${params.name}`,
+        " Discover Toon Central, the pioneering comic platform showcasing Afrocentric comics.",
+      url: ` https://tooncentralhub.com/comics/${params.name}`,
       type: "website",
       images: images,
     },
-
     twitter: {
       card: "summary_large_image",
       site: "@tooncentralhub",
       title: `Toon Central - ${title}`,
       description:
         description ||
-        `Discover Toon Central, the pioneering comic platform showcasing Afrocentric comics.`,
+        "Discover Toon Central, the pioneering comic platform showcasing Afrocentric comics.",
       images: images,
     },
   };
