@@ -6,7 +6,7 @@ import { DEFAULT_OG_URL } from "@/app/layout";
 type Props = {
   params: { name: string };
 };
-
+const alternate = "https://tooncentralhub.com/static/images/login.png";
 // export async function generateStaticParams() {
 //   const response = await getRequest("/comics/pull/all"); // adjust API endpoint if needed
 //   const comics = response?.data || [];
@@ -64,19 +64,19 @@ export const generateMetadata = async ({
   });
   const images = [
     {
-      url: logoUrl || DEFAULT_OG_URL,
+      url: alternate,
       width: 1200,
       height: 630,
       alt: title || "Toon Central Comic",
     },
     {
-      url: logoUrl || DEFAULT_OG_URL,
+      url: alternate,
       width: 800,
       height: 420,
       alt: title || "Toon Central Comic",
     },
     {
-      url: logoUrl || DEFAULT_OG_URL,
+      url: alternate,
       width: 600,
       height: 315,
       alt: title || "Toon Central Comic",
