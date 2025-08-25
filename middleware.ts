@@ -7,6 +7,23 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get(cookieName)?.value;
   const { pathname } = request.nextUrl;
 
+  const userAgent = request.headers.get("user-agent") || "";
+   const isSocialCrawler =
+     userAgent.includes("facebookexternalhit") ||
+     userAgent.includes("Twitterbot") ||
+     userAgent.includes("LinkedInBot") ||
+     userAgent.includes("WhatsApp") ||
+     userAgent.includes("Slackbot") ||
+     userAgent.includes("TelegramBot");
+
+   // Allow all social media crawlers to access any page without redirects
+   if (isSocialCrawler) {
+     console.log(`Social crawler accessing: ${pathname}`);
+     return NextResponse.next();
+   }
+
+
+
   const checkProtectedRoutes = () => {
     if (pathname.startsWith("/comics") || pathname.startsWith("/user")) {
       return NextResponse.redirect(new URL("/auth/login", request.url));
