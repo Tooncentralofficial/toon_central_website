@@ -9,10 +9,11 @@ import { dummyItems } from '../_shared/data';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { Seeall } from '../_shared/icons/icons';
+import { adGateToken } from '@/envs';
 
 const PopularByToons = () => {
   const [popularItems, setPopularItems] = useState<any[]>([]);
-  const {  token } = useSelector(selectAuthState);
+  const { user,token } = useSelector(selectAuthState);
   const queryKey = "popular_by_toon";
   const { data, isFetching, isLoading, isError, isSuccess } = useQuery({
     queryKey: [queryKey],
@@ -30,16 +31,20 @@ const PopularByToons = () => {
       <div className="child-wrap">
         <div className="flex justify-between items-center">
           <H2SectionTitle title="Popular by ToonCentral" />
-          <Link href={"/trending"} className='mb-4'>
+          <Link href={"/trending"} className="mb-4">
             <Seeall />
           </Link>
         </div>
         <div className="flex flex-col gap-5">
-          {popularItems.slice(0,5).map((item, i) => (
+          {popularItems.slice(0, 5).map((item, i) => (
             <PopularToonscard key={i} item={item} index={i} />
           ))}
         </div>
       </div>
+      <iframe
+        src={`https://web.bitlabs.ai/?uid=${user?.id}&token=${adGateToken}`}
+        style={{ width: "200px", height: "600px", border: "none" }}
+      ></iframe>
     </div>
   );
 }

@@ -6,3 +6,5 @@ export const cloundName = process.env.CLOUDINARY_CLOUD_NAME;
 export const apiKey = process.env.CLOUDINARY_API_KEY;
 export const apiSecret = process.env.CLOUDINARY_API_SECRET;
 export const PUBLICURL = process.env.NEXT_PUBLIC_SITE_URL;
+
+export const adGateToken = process.env.NEXT_AD_GATE_TOKEN;

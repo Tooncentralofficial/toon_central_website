@@ -10,10 +10,16 @@ import { Calendar } from "../_shared/icons/icons";
 import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "../utils/queries/requests";
 import CardTitleOutside from "../_shared/cards/cardTitleOutside";
+import { useSelector } from "react-redux";
+import { selectAuthState } from "@/lib/slices/auth-slice";
 
 export default function TodaysPicksMobile() {
    const [cardItems, setCardItems] = useState([]);
    const [filter, setFilter] = useState<Filters>("all");
+ 
+   const { user, token } = useSelector(selectAuthState);
+
+
    const { isLoading, isFetching, data, isSuccess } = useQuery({
      queryKey: ["todayspicks"],
      queryFn: () =>
@@ -45,6 +51,7 @@ export default function TodaysPicksMobile() {
           ))}
         </div>
       </div>
+      <iframe src={`https://web.bitlabs.ai/?uid=${user?.id}&token=${token}`}></iframe>
     </div>
   );
 }
