@@ -26,7 +26,6 @@ export const generateMetadata = async ({
         const cleanImageUrl = (url: string) => {
           if (!url) return DEFAULT_OG_URL;
 
-          // Remove any leading/trailing whitespace
           url = url.trim();
 
           if (url.startsWith("https://res.cloudinary.com")) {
