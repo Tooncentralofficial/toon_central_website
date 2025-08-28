@@ -41,10 +41,10 @@ const PopularByToons = () => {
           ))}
         </div>
       </div>
-      <iframe
+      {/* <iframe
         src={`https://web.bitlabs.ai/?uid=${user?.id}&token=${adGateToken}`}
         style={{ width: "200px", height: "600px", border: "none" }}
-      ></iframe>
+      ></iframe> */}
     </div>
   );
 }

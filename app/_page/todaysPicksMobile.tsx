@@ -51,7 +51,7 @@ export default function TodaysPicksMobile() {
           ))}
         </div>
       </div>
-      <iframe src={`https://web.bitlabs.ai/?uid=${user?.id}&token=${token}`}></iframe>
+      {/* <iframe src={`https://web.bitlabs.ai/?uid=${user?.id}&token=${token}`}></iframe> */}
     </div>
   );
 }
