@@ -21,9 +21,9 @@ const ChapterLink = ({
   const pathname = usePathname();
   const router = useRouter();
   const readChapter = () => {
-    if (index > 3-1) {
-      window.open(adLink, "_blank");
-    }
+    // if (index > 3-1) {
+    //   window.open(adLink, "_blank");
+    // }
     router.push(
       `${pathname}/chapter?chapter=${index}&uid=${uid}&comicid=${comicId}`
     );

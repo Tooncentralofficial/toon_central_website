@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { dummyItems } from "../_shared/data";
 import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
 import { Autoplay } from "swiper/modules";
+// @ts-ignore
 import "swiper/css";
 import { motion } from "framer-motion";
 export const staticCardItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];

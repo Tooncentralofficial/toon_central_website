@@ -9,6 +9,8 @@ import { Comic } from "@/helpers/types";
 import Link from "next/link";
 import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
 import { Autoplay } from "swiper/modules";
+
+// @ts-ignore
 import "swiper/css";
 import CardTitleOutside from "../_shared/cards/cardTitleOutside";
 
