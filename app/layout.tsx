@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+//@ts-ignore
 import "./globals.css";
+//@ts-ignore
 import "slick-carousel/slick/slick.css";
+//@ts-ignore
 import "slick-carousel/slick/slick-theme.css";
+//@ts-ignore
 import "react-toastify/dist/ReactToastify.css";
 import ClientLayout from "./clientLayout";
 import Script from "next/script";
@@ -55,7 +59,7 @@ export default function RootLayout({
         <meta name="monetag" content="b1560b2812f90a46572fbf59094c6458" />
       </head>
       <body className={` ${satoshi.className} `}>
-         <PropellerAdsScript />
+         {/* <PropellerAdsScript /> */}
         {/* <Script
           id="adsense-script"
           async

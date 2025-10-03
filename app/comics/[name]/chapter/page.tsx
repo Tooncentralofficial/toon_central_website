@@ -113,7 +113,7 @@ const Page = ({
       ),
     enabled: token !== null,
   });
-  
+
   const addEpisodeComment = useMutation({
     mutationKey: ["add_episode_comment"],
     mutationFn: () =>
@@ -152,27 +152,33 @@ const Page = ({
       });
     },
   });
-  const [hasClicked, setHasClicked] = useState(false);
-  useEffect(() => {
-    const storedClick = localStorage.getItem("hasClickedAd");
-    if (storedClick === "true") {
-      setHasClicked(true);
-    }
-  }, [chapter]);
-  const redirectToAd = () => {
-    window.open(adLink, "_blank");
-  };
+  // const [hasClicked, setHasClicked] = useState(false);
+  // useEffect(() => {
+  //   const storedClick = localStorage.getItem("hasClickedAd");
+  //   if (storedClick === "true") {
+  //     setHasClicked(true);
+  //   }
+  // }, [chapter]);
+  // const redirectToAd = () => {
+  //   window.open(adLink, "_blank");
+  // };
+  // const prevChapter = () => {
+  //   if (!hasClicked && chapter > 3) {
+  //     localStorage.setItem("hasClickedAd", "true");
+  //     setHasClicked(true);
+  //     redirectToAd();
+  //   } else {
+  //     if (chapter > 1) {
+  //       setChapter((prev) => prev - 1);
+  //       localStorage.removeItem("hasClickedAd");
+  //       setHasClicked(false);
+  //     }
+  //   }
+  // };
   const prevChapter = () => {
-    if (!hasClicked && chapter > 3) {
-      localStorage.setItem("hasClickedAd", "true");
-      setHasClicked(true);
-      redirectToAd();
-    } else {
-      if (chapter > 1) {
-        setChapter((prev) => prev - 1);
-        localStorage.removeItem("hasClickedAd");
-        setHasClicked(false);
-      }
+    localStorage.removeItem("hasClickedAd");
+    if (chapter > 1) {
+      setChapter((prev) => prev - 1);
     }
   };
   const animationRef = useRef<number | null>(null);
@@ -192,23 +198,29 @@ const Page = ({
     animationRef.current = requestAnimationFrame(scrollStep);
   };
 
+  // const nextChapter = () => {
+  //   if (!hasClicked && chapter > 3) {
+  //     localStorage.setItem("hasClickedAd", "true");
+  //     setHasClicked(true);
+  //     redirectToAd();
+  //   } else {
+  //     if (chapter < parseArray(data?.data?.episodes).length) {
+  //       setChapter((prev) => prev + 1);
+  //       setTimeout(() => {
+  //         window.scrollTo({
+  //           top: 0,
+  //           behavior: "smooth",
+  //         });
+  //       }, 50);
+  //       localStorage.removeItem("hasClickedAd");
+  //       setHasClicked(false);
+  //     }
+  //   }
+  // };
   const nextChapter = () => {
-    if (!hasClicked && chapter > 3) {
-      localStorage.setItem("hasClickedAd", "true");
-      setHasClicked(true);
-      redirectToAd();
-    } else {
-      if (chapter < parseArray(data?.data?.episodes).length) {
-        setChapter((prev) => prev + 1);
-        setTimeout(() => {
-          window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-          });
-        }, 50);
-        localStorage.removeItem("hasClickedAd");
-        setHasClicked(false);
-      }
+    "clicked next chapter"
+    if (chapter < parseArray(data?.data?.episodes).length) {
+      setChapter((prev) => prev + 1);
     }
   };
   const [scrolling, setScrolling] = useState(false);
@@ -265,7 +277,7 @@ const Page = ({
       <div className="parent-wrap py-10">
         <div className="min-h-screen   w-[100%] max-w-[1400px] px-[5px] sm:px-[5px] md:px-[10px] lg:px-[25px] xl:px-[25px]  ">
           <>
-           {/* TO ADD LATER */}
+            {/* TO ADD LATER */}
             {/* <div className="w-full flex items-center justify-center">
               <button onClick={() => setScrolling((prev) => !prev)}>
                 lime
@@ -362,7 +374,10 @@ const Page = ({
                 Post
               </div>
             </div>
-            <div onClick={toggleCommentPopup} className="flex gap-2 items-center">
+            <div
+              onClick={toggleCommentPopup}
+              className="flex gap-2 items-center"
+            >
               <CommentPop />
               {episode?.[chapter - 1]?.episode_comments?.length && (
                 <span className="bg-[#05834B] w-5 h-5 rounded-full text-white flex items-center justify-center">
