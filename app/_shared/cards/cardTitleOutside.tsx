@@ -21,11 +21,11 @@ const CardTitleOutside = ({
       <div className="h-[135px] sm:h-[250px] md:h-[320px]  rounded-[4px] overflow-hidden">
         <div className="h-full w-auto relative">
           <div className="absolute top-0 left-0 ">
-            <div className="font-bold text-xl  bg-[#3EFFA2] flex md:hidden items-center gap-[0.2rem] m-1 rounded-full px-1 h-3 overflow-hidden ">
+            <div className="font-bold text-xl  bg-[#3EFFA2] flex  items-center gap-[0.2rem] m-1 rounded-full px-1 h-3 overflow-hidden ">
               
-                <p className="text-[6.7px] text-[#061A29] ">{views}</p>
+                <p className="text-[6.7px] md:text-[12px] text-[#061A29] ">{views}</p>
 
-                <DarkEyeIcon />
+                <DarkEyeIcon width={10} height={10} />
              
             </div>
           </div>
@@ -44,7 +44,7 @@ const CardTitleOutside = ({
               priority
             />
 
-            <div className="hidden absolute top-0 left-0 p-1  h-full w-full md:flex flex-col justify-end sm:p-4 bg-[#FCFCFD10] ">
+            <div className="hidden absolute top-0 left-0 p-1  h-full w-full md:hidden flex-col justify-end sm:p-4 bg-[#FCFCFD10] ">
               <Likes
                 likesNViews={cardData?.likesAndViews}
                 queryKey={queryKey}

@@ -5,9 +5,8 @@ import CardTitleTop from "../_shared/cards/cardTitleTop";
 import { RecommendedTabProps } from "./recommendtnTabs";
 import { dummyItems } from "../_shared/data";
 import LoadingTitleTop from "../_shared/cards/loadingTitleTop";
-import ModalContainer from "../_shared/modals/modalcont";
 import { useDisclosure } from "@nextui-org/react";
-import CardTitleBottom from "../_shared/cards/cardTitleBottom";
+
 import CardTitleOutside from "../_shared/cards/cardTitleOutside";
 
 const TopRecommendations = ({
@@ -62,13 +61,6 @@ const TopRecommendations = ({
           )}
         </>
       )}
-      <ModalContainer
-        isOpen={isOpen}
-        onClose={onClose}
-        onOpenChange={onOpenChange}
-      >
-        <div>sbdhkjs</div>
-      </ModalContainer>
     </div>
   );
 };
