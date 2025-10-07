@@ -33,6 +33,7 @@ const Page = () => {
     initialValues,
     validationSchema,
     onSubmit: (values) => {
+      values.remembered = true;
       loginUser.mutate(values);
     },
   });
