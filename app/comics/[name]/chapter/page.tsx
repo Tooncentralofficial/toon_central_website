@@ -221,6 +221,12 @@ const Page = ({
     "clicked next chapter"
     if (chapter < parseArray(data?.data?.episodes).length) {
       setChapter((prev) => prev + 1);
+      setTimeout(() => {
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        }, 50);
     }
   };
   const [scrolling, setScrolling] = useState(false);

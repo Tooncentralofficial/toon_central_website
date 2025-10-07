@@ -18,6 +18,8 @@ const setExpiry = (remember: boolean) => {
 export async function LoginUser(data: any, url: string) {
   console.log("login user", data);
   const remember = data?.remembered;
+  console.log("remember", remember);
+  
   const res = await postRequest(data, "/onboard/login");
   if (res?.success) {
     let payload = {
