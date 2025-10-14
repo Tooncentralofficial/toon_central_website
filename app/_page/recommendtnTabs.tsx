@@ -127,10 +127,9 @@ export default function RecommendtnTabs() {
           )}
         </Tabs> */}
         {genresSuccess && genres?.data?.length > 0 && (
-          <GenreTabs
-            tabs={genres?.data}
-            children={(activeTab) => <GenreTabContent activeTab={activeTab} />}
-          />
+          <GenreTabs tabs={genres?.data}>
+            {(activeTab) => <GenreTabContent activeTab={activeTab} />}
+          </GenreTabs>
         )}
       </div>
     </div>

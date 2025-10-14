@@ -4,6 +4,7 @@ import { Skeleton, Tab, Tabs } from "@nextui-org/react";
 import Chapters from "./tabItems/chapters";
 import Comments from "./tabItems/comments";
 import { ViewComicProps } from "../pageClient";
+import ShortsTab from "./tabItems/shorts";
 
 export interface ComicTab{
   uid:any
@@ -15,6 +16,11 @@ const ComicTabs = ({uid, data, isLoading }: ViewComicProps) => {
       id: "chapters",
       label: "Chapters",
       content: <Chapters uid={uid} data={data} />,
+    },
+    {
+      id: "shorts",
+      label: "Shorts",
+      content: <ShortsTab uid={uid} data={data} />,
     },
     {
       id: "comments",
