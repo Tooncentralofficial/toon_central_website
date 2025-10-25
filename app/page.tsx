@@ -18,6 +18,7 @@ import TodaysPicks from "./_page/todaysPicks";
 import TodaysPicksMobile from "./_page/todaysPicksMobile";
 import { DEFAULT_OG_URL } from "./layout";
 import { Metadata } from "next";
+import HomeShorts from "./_page/shortsHome";
 
 
 const images = [
@@ -82,6 +83,7 @@ export default async function Home() {
         {/* <TodaysPicks /> */}
         <TodaysPicksMobile />
         <PopularByToons />
+        <HomeShorts />
         <HorizontalScroll />
         <Originals />
         <Footer />

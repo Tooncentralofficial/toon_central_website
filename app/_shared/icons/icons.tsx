@@ -66,6 +66,15 @@ import ShareShortsIcon from "@/public/static/svg/share.svg"
 import ShortscommentLikeIcon from "@/public/static/svg/shorts/shortcommentslike.svg"
 import SendCommnetIcon from "@/public/static/svg/shorts/send.svg"
 import PlayIcon from "@/public/static/svg/shorts/playicon.svg"
+import DeleteIcon from "@/public/static/svg/shorts/trash.svg";
+import UploadComicIcon from "@/public/static/svg/uploadcomic.svg"
+import UploadShortIcon from "@/public/static/svg/uploadshort.svg"
+import CautionIcon from "@/public/static/svg/shorts/caution.svg"
+import CopyrightCheckIcon from "@/public/static/svg/shorts/copywrightcheck.svg"
+import WhatsappshortsIcon from "@/public/static/svg/shorts/whatsApp.svg"
+import FacebookShortsIcon from "@/public/static/svg/shorts/facebook.svg"
+import TelegramShortsIcon from "@/public/static/svg/shorts/telegram.svg"
+import ForwardShortsIcon from "@/public/static/svg/shorts/forwardshorts.svg"
 
 export {
   ToonCentralIcon,
@@ -99,7 +108,9 @@ export {
   LikeIcon,
   DislikeIcon,
   CommentShortsIcon,
-  ShareShortsIcon
+  ShareShortsIcon,
+  UploadComicIcon,
+  UploadShortIcon
 };
 
 export { Steps, Steps2, Steps3 };
@@ -135,5 +146,12 @@ export {
 export {
   ShortscommentLikeIcon,
   SendCommnetIcon,
-  PlayIcon
+  PlayIcon,
+  DeleteIcon,
+  CautionIcon,
+  CopyrightCheckIcon,
+  WhatsappshortsIcon,
+  FacebookShortsIcon,
+  TelegramShortsIcon,
+  ForwardShortsIcon
 }

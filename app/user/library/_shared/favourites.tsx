@@ -114,7 +114,7 @@ const MyFavourites = () => {
                             {item?.comic?.description}
                           </p>
                           <SolidPrimaryButton
-                            className="w-max"
+                            className="w-max bg-gradient-to-r from-[#00A96E] to-[#22C55E] lg:w-[13rem]"
                             disabled={item?.comic?.uuid}
                             as={Link}
                             href={`/comics/${item?.comic?.uuid}`}

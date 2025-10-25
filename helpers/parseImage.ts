@@ -9,6 +9,7 @@ export const generateUrl = (file: any) => {
   }
 };
 
+
 export const parseImageSrc = (
   fileUrl: any
 ): { src: string; isFile: boolean; generateUrl: (fileUrl: any) => string } => {

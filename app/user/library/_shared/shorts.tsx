@@ -1,26 +1,25 @@
-import {
-  deleteRequestProtected,
-  getRequestProtected,
-} from "@/app/utils/queries/requests";
-import { selectAuthState } from "@/lib/slices/auth-slice";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import NotFound from "./notFound";
-import { formatDate, parseArray } from "@/helpers/parsArray";
-import Image from "next/image";
-import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
-import Link from "next/link";
-import PaginationCustom from "@/app/_shared/sort/pagination";
-import LoadingLibraryItems from "./loadingLibraryItem";
-import { usePathname } from "next/navigation";
-import { Button } from "@nextui-org/react";
-import { toast } from "react-toastify";
-import IconLoader from "@/app/_shared/icon_loader";
-import { DeleteIcon } from "@/app/_shared/icons/icons";
+import PaginationCustom from '@/app/_shared/sort/pagination';
+import React, { useEffect, useState } from 'react'
+import NotFound from './notFound';
+import { SolidPrimaryButton } from '@/app/_shared/inputs_actions/buttons';
+import { Button } from '@nextui-org/react';
+import { usePathname } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { selectAuthState } from '@/lib/slices/auth-slice';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { deleteRequestProtected, getRequestProtected } from '@/app/utils/queries/requests';
+import { toast } from 'react-toastify';
+import { formatDate, parseArray } from '@/helpers/parsArray';
+import LoadingLibraryItems from './loadingLibraryItem';
+import Image from 'next/image';
+import Link from 'next/link';
+import { DeleteIcon, PlayIcon } from '@/app/_shared/icons/icons';
+import { Butterfly_Kids } from 'next/font/google';
+import Loading from '@/app/loading';
+import IconLoader from '@/app/_shared/icon_loader';
 
-const MyBooksTab = ({tabName}: {tabName: string}) => {
-  const [loading, setLoading] = useState(true);
+function LibraryShorts({ tabName }: { tabName: string }) {
+ const [loading, setLoading] = useState(true);
   const pathname = usePathname();
   const [comics, setComics] = useState<any[]>([]);
   const [pagination, setPagination] = useState({ page: 1, total: 1 });
@@ -102,13 +101,16 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
           {!loading && comics.length != 0 && (
             <>
               <div className="w-full flex flex-col gap-8 ">
-                {comics?.map((item, i) => (
+                {comics?.map((item: any, i) => (
                   <div
                     key={i}
                     className="flex flex-col gap-[18px] bg-[var(--bg-secondary)] rounded-[8px] p-6 lg:p-9"
                   >
                     <div className=" flex gap-6">
-                      <div className="base:w-full sm:w-[30%] min-w-[120px] max-w-[241px] h-[140px] md:h-[271px] rounded-lg overflow-hidden">
+                      <div className="base:w-full sm:w-[30%] min-w-[120px] max-w-[241px] h-[140px] md:h-[271px] rounded-lg overflow-hidden relative">
+                        <div className="absolute top-0 left-0 w-full h-full  inset-0 flex justify-center items-center">
+                          <PlayIcon className="w-10 h-10 text-white opacity-70" />{" "}
+                        </div>
                         <Image
                           src={`${
                             item?.coverImage || item?.backgroundImage || ""
@@ -125,10 +127,10 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
                           unoptimized
                         />
                       </div>
-                      <div className="w-[80%] relative">
+                      <div className="w-[80%]  relative">
                         <p className="text-gray font-bold mb-2">
-                          {tabName === "books"
-                            ? "Continue Editing"
+                          {tabName === "shorts"
+                            ? "Continue Uplpoading"
                             : "Continue reading"}
                         </p>
                         <p className="text-2xl font-semibold lg:text-4xl uppercase">
@@ -155,21 +157,24 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
                           </p>
                           <div className="flex gap-14">
                             <SolidPrimaryButton
-                              className="w-max bg-gradient-to-r from-[#00A96E] to-[#22C55E] lg:w-[13rem]"
-                              disabled={item?.uuid}
-                              as={Link}
-                              href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
-                            >
-                              Add Episode
-                            </SolidPrimaryButton>
-                            <SolidPrimaryButton
-                              className="w-max bg-gradient-to-r from-[#00A96E] to-[#22C55E] lg:w-[13rem]"
+                              className="w-max bg-gradient-to-r from-[#00A96E] to-[#22C55E] "
                               disabled={item?.uuid}
                               as={Link}
                               href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
                             >
                               Add Shorts
                             </SolidPrimaryButton>
+                            {/* <Button
+                              onClick={() => {
+                                setDeletingComic(item.id);
+                                deleteComic(item?.id);
+                              }}
+                              className=" rounded-lg bg-default-300"
+                              size="lg"
+                              isLoading={deletingComic === item?.id}
+                            >
+                              Delete
+                            </Button> */}
                           </div>
                         </div>
                         <div
@@ -198,13 +203,25 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
                       </p>
                       <div>
                         <SolidPrimaryButton
-                          className="w-max"
+                          className="w-max bg-gradient-to-r from-[#00A96E] to-[#22C55E] lg:w-[13rem]"
                           disabled={item?.uuid}
                           as={Link}
                           href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
                         >
-                          Add EPISODE
+                          Add Shorts
                         </SolidPrimaryButton>
+                      </div>
+                      <div className="">
+                        <Button
+                          onClick={() => {
+                            setDeletingComic(item.id);
+                            deleteComic(item?.id);
+                          }}
+                          className=" rounded-lg bg-default-300 "
+                          isLoading={deletingComic === item?.id}
+                        >
+                          <DeleteIcon className="w-6 h-6 text-[#FF1010]" />
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -224,4 +241,5 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
   );
 };
 
-export default MyBooksTab;
+
+export default LibraryShorts

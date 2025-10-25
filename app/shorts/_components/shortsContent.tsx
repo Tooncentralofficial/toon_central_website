@@ -127,7 +127,7 @@ export default function ShortsContent({
         setCommentOpen={setCommentsOpen}
       />
       <motion.div
-        className="overflow-hidden  border-l-1 border-foreground-300  border-t-1 "
+        className="overflow-hidden  border-l-1 border-foreground-300  border-t-1  hidden md:flex flex-col"
         initial={{ width: 0, opacity: 0 }}
         animate={{
           width: commentsOpen ? "26rem" : "0rem",
