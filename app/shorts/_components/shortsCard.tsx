@@ -73,7 +73,7 @@ export default function ShortsCard({
   return (
     <div className="w-full h-[83vh] md:h-[90vh] lg:h-[84vh] block md:flex md:justify-center md:items-center relative flex-1">
       <div className="block md:flex  md:gap-10">
-        <div className="absolute left-2  z-50 flex flex-col justify-between h-full">
+        <div className="absolute left-2  z-[22] flex flex-col justify-between h-full">
           <div>
             <div className="flex gap-3 ">
               <h3 className="text-[#FCFCFDB2] text-xl">Short Title</h3>
@@ -139,7 +139,7 @@ export default function ShortsCard({
             </SwiperSlide>
           </Swiper>
         </div>
-        <div className="absolute md:static right-5 bottom-0 z-50 flex flex-col gap-10 justify-end mb-5">
+        <div className="absolute md:static right-5 bottom-0 z-[22] flex flex-col gap-10 justify-end mb-5">
           <div>
             <LikeIcon className="w-10 h-10 text-[#05834B]" />
           </div>

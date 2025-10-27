@@ -75,6 +75,7 @@ import WhatsappshortsIcon from "@/public/static/svg/shorts/whatsApp.svg"
 import FacebookShortsIcon from "@/public/static/svg/shorts/facebook.svg"
 import TelegramShortsIcon from "@/public/static/svg/shorts/telegram.svg"
 import ForwardShortsIcon from "@/public/static/svg/shorts/forwardshorts.svg"
+import AutoScrollIcon from "@/public/static/svg/autoscroll.svg"
 
 export {
   ToonCentralIcon,
@@ -153,5 +154,6 @@ export {
   WhatsappshortsIcon,
   FacebookShortsIcon,
   TelegramShortsIcon,
-  ForwardShortsIcon
+  ForwardShortsIcon,
+  AutoScrollIcon
 }

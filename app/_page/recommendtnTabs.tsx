@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Tabs, Tab, SelectItem } from "@nextui-org/react";
+import { Tabs, Tab, SelectItem, Skeleton } from "@nextui-org/react";
 import TopRecommendations from "./topRecommendations";
 import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "../utils/queries/requests";
@@ -104,7 +104,7 @@ export default function RecommendtnTabs() {
             ))}
           </SelectFilter>
         </div>
-        <H2SectionTitle title="Top recommendedd" />
+        <H2SectionTitle title="Top recommended" />
         {/* <Tabs
           aria-label="Dynamic tabs"
           items={tabs}
@@ -126,10 +126,15 @@ export default function RecommendtnTabs() {
             </Tab>
           )}
         </Tabs> */}
-        {genresSuccess && genres?.data?.length > 0 && (
+        
+        {genresSuccess && genres?.data?.length > 0 ? (
           <GenreTabs tabs={genres?.data}>
             {(activeTab) => <GenreTabContent activeTab={activeTab} />}
           </GenreTabs>
+        ):(
+          <div className="w-full h-full flex items-center justify-center">
+            <Skeleton className="w-full h-full" />
+          </div>
         )}
       </div>
     </div>

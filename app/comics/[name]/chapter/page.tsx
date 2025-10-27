@@ -1,6 +1,6 @@
 "use client";
 import { dummyItems } from "@/app/_shared/data";
-import { BXSLeft, BXSRight, CommentPop } from "@/app/_shared/icons/icons";
+import { AutoScrollIcon, BXSLeft, BXSRight, CommentPop } from "@/app/_shared/icons/icons";
 import { FlatInput } from "@/app/_shared/inputs_actions/inputFields";
 import BackButton from "@/app/_shared/layout/back";
 import {
@@ -37,7 +37,7 @@ const Page = ({
   const queryClient = useQueryClient();
   const router = useRouter();
   const fullUrl = pathname + "?" + searchParams.toString();
-  console.log(fullUrl);
+  const initialSpeed = 2
   const [chapter, setChapter] = useState(parseInt(chapterSlug || "0") + 1);
   const [episode, setEpisode] = useState<any[]>([]);
   const [showCommentPopup, setShowCommentPopup] = useState(false);
@@ -269,7 +269,7 @@ const Page = ({
     }
   };
   const [scrolling, setScrolling] = useState(false);
-  const [speed, setSpeed] = useState(2);
+  const [speed, setSpeed] = useState(initialSpeed);
   const speedRef = useRef(speed);
 
   useEffect(() => {
@@ -341,10 +341,11 @@ const Page = ({
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2 }}
                 id="scroll-button"
-                className="fixed bottom-16 right-5 px-4 py-2 bg-[#4276c5] text-white rounded-lg shadow-md z-[20] hover:scale-105"
+                className="fixed bottom-16 right-1 sm:right-5 w-20 h-20 flex flex-col items-center justify-center gap-1 bg-[#061A29] text-white rounded-full shadow-md z-[20] hover:scale-105"
                 onClick={handleAutoScroll}
               >
-                {speed} Action
+                <AutoScrollIcon className="w-4 h-9 text-white" />
+                {speed/initialSpeed}x
               </motion.button>
             )}
           </AnimatePresence>
