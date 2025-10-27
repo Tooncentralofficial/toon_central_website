@@ -76,13 +76,11 @@ function Page() {
                   <input
                     type="file"
                     className="hidden"
-                    
                     id="profilePicUpload"
                     onChange={handleFile}
                   />
                 </div>
                 <div className="flex flex-col gap-2 items-center">
-                  
                   <p className="text-xs flex">
                     By submitting your videos to Toon Central, you acknowledge
                     that you agree to Toon Central’s{" "}
@@ -106,7 +104,7 @@ function Page() {
                   <h3 className="text-xl">Details</h3>
                   <div className="flex flex-col gap-1">
                     <label className="text-sm text-gray-300">
-                      Title  <span className="text-gray-400">(required)</span>
+                      Title <span className="text-gray-400">(required)</span>
                     </label>
                     <div className="relative">
                       <input
@@ -146,7 +144,9 @@ function Page() {
                       whether your videos are made for kids.
                     </p>
                     <RadioGroup color="success">
-                      <Radio value="yes">Yes, it's made for kids</Radio>
+                      <Radio value="yes">
+                        Yes it&apos;s made for kids
+                      </Radio>
                       <Radio value="no"> aged 18 years and older</Radio>
                     </RadioGroup>
                   </div>
