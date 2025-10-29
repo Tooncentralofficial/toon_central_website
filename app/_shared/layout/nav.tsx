@@ -363,7 +363,7 @@ const NavHome = () => {
                     variant="flat"
                     onClick={() => setIsUploadOpen(!isUploadOpen)}
                   >
-                    Publishh
+                    Publish
                   </Button>
                 </NavbarItem>
                 <motion.div

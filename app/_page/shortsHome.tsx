@@ -23,8 +23,22 @@ function HomeShorts() {
           <Swiper
             centeredSlides
             slidesPerGroup={1}
-            slidesPerView={3}
-            spaceBetween={20}
+            breakpoints={{
+              0: {
+                slidesPerView: 1.4, // mobile
+                spaceBetween:10
+              },
+              768: {
+                slidesPerView: 2, // tablet
+                spaceBetween:15
+              },
+              1024: {
+                slidesPerView: 3, // desktop
+                spaceBetween:20
+              },
+            }}
+            
+            slidesPerGroupAuto
             onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
             className="w-full py-10"
           >
@@ -32,7 +46,7 @@ function HomeShorts() {
               <SwiperSlide
                 key={slide.id}
                 style={{
-                  width: "230px", 
+                  width: "230px",
                   transition: "all 0.4s ease",
                   transform:
                     index === activeIndex ? "scale(1.1)" : "scale(0.9)",

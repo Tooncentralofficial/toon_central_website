@@ -74,7 +74,7 @@ export default function ShortsCard({
     <div className="w-full h-[83vh] md:h-[90vh] lg:h-[84vh] block md:flex md:justify-center md:items-center relative flex-1">
       <div className="block md:flex  md:gap-10">
         <div className="absolute left-2  z-[22] flex flex-col justify-between h-full">
-          <div>
+          <div className="flex flex-col gap-4">
             <div className="flex gap-3 ">
               <h3 className="text-[#FCFCFDB2] text-xl">Short Title</h3>
               <div className="bg-[#475467] px-3 py-1 rounded-2xl">
