@@ -125,6 +125,7 @@ export default function ShortsContent({
         featured={true}
         index={0}
         setCommentOpen={setCommentsOpen}
+        commentsOpen={commentsOpen}
       />
       <motion.div
         className="overflow-hidden  border-l-1 border-foreground-300  border-t-1  hidden md:flex flex-col"

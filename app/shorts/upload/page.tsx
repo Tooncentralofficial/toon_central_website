@@ -12,6 +12,7 @@ import {
   CopyrightCheckIcon,
   FacebookShortsIcon,
   ForwardShortsIcon,
+  InfoIcon,
   TelegramShortsIcon,
   WhatsappshortsIcon,
 } from "@/app/_shared/icons/icons";
@@ -19,6 +20,7 @@ import Link from "next/link";
 import { FacebookShareButton, TelegramShareButton } from "react-share";
 import * as Yup from "yup";
 import { ErrorMessage, Form, Formik } from "formik";
+import { TailwindSwitch } from "@/app/_shared/inputs_actions/switch";
 
 const stepsSchema = [
   Yup.object({
@@ -46,20 +48,25 @@ function Page() {
   const [preview, setPreview] = useState<string | null>(null);
   const [formStep, setFormStep] = useState(0);
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [isForKids, setIsForKids] = useState(false);
-    const initialValues = {
-      url: "",
-      title: "",
-      description: "",
-      isForKids: "",
-      visibility: "",
-    };
+  
+  const [enabled, setEnabled] = useState(false);
+  const initialValues = {
+    url: "",
+    title: "",
+    description: "",
+    isForKids: "",
+    visibility: "",
+  };
 
   const steps = ["Step 1", "Step 2", "Step 3"];
 
-  const handleFile = (e: ChangeEvent<HTMLInputElement> , validateForm: any, setErrors: any, setFormStep: any, setFieldValue: any) => {
+  const handleFile = (
+    e: ChangeEvent<HTMLInputElement>,
+    validateForm: any,
+    setErrors: any,
+    setFormStep: any,
+    setFieldValue: any
+  ) => {
     const { files } = e.target;
 
     if (files && files.length > 0) {
@@ -104,7 +111,7 @@ function Page() {
                 {formStep === 0 && (
                   <div className="w-full h-full flex justify-center pt-10">
                     <div className="flex flex-col gap-10 items-center ">
-                      <div className=" w-[26rem] h-[20rem] overflow-hidden">
+                      <div className="w-[20rem] h-[16rem] sm:w-[26rem] sm:h-[20rem] overflow-hidden">
                         <Image
                           src={img}
                           alt="shortUpload"
@@ -149,22 +156,33 @@ function Page() {
                           className="text-[#880808] text-sm"
                         />
                       </div>
-                      <div className="flex flex-col gap-2 items-center">
-                        <p className="text-xs flex">
+                      <div className="flex flex-col gap-2 items-start sm:items-center">
+                        <p className="text-xs">
                           By submitting your videos to Toon Central, you
                           acknowledge that you agree to Toon Central’s{" "}
-                          <p className="text-[#4ADD80] ml-1 mr-1">
+                          <Link
+                            href="/terms"
+                            className="text-[#4ADD80] ml-1 mr-1"
+                          >
                             Terms of Service
-                          </p>{" "}
+                          </Link>{" "}
                           and{" "}
-                          <p className="text-[#4ADD80] ml-1">
+                          <Link
+                            href="/policies"
+                            className="text-[#4ADD80] ml-1"
+                          >
                             Community Guidelines.
-                          </p>
+                          </Link>
                         </p>
-                        <p className="text-xs flex">
+                        <p className="text-xs">
                           Please be sure not to violate others’ copyright or
                           privacy right.{" "}
-                          <p className="text-[#4ADD80] ml-1">Learn more</p>
+                          <Link
+                            href="/policies"
+                            className="text-[#4ADD80] ml-1"
+                          >
+                            Learn more
+                          </Link>
                         </p>
                       </div>
                     </div>
@@ -172,9 +190,9 @@ function Page() {
                 )}
                 {/* Step 2 */}
                 {formStep === 1 && (
-                  <div className="bg-[#151D29] h-screen w-full px-[4.5rem] py-[3.5rem] ">
-                    <div className="flex gap-10">
-                      <div className="flex flex-col gap-5">
+                  <div className="bg-none md:bg-[#151D29] h-full md:h-screen w-full px-[0rem] py-[1.5rem] md:px-[1.5rem] md:py-[2.5rem] lg:px-[4.5rem] lg:py-[3.5rem] ">
+                    <div className="flex gap-10 flex-col-reverse md:flex-row">
+                      <div className="bg-[#151D29] md:bg-none px-[0.8rem] py-[1rem] flex flex-col gap-5 md:py-0 md:px-0 ">
                         <h3 className="text-xl">Details</h3>
                         <div className="flex flex-col gap-1">
                           <label className="text-sm text-gray-300">
@@ -256,7 +274,7 @@ function Page() {
                           />
                         </div>
                       </div>
-                      <div className="flex flex-col gap-4">
+                      <div className="bg-[#151D29] md:bg-none px-[0.8rem] py-[1rem] md:py-0 md:px-0 flex flex-col gap-5">
                         <video
                           controls
                           src={
@@ -299,7 +317,7 @@ function Page() {
 
                 {/* Step 3 */}
                 {formStep === 2 && (
-                  <div className="bg-[#151D29] h-screen w-full px-[4.5rem] py-[3.5rem] flex flex-col  justify-between">
+                  <div className=" md:bg-[#151D29] h-screen w-full  px-[1rem] py-[1.5rem] md:px-[1.5rem] md:py-[2.5rem] lg:px-[4.5rem] lg:py-[3.5rem] flex flex-col  justify-between">
                     <div className="flex flex-col gap-8">
                       <h3 className="text-xl"> Checks</h3>
                       <p className="text-[#969AA0]">
@@ -314,7 +332,7 @@ function Page() {
                       <div className="flex flex-col gap-7">
                         <h3 className="text-medium">Copyright</h3>
                         <p className="flex gap-4">
-                          <CautionIcon className="h-5 w-5" />
+                          <CautionIcon className="h-8 w-8" />
                           <p className="text-[#969AA0]">
                             {" "}
                             Copyright-protected content found. People in some
@@ -352,13 +370,13 @@ function Page() {
                 {
                   // Step 4
                   formStep === 3 && (
-                    <div className="bg-[#151D29] h-screen w-full px-[4.5rem] py-[3.5rem] flex flex-col  justify-between">
+                    <div className="bg-none md:bg-[#151D29] h-full md:h-full w-full px-[0rem] py-[1.5rem] md:px-[1.5rem] md:py-[2.5rem] lg:px-[4.5rem] lg:py-[3.5rem]">
                       <h3 className="text-xl mb-5">Visibility</h3>
                       <p className="text-[#969AA0] mb-5">
                         Choose when to publish and who can see your video
                       </p>
-                      <div className="flex gap-12">
-                        <div className="w-2/3 flex flex-col justify-between">
+                      <div className="flex gap-10 flex-col-reverse md:flex-row">
+                        <div className="w-full md:w-2/3 flex flex-col justify-between bg-[#151D29] md:bg-none px-[0.5rem] py-[1.5rem] sm:px-[1.5rem] sm:py-[2.5rem] md:px-[0rem] md:py-[0rem]">
                           <div className="border-[1px] border-[#05834B] rounded-xl flex flex-col gap-3 p-5 ">
                             <h3 className="text-medium">Save or publish</h3>
                             <p>
@@ -414,7 +432,7 @@ function Page() {
                             </div>
                           </div>
                         </div>
-                        <div className="flex flex-col w-1/2">
+                        <div className="flex flex-col w-full gap-5 md:w-1/2 bg-[#151D29] md:bg-none px-[0.5rem] py-[1.5rem] sm:px-[1.5rem] sm:py-[2.5rem] md:px-[0rem] md:py-[0rem]">
                           <video
                             controls
                             src={
@@ -436,6 +454,41 @@ function Page() {
                           <p>Filename</p>
 
                           <p>BigBuckBunny.mp4</p>
+                        </div>
+                      </div>
+                      <div className=" flex flex-col gap-5 mt-8">
+                        <h3>Monetization</h3>
+                        <div className="flex gap-5">
+                          <TailwindSwitch
+                            enabled={enabled}
+                            setEnabled={setEnabled}
+                          />
+                          <p>Monetize this episode?</p>
+                        </div>
+
+                        <div className="border-1 border-[#3D434D] rounded-lg py-8 px-10 flex flex-col gap-5">
+                          <RadioGroup color="success">
+                            <Radio
+                              value="Ads"
+                              description="Ads will appear alongside your work"
+                            >
+                              Monetize with Ads
+                            </Radio>
+                            <Radio
+                              value="credits"
+                              description="Fans unlock with credits"
+                            >
+                              Monetize with Credits
+                            </Radio>
+                          </RadioGroup>
+
+                          <div className="flex gap-5">
+                            <InfoIcon className="w-5 h-5 text-[#FF4444]" />
+                            <p>
+                              Monitization is only available from chapter 4
+                              onwards
+                            </p>
+                          </div>
                         </div>
                       </div>
                       <div className="flex justify-between mt-10">

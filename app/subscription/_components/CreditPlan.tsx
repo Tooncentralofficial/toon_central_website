@@ -1,17 +1,18 @@
 "use client";
-import { Button } from "@nextui-org/react";
-import React from "react";
-import { CheckIcon } from "@nextui-org/shared-icons";
-import { SubPlansType } from "@/app/utils/constants/typess";
-import { PaystackButton } from "react-paystack";
-export default function SubPlan({
+import { CreditIcon } from '@/app/_shared/icons/icons';
+import { CreditPlansType, SubPlansType } from '@/app/utils/constants/typess';
+import { Button, CheckboxIcon } from '@nextui-org/react';
+import React from 'react'
+import { PaystackButton } from 'react-paystack';
+
+function CreditPlan({
   plan,
   setSelectedPlanIndex,
   index,
   selectedPlanIndex,
   activeIndex,
 }: {
-  plan: SubPlansType;
+  plan: CreditPlansType;
   setSelectedPlanIndex: (index: number) => void;
   index: number;
   selectedPlanIndex: number;
@@ -36,7 +37,7 @@ export default function SubPlan({
     email: "user@example.com", // replace with logged-in user email
     amount: plan.price * 100, // convert to kobo
     publicKey,
-    text: "Subscribe",
+    text: "Buy Credits",
     onSuccess: handleSuccess,
     onClose: handleClose,
     metadata: {
@@ -66,26 +67,26 @@ export default function SubPlan({
             : "border-transparent"
         } `}
       >
-        <p className="text-[1.3rem]">{plan.type}</p>
-        <div className="flex ">
+        <div className="flex items-center justify-center">
           <span className="text-3xl font-semibold">$</span>
           <p className="flex items-end gap-1">
             <span className="text-6xl font-bold leading-none">
               {plan.price}
             </span>
-            <aside className="text-xs leading-tight ml-1">
-              USD/
-              <br />
-              <span>month</span>
-            </aside>
           </p>
         </div>
       </div>
-      <p className="w-full text-center text-xs mt-2 ">{plan.title}</p>
-
+      <p className="w-full text-center text-xs mt-2 "></p>
+      <div className="flex items-center gap-3 mb-8 bg-[#1E293B] rounded-lg p-4 mt-5">
+        <CreditIcon className="w-6 h-6 text-[#34D399] flex-shrink-0" />
+        <div>
+          <p className="text-slate-400 text-xs">Credits</p>
+          <p className="text-lg font-semibold text-white">{plan.credits} credits</p>
+        </div>
+      </div>
       {index === activeIndex ? (
         <Button className="bg-[#475467] text-[#FCFCFD] w-full mt-6 rounded-xl">
-          Active
+          Buy Credits
         </Button>
       ) : (
         <PaystackButton
@@ -97,14 +98,9 @@ export default function SubPlan({
           }`}
         />
       )}
-      <div className="pl-2 flex flex-col gap-7 mt-8">
-        {plan.content.map((item, i) => (
-          <span key={i} className="text-[0.87rem] flex ">
-            {" "}
-            <CheckIcon className="text-[#05834B]" /> <p>{item}</p>{" "}
-          </span>
-        ))}
-      </div>
     </div>
   );
 }
+
+
+export default CreditPlan

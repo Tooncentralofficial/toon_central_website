@@ -76,6 +76,8 @@ import FacebookShortsIcon from "@/public/static/svg/shorts/facebook.svg"
 import TelegramShortsIcon from "@/public/static/svg/shorts/telegram.svg"
 import ForwardShortsIcon from "@/public/static/svg/shorts/forwardshorts.svg"
 import AutoScrollIcon from "@/public/static/svg/autoscroll.svg"
+import InfoIcon from "@/public/static/svg/info.svg"
+import CreditIcon from "@/public/static/svg/credits.svg"
 
 export {
   ToonCentralIcon,
@@ -155,5 +157,7 @@ export {
   FacebookShortsIcon,
   TelegramShortsIcon,
   ForwardShortsIcon,
-  AutoScrollIcon
+  AutoScrollIcon,
+  InfoIcon,
+  CreditIcon 
 }

@@ -13,7 +13,7 @@ import {
 import { FlatInput } from "@/app/_shared/inputs_actions/inputFields";
 import InputPicture from "@/app/_shared/inputs_actions/inputPicture";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
-import { Button, Select, SelectItem } from "@nextui-org/react";
+import { Button, Radio, RadioGroup, Select, SelectItem } from "@nextui-org/react";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -23,6 +23,9 @@ import axios from "axios";
 import DraggableImage from "./_shared/draggableimage";
 import { prevRoutes } from "@/lib/session/prevRoutes";
 import { parseArray } from "@/helpers/parsArray";
+import {Switch} from "@nextui-org/react"
+import { TailwindSwitch } from "@/app/_shared/inputs_actions/switch";
+import { InfoIcon } from "@/app/_shared/icons/icons";
 export default function Page({
   params,
   searchParams,
@@ -40,6 +43,7 @@ export default function Page({
     "chapterid"
   );
   const [isLoading, setisLoading] = useState<boolean>(false);
+  const [enabled, setEnabled] = useState<boolean>(false);
 
   const querykey = `comic_episode${comicId}`;
   const {
@@ -357,6 +361,35 @@ export default function Page({
                   ))}
                 </div>
               </div>
+              <div className=" flex flex-col gap-5 mt-8">
+                <h3>Monetization</h3>
+                <div className="flex gap-5">
+                  <TailwindSwitch enabled={enabled} setEnabled={setEnabled} />
+                  <p>Monetize this chapter ?</p>
+                </div>
+
+                <div className="border-1 border-[#3D434D] rounded-lg py-8 px-10 flex flex-col gap-5">
+                  <RadioGroup color="success">
+                    <Radio
+                      value="Ads"
+                      description="Ads will appear alongside your work"
+                    >
+                      Monetize with Ads
+                    </Radio>
+                    <Radio
+                      value="credits"
+                      description="Fans unlock with credits"
+                    >
+                      Monetize with Credits
+                    </Radio>
+                  </RadioGroup>
+
+                  <div className="flex gap-5">
+                    <InfoIcon className="w-5 h-5 text-[#FF4444]" />
+                    <p>Monitization is only available from chapter 4 onwards</p>
+                  </div>
+                </div>
+              </div>
             </div>
             {/* <InputPictureFloating
               formik={formik}
@@ -386,3 +419,4 @@ export default function Page({
     </main>
   );
 }
+

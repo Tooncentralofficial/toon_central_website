@@ -10,3 +10,8 @@ export type SubPlansType = {
   title: string;
   content: string[];
 };
+export type CreditPlansType = {
+  type: string;
+  price: number;
+  credits: number;
+};

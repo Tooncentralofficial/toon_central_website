@@ -3,7 +3,7 @@
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowDownIcon,
   ArrowLeftLong,
@@ -26,11 +26,14 @@ import "swiper/css/pagination";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { Button } from "@nextui-org/react";
+import { array } from "yup";
+import ShortsComments from "./shortscomments";
 interface ShortsCardProps {
   short: any;
   featured: boolean;
   index: number;
   setCommentOpen: (open: any) => void;
+  commentsOpen: boolean;
 }
 
 export default function ShortsCard({
@@ -38,6 +41,7 @@ export default function ShortsCard({
   featured,
   index,
   setCommentOpen,
+  commentsOpen,
 }: ShortsCardProps) {
   const { user, token } = useSelector(selectAuthState);
   const photo = user?.photo || "";
@@ -71,8 +75,8 @@ export default function ShortsCard({
   const views = short?.likesAndViews?.views?.length || 0;
 
   return (
-    <div className="w-full h-[83vh] md:h-[90vh] lg:h-[84vh] block md:flex md:justify-center md:items-center relative flex-1">
-      <div className="block md:flex  md:gap-10">
+    <div className="w-full h-[82.7vh] md:h-[90vh] lg:h-[80vh] block md:flex md:justify-center md:items-center relative flex-1 overflow-hidden">
+      <div className="block md:flex  md:gap-10 overflow-hidden">
         <div className="absolute left-2  z-[22] flex flex-col justify-between h-full">
           <div className="flex flex-col gap-4">
             <div className="flex gap-3 ">
@@ -81,7 +85,7 @@ export default function ShortsCard({
                 Subscribe
               </div>
             </div>
-            <h3 className="text-2xl">CHRYSALIS Vol. 1: Fallout</h3>
+            <h3 className="text-lg md:text-2xl">CHRYSALIS Vol. 1: Fallout</h3>
 
             <div className="flex gap-3">
               <p className="border-[1px] px-3 py-1 border-[#05834BF5]">
@@ -93,11 +97,11 @@ export default function ShortsCard({
               <p className="border-[1px] px-3 py-1 border-[#05834BF5]"> 2023</p>
             </div>
           </div>
-          <button className="flex items-center gap-2 bg-[#05834B] w-full justify-center py-2 rounded-md md:mb-8">
+          <button className="flex items-center gap-2 bg-[#05834B]  w-full justify-center py-2 rounded-md md:mb-8">
             watch more <ArrowRight />
           </button>
         </div>
-        <div className="relative h-[82vh] md:h-[60vw] md:max-h-[600px] w-full md:max-w-[480px] rounded-md z-10">
+        <div className="relative h-[82.7vh] md:h-[60vw] md:max-h-[600px] w-full md:max-w-[480px] rounded-md z-10">
           <Swiper
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
@@ -172,6 +176,27 @@ export default function ShortsCard({
           <ArrowCircle type="right" />
         </div>
       </div>
+      <AnimatePresence>
+        <motion.div
+          className="absolute left-0 bottom-0 z-[23] flex md:hidden flex-col gap-4 bg-[#0D111D] w-full overflow-hidden"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{
+            opacity: commentsOpen ? 1 : 0,
+            height: commentsOpen ? "70vh" : "1vh",
+            y: commentsOpen ? 0 : 20,
+          }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+        >
+          <p onClick={() => setCommentOpen(false)} className="py-2 px-4 cursor-pointer w-full flex justify-end">X</p>
+          <div className="flex flex-col gap-4 p-4 overflow-y-auto h-full">
+            {Array(10)
+              .fill(0)
+              .map((_, idx) => (
+                <ShortsComments key={idx} />
+              ))}
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
