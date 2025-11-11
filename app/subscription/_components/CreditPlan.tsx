@@ -68,6 +68,7 @@ function CreditPlan({
         } `}
       >
         <div className="flex items-center justify-center">
+          
           <span className="text-3xl font-semibold">$</span>
           <p className="flex items-end gap-1">
             <span className="text-6xl font-bold leading-none">
