@@ -10,7 +10,7 @@ export const createStore = (
 ) =>
   configureStore({
     reducer: Reducers,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
     ...options,
   });
 

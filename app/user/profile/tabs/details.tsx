@@ -140,7 +140,7 @@ export default function DetailsTab() {
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {
-        dispatch(updateProfile(null));
+        dispatch(updateProfile(null) as any);
         toast(message, {
           toastId: "profile",
           type: "success",
@@ -320,9 +320,10 @@ export default function DetailsTab() {
                     formik.setFieldValue("dob", formattedDate);
                   }}
                   value={
-                    formik.values.dob ? parseDate(formik.values.dob) : undefined
+                    formik.values.dob
+                      ? (parseDate(formik.values.dob) as unknown as any)
+                      : undefined
                   }
-                  
                   variant="flat"
                   color="primary"
                   size="lg"
