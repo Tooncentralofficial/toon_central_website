@@ -139,7 +139,7 @@ const NavHome = () => {
   const dispatch = useDispatch();
   const logout = () => logoutUser("");
   useEffect(() => {
-    dispatch(getUser());
+    dispatch(getUser() as any);
   }, []);
 
   const { mutate: logoutUser } = useMutation({

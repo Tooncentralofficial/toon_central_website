@@ -28,7 +28,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { usePathname } from "next/navigation";
 import { DateInput } from "@nextui-org/react";
-import {  parseDate } from "@internationalized/date";
+import { parseDate, toLocalTimeZone,parseZonedDateTime } from "@internationalized/date";
+import { getLocalTimeZone } from "@internationalized/date";
 export default function DetailsTab() {
   const queryClient = useQueryClient();
   const pathname = usePathname();
@@ -77,7 +78,7 @@ export default function DetailsTab() {
     queryKey: ["countyList"],
     queryFn: () => getRequest("/selectables/countries"),
   });
-  
+
   useEffect(() => {
     if (isSuccess) {
       setProfile(data?.data);
@@ -140,7 +141,7 @@ export default function DetailsTab() {
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {
-        dispatch(updateProfile(null));
+        dispatch(updateProfile(null) as any );
         toast(message, {
           toastId: "profile",
           type: "success",
@@ -190,6 +191,9 @@ export default function DetailsTab() {
       });
     },
   });
+ 
+
+  
   return (
     <div className="w-full min-h-dvh">
       <H2SectionTitle title="Profile" />
@@ -319,10 +323,12 @@ export default function DetailsTab() {
                       .split("T")[0];
                     formik.setFieldValue("dob", formattedDate);
                   }}
+                  //ts-ignore
                   value={
-                    formik.values.dob ? parseDate(formik.values.dob) : undefined
+                    formik.values.dob
+                      ? (parseDate(formik.values.dob) as unknown as any)
+                      : undefined
                   }
-                  
                   variant="flat"
                   color="primary"
                   size="lg"
