@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import Likes from "../_shared/cards/likes";
+const SlickSlider = Slider as unknown as React.ComponentType<any>;
 const Popular = () => {
   let sliderRef: any = useRef(null);
 
@@ -94,8 +95,8 @@ const Popular = () => {
           <div className=" slider-container hidden md:block">
             <EllipseGray />
 
-            <Slider
-              ref={(slider) => {
+            <SlickSlider
+              ref={(slider:any) => {
                 sliderRef = slider;
               }}
               {...settings}
@@ -190,11 +191,12 @@ const Popular = () => {
                   </Fragment>
                 );
               })}
-            </Slider>
+            </SlickSlider>
           </div>
         </div>
       </div>
       <div className=" slider-container block md:hidden">
+        {/* @ts-ignore */}
         <Slider
           ref={(slider) => {
             sliderRef = slider;

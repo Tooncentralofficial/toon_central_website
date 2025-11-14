@@ -120,20 +120,20 @@ const menuItemsMobile: {
 ];
 
 const NavHome = () => {
-  let  pathname = usePathname();
+  let pathname = usePathname();
   const iscomics = usePathname().includes("/comics");
-  if(iscomics) {
-    console.log(pathname)
+  if (iscomics) {
+    console.log(pathname);
     const uuid = pathname.split("/")[2];
     pathname = `/comics/${uuid}`;
   }
- 
+
   const { user, token } = useSelector(selectAuthState);
   const [isSide, setIsSide] = useState(false);
   const dispatch = useDispatch();
   const logout = () => logoutUser("");
   useEffect(() => {
-    dispatch(getUser());
+    dispatch(getUser() as any);
   }, []);
 
   const { mutate: logoutUser } = useMutation({
@@ -149,7 +149,7 @@ const NavHome = () => {
   });
 
   const handleToggle = () => setIsSide(!isSide);
-  const { sm,md, lg } = UseTailwindMediaQuery();
+  const { sm, md, lg } = UseTailwindMediaQuery();
 
   const { onClose, onOpen, isOpen, onOpenChange } = useDisclosure();
 
@@ -404,7 +404,6 @@ const NavHome = () => {
 };
 
 export default NavHome;
-
 
 {
   /* <NavbarItem>

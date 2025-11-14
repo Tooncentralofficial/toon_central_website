@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import shareimg from "@/public/static/images/shareimg.png";
 import ModalContainer from "./modalcont";
 import Image from "next/image";
@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
 import { PUBLICURL } from "@/envs";
 import { toast } from "react-toastify";
+import QRCode from "qrcode";
 export interface ModalBaseProps {
   isOpen: boolean;
   onClose: () => void;
@@ -42,7 +43,12 @@ const ShareModal = ({
   const currentUrl = `${PUBLICURL || "http://localhost:3000"}${pathname}`;
   const [copied, setCopiedId] = useState<string>();
   const [copiedText, setCopiedText] = useState<string>(currentUrl);
-  console.log(currentUrl)
+  const [qr, setQr] = useState("");
+  useEffect(() => {
+    QRCode.toDataURL(currentUrl)
+      .then((url) => setQr(url))
+      .catch((err) => console.error(err));
+  }, []);
   return (
     <ModalContainer
       isOpen={isOpen}
@@ -52,9 +58,7 @@ const ShareModal = ({
       <div className="">
         <div className="flex gap-5 items-center">
           <div className="w-[5rem] h-[5rem] rounded-2xl  overflow-auto relative ">
-            <div
-              style={{  width: "100%", height: "100%" }}
-            >
+            <div style={{ width: "100%", height: "100%" }}>
               <Image
                 src={comicImageUrl} // no "url()" here
                 alt="shareimage"
@@ -119,6 +123,8 @@ const ShareModal = ({
               </span>
             </div>
           </div>
+
+          <div className="mt-4 w-full flex justify-center">{qr && <img src={qr} alt="QR Code" />}</div>
         </div>
       </div>
     </ModalContainer>
