@@ -1,9 +1,10 @@
 "use client";
-import { CreditIcon } from '@/app/_shared/icons/icons';
-import { CreditPlansType, SubPlansType } from '@/app/utils/constants/typess';
-import { Button, CheckboxIcon } from '@nextui-org/react';
-import React from 'react'
-import { PaystackButton } from 'react-paystack';
+import { CreditIcon } from "@/app/_shared/icons/icons";
+import { CreditPlansType, SubPlansType } from "@/app/utils/constants/typess";
+import { Button, CheckboxIcon } from "@nextui-org/react";
+import React, { useState } from "react";
+import { usePaystack } from "@/app/utils/hooks/usePaystack";
+import PaymentModal from "@/app/_shared/modals/PaymentModal";
 
 function CreditPlan({
   plan,
@@ -18,37 +19,33 @@ function CreditPlan({
   selectedPlanIndex: number;
   activeIndex: number;
 }) {
-  const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string;
-  const handleSuccess = async (reference: any) => {
-    console.log("Payment Success:", reference);
+  const { initiatePayment, isReady } = usePaystack();
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [paymentReference, setPaymentReference] = useState<string | null>(null);
 
-    // ✅ Verify with your backend
-    await fetch(`/api/payments/verify/${reference.reference}`, {
-      method: "GET",
+  const handlePaymentSuccess = (reference: string) => {
+    setPaymentReference(reference);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleBuyCreditsClick = () => {
+    if (!isReady) {
+      return;
+    }
+
+    initiatePayment({
+      amount: plan.price,
+      planType: `${plan.credits} Credits`,
+      onSuccess: handlePaymentSuccess,
+      onClose: () => {
+        console.log("Payment cancelled by user");
+      },
     });
-
-    // optionally, update subscription status in your app
   };
 
-  const handleClose = () => {
-    console.log("Payment closed");
-  };
-  const paystackProps = {
-    email: "user@example.com", // replace with logged-in user email
-    amount: plan.price * 100, // convert to kobo
-    publicKey,
-    text: "Buy Credits",
-    onSuccess: handleSuccess,
-    onClose: handleClose,
-    metadata: {
-      custom_fields: [
-        {
-          display_name: "Plan Type",
-          variable_name: "plan_type",
-          value: plan.type,
-        },
-      ],
-    },
+  const handleCloseModal = () => {
+    setIsPaymentModalOpen(false);
+    setPaymentReference(null);
   };
 
   return (
@@ -81,7 +78,9 @@ function CreditPlan({
         <CreditIcon className="w-6 h-6 text-[#34D399] flex-shrink-0" />
         <div>
           <p className="text-slate-400 text-xs">Credits</p>
-          <p className="text-lg font-semibold text-white">{plan.credits} credits</p>
+          <p className="text-lg font-semibold text-white">
+            {plan.credits} credits
+          </p>
         </div>
       </div>
       {index === activeIndex ? (
@@ -89,18 +88,29 @@ function CreditPlan({
           Buy Credits
         </Button>
       ) : (
-        <PaystackButton
-          {...paystackProps}
+        <Button
+          onClick={handleBuyCreditsClick}
+          isDisabled={!isReady}
+          isLoading={false}
           className={` w-full mt-6 rounded-xl h-[40px] transition-colors duration-300 ease-in-out ${
             selectedPlanIndex === index
-              ? "bg-[#05834B]"
+              ? "bg-[#05834B] text-[#FCFCFD]"
               : "bg-[#FCFCFD] text-[#05834B]"
           }`}
-        />
+        >
+          Buy Credits
+        </Button>
       )}
+
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={handleCloseModal}
+        reference={paymentReference}
+        planType={`${plan.credits} Credits`}
+        amount={plan.price}
+      />
     </div>
   );
 }
 
-
-export default CreditPlan
+export default CreditPlan;

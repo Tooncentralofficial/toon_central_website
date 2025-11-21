@@ -1,7 +1,6 @@
 "use client";
 
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import Slider from "react-slick";
 import Image from "next/image";
 import EllipseGray from "../_shared/ellipse/ellipseGray";
 import H2SectionTitle from "../_shared/layout/h2SectionTitle";
@@ -23,6 +22,8 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import Likes from "../_shared/cards/likes";
+const Slider = require("react-slick").default;
+
 const Popular = () => {
   let sliderRef: any = useRef(null);
 
@@ -95,7 +96,7 @@ const Popular = () => {
             <EllipseGray />
 
             <Slider
-              ref={(slider) => {
+              ref={(slider: typeof Slider) => {
                 sliderRef = slider;
               }}
               {...settings}
@@ -196,7 +197,7 @@ const Popular = () => {
       </div>
       <div className=" slider-container block md:hidden">
         <Slider
-          ref={(slider) => {
+          ref={(slider: typeof Slider) => {
             sliderRef = slider;
           }}
           {...settings}

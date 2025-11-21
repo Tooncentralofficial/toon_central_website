@@ -1,19 +1,23 @@
 import React from "react";
 import Image from "next/image";
-import { AddBox, RemoveBox } from "@/app/_shared/icons/icons"
+import { AddBox, RemoveBox } from "@/app/_shared/icons/icons";
+import Likes from "@/app/_shared/cards/likes";
 const DiscoverItems = ({
   data,
   isSubscribed,
   onToggleSubscribe,
+  queryKey,
 }: {
   data: any;
   isSubscribed: boolean;
   onToggleSubscribe: () => void;
+  queryKey: string;
 }) => {
+  console.log(data);
   return (
-    <div className="flex items-center justify-between gap-4 p-4 rounded-lg bg-[var(--bg-secondary)] mt-6">
-      <div className="flex items-center gap-4">
-        <div className="w-[60px] h-[60px] overflow-hidden rounded-[6px]">
+    <div className="flex items-end justify-between gap-4 px-4 py-4 md:px-8 rounded-lg bg-primary mt-6">
+      <div className="flex gap-5 ">
+        <div className="w-[100px] h-[160px] overflow-hidden rounded-[6px]">
           <Image
             src={data?.coverImage || ""}
             width={60}
@@ -22,24 +26,30 @@ const DiscoverItems = ({
             className="object-cover w-full h-full"
           />
         </div>
-        <div className="flex flex-col">
-          <span className="font-bold">{data.title}</span>
-          <span className="text-sm text-gray-300">
-            {data.genres?.map((g: any, i: number) => (
-              <React.Fragment key={i}>
-                {g.genre.name}
-                {i < data.genres.length - 1 && ", "}
-              </React.Fragment>
-            ))}
-          </span>
+        <div className="flex flex-col gap-6">
+          <span className="font-bold text-4xl">{data.title}</span>
+          <Likes
+            likesNViews={data?.likesAndViews}
+            queryKey={queryKey}
+            uid={data?.uuid}
+            favourites={data?.favourites}
+          />
+
+          <span className="text-xl text-gray-300">{data?.user?.username}</span>
         </div>
       </div>
 
       <div
-        onClick={onToggleSubscribe}
-        className="cursor-pointer hover:bg-[#afb0af21] p-2 rounded-full"
+        // onClick={onToggleSubscribe}
+        className="cursor-pointer hover:bg-[#afb0af21] flex pb-5"
       >
-        {isSubscribed ? <RemoveBox /> : <AddBox />}
+        {data.genres?.map((g: any, i: number) => (
+          <React.Fragment key={i}>
+            {g.genre.name}
+            {i < data.genres.length - 1 && ", "}
+          </React.Fragment>
+        ))}
+        {/* {isSubscribed ? <RemoveBox /> : <AddBox />} */}
       </div>
     </div>
   );

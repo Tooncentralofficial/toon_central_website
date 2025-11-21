@@ -6,10 +6,14 @@ import H2SectionTitle from "../_shared/layout/h2SectionTitle";
 import { Skeleton } from "@nextui-org/react";
 import TrendingItem from "../trending/_components/trendingItem";
 import DiscoverItems from "./_components/discoverItems";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 function DiscoverClientPage() {
+  const discoverQueryKey = "discover_trending";
+  const router = useRouter();
   const { data, isError, isSuccess, isLoading, isFetching } = useQuery({
-    queryKey: ["discover_trending"],
+    queryKey: [discoverQueryKey],
     queryFn: () =>
       getRequest("/trending/new-and-trending?filter=all&page=1&limit=50"),
   });
@@ -40,20 +44,18 @@ function DiscoverClientPage() {
       <div className="child-wrap min-h-screen flex w-full flex-col gap-5">
         <div className="flex flex-col gap-[18px] bg-[var(--bg-secondary)] rounded-[8px] p-6 lg:p-9 h-full break-all">
           <H2SectionTitle title="Discover Trending Comics"></H2SectionTitle>
-          <div>
-            <aside className="px-6">
+          <div className=" flex justify-end">
+            <aside className="px-6 w-[10rem]">
               <button
-                onClick={toggleAll}
-                className={`w-full text-white font-semibold  py-3 rounded-md hover:opacity-90 transition-colors ${
-                  allSubscribed
-                    ? "bg-gradient-to-r from-[#DC2626] to-[#EF4444]"
-                    : "bg-gradient-to-r from-[#16A34A] to-[#38C172]"
-                }`}
+                onClick={() => router.push("/")}
+                className={`w-full text-white font-semibold  py-3 rounded-md hover:opacity-90 transition-colors 
+                 bg-gradient-to-r from-[#DC2626] to-[#EF4444]`}
               >
-                {allSubscribed ? "Unsubscribe All" : "Subscribe to All"}
+                Skip
               </button>
             </aside>
-
+          </div>
+          <div>
             <div className=" w-full rounded-[8px] overflow-hidden hidden md:flex">
               <div className="flex w-full h-full  overflow-hidden relative">
                 <div className=" px-6 pb-6 w-full flex flex-col gap-7 h-full overflow-y-auto">
@@ -70,10 +72,25 @@ function DiscoverClientPage() {
                           data={item}
                           isSubscribed={subscribedComics.includes(item.id)}
                           onToggleSubscribe={() => toggleSubscribe(item.id)}
+                          queryKey={discoverQueryKey}
                         />
                       ))}
                 </div>
               </div>{" "}
+            </div>
+            <div className=" flex justify-center">
+              <aside className="px-6 w-[20rem]">
+                <button
+                  onClick={toggleAll}
+                  className={`w-full text-white font-semibold  py-3 rounded-md hover:opacity-90 transition-colors ${
+                    allSubscribed
+                      ? "bg-gradient-to-r from-[#DC2626] to-[#EF4444]"
+                      : "bg-gradient-to-r from-[#16A34A] to-[#38C172]"
+                  }`}
+                >
+                  {allSubscribed ? "Unsubscribe All" : "Subscribe to All"}
+                </button>
+              </aside>
             </div>
           </div>
         </div>
