@@ -7,7 +7,7 @@ import { Skeleton } from "@nextui-org/react";
 import TrendingItem from "../trending/_components/trendingItem";
 import DiscoverItems from "./_components/discoverItems";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 function DiscoverClientPage() {
   const discoverQueryKey = "discover_trending";
