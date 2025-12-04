@@ -30,7 +30,7 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
   const queryClient = useQueryClient()
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [`my_library`, pagination],
-    queryFn: () =>
+  queryFn: () =>
       getRequestProtected(
         `/my-libraries/comics?page=${pagination.page}&limit=6`,
         token,
@@ -83,7 +83,7 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
         total: data?.data?.pagination?.totalPages || 1,
       }));
     }
-  }, [isFetching, isLoading, data]);
+  }, [isFetching, isLoading, data, tabName]);
   const changePage = (page: number) => {
     setPagination((prevState) => ({
       ...prevState,

@@ -40,15 +40,15 @@ function DiscoverClientPage() {
 
   console.log("Client fetched all_genres data", data);
   return (
-    <div className="parent-wrap py-10">
-      <div className="child-wrap min-h-screen flex w-full flex-col gap-5">
-        <div className="flex flex-col gap-[18px] bg-[var(--bg-secondary)] rounded-[8px] p-6 lg:p-9 h-full break-all">
+    <div className="auth-container  p-2 sm:p-5  md:p-10">
+      <div className="child-wrap max-h-screen flex w-full flex-col gap-5 px-2 sm:px-[1rem] md:px-[5rem] lg:px-[10rem]">
+        <div className="flex flex-col gap-[18px] bg-[var(--bg-secondary)] rounded-[8px] px-2 sm:px-6 py-6 lg:px-9 lg:py-5 h-full break-all ">
           <H2SectionTitle title="Discover Trending Comics"></H2SectionTitle>
           <div className=" flex justify-end">
-            <aside className="px-6 w-[10rem]">
+            <aside className="px-6 w-[6rem]">
               <button
                 onClick={() => router.push("/")}
-                className={`w-full text-white font-semibold  py-3 rounded-md hover:opacity-90 transition-colors 
+                className={`w-full text-white font-semibold  py-1 rounded-sm hover:opacity-90 transition-colors text-xs
                  bg-gradient-to-r from-[#DC2626] to-[#EF4444]`}
               >
                 Skip
@@ -56,9 +56,9 @@ function DiscoverClientPage() {
             </aside>
           </div>
           <div>
-            <div className=" w-full rounded-[8px] overflow-hidden hidden md:flex">
+            <div className=" w-full rounded-[8px] overflow-hidden flex md:flex">
               <div className="flex w-full h-full  overflow-hidden relative">
-                <div className=" px-6 pb-6 w-full flex flex-col gap-7 h-full overflow-y-auto">
+                <div className="px-2 md:px-6 pb-3 w-full flex flex-col gap-1 h-full overflow-y-auto">
                   {isLoading || isFetching || comics.length === 0
                     ? Array.from({ length: 6 }).map((_, i) => (
                         <Skeleton
@@ -66,15 +66,17 @@ function DiscoverClientPage() {
                           className="w-full h-[60px] mt-8 rounded-md"
                         ></Skeleton>
                       ))
-                    : comics?.map((item: any, i: number) => (
-                        <DiscoverItems
-                          key={i}
-                          data={item}
-                          isSubscribed={subscribedComics.includes(item.id)}
-                          onToggleSubscribe={() => toggleSubscribe(item.id)}
-                          queryKey={discoverQueryKey}
-                        />
-                      ))}
+                    : comics
+                        ?.slice(0, 4)
+                        .map((item: any, i: number) => (
+                          <DiscoverItems
+                            key={i}
+                            data={item}
+                            isSubscribed={subscribedComics.includes(item.id)}
+                            onToggleSubscribe={() => toggleSubscribe(item.id)}
+                            queryKey={discoverQueryKey}
+                          />
+                        ))}
                 </div>
               </div>{" "}
             </div>

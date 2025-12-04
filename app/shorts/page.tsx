@@ -12,7 +12,7 @@ export default async function ShortsPage() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <main>
+      <main className="overflow-hidden">
         <ShortsClient />
       </main>
     </HydrationBoundary>

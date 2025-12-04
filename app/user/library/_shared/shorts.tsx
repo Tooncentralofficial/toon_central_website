@@ -21,32 +21,28 @@ import IconLoader from '@/app/_shared/icon_loader';
 function LibraryShorts({ tabName }: { tabName: string }) {
  const [loading, setLoading] = useState(true);
   const pathname = usePathname();
-  const [comics, setComics] = useState<any[]>([]);
+  const [shorts, setShorts] = useState<any[]>([]);
   const [pagination, setPagination] = useState({ page: 1, total: 1 });
-  const [deletingComic, setDeletingComic] = useState<string | null>(null);
+  const [deletingShort, setDeletingShort] = useState<string | null>(null);
   const { token } = useSelector(selectAuthState);
-  const queryKey = "delete_comic"
+  const queryKey = "delete_short"
   const queryClient = useQueryClient()
   const { data, isLoading, isFetching, isSuccess } = useQuery({
-    queryKey: [`my_library`, pagination],
-    queryFn: () =>
-      getRequestProtected(
-        `/my-libraries/comics?page=${pagination.page}&limit=6`,
-        token,
-        pathname
-      ),
+    queryKey: [`my_shorts`, pagination, tabName],
+    queryFn: () => getRequestProtected(`my-libraries/shorts`, token, pathname),
     enabled: token !== null,
   });
 
-  const { mutate: deleteComic} = useMutation({
+  const { mutate: deleteShort } = useMutation({
     mutationKey: [queryKey],
-    mutationFn: (id) =>
+    mutationFn: (shortId: string) =>
       deleteRequestProtected(
-        `/my-libraries/comics/${id}/delete`,
+        `/my-libraries/shorts/${shortId}/delete`,
         token,
         pathname
       ),
     onSuccess(data, variables, context) {
+      console.log(data);
       const { success, message, data: resData } = data;
       if (success) {
         toast(message, {
@@ -54,9 +50,9 @@ function LibraryShorts({ tabName }: { tabName: string }) {
           type: "success",
         });
         queryClient.invalidateQueries({
-          queryKey: ['my_library'],
+          queryKey: ["my_shorts", pagination, tabName],
         });
-        return
+        return;
       } else {
         toast(message, {
           toastId: "comic_delete",
@@ -65,24 +61,25 @@ function LibraryShorts({ tabName }: { tabName: string }) {
       }
     },
     onError(error, variables, context) {
+      console.log(error);
       toast("Some error occured. Contact help !", {
         toastId: "comic_delete",
         type: "error",
       });
     },
-    onSettled(){
-      setDeletingComic(null)
-    }
+    onSettled() {
+      setDeletingShort(null);
+    },
   });
   useEffect(() => {
     if (isSuccess) {
-      setComics(parseArray(data?.data?.comics));
+      setShorts(parseArray(data?.data?.shorts));
       setPagination((prevState) => ({
         page: data?.data?.pagination?.currentPage || 1,
         total: data?.data?.pagination?.totalPages || 1,
       }));
     }
-  }, [isFetching, isLoading, data]);
+  }, [isFetching, isLoading, data,tabName]);
   const changePage = (page: number) => {
     setPagination((prevState) => ({
       ...prevState,
@@ -98,10 +95,10 @@ function LibraryShorts({ tabName }: { tabName: string }) {
       <div className="flex items-center h-full justify-between lg:justify-end gap-6 mb-[60px]">
         <div className="flex flex-col h-full w-full items-center justify-center">
           {loading && <LoadingLibraryItems />}
-          {!loading && comics.length != 0 && (
+          {!loading && shorts.length != 0 && (
             <>
               <div className="w-full flex flex-col gap-8 ">
-                {comics?.map((item: any, i) => (
+                {shorts?.map((item: any, i: number) => (
                   <div
                     key={i}
                     className="flex flex-col gap-[18px] bg-[var(--bg-secondary)] rounded-[8px] p-6 lg:p-9"
@@ -111,11 +108,8 @@ function LibraryShorts({ tabName }: { tabName: string }) {
                         <div className="absolute top-0 left-0 w-full h-full  inset-0 flex justify-center items-center">
                           <PlayIcon className="w-10 h-10 text-white opacity-70" />{" "}
                         </div>
-                        <Image
-                          src={`${
-                            item?.coverImage || item?.backgroundImage || ""
-                          }`}
-                          alt={`${item?.title || "toon_central"}`}
+                        <video
+                          src={item?.upload}
                           width={200}
                           height={271}
                           style={{
@@ -124,7 +118,6 @@ function LibraryShorts({ tabName }: { tabName: string }) {
                             width: "100%",
                             height: "100%",
                           }}
-                          unoptimized
                         />
                       </div>
                       <div className="w-[80%]  relative">
@@ -184,11 +177,12 @@ function LibraryShorts({ tabName }: { tabName: string }) {
                           <button
                             className="bg-[#20324C] p-3 rounded-lg flex items-center justify-center"
                             onClick={() => {
-                              setDeletingComic(item.id);
-                              deleteComic(item?.id);
+                              console.log(item.uuid);
+                              setDeletingShort(item.id);
+                              deleteShort(item?.uuid);
                             }}
                           >
-                            {deletingComic === item?.id ? (
+                            {deletingShort === item?.id ? (
                               <IconLoader />
                             ) : (
                               <DeleteIcon className="w-6 h-6 text-[#FF1010]" />
@@ -214,11 +208,12 @@ function LibraryShorts({ tabName }: { tabName: string }) {
                       <div className="">
                         <Button
                           onClick={() => {
-                            setDeletingComic(item.id);
-                            deleteComic(item?.id);
+                            console.log(item.uuid);
+                            setDeletingShort(item.id);
+                            deleteShort(item?.uuid);
                           }}
                           className=" rounded-lg bg-default-300 "
-                          isLoading={deletingComic === item?.id}
+                          isLoading={deletingShort === item?.id}
                         >
                           <DeleteIcon className="w-6 h-6 text-[#FF1010]" />
                         </Button>
@@ -229,7 +224,7 @@ function LibraryShorts({ tabName }: { tabName: string }) {
               </div>
             </>
           )}
-          {!loading && comics.length == 0 && <NotFound />}
+          {!loading && shorts.length == 0 && <NotFound />}
         </div>
       </div>
       <PaginationCustom

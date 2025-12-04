@@ -15,9 +15,9 @@ const DiscoverItems = ({
 }) => {
   console.log(data);
   return (
-    <div className="flex items-end justify-between gap-4 px-4 py-4 md:px-8 rounded-lg bg-primary mt-6">
+    <div className="flex items-end justify-between gap-4 px-2 py-4 md:px-8 rounded-lg bg-primary mt-3">
       <div className="flex gap-5 ">
-        <div className="w-[100px] h-[160px] overflow-hidden rounded-[6px]">
+        <div className="w-[40px] h-[60px] overflow-hidden rounded-[6px]">
           <Image
             src={data?.coverImage || ""}
             width={60}
@@ -26,8 +26,8 @@ const DiscoverItems = ({
             className="object-cover w-full h-full"
           />
         </div>
-        <div className="flex flex-col gap-6">
-          <span className="font-bold text-4xl">{data.title}</span>
+        <div className="flex flex-col gap-1">
+          <span className="font-bold text-lg">{data.title}</span>
           <Likes
             likesNViews={data?.likesAndViews}
             queryKey={queryKey}
@@ -35,13 +35,13 @@ const DiscoverItems = ({
             favourites={data?.favourites}
           />
 
-          <span className="text-xl text-gray-300">{data?.user?.username}</span>
+          <span className="text-xs text-gray-300">{data?.user?.username}</span>
         </div>
       </div>
 
       <div
         // onClick={onToggleSubscribe}
-        className="cursor-pointer hover:bg-[#afb0af21] flex pb-5"
+        className="cursor-pointer hover:bg-[#afb0af21] flex pb-5 text-xs md:text-sm"
       >
         {data.genres?.map((g: any, i: number) => (
           <React.Fragment key={i}>

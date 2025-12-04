@@ -1,6 +1,5 @@
-// ...existing code...
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -19,34 +18,72 @@ import Likes from "../../_shared/cards/likes";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
 import { Autoplay } from "swiper/modules";
-// @ts-ignore
+//@ts-ignore
 import "swiper/css";
-// @ts-ignore
+//@ts-ignore
 import "swiper/css/pagination";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
-import { Button } from "@nextui-org/react";
-import { array } from "yup";
 import ShortsComments from "./shortscomments";
+import { shortLike, ShortsType } from "@/helpers/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getRequestProtected } from "@/app/utils/queries/requests";
+import { prevRoutes } from "@/lib/session/prevRoutes";
+import { toast } from "react-toastify";
+
 interface ShortsCardProps {
-  short: any;
+  shorts: ShortsType[];
   featured: boolean;
   index: number;
   setCommentOpen: (open: any) => void;
   commentsOpen: boolean;
+  setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function ShortsCard({
-  short,
+  shorts,
   featured,
   index,
   setCommentOpen,
   commentsOpen,
+  setCurrentIndex
 }: ShortsCardProps) {
+  const queryClient= useQueryClient();
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const [isMuted, setIsMuted] = useState(true);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const { user, token } = useSelector(selectAuthState);
+  console.log("user", user);
+  const [likes, setLikes]= useState<shortLike[]>([])
   const photo = user?.photo || "";
+  console.log("shorts", shorts);
 
   const swiperRef: any = useRef(null);
+
+  // Handle video playback when slide changes
+  const handleSlideChange = (swiper: any) => {
+    const newIndex = swiper.activeIndex;
+    setCurrentSlideIndex(newIndex);
+    setCurrentIndex(newIndex);
+
+    // Pause all videos
+    videoRefs.current.forEach((video) => {
+      if (video) {
+        video.pause();
+        video.currentTime = 0; // Optional: reset to beginning
+      }
+    });
+
+    // Play the current video
+    const currentVideo = videoRefs.current[newIndex];
+    if (currentVideo) {
+      currentVideo.play().catch((error) => {
+        console.log("Video play failed:", error);
+      });
+    }
+  };
+
   const handleNext = () => {
     if (swiperRef.current) {
       swiperRef.current.slideNext();
@@ -57,6 +94,26 @@ export default function ShortsCard({
     if (swiperRef.current) {
       swiperRef.current.slidePrev();
     }
+  };
+
+  const handleUnmute = () => {
+    setIsMuted(false);
+    setHasInteracted(true);
+    videoRefs.current.forEach((video) => {
+      if (video) {
+        video.muted = false;
+      }
+    });
+  };
+
+  const handleToggleMute = () => {
+    const newMutedState = !isMuted;
+    setIsMuted(newMutedState);
+    videoRefs.current.forEach((video) => {
+      if (video) {
+        video.muted = newMutedState;
+      }
+    });
   };
 
   const ArrowCircle = ({ type }: { type: "left" | "right" }) => {
@@ -71,16 +128,80 @@ export default function ShortsCard({
       </div>
     );
   };
-  const [isHovered, setIsHovered] = useState(false);
-  const views = short?.likesAndViews?.views?.length || 0;
+
+  const { mutate: likeShorts , isPending, isSuccess} = useMutation({
+    mutationFn: async (uuid: string) => {
+      const response = await getRequestProtected(`shorts/${uuid}/like`, token, prevRoutes().library);
+      return response;
+    },
+    onSuccess: (data) => {
+      if (data?.success) {
+        toast(data?.message, {
+          type: "success",
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["shorts"],
+        });
+      } else {
+        toast(data?.message, {
+          type: "error",
+        });
+      }
+    },
+  });
+
+  const { mutate: dislikeShorts } = useMutation({
+    mutationFn: async (uuid: string) => {
+      const response = await getRequestProtected(`shorts/${uuid}/dislike`, token, prevRoutes().library);
+      return response;
+    },
+    onSuccess: (data) => {
+      if (data?.success) {
+        toast(data?.message, {
+          type: "success",
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["shorts"],
+        });
+      } else {
+        toast(data?.message, {
+          type: "error",
+        });
+      }
+    },  
+  },
+);
+
+const hasLiked = useMemo(() => {
+  if (!user?.id || !shorts[currentSlideIndex]?.likesAndViews) {
+    return false;
+  }
+
+   return shorts[currentSlideIndex].likesAndViews.some((item) =>
+     item.likes?.find((like) => like.user_id === user?.id))
+}, [shorts, currentSlideIndex, user?.id]);
+ console.log("hasLiked", hasLiked)
+
+const hasdiLiked = useMemo(() => {
+  if (!user?.id || !shorts[currentSlideIndex]?.likesAndViews) {
+    return false;
+  }
+
+   return shorts[currentSlideIndex].likesAndViews.some((item) =>
+     item?.dislikes?.find((like) => like.user_id === user?.id))
+}, [shorts, currentSlideIndex, user?.id]);
+ console.log("hasdiLiked", hasdiLiked)
+  
 
   return (
-    <div className="w-full h-[82.7vh] md:h-[90vh] lg:h-[80vh] block md:flex md:justify-center md:items-center relative flex-1 overflow-hidden">
-      <div className="block md:flex  md:gap-10 overflow-hidden">
-        <div className="absolute left-2  z-[22] flex flex-col justify-between h-full">
+    <div className="w-full h-full block md:flex md:justify-center md:items-center relative flex-1 overflow-hidden">
+      <div className="block md:flex md:gap-10 overflow-hidden">
+        <div className="absolute left-2 z-[22] flex flex-col justify-between h-full">
           <div className="flex flex-col gap-4">
-            <div className="flex gap-3 ">
-              <h3 className="text-[#FCFCFDB2] text-xl">Short Title</h3>
+            <div className="flex gap-3">
+              <h3 className="text-[#FCFCFDB2] text-xl">
+                {shorts?.[currentSlideIndex]?.title}
+              </h3>
               <div className="bg-[#475467] px-3 py-1 rounded-2xl">
                 Subscribe
               </div>
@@ -97,19 +218,38 @@ export default function ShortsCard({
               <p className="border-[1px] px-3 py-1 border-[#05834BF5]"> 2023</p>
             </div>
           </div>
-          <button className="flex items-center gap-2 bg-[#05834B]  w-full justify-center py-2 rounded-md md:mb-8">
-            watch more <ArrowRight />
-          </button>
+          <div className=" mb-0 lg:mb-10 xl:mb-14">
+            <button className="flex items-center gap-2 bg-[#05834B] w-full justify-center py-2 rounded-md md:mb-2">
+              watch more <ArrowRight />
+            </button>
+          </div>
         </div>
         <div className="relative h-[82.7vh] md:h-[60vw] md:max-h-[600px] w-full md:max-w-[480px] rounded-md z-10">
+          {/* Unmute Button - Shows on first load */}
+          {!hasInteracted && (
+            <button
+              onClick={handleUnmute}
+              className="absolute top-4 right-4 z-30 bg-black/50 text-white px-4 py-2 rounded-full hover:bg-black/70 transition-colors"
+            >
+              🔇 Tap to Unmute
+            </button>
+          )}
+
+          {/* Mute Toggle Button - Shows after first interaction */}
+          {hasInteracted && (
+            <button
+              onClick={handleToggleMute}
+              className="absolute top-4 right-4 z-30 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
+            >
+              {isMuted ? "🔇" : "🔊"}
+            </button>
+          )}
           <Swiper
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
             }}
+            onSlideChange={handleSlideChange}
             direction={"vertical"}
-            pagination={{
-              clickable: true,
-            }}
             modules={[Pagination]}
             className="h-full w-full"
             style={{
@@ -117,38 +257,54 @@ export default function ShortsCard({
               width: "100%",
             }}
           >
-            <SwiperSlide className="h-full w-full">
-              <img
-                src={short.image}
-                alt={short.title}
-                className="h-full w-full object-cover"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </SwiperSlide>
-            <SwiperSlide className="h-full w-full">
-              <img
-                src={short.image}
-                alt={short.title}
-                className="h-full w-full object-cover"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </SwiperSlide>
-            <SwiperSlide className="h-full w-full">
-              <img
-                src={short.image}
-                alt={short.title}
-                className="h-full w-full object-cover"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </SwiperSlide>
+            {shorts?.map((short: ShortsType, index: number) => (
+              <SwiperSlide className="h-full w-full" key={index}>
+                <video
+                  ref={(el) => {
+                    videoRefs.current[index] = el;
+                  }}
+                  className="h-full w-full object-cover"
+                  autoPlay={index === 0} // Only autoplay first video
+                  loop
+                  muted={isMuted}
+                  playsInline
+                  controls={false}
+                  src={short.upload}
+                ></video>
+              </SwiperSlide>
+            ))}
           </Swiper>
         </div>
         <div className="absolute md:static right-5 bottom-0 z-[22] flex flex-col gap-10 justify-end mb-5">
-          <div>
-            <LikeIcon className="w-10 h-10 text-[#05834B]" />
+          <div
+            onClick={() => likeShorts(shorts?.[currentSlideIndex]?.uuid)}
+            className="flex flex-col items-center gap-2"
+          >
+            <LikeIcon
+              className={`w-10 h-10 ${
+                hasLiked ? " text-[#05834B]" : "text-[#FCFCFDB2]"
+              }`}
+            />
+            <p>
+              {shorts?.[currentSlideIndex]?.likesAndViews.map(
+                (like: any) => like.likes?.length
+              ) || 0}
+            </p>
           </div>
-          <div>
-            <DislikeIcon className="w-10 h-10 text-[#05834B]" />
+          <div
+            className="flex flex-col items-center gap-2"
+            onClick={() => dislikeShorts(shorts?.[currentSlideIndex]?.uuid)}
+          >
+            <DislikeIcon
+              className={`w-10 h-10 ${
+                hasdiLiked ? " text-[#05834B]" : "text-[#FCFCFDB2]"
+              }`}
+            />
+            <p>
+              {shorts?.[currentSlideIndex]?.likesAndViews.map(
+                (dislike: any) => dislike.dislikes?.length || 0
+              )}
+            </p>
           </div>
           <div onClick={() => setCommentOpen((prev: any) => !prev)}>
             <CommentShortsIcon className="w-10 h-10" />
@@ -158,7 +314,7 @@ export default function ShortsCard({
           </div>
           <div className="overflow-hidden w-10 h-10 rounded-full">
             <Image
-              src={photo}
+              src={shorts?.[currentSlideIndex]?.user.photo as string}
               width={50}
               height={50}
               alt={"title"}
@@ -171,7 +327,7 @@ export default function ShortsCard({
             />
           </div>
         </div>
-        <div className="flex flex-col gap-5  justify-center ml-5">
+        <div className="flex flex-col gap-5 justify-center ml-5">
           <ArrowCircle type="left" />
           <ArrowCircle type="right" />
         </div>
@@ -187,7 +343,12 @@ export default function ShortsCard({
           }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
         >
-          <p onClick={() => setCommentOpen(false)} className="py-2 px-4 cursor-pointer w-full flex justify-end">X</p>
+          <p
+            onClick={() => setCommentOpen(false)}
+            className="py-2 px-4 cursor-pointer w-full flex justify-end"
+          >
+            X
+          </p>
           <div className="flex flex-col gap-4 p-4 overflow-y-auto h-full">
             {Array(10)
               .fill(0)
@@ -200,4 +361,3 @@ export default function ShortsCard({
     </div>
   );
 }
-// ...existing code...

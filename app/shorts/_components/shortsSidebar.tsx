@@ -33,7 +33,7 @@ export default function ShortsSidebar({
       initial={false}
       animate={{ width: collapsed ? 80 : 280 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="bg-[var(--bg-menu-cont)] border-r border-[var(--border-color)] h-screen sticky top-0 overflow-hidden"
+      className="bg-[var(--bg-menu-cont)] border-r border-[var(--border-color)] h-screen sticky top-0 "
     >
       <div className="p-4">
         {/* Toggle Button */}

@@ -9,9 +9,9 @@ export default function ShortsClient() {
   const [activeCategory, setActiveCategory] = useState("trending");
 
   return (
-    <div className=" bg-[var(--bg-primary)]  h-full w-full">
+    <div className=" bg-[var(--bg-primary)] h-full md:h-[90vh] lg:h-[83vh] xl:h-full w-full ">
 
-      <div className="h-full w-full">
+      <div className="h-full w-full overflow-hidden">
         {/* <ShortsSidebar
           collapsed={sidebarCollapsed}
           onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}

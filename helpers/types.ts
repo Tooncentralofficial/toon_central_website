@@ -93,3 +93,72 @@ export interface ComicFormValues {
   socialMediaHandle: string;
   genres: ComicGenre[];
 }
+
+export interface ShortsType {
+  id: number;
+  uuid: string;
+  title: string;
+  description: string;
+  upload: string;
+  amount: number;
+  audienceId: number;
+  isMonetized: number;
+  statusId: number;
+  userId: number;
+  createdAt: string;
+  updatedAt: string;
+  comments: any[];
+  likesAndViews: ShortsLikesAndViews;
+  user :Partial<User>
+}
+
+export interface ShortsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    pagination: PaginationInfo;
+    shorts: ShortsType[];
+  };
+}
+
+export interface PaginationInfo {
+  total: number;
+  count: number;
+  perPage: number;
+  currentPage: number;
+  totalPages: number;
+}
+
+export interface CommentType {
+  id: number;
+  comment: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  short_id: number;
+  user_id: number;
+  user: User
+}
+
+export interface PaginationType {
+  page: number;
+  limit: number;
+  perPage: number;
+  currentPage: number;
+  totalPages: number;
+}
+export interface shortLike {
+  user_id: number;
+}
+
+export interface LikesAndViewsItem {
+  id: number;
+  short_id: number;
+  dislikes: shortLike[];
+  views: number | null;
+  likes: shortLike[];
+  created_at: string;
+  updated_at: string;
+}
+
+export type ShortsLikesAndViews = LikesAndViewsItem[];
