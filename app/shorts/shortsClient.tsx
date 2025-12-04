@@ -6,13 +6,9 @@ import ShortsHeader from "./_components/shortsHeader";
 
 export default function ShortsClient() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [showPage, setShowPage] = useState(false);
+
   const [activeCategory, setActiveCategory] = useState("trending");
 
-  useEffect(()=>{
-    setTimeout(()=>setShowPage(true),600)
-    
-  },[])
 
   
 
@@ -26,13 +22,7 @@ export default function ShortsClient() {
           activeCategory={activeCategory}
           onCategoryChange={setActiveCategory}
         /> */}
-        {
-          showPage && (
-            <ShortsContent />
-          )
-        }
-
-        
+            <ShortsContent />  
       </div>
     </div>
   );

@@ -41,7 +41,7 @@ export default function ShortsContent() {
   const [commentsOpen, setCommentsOpen] = useState(false);
 
   // FIXED: Removed page and currentIndex from queryKey - they shouldn't be there
-  const { data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, isSuccess, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: ["shorts"], // Only the static key needed
       initialPageParam: 1, // Start from page 1, not 0
@@ -151,7 +151,7 @@ export default function ShortsContent() {
     shortComments.pagination.currentPage < shortComments.pagination.totalPages;
   
  
-  if (!shorts || shorts.length === 0 || isFetching) {
+  if (!isSuccess) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
         <div className="text-center text-gray-500 animate-pulse">
