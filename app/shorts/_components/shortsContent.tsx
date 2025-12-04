@@ -109,7 +109,6 @@ export default function ShortsContent() {
    },
  });
  
-  console.log("shortIndex", currentIndex);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({

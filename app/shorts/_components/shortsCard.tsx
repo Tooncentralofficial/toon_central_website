@@ -54,10 +54,10 @@ export default function ShortsCard({
   const [hasInteracted, setHasInteracted] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const { user, token } = useSelector(selectAuthState);
-  console.log("user", user);
+ 
   const [likes, setLikes]= useState<shortLike[]>([])
   const photo = user?.photo || "";
-  console.log("shorts", shorts);
+
 
   const swiperRef: any = useRef(null);
 
@@ -180,7 +180,7 @@ const hasLiked = useMemo(() => {
    return shorts[currentSlideIndex].likesAndViews.some((item) =>
      item.likes?.find((like) => like.user_id === user?.id))
 }, [shorts, currentSlideIndex, user?.id]);
- console.log("hasLiked", hasLiked)
+
 
 const hasdiLiked = useMemo(() => {
   if (!user?.id || !shorts[currentSlideIndex]?.likesAndViews) {
@@ -190,7 +190,8 @@ const hasdiLiked = useMemo(() => {
    return shorts[currentSlideIndex].likesAndViews.some((item) =>
      item?.dislikes?.find((like) => like.user_id === user?.id))
 }, [shorts, currentSlideIndex, user?.id]);
- console.log("hasdiLiked", hasdiLiked)
+
+ const lv = shorts?.[currentSlideIndex]?.likesAndViews?.[0];
   
 
   return (
@@ -286,9 +287,7 @@ const hasdiLiked = useMemo(() => {
               }`}
             />
             <p>
-              {shorts?.[currentSlideIndex]?.likesAndViews.map(
-                (like: any) => like.likes?.length
-              ) || 0}
+              {lv?.likes?.length || 0}
             </p>
           </div>
           <div
@@ -301,9 +300,7 @@ const hasdiLiked = useMemo(() => {
               }`}
             />
             <p>
-              {shorts?.[currentSlideIndex]?.likesAndViews.map(
-                (dislike: any) => dislike.dislikes?.length || 0
-              )}
+              {lv?.dislikes?.length || 0}
             </p>
           </div>
           <div onClick={() => setCommentOpen((prev: any) => !prev)}>
