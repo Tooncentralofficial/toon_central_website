@@ -173,27 +173,29 @@ export default function ShortsCard({
 );
 
 const hasLiked = useMemo(() => {
-  if (!user?.id || !shorts[currentSlideIndex]?.likesAndViews) {
+  if (!user?.id || !shorts?.[currentSlideIndex]?.likesAndViews) {
     return false;
   }
 
-   return shorts[currentSlideIndex].likesAndViews.some((item) =>
+   return shorts?.[currentSlideIndex]?.likesAndViews.some((item) =>
      item.likes?.find((like) => like.user_id === user?.id))
 }, [shorts, currentSlideIndex, user?.id]);
 
 
 const hasdiLiked = useMemo(() => {
-  if (!user?.id || !shorts[currentSlideIndex]?.likesAndViews) {
+  if (!user?.id || !shorts?.[currentSlideIndex]?.likesAndViews) {
     return false;
   }
 
-   return shorts[currentSlideIndex].likesAndViews.some((item) =>
+   return shorts?.[currentSlideIndex].likesAndViews.some((item) =>
      item?.dislikes?.find((like) => like.user_id === user?.id))
 }, [shorts, currentSlideIndex, user?.id]);
 
  const lv = shorts?.[currentSlideIndex]?.likesAndViews?.[0];
   
-
+  if (!shorts?.[currentSlideIndex]) {
+    return null;
+  }
   return (
     <div className="w-full h-full block md:flex md:justify-center md:items-center relative flex-1 overflow-hidden">
       <div className="block md:flex md:gap-10 overflow-hidden">
