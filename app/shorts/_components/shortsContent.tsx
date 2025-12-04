@@ -20,19 +20,13 @@ import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { prevRoutes } from "@/lib/session/prevRoutes";
 
-interface ShortsContentProps {
-  category: string;
-  sidebarCollapsed: boolean;
-}
+
 export interface ShortsInfiniteData {
   pages: ShortsResponse[];
   pageParams: number[];
 }
 
-export default function ShortsContent({
-  category,
-  sidebarCollapsed,
-}: ShortsContentProps) {
+export default function ShortsContent() {
   const {token} = useSelector(selectAuthState)
   const featuredShortsData = [
     // Mock featured data with stock images
@@ -131,15 +125,15 @@ export default function ShortsContent({
           nextPage: res?.data?.nextPage || null,
         };
       },
-      getNextPageParam: (lastPage) => lastPage.nextPage,
+      getNextPageParam: (lastPage) => lastPage?.nextPage,
     });
 
   const pages = data?.pages || [];
-  const shorts = pages.flatMap((p) => p.shorts);
+  const shorts = pages.flatMap((p) => p?.shorts);
   const handleSlideChange = async (swiper: any) => {
     const index = swiper.activeIndex;
 
-    const nearEnd = index >= shorts.length - 2;
+    const nearEnd = index >= shorts?.length - 2;
 
     if (nearEnd && hasNextPage && !isFetchingNextPage) {
       await fetchNextPage();
@@ -162,7 +156,6 @@ export default function ShortsContent({
   useEffect(() => {
     if (shortCommentsdata?.data) {
       setShortComments((prev) => ({
-        // Append new comments instead of replacing
         comments:
           shortCommentsdata.data.pagination.currentPage === 1
             ? shortCommentsdata.data.short_comments || []
@@ -198,7 +191,7 @@ export default function ShortsContent({
   }, [shorts, currentIndex]); 
 const handleLoadMore = () => {
   if (
-    shortComments.pagination.currentPage < shortComments.pagination.totalPages
+    shortComments?.pagination.currentPage < shortComments.pagination.totalPages
   ) {
     setShortComments((prev) => ({
       ...prev,
@@ -243,7 +236,7 @@ const hasMoreComments =
               <span>{shortComments?.pagination?.total} Comments</span>
               <span onClick={() => setCommentsOpen(false)}>x</span>
             </div>
-            {shortCommentsLoading && shortComments.comments.length === 0 ? (
+            {shortCommentsLoading && shortComments?.comments?.length === 0 ? (
               <div className="text-center text-sm text-gray-500 animate-pulse ">
                 Loading comments...
               </div>

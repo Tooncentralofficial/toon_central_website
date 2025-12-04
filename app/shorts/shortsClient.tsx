@@ -20,8 +20,6 @@ export default function ShortsClient() {
         /> */}
 
         <ShortsContent
-          category={activeCategory}
-          sidebarCollapsed={sidebarCollapsed}
         />
       </div>
     </div>
