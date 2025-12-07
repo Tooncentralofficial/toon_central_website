@@ -40,39 +40,45 @@ export default function ShortsContent() {
   });
   const [commentsOpen, setCommentsOpen] = useState(false);
 
-  // FIXED: Removed page and currentIndex from queryKey - they shouldn't be there
-  const { data, isSuccess, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ["shorts"], // Only the static key needed
-      initialPageParam: 1, // Start from page 1, not 0
-      queryFn: async ({ pageParam = 1 }) => {
-        const res = await getRequest(
-          `home/shorts-carousel?page=${pageParam}&limit=10`
-        );
+  const {
+    data,
+    isSuccess,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteQuery({
+    queryKey: ["shorts"],
+    initialPageParam: 1,
+    queryFn: async ({ pageParam = 1 }) => {
+      const res = await getRequest(
+        `home/shorts-carousel?page=${pageParam}&limit=10`
+      );
 
-        return {
-          shorts: res?.data?.shorts || [],
-          nextPage: res?.data?.nextPage || null,
-        };
-      },
-      getNextPageParam: (lastPage) => lastPage?.nextPage,
-    });
+      return {
+        shorts: res?.data?.shorts || [],
+        nextPage: res?.data?.nextPage || null,
+      };
+    },
+    getNextPageParam: (lastPage) => lastPage?.nextPage,
+  });
 
-  const pages = data?.pages || [];
-  const shorts = pages.flatMap((p) => p?.shorts || []);
-
-  
+  // Safely extract shorts with proper null checks
+  const pages = data?.pages ?? [];
+  const shorts = pages.flatMap((p) => p?.shorts ?? []);
+  const currentShort = shorts[currentIndex] ?? null;
 
   const handleSlideChange = async (swiper: any) => {
     const index = swiper.activeIndex;
-    const nearEnd = shorts.length > 0 && index >= shorts.length - 2;
+    const shortsLength = shorts.length;
+    const nearEnd = shortsLength > 0 && index >= shortsLength - 2;
 
     if (nearEnd && hasNextPage && !isFetchingNextPage) {
       await fetchNextPage();
     }
   };
 
-  const prevShortIdRef = useRef(shorts?.[currentIndex]?.id);
+  const prevShortIdRef = useRef<string | null>(null);
 
   const {
     data: shortCommentsdata,
@@ -81,16 +87,16 @@ export default function ShortsContent() {
   } = useQuery({
     queryKey: [
       `short-comments`,
-      shorts?.[currentIndex]?.id,
+      currentShort?.id,
       shortComments.pagination.currentPage,
     ],
     queryFn: () =>
       getRequestProtected(
-        `/short-comments/${shorts?.[currentIndex]?.id}?page=${shortComments.pagination.currentPage}&limit=5`,
+        `/short-comments/${currentShort?.id}?page=${shortComments.pagination.currentPage}&limit=5`,
         token,
         prevRoutes().library
       ),
-    enabled: !!shorts?.[currentIndex]?.id,
+    enabled: !!currentShort?.id,
   });
 
   useEffect(() => {
@@ -116,7 +122,7 @@ export default function ShortsContent() {
 
   useEffect(() => {
     // Only reset if the short ID actually changed
-    if (prevShortIdRef.current !== shorts?.[currentIndex]?.id) {
+    if (prevShortIdRef.current !== currentShort?.id) {
       setShortComments({
         comments: shortCommentsdata?.data?.short_comments || [],
         pagination: shortCommentsdata?.data?.pagination || {
@@ -127,11 +133,10 @@ export default function ShortsContent() {
           totalPages: 1,
         },
       });
-      prevShortIdRef.current = shorts?.[currentIndex]?.id;
+      prevShortIdRef.current = currentShort?.id ?? null;
     }
-  }, [shorts, currentIndex]);
+  }, [currentShort?.id, shortCommentsdata]);
 
-   
   const handleLoadMore = () => {
     if (
       shortComments?.pagination.currentPage <
@@ -149,14 +154,23 @@ export default function ShortsContent() {
 
   const hasMoreComments =
     shortComments.pagination.currentPage < shortComments.pagination.totalPages;
-  
- 
-  if (!isSuccess) {
+
+  // Show loading state while data is being fetched
+  if (isLoading || !isSuccess) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
         <div className="text-center text-gray-500 animate-pulse">
           Loading shorts...
         </div>
+      </div>
+    );
+  }
+
+  // Show empty state if no shorts available
+  if (!shorts || shorts.length === 0) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <div className="text-center text-gray-500">No shorts available</div>
       </div>
     );
   }
@@ -186,7 +200,7 @@ export default function ShortsContent() {
         <div className="flex flex-col h-full">
           <div className="flex flex-col p-3 gap-5 flex-1">
             <div className="flex justify-between text-sm">
-              <span>{shortComments?.pagination?.total} Comments</span>
+              <span>{shortComments?.pagination?.total ?? 0} Comments</span>
               <span
                 onClick={() => setCommentsOpen(false)}
                 className="cursor-pointer"
@@ -203,7 +217,7 @@ export default function ShortsContent() {
                 {shortComments?.comments?.map((item: any, i: number) => (
                   <ShortsComments
                     key={item.id || i}
-                    shortId={shorts?.[currentIndex]?.id}
+                    shortId={currentShort?.id}
                     comment={item}
                   />
                 ))}
@@ -223,7 +237,7 @@ export default function ShortsContent() {
             )}
           </div>
           <div>
-            <ShortCommentInput shortId={shorts?.[currentIndex]?.id} />
+            <ShortCommentInput shortId={currentShort?.id} />
           </div>
         </div>
       </motion.div>

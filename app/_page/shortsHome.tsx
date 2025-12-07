@@ -22,7 +22,7 @@ function HomeShorts() {
     { id: 4, title: "Another Slide" },
   ];
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["shorts"],
     queryFn: () => getRequest("home/shorts-carousel?page=1&limit=10"),
   });
@@ -40,6 +40,11 @@ function HomeShorts() {
       }
     });
   }, [activeIndex]);
+
+   if (isLoading) {
+     return <ShortsSkeleton />;
+   }
+
   return (
     <div className="parent-wrap pt-10 md:py-10 md:pt-0 ">
       <div className="child-wrap">
@@ -50,15 +55,15 @@ function HomeShorts() {
             slidesPerGroup={1}
             breakpoints={{
               0: {
-                slidesPerView: 1.4, // mobile
+                slidesPerView: 3, // mobile
                 spaceBetween: 10,
               },
               768: {
-                slidesPerView: 2, // tablet
+                slidesPerView: 5, // tablet
                 spaceBetween: 15,
               },
               1024: {
-                slidesPerView: 3, // desktop
+                slidesPerView: 7, // desktop
                 spaceBetween: 20,
               },
             }}
@@ -77,13 +82,13 @@ function HomeShorts() {
                   opacity: index === activeIndex ? 1 : 0.6,
                 }}
               >
-                <div className="bg-[#1e1e1e] rounded-2xl h-[500px] flex items-center justify-center">
+                <div className="bg-[#1e1e1e] rounded-medium h-[200px] flex items-center justify-center ">
                   <video
                     ref={(el) => {
                       if (el) videoRefs.current[index] = el;
                     }}
                     src={item.upload}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-medium"
                     controls={false}
                     playsInline
                     muted
@@ -97,5 +102,26 @@ function HomeShorts() {
     </div>
   );
 }
+function ShortsSkeleton() {
+  return (
+    <div className="parent-wrap pt-10 md:py-10 md:pt-0">
+      <div className="child-wrap">
+        {/* Title skeleton */}
+        <div className="h-8 w-32 bg-gray-700/30 rounded animate-pulse mb-6"></div>
 
+        <div className="w-full flex justify-center">
+          <div className="w-full py-10 flex gap-5 justify-center">
+            {/* Simple boxes in a line */}
+            {[0, 1, 2, 3, 4, 5].map((index) => (
+              <div
+                key={index}
+                className="w-[230px] h-[200px] bg-[var(--bg-secondary)] rounded-2xl animate-pulse"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 export default HomeShorts;

@@ -192,7 +192,7 @@ const hasdiLiked = useMemo(() => {
 }, [shorts, currentSlideIndex, user?.id]);
 
  const lv = shorts?.[currentSlideIndex]?.likesAndViews?.[0];
-  
+  if (!shorts || shorts.length === 0) return null;
   if (!shorts?.[currentSlideIndex]) {
     return null;
   }
