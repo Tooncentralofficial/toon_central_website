@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import ShortsSidebar from "./_components/shortsSidebar";
 import ShortsContent from "./_components/shortsContent";
 import ShortsHeader from "./_components/shortsHeader";
+import ShortsComponentscontent from "./_components/ShortsComponentscontent";
 
 export default function ShortsClient() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -23,6 +24,7 @@ export default function ShortsClient() {
           onCategoryChange={setActiveCategory}
         /> */}
             <ShortsContent />  
+            {/* <ShortsComponentscontent /> */}
       </div>
     </div>
   );

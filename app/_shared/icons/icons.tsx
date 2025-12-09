@@ -78,7 +78,8 @@ import ForwardShortsIcon from "@/public/static/svg/shorts/forwardshorts.svg"
 import AutoScrollIcon from "@/public/static/svg/autoscroll.svg"
 import InfoIcon from "@/public/static/svg/info.svg"
 import CreditIcon from "@/public/static/svg/credits.svg"
-
+import ShortsIcon from "@/public/static/svg/shorts/shortsicon.svg"
+import ShortIconSelected from "@/public/static/svg/shorts/shortsiconselected.svg"
 export {
   ToonCentralIcon,
   ThumbsSolid,
@@ -159,5 +160,7 @@ export {
   ForwardShortsIcon,
   AutoScrollIcon,
   InfoIcon,
-  CreditIcon 
-}
+  CreditIcon,
+  ShortsIcon,
+  ShortIconSelected,
+};

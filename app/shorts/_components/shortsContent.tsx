@@ -60,7 +60,7 @@ export default function ShortsContent() {
         nextPage: res?.data?.nextPage || null,
       };
     },
-    getNextPageParam: (lastPage) => lastPage?.nextPage,
+    getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
   });
 
   // Safely extract shorts with proper null checks
@@ -178,6 +178,7 @@ export default function ShortsContent() {
   return (
     <div className="w-full h-full flex">
       <ShortsCard
+        shortComment={shortComments}
         shorts={shorts}
         featured={true}
         index={0}

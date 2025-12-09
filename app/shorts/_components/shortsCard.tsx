@@ -38,6 +38,7 @@ interface ShortsCardProps {
   setCommentOpen: (open: any) => void;
   commentsOpen: boolean;
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
+  shortComment: any;
 }
 
 export default function ShortsCard({
@@ -46,18 +47,18 @@ export default function ShortsCard({
   index,
   setCommentOpen,
   commentsOpen,
-  setCurrentIndex
+  setCurrentIndex,
+  shortComment,
 }: ShortsCardProps) {
-  const queryClient= useQueryClient();
+  const queryClient = useQueryClient();
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const [isMuted, setIsMuted] = useState(true);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const { user, token } = useSelector(selectAuthState);
- 
-  const [likes, setLikes]= useState<shortLike[]>([])
-  const photo = user?.photo || "";
 
+  const [likes, setLikes] = useState<shortLike[]>([]);
+  const photo = user?.photo || "";
 
   const swiperRef: any = useRef(null);
 
@@ -129,9 +130,17 @@ export default function ShortsCard({
     );
   };
 
-  const { mutate: likeShorts , isPending, isSuccess} = useMutation({
+  const {
+    mutate: likeShorts,
+    isPending,
+    isSuccess,
+  } = useMutation({
     mutationFn: async (uuid: string) => {
-      const response = await getRequestProtected(`shorts/${uuid}/like`, token, prevRoutes().library);
+      const response = await getRequestProtected(
+        `shorts/${uuid}/like`,
+        token,
+        prevRoutes().library
+      );
       return response;
     },
     onSuccess: (data) => {
@@ -152,7 +161,11 @@ export default function ShortsCard({
 
   const { mutate: dislikeShorts } = useMutation({
     mutationFn: async (uuid: string) => {
-      const response = await getRequestProtected(`shorts/${uuid}/dislike`, token, prevRoutes().library);
+      const response = await getRequestProtected(
+        `shorts/${uuid}/dislike`,
+        token,
+        prevRoutes().library
+      );
       return response;
     },
     onSuccess: (data) => {
@@ -168,30 +181,30 @@ export default function ShortsCard({
           type: "error",
         });
       }
-    },  
-  },
-);
+    },
+  });
 
-const hasLiked = useMemo(() => {
-  if (!user?.id || !shorts?.[currentSlideIndex]?.likesAndViews) {
-    return false;
-  }
+  const hasLiked = useMemo(() => {
+    if (!user?.id || !shorts?.[currentSlideIndex]?.likesAndViews) {
+      return false;
+    }
 
-   return shorts?.[currentSlideIndex]?.likesAndViews.some((item) =>
-     item.likes?.find((like) => like.user_id === user?.id))
-}, [shorts, currentSlideIndex, user?.id]);
+    return shorts?.[currentSlideIndex]?.likesAndViews.some((item) =>
+      item.likes?.find((like) => like.user_id === user?.id)
+    );
+  }, [shorts, currentSlideIndex, user?.id]);
 
+  const hasdiLiked = useMemo(() => {
+    if (!user?.id || !shorts?.[currentSlideIndex]?.likesAndViews) {
+      return false;
+    }
 
-const hasdiLiked = useMemo(() => {
-  if (!user?.id || !shorts?.[currentSlideIndex]?.likesAndViews) {
-    return false;
-  }
+    return shorts?.[currentSlideIndex].likesAndViews.some((item) =>
+      item?.dislikes?.find((like) => like.user_id === user?.id)
+    );
+  }, [shorts, currentSlideIndex, user?.id]);
 
-   return shorts?.[currentSlideIndex].likesAndViews.some((item) =>
-     item?.dislikes?.find((like) => like.user_id === user?.id))
-}, [shorts, currentSlideIndex, user?.id]);
-
- const lv = shorts?.[currentSlideIndex]?.likesAndViews?.[0];
+  const lv = shorts?.[currentSlideIndex]?.likesAndViews?.[0];
   if (!shorts || shorts.length === 0) return null;
   if (!shorts?.[currentSlideIndex]) {
     return null;
@@ -221,11 +234,11 @@ const hasdiLiked = useMemo(() => {
               <p className="border-[1px] px-3 py-1 border-[#05834BF5]"> 2023</p>
             </div>
           </div>
-          <div className=" mb-0 lg:mb-10 xl:mb-14">
+          {/* <div className=" mb-0 lg:mb-10 xl:mb-14">
             <button className="flex items-center gap-2 bg-[#05834B] w-full justify-center py-2 rounded-md md:mb-2">
               watch more <ArrowRight />
             </button>
-          </div>
+          </div> */}
         </div>
         <div className="relative h-[82.7vh] md:h-[60vw] md:max-h-[600px] w-full md:max-w-[480px] rounded-md z-10">
           {/* Unmute Button - Shows on first load */}
@@ -288,9 +301,7 @@ const hasdiLiked = useMemo(() => {
                 hasLiked ? " text-[#05834B]" : "text-[#FCFCFDB2]"
               }`}
             />
-            <p>
-              {lv?.likes?.length || 0}
-            </p>
+            <p>{lv?.likes?.length || 0}</p>
           </div>
           <div
             className="flex flex-col items-center gap-2"
@@ -301,9 +312,7 @@ const hasdiLiked = useMemo(() => {
                 hasdiLiked ? " text-[#05834B]" : "text-[#FCFCFDB2]"
               }`}
             />
-            <p>
-              {lv?.dislikes?.length || 0}
-            </p>
+            <p>{lv?.dislikes?.length || 0}</p>
           </div>
           <div onClick={() => setCommentOpen((prev: any) => !prev)}>
             <CommentShortsIcon className="w-10 h-10" />
@@ -342,21 +351,29 @@ const hasdiLiked = useMemo(() => {
           }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
         >
-          <p
-            onClick={() => setCommentOpen(false)}
-            className="py-2 px-4 cursor-pointer w-full flex justify-end"
-          >
-            X
-          </p>
+          <div className="flex justify-between ">
+            <span className="py-2 px-4 text-lg flex gap-2">
+              <p>{shorts?.[currentSlideIndex]?.comments?.length}</p>{" "}
+              <p>Comments </p>
+            </span>
+
+            <p
+              onClick={() => setCommentOpen(false)}
+              className="py-2 px-4 cursor-pointer w-full flex justify-end"
+            >
+              X
+            </p>
+          </div>
           <div className="flex flex-col gap-4 p-4 overflow-y-auto h-full">
-            {Array(10)
-              .fill(0)
-              .map((_, idx) => (
-                <ShortsComments key={idx} />
-              ))}
+            {shorts?.[currentSlideIndex]?.comments?.map(
+              (comment: any, idx: number) => (
+                <ShortsComments key={idx} comment={comment} />
+              )
+            )}
           </div>
         </motion.div>
       </AnimatePresence>
     </div>
   );
 }
+//<ShortsComments key={idx} />

@@ -25,6 +25,8 @@ import {
   BellIcon,
   DownMenuArrow,
   SearchIcon,
+  ShortIconSelected,
+  ShortsIcon,
   ToonCentralIcon,
   TrendingColored,
   UploadComicIcon,
@@ -104,6 +106,12 @@ const menuItemsMobile: {
     link: "/",
     icon: HomeIcon,
     active: HomeIconColored,
+  },
+  {
+    name: "shorts",
+    link: "/shorts",
+    icon: ShortsIcon,
+    active: ShortIconSelected,
   },
   {
     name: "genres",
