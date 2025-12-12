@@ -25,11 +25,11 @@ export default function FloatingButton() {
   const { user } = useSelector(selectAuthState);
   const userId = user?.id || user?.userId || undefined;
 
-  const [minutesRemaining, setMinutesRemaining] = useState(60);
+  const [minutesRemaining, setMinutesRemaining] = useState(40);
   const [progress, setProgress] = useState(0);
   const [couponCode, setCouponCode] = useState<string | null>(null);
-  const TOTAL_MINUTES = 60;
-  const TOTAL_MS = TOTAL_MINUTES * 60 * 1000; // 60 minutes in milliseconds
+  const TOTAL_MINUTES = 40;
+  const TOTAL_MS = TOTAL_MINUTES * 60 * 1000; // 40 minutes in milliseconds
 
   const isProgressCompleted = progress >= 100;
 
@@ -85,7 +85,6 @@ export default function FloatingButton() {
           "Content-Type": "application/json",
         },
       });
-      
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -161,7 +160,18 @@ export default function FloatingButton() {
         onClick={onOpen}
         aria-label="Open Otaku Modal"
       >
-       <Image src={OtakuButton} alt="Otaku Button" width={100} height={100} className="w-24 h-24 animate-pulse hover:scale-110 transition-all duration-300" style={{ filter: "drop-shadow(0 0 10px rgba(0,0,0,0.5))", objectFit: "contain", objectPosition: "center" }} />
+        <Image
+          src={OtakuButton}
+          alt="Otaku Button"
+          width={100}
+          height={100}
+          className="w-24 h-24 animate-pulse hover:scale-110 transition-all duration-300"
+          style={{
+            filter: "drop-shadow(0 0 10px rgba(0,0,0,0.5))",
+            objectFit: "contain",
+            objectPosition: "center",
+          }}
+        />
       </motion.div>
 
       <OtakuModal isOpen={isOpen} onClose={onClose} maxWidth="50rem">
