@@ -20,6 +20,7 @@ import OtakuButton from "@/public/static/images/events/otakuload.png";
 
 export default function FloatingButton() {
   const [isOpen, setIsOpen] = useState(true);
+  
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
   const { user } = useSelector(selectAuthState);
