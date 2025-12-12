@@ -42,6 +42,7 @@
     "react-share": "^5.1.2",
     "react-slick": "^0.30.2",
     "react-toastify": "^10.0.5",
+    "recharts": "^2.15.4",
     "redux-thunk": "^3.1.0",
     "sass": "^1.77.2",
     "sharp": "^0.33.5",
