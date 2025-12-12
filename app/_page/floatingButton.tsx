@@ -19,7 +19,7 @@ import copy from "copy-to-clipboard";
 import OtakuButton from "@/public/static/images/events/otakuload.png";
 
 export default function FloatingButton() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
   const { user } = useSelector(selectAuthState);
@@ -192,10 +192,10 @@ export default function FloatingButton() {
             {/* Stylized X Separator - Center */}
             <div className="flex flex-col items-center absolute left-1/2 transform -translate-x-1/2 z-20">
               <span
-                className="text-6xl md:text-8xl lg:text-9xl font-bold text-[#4A9EFF] leading-none"
+                className="text-6xl md:text-8xl lg:text-9xl font-bold text-[#ffffff] leading-none"
                 style={{
                   textShadow:
-                    "0 0 15px rgba(74, 158, 255, 0.7), 0 0 30px rgba(74, 158, 255, 0.4)",
+                    "0 0 15px rgba(255, 255, 255, 0.7), 0 0 30px rgba(74, 255, 255, 0.4)",
                   filter: "drop-shadow(0 0 10px rgba(74, 158, 255, 0.8))",
                   fontFamily: "Arial, sans-serif",
                 }}
@@ -203,7 +203,7 @@ export default function FloatingButton() {
                 ✕
               </span>
               <span
-                className="text-3xl md:text-4xl mt-2"
+                className="text-3xl hidden md:block md:text-4xl mt-2"
                 style={{
                   filter: "drop-shadow(0 0 5px rgba(255, 165, 0, 0.8))",
                 }}
