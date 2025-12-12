@@ -16,9 +16,9 @@ import HorizontalScroll from "./_page/test";
 import CardTitleInMobile from "./_shared/cards/cardTitleinMobile";
 import TodaysPicks from "./_page/todaysPicks";
 import TodaysPicksMobile from "./_page/todaysPicksMobile";
+import FloatingButton from "./_page/floatingButton";
 import { DEFAULT_OG_URL } from "./layout";
 import { Metadata } from "next";
-
 
 const images = [
   {
@@ -66,7 +66,6 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const queryClient = new QueryClient();
-  
 
   await queryClient.prefetchQuery({
     queryKey: ["carousel"],
@@ -86,6 +85,7 @@ export default async function Home() {
         <Originals />
         <Footer />
         <MainfooterWithDelay />
+        <FloatingButton />
       </main>
     </HydrationBoundary>
   );
