@@ -178,7 +178,7 @@ export default function FloatingButton() {
       <OtakuModal isOpen={isOpen} onClose={onClose} maxWidth="50rem">
         <div className="w-full mx-auto p-4 md:p-8 text-white">
           {/* Header with Logos */}
-          <div className="flex justify-between items-center mb-6 md:mb-8 relative px-4">
+          <div className="flex justify-between items-center mb-6 md:mb-8 relative px-0 sm:px-4">
             {/* TOON CENTRAL Logo - Left */}
             <div className="flex flex-col items-start z-10">
               <Image
@@ -193,7 +193,7 @@ export default function FloatingButton() {
             {/* Stylized X Separator - Center */}
             <div className="flex flex-col items-center absolute left-1/2 transform -translate-x-1/2 z-20">
               <span
-                className="text-6xl md:text-8xl lg:text-9xl font-bold text-[#ffffff] leading-none"
+                className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-bold text-[#ffffff] leading-none"
                 style={{
                   textShadow:
                     "0 0 15px rgba(255, 255, 255, 0.7), 0 0 30px rgba(74, 255, 255, 0.4)",
