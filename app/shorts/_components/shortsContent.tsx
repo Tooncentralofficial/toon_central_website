@@ -61,6 +61,7 @@ export default function ShortsContent() {
       };
     },
     getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
+    enabled: !!token,
   });
 
   // Safely extract shorts with proper null checks
@@ -96,7 +97,7 @@ export default function ShortsContent() {
         token,
         prevRoutes().library
       ),
-    enabled: !!currentShort?.id,
+    enabled: !!currentShort?.id && !!token,
   });
 
   useEffect(() => {

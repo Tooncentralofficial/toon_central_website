@@ -49,7 +49,43 @@ function HomeShorts() {
     <div className="parent-wrap pt-10 md:py-10 md:pt-0 ">
       <div className="child-wrap">
         <H2SectionTitle title="Toon Shorts" />
-        <div className="w-full flex justify-center">
+        <div className="w-full justify-center flex md:hidden">
+          <Swiper
+            spaceBetween={12}
+            slidesPerGroup={1}
+            slidesPerView={1.3}
+            slidesPerGroupAuto={true}
+            centeredSlides={true}
+            onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+            className="w-full py-10"
+          >
+            {shorts.map((item: ShortsType, index: number) => (
+              <SwiperSlide
+                key={item.id}
+                style={{
+                  transition: "all 0.4s ease",
+                  transform:
+                    index === activeIndex ? "scale(1.1)" : "scale(0.9)",
+                  opacity: index === activeIndex ? 1 : 0.6,
+                }}
+              >
+                <div className="bg-[#1e1e1e] rounded-medium h-[350px] flex items-center justify-center ">
+                  <video
+                    ref={(el) => {
+                      if (el) videoRefs.current[index] = el;
+                    }}
+                    src={item.upload}
+                    className="w-full h-full object-cover rounded-medium"
+                    controls={false}
+                    playsInline
+                    muted
+                  />
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+        <div className="w-full justify-center hidden md:flex">
           <Swiper
             centeredSlides
             slidesPerGroup={1}
@@ -110,7 +146,16 @@ function ShortsSkeleton() {
         <div className="h-8 w-32 bg-gray-700/30 rounded animate-pulse mb-6"></div>
 
         <div className="w-full flex justify-center">
-          <div className="w-full py-10 flex gap-5 justify-center">
+          <div className="w-full py-10 flex md:hidden gap-5 justify-center">
+            {/* Simple boxes in a line */}
+            {[0, 1].map((index) => (
+              <div
+                key={index}
+                className="w-full h-[320px] bg-[var(--bg-secondary)] rounded-2xl animate-pulse"
+              />
+            ))}
+          </div>
+          <div className="w-full py-10 hidden md:flex gap-5 justify-center">
             {/* Simple boxes in a line */}
             {[0, 1, 2, 3, 4, 5].map((index) => (
               <div

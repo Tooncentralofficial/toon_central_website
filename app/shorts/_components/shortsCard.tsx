@@ -279,7 +279,7 @@ export default function ShortsCard({
                   ref={(el) => {
                     videoRefs.current[index] = el;
                   }}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
                   autoPlay={index === 0} // Only autoplay first video
                   loop
                   muted={isMuted}
