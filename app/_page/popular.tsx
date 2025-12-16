@@ -194,7 +194,7 @@ const Popular = () => {
                   </Fragment>
                 );
               })}
-            </SlickSlider>
+            </Slider>
           </div>
         </div>
       </div>
