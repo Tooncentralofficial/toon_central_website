@@ -79,7 +79,7 @@ const Page = () => {
   });
   return (
     <form onSubmit={formik.handleSubmit}>
-      <div className="">
+      <div className=" ">
         <p className="text-3xl text-center">Create Account</p>
         <p className="my-5 text-center">
           Read Anywhere. Create Anytime. Get started with us to unlock a world

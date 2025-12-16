@@ -56,6 +56,30 @@ import CommentIcon from "@/public/static/svg/commentprofile.svg"
 import Mobilecommenticon from "@/public/static/svg/mobilecommenticon.svg"
 import Sendicon from "@/public/static/svg/sendicon.svg"
 import TrendingColored from "@/public/static/svg/trending_colored.svg";
+import ArrowUpIcon from "@/public/static/svg/arrowup.svg"
+import ArrowDownIcon from "@/public/static/svg/arrowdown.svg"
+
+import LikeIcon from "@/public/static/svg/like.svg"
+import DislikeIcon from "@/public/static/svg/dilike.svg"
+import CommentShortsIcon from "@/public/static/svg/comments.svg"
+import ShareShortsIcon from "@/public/static/svg/share.svg"
+import ShortscommentLikeIcon from "@/public/static/svg/shorts/shortcommentslike.svg"
+import SendCommnetIcon from "@/public/static/svg/shorts/send.svg"
+import PlayIcon from "@/public/static/svg/shorts/playicon.svg"
+import DeleteIcon from "@/public/static/svg/shorts/trash.svg";
+import UploadComicIcon from "@/public/static/svg/uploadcomic.svg"
+import UploadShortIcon from "@/public/static/svg/uploadshort.svg"
+import CautionIcon from "@/public/static/svg/shorts/caution.svg"
+import CopyrightCheckIcon from "@/public/static/svg/shorts/copywrightcheck.svg"
+import WhatsappshortsIcon from "@/public/static/svg/shorts/whatsApp.svg"
+import FacebookShortsIcon from "@/public/static/svg/shorts/facebook.svg"
+import TelegramShortsIcon from "@/public/static/svg/shorts/telegram.svg"
+import ForwardShortsIcon from "@/public/static/svg/shorts/forwardshorts.svg"
+import AutoScrollIcon from "@/public/static/svg/autoscroll.svg"
+import InfoIcon from "@/public/static/svg/info.svg"
+import CreditIcon from "@/public/static/svg/credits.svg"
+import ShortsIcon from "@/public/static/svg/shorts/shortsicon.svg"
+import ShortIconSelected from "@/public/static/svg/shorts/shortsiconselected.svg"
 export {
   ToonCentralIcon,
   ThumbsSolid,
@@ -84,7 +108,13 @@ export {
   LikesSmall,
   ShareIcon,
   Copyicon,CommentIcon,Mobilecommenticon,Sendicon,
-  DarkEyeIcon
+  DarkEyeIcon,
+  LikeIcon,
+  DislikeIcon,
+  CommentShortsIcon,
+  ShareShortsIcon,
+  UploadComicIcon,
+  UploadShortIcon
 };
 
 export { Steps, Steps2, Steps3 };
@@ -98,6 +128,8 @@ export {
   BXSRight,
   DownMenuArrow,
   SearchIcon,
+  ArrowUpIcon,
+  ArrowDownIcon
   
 };
 
@@ -113,4 +145,22 @@ export {
   OriginalIcon,
   OriginalIconColored,
   TrendingColored,
+};
+
+export {
+  ShortscommentLikeIcon,
+  SendCommnetIcon,
+  PlayIcon,
+  DeleteIcon,
+  CautionIcon,
+  CopyrightCheckIcon,
+  WhatsappshortsIcon,
+  FacebookShortsIcon,
+  TelegramShortsIcon,
+  ForwardShortsIcon,
+  AutoScrollIcon,
+  InfoIcon,
+  CreditIcon,
+  ShortsIcon,
+  ShortIconSelected,
 };

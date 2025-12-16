@@ -25,12 +25,12 @@ export async function middleware(request: NextRequest) {
 
 
   const checkProtectedRoutes = () => {
-    if (pathname.startsWith("/comics") || pathname.startsWith("/user")) {
+    if (pathname.startsWith("/comics") || pathname.startsWith("/user") || pathname.startsWith("/creator/dashboard")) {
       return NextResponse.redirect(new URL("/auth/login", request.url));
     }
 
-    if (pathname.startsWith("/creator"))
-      return NextResponse.redirect(new URL("/creator", request.url));
+    if (pathname.startsWith("/creator/dashboard"))
+      return NextResponse.redirect(new URL("/auth/login", request.url));
   };
 
   const checkUnProtectedRoutes = () => {

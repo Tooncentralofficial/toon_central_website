@@ -25,7 +25,7 @@ export interface ComicGenre {
   genre: Genre; // The nested genre object
 
 }
-const TrendingItem = ({ data ,refetchTrending}: { data: any,refetchTrending: any }) => {
+const TrendingItem = ({ data ,refetchTrending}: { data: any,refetchTrending?: any }) => {
   const { user, token } = useSelector(selectAuthState);
   const queryClient = useQueryClient();
   const pathname = usePathname();

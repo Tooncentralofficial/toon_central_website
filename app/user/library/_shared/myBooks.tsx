@@ -16,6 +16,8 @@ import LoadingLibraryItems from "./loadingLibraryItem";
 import { usePathname } from "next/navigation";
 import { Button } from "@nextui-org/react";
 import { toast } from "react-toastify";
+import IconLoader from "@/app/_shared/icon_loader";
+import { DeleteIcon } from "@/app/_shared/icons/icons";
 
 const MyBooksTab = ({tabName}: {tabName: string}) => {
   const [loading, setLoading] = useState(true);
@@ -28,7 +30,7 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
   const queryClient = useQueryClient()
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [`my_library`, pagination],
-    queryFn: () =>
+  queryFn: () =>
       getRequestProtected(
         `/my-libraries/comics?page=${pagination.page}&limit=6`,
         token,
@@ -81,7 +83,7 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
         total: data?.data?.pagination?.totalPages || 1,
       }));
     }
-  }, [isFetching, isLoading, data]);
+  }, [isFetching, isLoading, data, tabName]);
   const changePage = (page: number) => {
     setPagination((prevState) => ({
       ...prevState,
@@ -123,9 +125,11 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
                           unoptimized
                         />
                       </div>
-                      <div className="w-[80%] ">
+                      <div className="w-[80%] relative">
                         <p className="text-gray font-bold mb-2">
-                          {tabName === "books" ? "Continue Editing" : "Continue reading"}
+                          {tabName === "books"
+                            ? "Continue Editing"
+                            : "Continue reading"}
                         </p>
                         <p className="text-2xl font-semibold lg:text-4xl uppercase">
                           {item?.title}
@@ -151,25 +155,40 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
                           </p>
                           <div className="flex gap-14">
                             <SolidPrimaryButton
-                              className="w-max"
+                              className="w-max bg-gradient-to-r from-[#00A96E] to-[#22C55E] lg:w-[13rem]"
                               disabled={item?.uuid}
                               as={Link}
                               href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
                             >
-                              Add EPISODE
+                              Add Episode
                             </SolidPrimaryButton>
-                            <Button
-                              onClick={() => {
-                                setDeletingComic(item.id);
-                                deleteComic(item?.id);
-                              }}
-                              className=" rounded-lg bg-default-300"
-                              size="lg"
-                              isLoading={deletingComic === item?.id}
+                            <SolidPrimaryButton
+                              className="w-max bg-gradient-to-r from-[#00A96E] to-[#22C55E] lg:w-[13rem]"
+                              disabled={item?.uuid}
+                              as={Link}
+                              href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
                             >
-                              Delete
-                            </Button>
+                              Add Shorts
+                            </SolidPrimaryButton>
                           </div>
+                        </div>
+                        <div
+                          className=" absolute top-2 right-2"
+                          id="deleteButton"
+                        >
+                          <button
+                            className="bg-[#20324C] p-3 rounded-lg flex items-center justify-center"
+                            onClick={() => {
+                              setDeletingComic(item.id);
+                              deleteComic(item?.id);
+                            }}
+                          >
+                            {deletingComic === item?.id ? (
+                              <IconLoader />
+                            ) : (
+                              <DeleteIcon className="w-6 h-6 text-[#FF1010]" />
+                            )}
+                          </button>
                         </div>
                       </div>
                     </div>

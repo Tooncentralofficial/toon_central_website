@@ -4,7 +4,7 @@ import { Pagination, PaginationProps } from "@nextui-org/react";
 
 const PaginationCustom = ({ ...props }: PaginationProps) => {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between w-full">
       <span className="text-xs">Showing {props.page} of {props.total}</span>
       <Pagination
         {...props}

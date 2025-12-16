@@ -63,10 +63,10 @@ const tokenState = token === undefined
             />
           </div>
           <div className="flex md:hidden flex gap-5">
-            <Button radius="sm" className="bg-[var(--green100)]">
+            <Button radius="sm" className="bg-[var(--green100)]" as={Link} href="/auth/signup">
               Get Started
             </Button>
-            <Button radius="sm" className="bg-[var(--gray100)]">
+            <Button radius="sm" className="bg-[var(--gray100)]" as={Link} href="/creator/dashboard">
               Publish
             </Button>
           </div>
@@ -82,7 +82,7 @@ const tokenState = token === undefined
               Start publishing on Toon Central with the following steps
             </p>
             <div className="w-min">
-              <Button radius="sm" className="bg-[var(--green100)]">
+              <Button radius="sm" className="bg-[var(--green100)]" as={Link} href="/creator/dashboard">
                 Publish
               </Button>
             </div>

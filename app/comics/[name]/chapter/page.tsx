@@ -1,6 +1,6 @@
 "use client";
 import { dummyItems } from "@/app/_shared/data";
-import { BXSLeft, BXSRight, CommentPop } from "@/app/_shared/icons/icons";
+import { AutoScrollIcon, BXSLeft, BXSRight, CommentPop } from "@/app/_shared/icons/icons";
 import { FlatInput } from "@/app/_shared/inputs_actions/inputFields";
 import BackButton from "@/app/_shared/layout/back";
 import {
@@ -15,7 +15,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import CommentPopUp from "../_shared/commentpopup";
@@ -37,13 +37,15 @@ const Page = ({
   const queryClient = useQueryClient();
   const router = useRouter();
   const fullUrl = pathname + "?" + searchParams.toString();
-  console.log(fullUrl);
+  const initialSpeed = 2
   const [chapter, setChapter] = useState(parseInt(chapterSlug || "0") + 1);
   const [episode, setEpisode] = useState<any[]>([]);
   const [showCommentPopup, setShowCommentPopup] = useState(false);
   const [typedComment, setTypedComment] = useState<string>("");
   const { user, token }: any = useSelector(selectAuthState);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+  const [showButton, setShowButton] = useState(false);
+  
   const toggleCommentPopup = () => {
     setShowCommentPopup((prev) => !prev);
   };
@@ -95,6 +97,49 @@ const Page = ({
       });
     },
   });
+
+   useEffect(() => {
+      let lastTap = 0;
+      let hideTimer: NodeJS.Timeout;
+
+      const handleDoubleClick = () => {
+        setShowButton(true);
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => setShowButton(false), 10000);
+      };
+
+      const handleTouch = () => {
+        const now = Date.now();
+        const timeSince = now - lastTap;
+
+        if (timeSince < 300 && timeSince > 0) {
+          // Detected double tap
+          handleDoubleClick();
+        }
+
+        lastTap = now;
+      };
+
+      // Desktop double click
+      window.addEventListener("dblclick", handleDoubleClick);
+      // Mobile double tap
+      window.addEventListener("touchstart", handleTouch);
+
+      return () => {
+        window.removeEventListener("dblclick", handleDoubleClick);
+        window.removeEventListener("touchstart", handleTouch);
+        clearTimeout(hideTimer);
+      };
+   }, []);
+
+  const handleAutoScroll= ()=>{
+     if (!scrolling) {
+       setScrolling(true);
+     } else {
+       setSpeed((prev) => (prev >= 8 ? 2 : prev * 2));
+     }
+  }
+  
 
   const subscribe = () => {
     if (!token) {
@@ -182,7 +227,7 @@ const Page = ({
     }
   };
   const animationRef = useRef<number | null>(null);
-  const scrollStep: any = () => {
+  const scrollStep = useCallback(() => {
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
     const windowHeight = window.innerHeight;
     const fullHeight = document.documentElement.scrollHeight;
@@ -190,13 +235,13 @@ const Page = ({
     const atBottom = scrollTop + windowHeight >= fullHeight;
 
     if (atBottom) {
-      setScrolling(false); // Stop scrolling
-      return; // Stop loop
+      setScrolling(false);
+      return;
     }
 
-    window.scrollBy(0, speed);
+    window.scrollBy(0, speedRef.current); // ✅ always use the latest speed
     animationRef.current = requestAnimationFrame(scrollStep);
-  };
+  }, []);
 
   // const nextChapter = () => {
   //   if (!hasClicked && chapter > 3) {
@@ -230,7 +275,12 @@ const Page = ({
     }
   };
   const [scrolling, setScrolling] = useState(false);
-  const [speed, setSpeed] = useState(10);
+  const [speed, setSpeed] = useState(initialSpeed);
+  const speedRef = useRef(speed);
+
+  useEffect(() => {
+    speedRef.current = speed;
+  }, [speed]);
   const backDisabled = useMemo(() => chapter <= 1, [chapter]);
 
   useEffect(() => {
@@ -243,7 +293,6 @@ const Page = ({
       }
     }
 
-    // Cleanup on unmount
     return () => {
       if (animationRef.current !== null) {
         cancelAnimationFrame(animationRef.current);
@@ -253,7 +302,13 @@ const Page = ({
   useEffect(() => {
     if (!scrolling) return;
 
-    const cancelOnUserInput = () => {
+    const cancelOnUserInput = (
+      e: MouseEvent | WheelEvent | KeyboardEvent | TouchEvent
+    ) => {
+      // Prevent scroll cancel if clicking the action button
+      const target = e.target as HTMLElement;
+      if (target.closest("#scroll-button")) return;
+
       setScrolling(false);
     };
 
@@ -278,10 +333,28 @@ const Page = ({
       return value?.user_id === user?.id;
     });
   }, [user, data]);
+  
+  console.log(speed);
   return (
     <main>
-      <div className="parent-wrap py-10">
+      <div className="parent-wrap py-10 relative">
         <div className="min-h-screen   w-[100%] max-w-[1400px] px-[5px] sm:px-[5px] md:px-[10px] lg:px-[25px] xl:px-[25px]  ">
+          <AnimatePresence>
+            {showButton && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.2 }}
+                id="scroll-button"
+                className="fixed bottom-16 right-1 sm:right-5 w-20 h-20 flex flex-col items-center justify-center gap-1 bg-[#061A29] text-white rounded-full shadow-md z-[20] hover:scale-105"
+                onClick={handleAutoScroll}
+              >
+                <AutoScrollIcon className="w-4 h-9 text-white" />
+                {speed/initialSpeed}x
+              </motion.button>
+            )}
+          </AnimatePresence>
           <>
             {/* TO ADD LATER */}
             {/* <div className="w-full flex items-center justify-center">
@@ -318,6 +391,7 @@ const Page = ({
               {subscribed ? "Unsubscribe" : "Subscribe"}
             </Button>
           </div>
+
           <div className="my-10 sm:my-1 md:my-2 relative">
             <div className="flex flex-col items-center gap-0 lg:gap-0">
               {parseArray(episode[chapter - 1]?.comic_images).map(

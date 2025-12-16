@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Tabs, Tab, SelectItem } from "@nextui-org/react";
+import { Tabs, Tab, SelectItem, Skeleton } from "@nextui-org/react";
 import TopRecommendations from "./topRecommendations";
 import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "../utils/queries/requests";
@@ -8,6 +8,7 @@ import { Filters, SelectFilters } from "../_shared/sort/filters";
 import SelectFilter from "../_shared/sort/selects";
 import SelectFilterClone from "../_shared/sort/selectclone";
 import H2SectionTitle from "../_shared/layout/h2SectionTitle";
+import GenreTabs, { GenreTabContent } from "../_shared/genre_tabs";
 
 export interface RecommendedTabProps {
   isLoading: boolean;
@@ -15,6 +16,17 @@ export interface RecommendedTabProps {
   data: any;
 }
 export default function RecommendtnTabs() {
+  const {
+    data: genres,
+    isError: genresError,
+    isSuccess: genresSuccess,
+    isLoading: genresLoading,
+    isFetching: genresFetching,
+  } = useQuery({
+    queryKey: ["all_genres"],
+    queryFn: () => getRequest("/genres/pull/list"),
+  });
+
   const [recommended, setRecommended] = useState([]);
   const [filter, setFilter] = useState<Filters>("all");
   const { data, isError, isSuccess, isLoading, isFetching } = useQuery({
@@ -92,15 +104,9 @@ export default function RecommendtnTabs() {
               <SelectItem key={tab?.id}>{tab?.label}</SelectItem>
             ))}
           </SelectFilter>
-
-          <SelectFilterClone placeholder="Days">
-            {SelectFilters.map((filter, i) => (
-              <SelectItem key={filter}>{filter}</SelectItem>
-            ))}
-          </SelectFilterClone>
         </div>
         <H2SectionTitle title="Top recommended" />
-        <Tabs
+        {/* <Tabs
           aria-label="Dynamic tabs"
           items={tabs}
           onSelectionChange={(tab: any) => {
@@ -120,8 +126,19 @@ export default function RecommendtnTabs() {
               <div className="py-5">{item.content}</div>
             </Tab>
           )}
-        </Tabs>
+        </Tabs> */}
+        
+        {genresSuccess && genres?.data?.length > 0 ? (
+          <GenreTabs tabs={genres?.data}>
+            {(activeTab) => <GenreTabContent activeTab={activeTab} />}
+          </GenreTabs>
+        ):(
+          <div className="w-full h-full flex items-center justify-center">
+            <Skeleton className="w-full h-full" />
+          </div>
+        )}
       </div>
     </div>
   );
 }
+// <TopRecommendations isLoading={isLoading} isFetching={isFetching} data={recommended} />}

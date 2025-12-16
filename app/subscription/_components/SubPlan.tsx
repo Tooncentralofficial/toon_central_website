@@ -1,9 +1,53 @@
 "use client";
 import { Button } from "@nextui-org/react";
-import React from "react";
-import { CheckIcon  } from "@nextui-org/shared-icons";
+import React, { useState } from "react";
+import { CheckIcon } from "@nextui-org/shared-icons";
 import { SubPlansType } from "@/app/utils/constants/typess";
-export default function SubPlan({plan,setSelectedPlanIndex,index, selectedPlanIndex,activeIndex}: { plan: SubPlansType,setSelectedPlanIndex: (index: number) => void, index: number, selectedPlanIndex: number ,activeIndex: number  }) {
+import { usePaystack } from "@/app/utils/hooks/usePaystack";
+import PaymentModal from "@/app/_shared/modals/PaymentModal";
+
+export default function SubPlan({
+  plan,
+  setSelectedPlanIndex,
+  index,
+  selectedPlanIndex,
+  activeIndex,
+}: {
+  plan: SubPlansType;
+  setSelectedPlanIndex: (index: number) => void;
+  index: number;
+  selectedPlanIndex: number;
+  activeIndex: number;
+}) {
+  const { initiatePayment, isReady } = usePaystack();
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [paymentReference, setPaymentReference] = useState<string | null>(null);
+
+  const handlePaymentSuccess = (reference: string) => {
+    setPaymentReference(reference);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleSubscribeClick = () => {
+    if (!isReady) {
+      return;
+    }
+
+    initiatePayment({
+      amount: plan.price,
+      planType: plan.type,
+      onSuccess: handlePaymentSuccess,
+      onClose: () => {
+        console.log("Payment cancelled by user");
+      },
+    });
+  };
+
+  const handleCloseModal = () => {
+    setIsPaymentModalOpen(false);
+    setPaymentReference(null);
+  };
+
   return (
     <div
       className={`border w-full px-4 pt-4 pb-8 rounded-[10px] cursor-pointer transition-colors duration-300 ease-in-out ${
@@ -23,7 +67,7 @@ export default function SubPlan({plan,setSelectedPlanIndex,index, selectedPlanIn
         <p className="text-[1.3rem]">{plan.type}</p>
         <div className="flex ">
           <span className="text-3xl font-semibold">$</span>
-          <p className="flex items-end gap-1">
+          <aside className="flex items-end gap-1">
             <span className="text-6xl font-bold leading-none">
               {plan.price}
             </span>
@@ -32,22 +76,37 @@ export default function SubPlan({plan,setSelectedPlanIndex,index, selectedPlanIn
               <br />
               <span>month</span>
             </aside>
-          </p>
+          </aside>
         </div>
       </div>
       <p className="w-full text-center text-xs mt-2 ">{plan.title}</p>
 
-      <Button
-        className={`text-[#FCFCFD] w-full mt-6 transition-colors duration-300 ease-in-out ${
-          index === activeIndex
-            ? "bg-[#475467]"
-            : selectedPlanIndex === index
-            ? "bg-[#05834B]"
-            : "bg-[#FCFCFD] text-[#05834B]"
-        } `}
-      >
-        {index === activeIndex ? "Active" : "Subscribe"}
-      </Button>
+      {index === activeIndex ? (
+        <Button className="bg-[#475467] text-[#FCFCFD] w-full mt-6 rounded-xl">
+          Active
+        </Button>
+      ) : (
+        <Button
+          onClick={handleSubscribeClick}
+          isDisabled={!isReady}
+          isLoading={false}
+          className={` w-full mt-6 rounded-xl h-[40px] transition-colors duration-300 ease-in-out ${
+            selectedPlanIndex === index
+              ? "bg-[#05834B] text-[#FCFCFD]"
+              : "bg-[#FCFCFD] text-[#05834B]"
+          }`}
+        >
+          Subscribe
+        </Button>
+      )}
+
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={handleCloseModal}
+        reference={paymentReference}
+        planType={plan.type}
+        amount={plan.price}
+      />
       <div className="pl-2 flex flex-col gap-7 mt-8">
         {plan.content.map((item, i) => (
           <span key={i} className="text-[0.87rem] flex ">

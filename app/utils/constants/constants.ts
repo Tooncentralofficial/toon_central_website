@@ -1,4 +1,4 @@
-import { ReqResponseType, SubPlansType } from "./typess";
+import { CreditPlansType, ReqResponseType, SubPlansType } from "./typess";
 
 const SuccessResponse = (
   data?: any,
@@ -242,6 +242,35 @@ export const SubPlans : SubPlansType[] = [
       "10,000 free credits monthly",
       "Membership access to Toon Centrals creative community",
     ],
+  },
+];
+export const CreditPlans : CreditPlansType[] = [
+  {
+    type: "Free",
+    price: 1,
+    credits:100
+  },
+  {
+    type: "Basic",
+    price: 4.5,
+    credits:500,
+  },
+  {
+    type: "Standard",
+    price: 8,
+    credits:1000,
+  },
+  {
+    type: "Premium",
+    price: 18,
+    credits:2500,
+    
+  },
+  {
+    type: "Premium",
+    price: 35,
+    credits:5000,
+    
   },
 ];
 

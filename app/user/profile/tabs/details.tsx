@@ -320,9 +320,12 @@ export default function DetailsTab() {
                     formik.setFieldValue("dob", formattedDate);
                   }}
                   value={
-                     parseDate(formik.values.dob) as unknown as any
+
+                    formik.values.dob
+                      ? (parseDate(formik.values.dob) as unknown as any)
+                      : undefined
+
                   }
-                  
                   variant="flat"
                   color="primary"
                   size="lg"

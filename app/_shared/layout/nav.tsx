@@ -25,8 +25,12 @@ import {
   BellIcon,
   DownMenuArrow,
   SearchIcon,
+  ShortIconSelected,
+  ShortsIcon,
   ToonCentralIcon,
   TrendingColored,
+  UploadComicIcon,
+  UploadShortIcon,
 } from "../icons/icons";
 import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
@@ -59,6 +63,10 @@ const menuItems: { name: string; link: string }[] = [
   {
     name: "home",
     link: "/",
+  },
+  {
+    name: "shorts",
+    link: "/shorts",
   },
   {
     name: "genres",
@@ -98,6 +106,12 @@ const menuItemsMobile: {
     link: "/",
     icon: HomeIcon,
     active: HomeIconColored,
+  },
+  {
+    name: "shorts",
+    link: "/shorts",
+    icon: ShortsIcon,
+    active: ShortIconSelected,
   },
   {
     name: "genres",
@@ -150,6 +164,22 @@ const NavHome = () => {
 
   const handleToggle = () => setIsSide(!isSide);
   const { sm, md, lg } = UseTailwindMediaQuery();
+
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const variant = {
+    open: {
+      rotate: 90,
+      transition: {
+        duration: 0.2,
+      },
+    },
+    closed: {
+      rotate: 0,
+      transition: {
+        duration: 0.2,
+      },
+    },
+  };
 
   const { onClose, onOpen, isOpen, onOpenChange } = useDisclosure();
 
@@ -333,17 +363,50 @@ const NavHome = () => {
 
                 <NavbarItem className="hidden lg:flex h-full items-center">
                   <Button
-                    as={Link}
+                    // as={Link}
                     className={`${!token && "bg-transparent min-w-0 px-0"} ${
                       token &&
                       "bg-[var(--green100)] text-white px-[18px] py-[10px] rounded-[8px]"
                     }`}
-                    href={token ? "/creator/new" : "/creator"}
+                    // href={token ? "/creator/new" : "/creator"}
                     variant="flat"
+                    onClick={() => setIsUploadOpen(!isUploadOpen)}
                   >
                     Publish
                   </Button>
                 </NavbarItem>
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={
+                    isUploadOpen
+                      ? { opacity: 1, y: 0, scale: 1 }
+                      : { opacity: 0, y: -10, scale: 0.95 }
+                  }
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className={`absolute right-5 top-16 bg-[#151D29]/95 backdrop-blur-md w-[17rem] p-3 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.4)] border border-[#ffffff1a] origin-top-right ${
+                    isUploadOpen
+                      ? "pointer-events-auto cursor-pointer"
+                      : "pointer-events-none"
+                  }`}
+                >
+                  <Link
+                    className="flex gap-3 ml-[1.6rem] py-[1rem]"
+                    onClick={() => setIsUploadOpen(false)}
+                    href={token ? "/creator/new" : "/creator"}
+                  >
+                    <UploadComicIcon />
+                    <p>Upload Comic</p>
+                  </Link>
+                  <div className="w-full h-[1px] bg-[#FFFFFF3D]" />
+                  <Link
+                    onClick={() => setIsUploadOpen(false)}
+                    className="flex gap-3 ml-[1.6rem] py-[1rem]"
+                    href={token ? "/shorts/upload" : "/creator"}
+                  >
+                    <UploadShortIcon />
+                    <p>Upload Shorts</p>
+                  </Link>
+                </motion.div>
 
                 {!token && (
                   <NavbarItem className="h-full flex items-center">

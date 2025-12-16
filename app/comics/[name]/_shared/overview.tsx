@@ -93,7 +93,7 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
               unoptimized
             />
           </div>
-          <div className="w-[80%] ">
+          <div className="w-[80%]">
             <p className="text-[1.5rem] font-semibold lg:text-4xl uppercase">
               {data?.title}
             </p>

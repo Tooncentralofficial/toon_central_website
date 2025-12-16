@@ -6,6 +6,7 @@ import MyBooksTab from "./_shared/myBooks";
 import NotFound from "./_shared/notFound";
 import LoadingLibraryItems from "./_shared/loadingLibraryItem";
 import MyFavourites from "./_shared/favourites";
+import LibraryShorts from "./_shared/shorts";
 
 export default function Library() {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -22,22 +23,28 @@ export default function Library() {
       tabIndex: 0,
     },
     {
+      id: "shorts",
+      label: "My Shorts",
+      content: <LibraryShorts tabName="shorts" />,
+      tabIndex: 1,
+    },
+    {
       id: "favorites",
       label: "Favourites",
       content:<MyFavourites />,
-      tabIndex: 1,
+      tabIndex: 2,
     },
     {
       id: "continue_reading",
       label: "Continue Reading",
       content:<MyFavourites />,
-      tabIndex: 2,
+      tabIndex: 3,
     },
     {
       id: "subscribtion",
       label: "Subscription",
       content:<MyFavourites />,
-      tabIndex: 3,
+      tabIndex: 4,
     },
   ];
   const handleTabChange = (key: string) => {
