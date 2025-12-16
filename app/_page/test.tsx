@@ -1,13 +1,10 @@
 "use client";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
+import React, { useEffect, useState } from "react";
 import H2SectionTitle from "../_shared/layout/h2SectionTitle";
-import image from "@/public/static/images/comics/new_0.png";
 import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "../utils/queries/requests";
 import { Comic } from "@/helpers/types";
-import Link from "next/link";
-import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 
 // @ts-ignore
@@ -15,22 +12,11 @@ import "swiper/css";
 import CardTitleOutside from "../_shared/cards/cardTitleOutside";
 
 const HorizontalScroll = () => {
-  let sliderRef: any = useRef(null);
   const [actionItems, setActionItems] = useState<Comic[]>([]);
   const [ComedyItems, setComedyItems] = useState<Comic[]>([]);
   const [page, setPage] = useState<number>(1);
   const [comedyPage, setComedyPage] = useState<number>(1);
-  const infinite = useMemo(() => actionItems.length > 1, [actionItems]);
-  const settings = {
-    dots: false,
-    infinite: infinite,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    initialSlide: 1,
-    autoplay: true,
-    arrows: false,
-  };
+
   const fetchMoreData = () => {
     setPage((prev) => prev + 1);
   };
@@ -67,34 +53,46 @@ const HorizontalScroll = () => {
       setComedyItems((prev) => [...prev, ...(comedyData?.data?.comics || [])]);
     }
   }, [comedyIsLoading, comedyIsFetching, comedyIsSuccess]);
+
+  // Calculate if we have enough slides for loop
+  const slidesPerView = 3.1;
+  const hasEnoughSlidesForLoop = actionItems.length > slidesPerView * 2;
+
   return (
-    <div className="block md:hidden">
+    <div className="block md:hidden lg:hidden xl:hidden">
       <div className="parent-wrap block pt-10">
         <div className="child-wrap">
           <H2SectionTitle title="Favourites Genre" />
         </div>
       </div>
-      <Swiper
-        modules={[Autoplay]}
-        loop={true}
-        autoplay={{
-          delay: 3000,
-          disableOnInteraction: false,
-        }}
-        spaceBetween={9}
-        slidesPerGroup={1}
-        slidesPerView={3.1}
-        slidesPerGroupAuto={true}
-        centeredSlides={true}
-      >
-        {actionItems.map((item, i) => {
-          return (
-            <SwiperSlide key={i}>
-              <CardTitleOutside cardData={item} index={i} noTitle />
-            </SwiperSlide>
-          );
-        })}
-      </Swiper>
+      {actionItems.length > 0 && (
+        <Swiper
+          key={actionItems.length}
+          modules={[Autoplay]}
+          loop={hasEnoughSlidesForLoop}
+          autoplay={
+            hasEnoughSlidesForLoop
+              ? {
+                  delay: 3000,
+                  disableOnInteraction: false,
+                }
+              : false
+          }
+          spaceBetween={9}
+          slidesPerGroup={1}
+          slidesPerView={slidesPerView}
+          initialSlide={0}
+          centeredSlides={hasEnoughSlidesForLoop}
+        >
+          {actionItems.map((item, i) => {
+            return (
+              <SwiperSlide key={`${item.uuid || item.id || i}-${i}`}>
+                <CardTitleOutside cardData={item} index={i} noTitle />
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      )}
     </div>
   );
 };

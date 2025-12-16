@@ -12,7 +12,7 @@ import { postRequest } from "@/app/utils/queries/requests";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/lib/slices/auth-slice";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { LoginUser } from "./login";
 import { Checkbox } from "@nextui-org/react";
 
@@ -20,6 +20,8 @@ const Page = () => {
   const dispatch = useDispatch();
   const [isText, setIsText] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams()
+  
   const initialValues = {
     password: "",
     email: "",
@@ -33,18 +35,42 @@ const Page = () => {
     initialValues,
     validationSchema,
     onSubmit: (values) => {
+      values.remembered = true;
       loginUser.mutate(values);
     },
   });
 
-  const routeUser = () => {
-    const prevUrl = new URLSearchParams(window.location.search).get("previous");
-    if (prevUrl) {
-      router.push(decodeURIComponent(prevUrl));
-    } else {
-      router.push("/");
-    }
-  };
+//  const routeUser = () => {
+//    const searchParams = new URLSearchParams(window.location.search);
+
+//    const next = searchParams.get("next");
+//    const previous = searchParams.get("previous");
+
+//    if (next) {
+//      router.push(decodeURIComponent(next));
+//      return;
+//    }
+
+//    if (previous) {
+//      router.push(decodeURIComponent(previous));
+//      return;
+//    }
+
+//    router.push("/");
+//  };
+const nextParam = (() => {
+  const next = searchParams?.get("next");
+  const previous = searchParams?.get("previous");
+
+  if (next && next.startsWith("/")) {
+    return decodeURIComponent(next);
+  }
+  if (previous && previous.startsWith("/")) {
+    return decodeURIComponent(previous);
+  }
+  return "/";
+})();
+
 
   const loginUser = useMutation({
     mutationFn: (data: any) => LoginUser(data, "/onboard/login"),
@@ -56,7 +82,7 @@ const Page = () => {
           type: "success",
         });
         dispatch(loginSuccess(resData));
-        routeUser();
+        router.replace(nextParam);
       } else {
         toast(message, {
           toastId: "login",

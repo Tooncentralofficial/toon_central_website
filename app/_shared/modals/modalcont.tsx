@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   Button,
   Divider,
@@ -12,6 +12,7 @@ import {
 } from "@nextui-org/react";
 import { usePathname } from "next/navigation";
 import { ReactNode, useEffect } from "react";
+import OtakuBanner from "@/public/static/images/events/otakubanner.jpg";
 export interface ModalBaseProps {
   isOpen: boolean;
   onClose: () => void;
@@ -35,27 +36,32 @@ const ModalContainer = ({
       placement="center"
       className="bg-[#FFFFFF] text-[#000000]"
       classNames={{
-        closeButton:"hidden"
+        closeButton: "hidden",
       }}
+      size="4xl"
     >
-      <ModalContent >
+      <ModalContent
+        style={{
+          backgroundImage: `url(${OtakuBanner.src})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
         {(onClose) => (
           <>
             <ModalHeader className="flex  gap-1 w-full items-start justify-end">
-           
-              
               <Button
                 isIconOnly
                 size="sm"
                 variant="light"
                 className="text-[#000000] items-center "
-                onPress={onClose} 
+                onPress={onClose}
               >
                 ✖️
               </Button>
             </ModalHeader>
-            <ModalBody className="">{children}</ModalBody>
-            <ModalFooter></ModalFooter>
+            <ModalBody>{children}</ModalBody>
+            <ModalFooter className="bg-transparent"></ModalFooter>
           </>
         )}
       </ModalContent>

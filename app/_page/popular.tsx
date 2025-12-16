@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import Likes from "../_shared/cards/likes";
+
 const Slider = require("react-slick").default;
 
 const Popular = () => {
@@ -95,8 +96,10 @@ const Popular = () => {
           <div className=" slider-container hidden md:block">
             <EllipseGray />
 
+
             <Slider
               ref={(slider: typeof Slider) => {
+
                 sliderRef = slider;
               }}
               {...settings}
@@ -191,11 +194,12 @@ const Popular = () => {
                   </Fragment>
                 );
               })}
-            </Slider>
+            </SlickSlider>
           </div>
         </div>
       </div>
       <div className=" slider-container block md:hidden">
+        {/* @ts-ignore */}
         <Slider
           ref={(slider: typeof Slider) => {
             sliderRef = slider;

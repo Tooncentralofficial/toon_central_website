@@ -5,7 +5,7 @@ import { thunk } from "redux-thunk";
 
 import { Reducers } from "./reducers";
 
-export const createStore = (
+export  const  createStore =  (
   options?: ConfigureStoreOptions["preloadedState"] | undefined
 ) =>
   configureStore({

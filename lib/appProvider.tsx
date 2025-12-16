@@ -11,8 +11,15 @@ import { Provider } from "react-redux";
 import { useEffect } from "react";
 import Mainfooter from "@/app/_shared/layout/footermain";
 import MainfooterWithDelay from "@/app/_shared/layout/footermain";
+import { useSessionTracker } from "./hooks/useSessionTracker";
 // import { Provider } from "react-redux";
 // import { Store } from "./store";
+
+// Component to handle session tracking (must be inside Redux Provider)
+function SessionTracker() {
+  useSessionTracker();
+  return null;
+}
 
 function makeQueryClient() {
   return new QueryClient({
@@ -60,6 +67,7 @@ export default function AppProvider({
   return (
     <NextUIProvider>
       <Provider store={Store}>
+        <SessionTracker />
         <QueryClientProvider client={queryClient}>
           <NavHome />
           <motion.div

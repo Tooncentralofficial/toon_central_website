@@ -164,6 +164,7 @@ const NavHome = () => {
 
   const handleToggle = () => setIsSide(!isSide);
   const { sm, md, lg } = UseTailwindMediaQuery();
+
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const variant = {
     open: {

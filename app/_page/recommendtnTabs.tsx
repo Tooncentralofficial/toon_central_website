@@ -90,6 +90,7 @@ export default function RecommendtnTabs() {
     setFilter(e.target.value);
   };
   return (
+    
     <div className="parent-wrap py-10">
       <div className="child-wrap min-h-[520px] flex w-full flex-col relative">
         <div className="lg:absolute lg:top-[10px] lg:right-[80px] lg:w-32 hidden lg:flex justify-end items-center w-full gap-5 ">
