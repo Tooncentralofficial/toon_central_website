@@ -64,10 +64,10 @@ const menuItems: { name: string; link: string }[] = [
     name: "home",
     link: "/",
   },
-  {
-    name: "shorts",
-    link: "/shorts",
-  },
+  // {
+  //   name: "shorts",
+  //   link: "/shorts",
+  // },
   {
     name: "genres",
     link: "/genres",
@@ -107,12 +107,12 @@ const menuItemsMobile: {
     icon: HomeIcon,
     active: HomeIconColored,
   },
-  {
-    name: "shorts",
-    link: "/shorts",
-    icon: ShortsIcon,
-    active: ShortIconSelected,
-  },
+  // {
+  //   name: "shorts",
+  //   link: "/shorts",
+  //   icon: ShortsIcon,
+  //   active: ShortIconSelected,
+  // },
   {
     name: "genres",
     link: "/genres",
