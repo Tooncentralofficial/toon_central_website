@@ -13,18 +13,21 @@ import {
   getSessionTrackingData,
   getActiveSession,
 } from "@/lib/utils/sessionTracker";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import copy from "copy-to-clipboard";
 import OtakuButton from "@/public/static/images/events/otakuload.png";
+import { usePathname } from "next/navigation";
+import { getRequestProtected } from "@/app/utils/queries/requests";
 
 export default function FloatingButton() {
   const [isOpen, setIsOpen] = useState(true);
-  
+
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  const { user } = useSelector(selectAuthState);
+  const { user, token } = useSelector(selectAuthState);
   const userId = user?.id || user?.userId || undefined;
+  const pathname = usePathname();
 
   const [minutesRemaining, setMinutesRemaining] = useState(40);
   const [progress, setProgress] = useState(0);
@@ -76,6 +79,21 @@ export default function FloatingButton() {
     return () => clearInterval(interval);
   }, [isOpen, userId]);
 
+  // Fetch existing coupon when progress is completed and user is authenticated
+  const { data: existingCoupon, isLoading: loadingCoupon } = useQuery({
+    queryKey: ["user-coupon", userId],
+    queryFn: () => getRequestProtected("/coupons", token, pathname),
+    enabled: !!token && !!userId && isProgressCompleted,
+  });
+  console.log("@@ existingCoupon", existingCoupon);
+
+  // Update couponCode state when existing coupon is found
+  useEffect(() => {
+    if (existingCoupon?.success && existingCoupon?.data?.couponCode) {
+      setCouponCode(existingCoupon.data.couponCode);
+    }
+  }, [existingCoupon]);
+
   // Generate coupon mutation
   const generateCoupon = useMutation({
     mutationKey: ["generate-coupon"],
@@ -84,6 +102,7 @@ export default function FloatingButton() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -125,6 +144,15 @@ export default function FloatingButton() {
   });
 
   const handleClaimCoupon = () => {
+    // Prevent generation if coupon already exists
+    if (couponCode) {
+      toast("You already have a coupon code", {
+        toastId: "coupon-exists",
+        type: "info",
+      });
+      return;
+    }
+
     if (isProgressCompleted && !couponCode) {
       generateCoupon.mutate();
     }
