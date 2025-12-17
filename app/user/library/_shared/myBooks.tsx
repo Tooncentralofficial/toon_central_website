@@ -36,7 +36,7 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
         token,
         pathname
       ),
-    enabled: token !== null,
+    enabled: !!token,
   });
 
   const { mutate: deleteComic} = useMutation({
