@@ -16,7 +16,7 @@ const Originals = () => {
   const { isLoading, isFetching, data, isSuccess } = useQuery({
     queryKey: [originalsqueryKey],
     queryFn: () =>
-      getRequest("/home/toon-central-originals?filter=all&page=1&limit=5"),
+      getRequest("/home/toon-central-originals?filter=all&page=1&limit=10"),
   });
   useEffect(() => {
     if (isSuccess) {
@@ -29,7 +29,7 @@ const Originals = () => {
       let cards = cardItems.slice(0, 4);
       return cards;
     } else {
-      let cards = cardItems.slice(0, 5);
+      let cards = cardItems.slice(0, 10);
       return cards;
     }
   }, [base,cardItems]);

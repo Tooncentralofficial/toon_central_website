@@ -1,10 +1,10 @@
-import Image from 'next/image';
-import React from 'react'
+import Image from "next/image";
+import React from "react";
 import image from "@/public/static/images/comics/new_0.png";
-import { Comic } from '@/helpers/types';
-import Link from 'next/link';
-const PopularToonscard = ({item,index}:{item:Comic,index:number}) => {
-  
+import { Comic } from "@/helpers/types";
+import Link from "next/link";
+import { GreeFlameIcon } from "../icons/icons";
+const PopularToonscard = ({ item, index }: { item: Comic; index: number }) => {
   return (
     <Link href={`${item?.uuid ? `/comics/${item?.uuid}` : ""}`}>
       <div className="flex gap-5">
@@ -38,6 +38,51 @@ const PopularToonscard = ({item,index}:{item:Comic,index:number}) => {
       </div>
     </Link>
   );
-}
+};
 
-export default PopularToonscard
+export const PopularToonscardDesktop = ({
+  item,
+  index,
+}: {
+  item: Comic;
+  index: number;
+}) => {
+  return (
+    <Link href={`${item?.uuid ? `/comics/${item?.uuid}` : ""}`}>
+      <div className="flex gap-5 relative mt-5">
+        {index === 0 && (
+          <div className="absolute z-10">
+            <GreeFlameIcon className={"w-[2rem] h-[2rem] text-[#05834B]"} />
+          </div>
+        )}
+        <p
+          className={` h-[2rem] w-[2rem] flex items-center justify-center z-20`}
+        >
+          {index + 1}
+        </p>
+        <div className="w-[6rem] h-[8rem] overflow-hidden rounded-[6px]">
+          <Image
+            src={item.coverImage}
+            layout="responsive"
+            width={70}
+            height={70}
+            alt={`item`}
+            style={{
+              objectFit: "cover",
+              width: "100%",
+              minHeight: "100%",
+            }}
+          />
+        </div>
+        <div>
+          <p className="text-[1.2rem] font-[300]">
+            {item?.genres?.[0]?.genre.name}{" "}
+          </p>
+          <p className="text-[1.8rem] font-[700]">{item?.title}</p>
+        </div>
+      </div>
+    </Link>
+  );
+};
+
+export default PopularToonscard;
