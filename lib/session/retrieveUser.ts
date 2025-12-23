@@ -17,3 +17,16 @@ export async function retrieveUser() {
   }
   return null;
 }
+
+export async function retrieveCredits() {
+  const token = cookies().get(cookieName)?.value;
+  if (token) {
+    const userVerified = await verifyToken(token).catch((err) => {
+      console.log("err verifyin user", err);
+    });
+    if (userVerified) {
+      return userVerified?.payload;
+    }
+  }
+  return null;
+}

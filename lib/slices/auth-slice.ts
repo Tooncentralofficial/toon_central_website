@@ -9,6 +9,7 @@ export interface AuthState {
   userType?: string | null;
   pending?: boolean;
   error?: boolean;
+  credits?: number;
 }
 
 const userInit: AuthState = {
@@ -17,12 +18,18 @@ const userInit: AuthState = {
   userType: null,
   pending: false,
   error: false,
+  credits: 0,
 };
 
 export const getUser = createAsyncThunk("auth/getuser", async () => {
   const user: any = await retrieveUser();
   return user;
 });
+
+// export const getCredits = createAsyncThunk("profile/wallet", async () => {
+//   const credits: number = await retrieveCredits();
+//   return credits;
+// });
 
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
@@ -94,9 +101,16 @@ export const authSlice = createSlice({
     });
     builder.addCase(getUser.fulfilled, (state, { payload }) => {
       state.pending = false;
-      state.token = payload?.token;
-      state.user = payload?.user;
-      state.userType = payload?.userType;
+      // Only update auth state if payload contains valid data
+      // This prevents clearing auth state when retrieveUser returns null
+      // (e.g., if local JWT verification fails but backend token is still valid)
+      if (payload && (payload.token || payload.user)) {
+        state.token = payload?.token || state.token;
+        state.user = payload?.user || state.user;
+        state.userType = payload?.userType || state.userType;
+      }
+      // If payload is null but we have existing state, preserve it
+      // This prevents logging out users when token verification temporarily fails
     });
     builder.addCase(getUser.rejected, (state) => {
       state.pending = false;

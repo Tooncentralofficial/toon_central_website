@@ -3,23 +3,32 @@ import { Button } from "@nextui-org/react";
 import React, { useState } from "react";
 import { CheckIcon } from "@nextui-org/shared-icons";
 import { SubPlansType } from "@/app/utils/constants/typess";
-import { usePaystack } from "@/app/utils/hooks/usePaystack";
+
 import PaymentModal from "@/app/_shared/modals/PaymentModal";
+import { SubPlans } from "@/app/utils/constants/constants";
+import { useMutation } from "@tanstack/react-query";
+import { postRequestProtected } from "@/app/utils/queries/requests";
+import { useSelector } from "react-redux";
+import { selectAuthState } from "@/lib/slices/auth-slice";
+import { usePathname } from "next/navigation";
 
 export default function SubPlan({
+  id,
   plan,
   setSelectedPlanIndex,
   index,
   selectedPlanIndex,
   activeIndex,
 }: {
-  plan: SubPlansType;
+  id:number;
+  plan: any;
   setSelectedPlanIndex: (index: number) => void;
   index: number;
   selectedPlanIndex: number;
   activeIndex: number;
 }) {
-  const { initiatePayment, isReady } = usePaystack();
+  const { token } = useSelector(selectAuthState);
+  const pathname = usePathname();
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [paymentReference, setPaymentReference] = useState<string | null>(null);
 
@@ -27,27 +36,30 @@ export default function SubPlan({
     setPaymentReference(reference);
     setIsPaymentModalOpen(true);
   };
-
-  const handleSubscribeClick = () => {
-    if (!isReady) {
-      return;
-    }
-
-    initiatePayment({
-      amount: plan.price,
-      planType: plan.type,
-      onSuccess: handlePaymentSuccess,
-      onClose: () => {
-        console.log("Payment cancelled by user");
-      },
-    });
-  };
-
-  const handleCloseModal = () => {
-    setIsPaymentModalOpen(false);
-    setPaymentReference(null);
-  };
-
+  const {mutate,  } = useMutation({
+    mutationKey: ["subscribe"],
+    mutationFn: (data: { subscriptionPlanId: number }) => {
+      const res = postRequestProtected(
+        data,
+        `checkout/subscription/proceed`,
+        token || "" ,
+        pathname ,
+        "json"
+      );
+      return res;
+    },
+    onSuccess: (data) => {
+      console.log("@@data", data);
+      const paystackUrl  = data.data.check_out_url;
+      if(paystackUrl) {
+        window.location.href = paystackUrl;
+      }
+    },
+    onError: (error) => {
+      console.log("@@error", error);
+    },
+  });
+ const features = SubPlans.find((p) => p.type === plan.name)?.content;
   return (
     <div
       className={`border w-full px-4 pt-4 pb-8 rounded-[10px] cursor-pointer transition-colors duration-300 ease-in-out ${
@@ -64,12 +76,12 @@ export default function SubPlan({
             : "border-transparent"
         } `}
       >
-        <p className="text-[1.3rem]">{plan.type}</p>
+        <p className="text-[1.3rem]">{plan?.name}</p>
         <div className="flex ">
           <span className="text-3xl font-semibold">$</span>
           <aside className="flex items-end gap-1">
             <span className="text-6xl font-bold leading-none">
-              {plan.price}
+              {plan?.amount}
             </span>
             <aside className="text-xs leading-tight ml-1">
               USD/
@@ -79,16 +91,18 @@ export default function SubPlan({
           </aside>
         </div>
       </div>
-      <p className="w-full text-center text-xs mt-2 ">{plan.title}</p>
+      <p className="text-xs text-[#667085] mt-2 text-center">
+        {plan?.description}
+      </p>
+      {/* <p className="w-full text-center text-xs mt-2 ">{plan.title}</p> */}
 
       {index === activeIndex ? (
-        <Button className="bg-[#475467] text-[#FCFCFD] w-full mt-6 rounded-xl">
+        <Button className="bg-[#6d7889] text-[#FCFCFD] w-full mt-6 rounded-xl">
           Active
         </Button>
       ) : (
         <Button
-          onClick={handleSubscribeClick}
-          isDisabled={!isReady}
+          onPress={() => mutate({ subscriptionPlanId: id })}
           isLoading={false}
           className={` w-full mt-6 rounded-xl h-[40px] transition-colors duration-300 ease-in-out ${
             selectedPlanIndex === index
@@ -100,20 +114,14 @@ export default function SubPlan({
         </Button>
       )}
 
-      <PaymentModal
-        isOpen={isPaymentModalOpen}
-        onClose={handleCloseModal}
-        reference={paymentReference}
-        planType={plan.type}
-        amount={plan.price}
-      />
       <div className="pl-2 flex flex-col gap-7 mt-8">
-        {plan.content.map((item, i) => (
-          <span key={i} className="text-[0.87rem] flex ">
-            {" "}
-            <CheckIcon className="text-[#05834B]" /> <p>{item}</p>{" "}
-          </span>
-        ))}
+        {features &&
+          features?.map((item: any, i: number) => (
+            <span key={i} className="text-[0.87rem] flex ">
+              {" "}
+              <CheckIcon className="text-[#05834B]" /> <p>{item}</p>{" "}
+            </span>
+          ))}
       </div>
     </div>
   );

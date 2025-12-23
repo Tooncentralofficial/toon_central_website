@@ -46,7 +46,7 @@ function HomeShorts() {
    }
 
   return (
-    <div className="parent-wrap pt-10 md:py-10 md:pt-0 ">
+    <div className="parent-wrap pt-10 md:py-10 md:pt-10 ">
       <div className="child-wrap">
         <H2SectionTitle title="Toon Shorts" />
         <div className="w-full justify-center flex md:hidden">

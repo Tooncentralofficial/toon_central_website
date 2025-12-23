@@ -1,6 +1,11 @@
 "use client";
 import { dummyItems } from "@/app/_shared/data";
-import { AutoScrollIcon, BXSLeft, BXSRight, CommentPop } from "@/app/_shared/icons/icons";
+import {
+  AutoScrollIcon,
+  BXSLeft,
+  BXSRight,
+  CommentPop,
+} from "@/app/_shared/icons/icons";
 import { FlatInput } from "@/app/_shared/inputs_actions/inputFields";
 import BackButton from "@/app/_shared/layout/back";
 import {
@@ -15,11 +20,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import CommentPopUp from "../_shared/commentpopup";
 import { motion, AnimatePresence } from "framer-motion";
+import UnlockPanelDialog from "./_shared/UnlockPanelDialog";
 const Page = ({
   params,
   searchParams,
@@ -37,15 +49,19 @@ const Page = ({
   const queryClient = useQueryClient();
   const router = useRouter();
   const fullUrl = pathname + "?" + searchParams.toString();
-  const initialSpeed = 2
+  const initialSpeed = 2;
   const [chapter, setChapter] = useState(parseInt(chapterSlug || "0") + 1);
+  const [episodeId, setEpisodeId] = useState<string>("");
   const [episode, setEpisode] = useState<any[]>([]);
   const [showCommentPopup, setShowCommentPopup] = useState(false);
   const [typedComment, setTypedComment] = useState<string>("");
   const { user, token }: any = useSelector(selectAuthState);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
   const [showButton, setShowButton] = useState(false);
-  
+  const [showUnlockDialog, setShowUnlockDialog] = useState(false);
+  const [selectedUnlockOption, setSelectedUnlockOption] = useState(0);
+  const [unlockOptions, setUnlockOptions] = useState<any[]>([]);
+
   const toggleCommentPopup = () => {
     setShowCommentPopup((prev) => !prev);
   };
@@ -66,9 +82,21 @@ const Page = ({
     enabled: token !== null,
   });
   useEffect(() => {
+    if (data?.data?.episodes && data.data.episodes.length > 0) {
+      const episode = parseArray(data.data.episodes)[chapter - 1];
+      if (episode?.id) {
+        setEpisodeId(episode.id);
+      }
+    }
+  }, [data, chapter]);
+ 
+  const BackgroundImage = data?.data?.backgroundImage;
+
+
+  useEffect(() => {
     if (isSuccess) setEpisode(parseArray(data?.data?.episodes));
   }, [data, isFetching, isSuccess]);
-  const currentEpisodeId = data?.data?.episodes?.[chapter - 1]?.id;
+
   const { mutate: likeComic, isPending } = useMutation({
     mutationKey: ["like"],
     mutationFn: () =>
@@ -98,48 +126,47 @@ const Page = ({
     },
   });
 
-   useEffect(() => {
-      let lastTap = 0;
-      let hideTimer: NodeJS.Timeout;
+  useEffect(() => {
+    let lastTap = 0;
+    let hideTimer: NodeJS.Timeout;
 
-      const handleDoubleClick = () => {
-        setShowButton(true);
-        clearTimeout(hideTimer);
-        hideTimer = setTimeout(() => setShowButton(false), 10000);
-      };
+    const handleDoubleClick = () => {
+      setShowButton(true);
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => setShowButton(false), 10000);
+    };
 
-      const handleTouch = () => {
-        const now = Date.now();
-        const timeSince = now - lastTap;
+    const handleTouch = () => {
+      const now = Date.now();
+      const timeSince = now - lastTap;
 
-        if (timeSince < 300 && timeSince > 0) {
-          // Detected double tap
-          handleDoubleClick();
-        }
+      if (timeSince < 300 && timeSince > 0) {
+        // Detected double tap
+        handleDoubleClick();
+      }
 
-        lastTap = now;
-      };
+      lastTap = now;
+    };
 
-      // Desktop double click
-      window.addEventListener("dblclick", handleDoubleClick);
-      // Mobile double tap
-      window.addEventListener("touchstart", handleTouch);
+    // Desktop double click
+    window.addEventListener("dblclick", handleDoubleClick);
+    // Mobile double tap
+    window.addEventListener("touchstart", handleTouch);
 
-      return () => {
-        window.removeEventListener("dblclick", handleDoubleClick);
-        window.removeEventListener("touchstart", handleTouch);
-        clearTimeout(hideTimer);
-      };
-   }, []);
+    return () => {
+      window.removeEventListener("dblclick", handleDoubleClick);
+      window.removeEventListener("touchstart", handleTouch);
+      clearTimeout(hideTimer);
+    };
+  }, []);
 
-  const handleAutoScroll= ()=>{
-     if (!scrolling) {
-       setScrolling(true);
-     } else {
-       setSpeed((prev) => (prev >= 8 ? 2 : prev * 2));
-     }
-  }
-  
+  const handleAutoScroll = () => {
+    if (!scrolling) {
+      setScrolling(true);
+    } else {
+      setSpeed((prev) => (prev >= 8 ? 2 : prev * 2));
+    }
+  };
 
   const subscribe = () => {
     if (!token) {
@@ -148,16 +175,49 @@ const Page = ({
     }
     likeComic();
   };
-  const { data: episodeCount } = useQuery({
-    queryKey: ["episdodelive", currentEpisodeId],
+  const {
+    data: currentEpisode,
+    isLoading: isLoadingEpisode,
+    isFetching: isFetchingEpisode,
+    refetch: refetchEpisode,
+  } = useQuery({
+    queryKey: ["episode", uid, episodeId, chapter],
     queryFn: () =>
       getRequestProtected(
-        `comics/${uid}/episode/${currentEpisodeId}/get`,
+        `comics/${uid}/episode/${episodeId}/get`,
         token,
         fullUrl
       ),
-    enabled: token !== null,
+    enabled: token !== null && !!episodeId,
   });
+  console.log("@@currentEpisode", currentEpisode);
+
+  const images = useMemo(
+    () => parseArray(currentEpisode?.data?.comicImages || []),
+    [currentEpisode, chapter]
+  );
+
+  // Detect unlock options in currentEpisode response
+  useEffect(() => {
+    if (
+      currentEpisode?.success &&
+      Array.isArray(currentEpisode?.data) &&
+      currentEpisode.data.length > 0
+    ) {
+      // Check if it's unlock options structure
+      const firstItem = currentEpisode.data[0];
+      if (
+        firstItem?.tag &&
+        (firstItem.tag === "PAY_WITH_AIRTIME" ||
+          firstItem.tag === "UNLOCK_WITH_POINT" ||
+          firstItem.tag === "UNLOCK_FULL_CHAPTER")
+      ) {
+        setUnlockOptions(currentEpisode.data);
+        setShowUnlockDialog(true);
+        setSelectedUnlockOption(0); // Default to first option
+      }
+    }
+  }, [currentEpisode]);
 
   const addEpisodeComment = useMutation({
     mutationKey: ["add_episode_comment"],
@@ -263,15 +323,15 @@ const Page = ({
   //   }
   // };
   const nextChapter = () => {
-    "clicked next chapter"
+    "clicked next chapter";
     if (chapter < parseArray(data?.data?.episodes).length) {
       setChapter((prev) => prev + 1);
       setTimeout(() => {
-          window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-          });
-        }, 50);
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, 50);
     }
   };
   const [scrolling, setScrolling] = useState(false);
@@ -333,8 +393,7 @@ const Page = ({
       return value?.user_id === user?.id;
     });
   }, [user, data]);
-  
-  console.log(speed);
+
   return (
     <main>
       <div className="parent-wrap py-10 relative">
@@ -351,7 +410,7 @@ const Page = ({
                 onClick={handleAutoScroll}
               >
                 <AutoScrollIcon className="w-4 h-9 text-white" />
-                {speed/initialSpeed}x
+                {speed / initialSpeed}x
               </motion.button>
             )}
           </AnimatePresence>
@@ -394,8 +453,14 @@ const Page = ({
 
           <div className="my-10 sm:my-1 md:my-2 relative">
             <div className="flex flex-col items-center gap-0 lg:gap-0">
-              {parseArray(episode[chapter - 1]?.comic_images).map(
-                (image, i) => (
+              {isLoadingEpisode || isFetchingEpisode ? (
+                <div className="flex flex-col items-center gap-4 w-full">
+                  <div className="w-full max-w-[80%] h-[600px] bg-gray-800 animate-pulse rounded" />
+                  <div className="w-full max-w-[80%] h-[600px] bg-gray-800 animate-pulse rounded" />
+                  <div className="w-full max-w-[80%] h-[600px] bg-gray-800 animate-pulse rounded" />
+                </div>
+              ) : images && images.length > 0 ? (
+                images.map((image, i) => (
                   <Image
                     key={i}
                     src={`${image?.image || ""}`}
@@ -411,7 +476,11 @@ const Page = ({
                     }}
                     unoptimized
                   />
-                )
+                ))
+              ) : (
+                <div className="flex flex-col items-center gap-4 w-full py-20">
+                  <p className="text-white">No images found for this chapter</p>
+                </div>
               )}
               <div className="flex items-center gap-4 mt-10">
                 <button
@@ -489,6 +558,21 @@ const Page = ({
           </AnimatePresence>
         </div>
       </div>
+      <UnlockPanelDialog
+        isOpen={showUnlockDialog}
+        onClose={() => setShowUnlockDialog(false)}
+        options={unlockOptions}
+        selectedOption={selectedUnlockOption}
+        onOptionSelect={setSelectedUnlockOption}
+        episodeId={episodeId}
+        uid={uid || ""}
+        onUnlockSuccess={() => {
+          refetchEpisode();
+        }}
+        previewImage={
+          BackgroundImage || (images && images.length > 0 ? images[0]?.image : undefined)
+        }
+      />
     </main>
   );
 };
