@@ -271,7 +271,7 @@ const ProfileHeader = ({
                 isLoading={isSubscribing}
                 className="w-full lg:w-auto min-w-[120px]"
               >
-                {isSubscribed ? "Subscribed" : "Subscribe"}
+                {isSubscribed ? "Following" : "Follow"}
               </SolidPrimaryButton>
             </div>
           </div>

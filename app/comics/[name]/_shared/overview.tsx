@@ -18,6 +18,7 @@ import SearchModal from "@/app/_shared/layout/search";
 import ShareModal from "@/app/_shared/modals/shareModal";
 
 const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
+  console.log("@@comicOverviewData", data);
   const { onClose, onOpen, isOpen, onOpenChange } = useDisclosure();
   const disabled = useMemo(() => data?.episodes?.length <= 0, [data]);
   const queryClient = useQueryClient();
@@ -27,7 +28,6 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
   const { user, token } = useSelector(selectAuthState);
   const readChapter = () =>
     router.push(`${pathname}/chapter?chapter=${0}&uid=${uid}&comicid=${comicId}`);
-
   const { mutate: likeComic, isPending } = useMutation({
     mutationKey: ["like"],
     mutationFn: () =>

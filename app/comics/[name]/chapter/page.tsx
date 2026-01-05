@@ -61,6 +61,11 @@ const Page = ({
   const [showUnlockDialog, setShowUnlockDialog] = useState(false);
   const [selectedUnlockOption, setSelectedUnlockOption] = useState(0);
   const [unlockOptions, setUnlockOptions] = useState<any[]>([]);
+  const [selectedPanelId, setSelectedPanelId] = useState<number | null>(null);
+  const [selectedPanelImage, setSelectedPanelImage] = useState<string | null>(
+    null
+  );
+  const [isLoadingUnlockOptions, setIsLoadingUnlockOptions] = useState(false);
 
   const toggleCommentPopup = () => {
     setShowCommentPopup((prev) => !prev);
@@ -89,9 +94,8 @@ const Page = ({
       }
     }
   }, [data, chapter]);
- 
-  const BackgroundImage = data?.data?.backgroundImage;
 
+  const BackgroundImage = data?.data?.backgroundImage;
 
   useEffect(() => {
     if (isSuccess) setEpisode(parseArray(data?.data?.episodes));
@@ -196,8 +200,51 @@ const Page = ({
     () => parseArray(currentEpisode?.data?.comicImages || []),
     [currentEpisode, chapter]
   );
+  console.log("@comicImages", images);
 
-  // Detect unlock options in currentEpisode response
+  // Handle unlock button click for locked images
+  const handleUnlockClick = async (panelId: number, imageUrl: string) => {
+    if (!token) {
+      router.push(`/auth/login?previous=${prevRoutes(uid).comic}`);
+      return;
+    }
+
+    setSelectedPanelId(panelId);
+    setSelectedPanelImage(imageUrl);
+    setIsLoadingUnlockOptions(true);
+
+    try {
+      // Fetch unlock options for this panel
+      const response = await getRequestProtected(
+        `unlock-tasks`,
+        token,
+        fullUrl
+      );
+      console.log("@@response", response);
+
+      if (response?.success && Array.isArray(response?.data)) {
+        setUnlockOptions(response.data);
+        setSelectedUnlockOption(0);
+        setShowUnlockDialog(true);
+      } else {
+        toast(response?.message || "Failed to fetch unlock options", {
+          type: "error",
+        });
+      }
+    } catch (error: any) {
+      toast(
+        error?.response?.data?.message ||
+          "An error occurred while fetching unlock options",
+        {
+          type: "error",
+        }
+      );
+    } finally {
+      setIsLoadingUnlockOptions(false);
+    }
+  };
+
+  // Detect unlock options in currentEpisode response (legacy - may not be needed)
   useEffect(() => {
     if (
       currentEpisode?.success &&
@@ -212,12 +259,15 @@ const Page = ({
           firstItem.tag === "UNLOCK_WITH_POINT" ||
           firstItem.tag === "UNLOCK_FULL_CHAPTER")
       ) {
-        setUnlockOptions(currentEpisode.data);
-        setShowUnlockDialog(true);
-        setSelectedUnlockOption(0); // Default to first option
+        // Only auto-show dialog if no panel is selected (legacy behavior)
+        if (!selectedPanelId) {
+          setUnlockOptions(currentEpisode.data);
+          setShowUnlockDialog(true);
+          setSelectedUnlockOption(0); // Default to first option
+        }
       }
     }
-  }, [currentEpisode]);
+  }, [currentEpisode, selectedPanelId]);
 
   const addEpisodeComment = useMutation({
     mutationKey: ["add_episode_comment"],
@@ -460,23 +510,69 @@ const Page = ({
                   <div className="w-full max-w-[80%] h-[600px] bg-gray-800 animate-pulse rounded" />
                 </div>
               ) : images && images.length > 0 ? (
-                images.map((image, i) => (
-                  <Image
-                    key={i}
-                    src={`${image?.image || ""}`}
-                    alt="iamge"
-                    width={500}
-                    height={600}
-                    style={{
-                      width: isMobile ? "98%" : "80%",
-                      height: "auto",
-                      objectFit: "cover",
-                      maxWidth: "100%",
-                      background: "var(--image-bkg)",
-                    }}
-                    unoptimized
-                  />
-                ))
+                images.map((image, i) => {
+                  const isLocked = image?.is_lock === 1;
+                  return (
+                    <div
+                      key={i}
+                      className="relative"
+                      style={{
+                        width: isMobile ? "98%" : "80%",
+                        maxWidth: "100%",
+                      }}
+                    >
+                      <Image
+                        src={`${image?.image || ""}`}
+                        alt="image"
+                        width={500}
+                        height={600}
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          objectFit: "cover",
+                          maxWidth: "100%",
+                          background: "var(--image-bkg)",
+                          filter: isLocked ? "blur(20px)" : "none",
+                          transition: "filter 0.3s ease",
+                        }}
+                        unoptimized
+                      />
+                      {isLocked && (
+                        <div className="absolute inset-0 bg-[#0000]/70 flex items-center justify-center z-10">
+                          <div className="flex flex-col items-center gap-4">
+                            <div className="w-16 h-16 bg-[#1d2a3c] rounded-full flex items-center justify-center">
+                              <svg
+                                className="w-8 h-8 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                                />
+                              </svg>
+                            </div>
+                            <Button
+                              onClick={() =>
+                                handleUnlockClick(image?.id, image?.image)
+                              }
+                              isLoading={
+                                isLoadingUnlockOptions &&
+                                selectedPanelId === image?.id
+                              }
+                              className="bg-[#05834B] text-white font-semibold px-6 py-2 rounded-lg hover:bg-[#0d5132] transition-colors"
+                            >
+                              Unlock
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
               ) : (
                 <div className="flex flex-col items-center gap-4 w-full py-20">
                   <p className="text-white">No images found for this chapter</p>
@@ -560,17 +656,26 @@ const Page = ({
       </div>
       <UnlockPanelDialog
         isOpen={showUnlockDialog}
-        onClose={() => setShowUnlockDialog(false)}
+        onClose={() => {
+          setShowUnlockDialog(false);
+          setSelectedPanelId(null);
+          setSelectedPanelImage(null);
+        }}
         options={unlockOptions}
         selectedOption={selectedUnlockOption}
         onOptionSelect={setSelectedUnlockOption}
+        panelId={selectedPanelId}
         episodeId={episodeId}
         uid={uid || ""}
         onUnlockSuccess={() => {
           refetchEpisode();
+          setSelectedPanelId(null);
+          setSelectedPanelImage(null);
         }}
         previewImage={
-          BackgroundImage || (images && images.length > 0 ? images[0]?.image : undefined)
+          selectedPanelImage ||
+          BackgroundImage ||
+          (images && images.length > 0 ? images[0]?.image : undefined)
         }
       />
     </main>

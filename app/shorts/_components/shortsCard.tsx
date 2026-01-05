@@ -234,11 +234,13 @@ export default function ShortsCard({
               <p className="border-[1px] px-3 py-1 border-[#05834BF5]"> 2023</p>
             </div>
           </div>
-          {/* <div className=" mb-0 lg:mb-10 xl:mb-14">
-            <button className="flex items-center gap-2 bg-[#05834B] w-full justify-center py-2 rounded-md md:mb-2">
-              watch more <ArrowRight />
-            </button>
-          </div> */}
+          <div className=" mb-0 lg:mb-10 xl:mb-14">
+            <Link href={`/pubprofile/${shorts?.[currentSlideIndex]?.user.id}`}>
+              <button className="flex items-center gap-2 bg-[#05834B] w-full justify-center py-2 rounded-md md:mb-2">
+                watch more <ArrowRight />
+              </button>
+            </Link>
+          </div>
         </div>
         <div className="relative h-[82.7vh] md:h-[60vw] md:max-h-[600px] w-full md:max-w-[480px] rounded-md z-10">
           {/* Unmute Button - Shows on first load */}

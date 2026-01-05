@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CreditIcon } from "@/app/_shared/icons/icons";
 import { Button } from "@nextui-org/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postRequestProtected } from "@/app/utils/queries/requests";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
@@ -26,7 +26,8 @@ interface UnlockPanelDialogProps {
   options: UnlockOption[];
   selectedOption: number;
   onOptionSelect: (index: number) => void;
-  episodeId: string;
+  episodeId?: string;
+  panelId?: number | null;
   uid: string;
   onUnlockSuccess?: () => void;
   previewImage?: string;
@@ -39,13 +40,14 @@ export default function UnlockPanelDialog({
   selectedOption,
   onOptionSelect,
   episodeId,
+  panelId,
   uid,
   onUnlockSuccess,
   previewImage,
 }: UnlockPanelDialogProps) {
   const { token } = useSelector(selectAuthState);
   const pathname = usePathname();
-
+  const queryClient = useQueryClient();
   // Handle escape key press
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -73,11 +75,11 @@ export default function UnlockPanelDialog({
   };
 
   const { mutate: unlockPanel, isPending: isUnlocking } = useMutation({
-    mutationKey: ["unlock-panel", episodeId],
-    mutationFn: (data: { unlockTaskId: number; episodeId: string }) => {
+    mutationKey: ["unlock-panel", panelId || episodeId],
+    mutationFn: (data: { unlockTaskId: number; panelId: number }) => {
       return postRequestProtected(
         data,
-        `unlock-task/proceed`,
+        `/unlock-task/proceed`,
         token || "",
         pathname,
         "json"
@@ -89,6 +91,7 @@ export default function UnlockPanelDialog({
           toastId: "unlock-panel-success",
           type: "success",
         });
+        queryClient.invalidateQueries({ queryKey: ["credits"] });
         onClose();
         if (onUnlockSuccess) {
           onUnlockSuccess();
@@ -113,11 +116,11 @@ export default function UnlockPanelDialog({
   });
 
   const handleUnlock = () => {
-    if (options[selectedOption]) {
+    if (options[selectedOption] && panelId) {
       const selected = options[selectedOption];
       unlockPanel({
         unlockTaskId: selected.id,
-        episodeId: episodeId,
+        panelId: panelId,
       });
     }
   };
@@ -317,6 +320,7 @@ export default function UnlockPanelDialog({
                   <Button
                     onPress={handleUnlock}
                     isLoading={isUnlocking}
+                    isDisabled={!panelId || options.length === 0}
                     className="flex-1 bg-[#05834B] text-white font-semibold rounded-lg"
                   >
                     Unlock Panel

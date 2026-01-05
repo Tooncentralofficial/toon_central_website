@@ -81,7 +81,7 @@ import CreditIcon from "@/public/static/svg/credits.svg"
 import ShortsIcon from "@/public/static/svg/shorts/shortsicon.svg"
 import ShortIconSelected from "@/public/static/svg/shorts/shortsiconselected.svg"
 import GreeFlameIcon from "@/public/static/svg/shorts/greenflame.svg"
-import ToonShortsLogo from "@/public/static/svg/shorts/shortslogo.svg"
+import ToonShortsLogo from "@/public/static/svg/shorts/toonshortslogo.svg"
 export {
   ToonCentralIcon,
   ThumbsSolid,

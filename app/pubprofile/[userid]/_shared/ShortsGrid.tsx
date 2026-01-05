@@ -58,7 +58,10 @@ const ShortItem = ({ short }: { short: any }) => {
   }
 
   const thumbnail = short.cover_image || short.upload || shortImage;
-  const shortUrl = short.uuid ? `/shorts?short=${short.uuid}` : "/shorts";
+  // Use short ID for the route (prefer id over uuid for cleaner URLs)
+  const shortUrl = short.uuid
+    ? `/shorts/${short.uuid}`
+    : "/shorts";
 
   return (
     <Link href={shortUrl}>

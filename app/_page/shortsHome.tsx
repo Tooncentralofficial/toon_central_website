@@ -10,6 +10,7 @@ import { selectAuthState } from "@/lib/slices/auth-slice";
 import { useQuery } from "@tanstack/react-query";
 import { getRequest, getRequestProtected } from "../utils/queries/requests";
 import { ShortsType } from "@/helpers/types";
+import { ToonShortsLogo } from "../_shared/icons/icons";
 
 function HomeShorts() {
   const {token} = useSelector(selectAuthState)
@@ -48,7 +49,7 @@ function HomeShorts() {
   return (
     <div className="parent-wrap pt-10 md:py-10 md:pt-10 ">
       <div className="child-wrap">
-        <H2SectionTitle title="Toon Shorts" />
+        <ToonShortsLogo className="w-18 h-12 mb-4  " />
         <div className="w-full justify-center flex md:hidden">
           <Swiper
             spaceBetween={12}
@@ -142,7 +143,7 @@ function ShortsSkeleton() {
   return (
     <div className="parent-wrap pt-10 md:py-10 md:pt-0">
       <div className="child-wrap">
-        {/* Title skeleton */}
+        <ToonShortsLogo className="w-18 h-12 mb-4  " />
         <div className="h-8 w-32 bg-gray-700/30 rounded animate-pulse mb-6"></div>
 
         <div className="w-full flex justify-center">

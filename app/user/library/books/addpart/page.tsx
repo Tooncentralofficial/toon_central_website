@@ -9,11 +9,18 @@ import {
   getRequestProtected,
   postRequest,
   postRequestProtected,
+  putRequestProtected,
 } from "@/app/utils/queries/requests";
 import { FlatInput } from "@/app/_shared/inputs_actions/inputFields";
 import InputPicture from "@/app/_shared/inputs_actions/inputPicture";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
-import { Button, Radio, RadioGroup, Select, SelectItem } from "@nextui-org/react";
+import {
+  Button,
+  Radio,
+  RadioGroup,
+  Select,
+  SelectItem,
+} from "@nextui-org/react";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -23,7 +30,7 @@ import axios from "axios";
 import DraggableImage from "./_shared/draggableimage";
 import { prevRoutes } from "@/lib/session/prevRoutes";
 import { parseArray } from "@/helpers/parsArray";
-import {Switch} from "@nextui-org/react"
+import { Switch } from "@nextui-org/react";
 import { TailwindSwitch } from "@/app/_shared/inputs_actions/switch";
 import { InfoIcon } from "@/app/_shared/icons/icons";
 export default function Page({
@@ -34,7 +41,7 @@ export default function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const pathname = usePathname();
-  
+
   const { uuid, comicId, chapterid } = searchParams;
   const { user, userType, token } = useSelector(selectAuthState);
   const comicid = new URLSearchParams(window.location.search).get("comicId");
@@ -44,6 +51,7 @@ export default function Page({
   );
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [enabled, setEnabled] = useState<boolean>(false);
+  const [panelLockStates, setPanelLockStates] = useState<boolean[]>([]);
 
   const querykey = `comic_episode${comicId}`;
   const {
@@ -51,19 +59,72 @@ export default function Page({
     isSuccess,
     isLoading: isepisodeLoading,
   } = useQuery({
-    queryKey: [`comic_episode${chapterid}`,episodeId],
+    queryKey: [`comic_episode${chapterid}`, episodeId],
     queryFn: () =>
       getRequestProtected(
         `/my-libraries/chapters/${episodeId}/comic/${comicid}/get`,
         token,
         prevRoutes(uuid).comic
       ),
-    enabled: episodeId !== null && (token !== null),
+    enabled: episodeId !== null && token !== null,
   });
+  console.log("@@edit data", data);
+
+  // Fetch comic data to get episode count for restriction check
+  const { data: comicData, isSuccess: isComicDataSuccess } = useQuery({
+    queryKey: [`comic_data_${comicid}`],
+    queryFn: () =>
+      getRequestProtected(
+        `/my-libraries/comics/${comicid}/get`,
+        token,
+        prevRoutes(uuid).comic
+      ),
+    enabled: comicid !== null && token !== null,
+  });
+
   const images = useMemo(
     () => parseArray(data?.data?.comicImages).map((val) => val.image),
     [data?.data?.comicImages]
   );
+
+  // Memoized array of image IDs for API calls in edit mode
+  const comicImageIds = useMemo(
+    () => parseArray(data?.data?.comicImages).map((val) => val.id),
+    [data?.data?.comicImages]
+  );
+
+  // Check if user can lock panels or enable monetization (requires at least 3 chapters)
+  const canLockOrMonetize = useMemo(() => {
+    const episodes = comicData?.data?.episodes || [];
+    console.log("@@episodes", episodes);
+    return episodes.length >= 3;
+  }, [comicData?.data?.episodes]);
+
+  // Initialize lock states when images are loaded
+  useEffect(() => {
+    if (data?.data?.comicImages && data.data.comicImages.length > 0) {
+      const existingImages = parseArray(data?.data?.comicImages);
+      setPanelLockStates((prev) => {
+        // Map existing lock states from API response
+        return existingImages.map((img: any) => img.is_lock === 1);
+      });
+    } else if (images && images.length > 0) {
+      setPanelLockStates((prev) => {
+        // Only initialize if the length doesn't match or if it's empty
+        if (prev.length !== images.length) {
+          return new Array(images.length).fill(false);
+        }
+        return prev;
+      });
+    }
+  }, [data?.data?.comicImages, images]);
+
+  // Initialize monetization switch state from API data in edit mode
+  useEffect(() => {
+    if (data?.data && episodeId) {
+      setEnabled(data?.data?.isMonetized === 1);
+    }
+  }, [data?.data, episodeId]);
 
   const initialValues = {
     title: data?.data?.title || "",
@@ -88,11 +149,22 @@ export default function Page({
       formData?.append("title", values.title);
       formData?.append("description", values.description);
       formData?.append("thumbnail", values.thumbnail);
+      formData.append("isMonetized", enabled ? "1" : "0");
       values.comicImages.forEach((image: any, i: number) => {
         if (typeof image === "string") {
           formData.append(`comicImage[${i}][image]`, image);
+          // Add lock status
+          formData.append(
+            `comicImage[${i}][is_lock]`,
+            panelLockStates[i] ? "1" : "0"
+          );
         } else if (image instanceof File) {
           formData.append(`comicImage[${i}][image]`, image);
+          // Add lock status for new files
+          formData.append(
+            `comicImage[${i}][is_lock]`,
+            panelLockStates[i] ? "1" : "0"
+          );
         }
       });
       publishhh.mutate(formData);
@@ -108,6 +180,11 @@ export default function Page({
         ...formik.values.comicImages,
         ...filesArray,
       ]);
+      // Add lock states for new images (all unlocked by default)
+      setPanelLockStates((prev) => [
+        ...prev,
+        ...new Array(filesArray.length).fill(false),
+      ]);
     }
   };
   const moveImage = (dragIndex: number, hoverIndex: number) => {
@@ -118,12 +195,23 @@ export default function Page({
     newFiles.splice(hoverIndex, 0, draggedItem);
 
     formik.setFieldValue("comicImages", newFiles);
+
+    // Reorder lock states to match panel order
+    setPanelLockStates((prev) => {
+      const newLockStates = [...prev];
+      const draggedLockState = newLockStates[dragIndex];
+      newLockStates.splice(dragIndex, 1);
+      newLockStates.splice(hoverIndex, 0, draggedLockState);
+      return newLockStates;
+    });
   };
   const removeImage = (index: number) => {
     formik.setFieldValue(
       "comicImages",
       formik.values.comicImages.filter((_: any, i: number) => i !== index)
     );
+    // Remove corresponding lock state
+    setPanelLockStates((prev) => prev.filter((_, i) => i !== index));
   };
   const addedImages = useMemo(() => {
     const images = formik.values.comicImages.map((imageFile: any) =>
@@ -131,6 +219,94 @@ export default function Page({
     );
     return images;
   }, [formik.values.comicImages]);
+
+  // Sync lock states with image count
+  useEffect(() => {
+    const imageCount = formik.values.comicImages.length;
+    setPanelLockStates((prev) => {
+      if (prev.length === imageCount) {
+        return prev; // No change needed
+      }
+      if (prev.length < imageCount) {
+        // Add false for new images
+        return [...prev, ...new Array(imageCount - prev.length).fill(false)];
+      } else {
+        // Remove excess lock states
+        return prev.slice(0, imageCount);
+      }
+    });
+  }, [formik.values.comicImages.length]);
+
+  // Toggle lock mutation for edit mode
+  const toggleLockMutation = useMutation({
+    mutationKey: ["toggle-comic-panel-lock"],
+    mutationFn: ({ imageId, index }: { imageId: number; index: number }) =>
+      putRequestProtected(
+        {},
+        `/my-libraries/chapters/comic-panel/${imageId}/toggle`,
+        token || "",
+        pathname,
+        "json"
+      ),
+    onSuccess: (data, variables) => {
+      const { success, message } = data;
+      if (!success) {
+        toast(message || "Failed to toggle lock", {
+          toastId: "toggle-lock-error",
+          type: "error",
+        });
+        // Revert on API failure
+        setPanelLockStates((prev) => {
+          const newStates = [...prev];
+          newStates[variables.index] = !newStates[variables.index];
+          return newStates;
+        });
+      }
+    },
+    onError: (error, variables) => {
+      toast("Failed to toggle lock. Please try again.", {
+        toastId: "toggle-lock-error",
+        type: "error",
+      });
+      // Revert on error
+      setPanelLockStates((prev) => {
+        const newStates = [...prev];
+        newStates[variables.index] = !newStates[variables.index];
+        return newStates;
+      });
+    },
+  });
+
+  const toggleLock = (index: number) => {
+    // Check if user has enough chapters to lock panels
+    if (!canLockOrMonetize) {
+      toast("You need at least 4 chapters before you can lock panels", {
+        toastId: "lock-restriction",
+        type: "info",
+      });
+      return;
+    }
+
+    // If in edit mode and image has an ID, call the API
+    if (episodeId && comicImageIds[index]) {
+      const imageId = comicImageIds[index];
+      // Optimistically update the UI
+      setPanelLockStates((prev) => {
+        const newStates = [...prev];
+        newStates[index] = !newStates[index];
+        return newStates;
+      });
+      // Call the API with index for error handling
+      toggleLockMutation.mutate({ imageId, index });
+    } else {
+      // In create mode or for new images without IDs, just update local state
+      setPanelLockStates((prev) => {
+        const newStates = [...prev];
+        newStates[index] = !newStates[index];
+        return newStates;
+      });
+    }
+  };
   const router = useRouter();
   const publishChapter = useMutation({
     mutationKey: [`comic${comicid}_post_chapter`],
@@ -186,15 +362,19 @@ export default function Page({
         formData?.append("title", updatedValues.title);
         formData?.append("description", updatedValues.description);
         formData?.append("thumbnail", updatedValues.thumbnail);
+        formData.append("isMonetized", enabled ? "1" : "0");
         updatedValues.comicImages.map((imageUrl: string, i: number) => {
           formData.append(`comicImage[${i}][image]`, imageUrl);
+          // Add lock status - ensure we have a lock state for this index
+          const lockState =
+            i < panelLockStates.length ? panelLockStates[i] : false;
+          formData.append(`comicImage[${i}][is_lock]`, lockState ? "1" : "0");
         });
-        if (episodeId){
-          editComic.mutate(formData)
-        }else{
+        if (episodeId) {
+          editComic.mutate(formData);
+        } else {
           publishChapter.mutate(formData);
         }
-        
       }
     },
     onError(error, variables, context) {
@@ -217,6 +397,7 @@ export default function Page({
     onSuccess(data, variables, context) {
       setisLoading(false);
       const { success, message, data: resData } = data;
+      console.log("@@edit comic data", data);
       if (success) {
         toast("Chapter added", {
           toastId: "add_comic",
@@ -231,13 +412,16 @@ export default function Page({
       }
     },
     onError(error, variables, context) {
+      console.log("@@edit comic error", error);
       toast("Some error occured. Contact help !", {
         toastId: "add_comic",
         type: "error",
       });
       setisLoading(false);
     },
-
+    onSettled(data, error, variables, context) {
+      setisLoading(false);
+    },
   });
 
   return (
@@ -340,6 +524,9 @@ export default function Page({
                         removeImage={removeImage}
                         i={i}
                         moveImage={moveImage}
+                        isLocked={panelLockStates[i] || false}
+                        onToggleLock={toggleLock}
+                        canLockOrMonetize={canLockOrMonetize}
                       />
                     </div>
                     // <div
@@ -364,11 +551,34 @@ export default function Page({
               <div className=" flex flex-col gap-5 mt-8">
                 <h3>Monetization</h3>
                 <div className="flex gap-5">
-                  <TailwindSwitch enabled={enabled} setEnabled={setEnabled} />
-                  <p>Monetize this chapter ?</p>
+                  <TailwindSwitch
+                    enabled={enabled}
+                    setEnabled={(value: boolean) => {
+                      if (!canLockOrMonetize) {
+                        toast(
+                          "You need at least 4 chapters before you can enable monetization",
+                          {
+                            toastId: "monetization-restriction",
+                            type: "info",
+                          }
+                        );
+                        return;
+                      }
+                      setEnabled(value);
+                    }}
+                    disabled={!canLockOrMonetize}
+                  />
+                  <div className="flex flex-col">
+                    <p>Monetize this chapter ?</p>
+                    {!canLockOrMonetize && (
+                      <p className="text-sm text-gray-400 mt-1">
+                        You need at least 4 chapters to enable monetization
+                      </p>
+                    )}
+                  </div>
                 </div>
 
-                <div className="border-1 border-[#3D434D] rounded-lg py-8 px-10 flex flex-col gap-5">
+                {/* <div className="border-1 border-[#3D434D] rounded-lg py-8 px-10 flex flex-col gap-5">
                   <RadioGroup color="success">
                     <Radio
                       value="Ads"
@@ -388,7 +598,7 @@ export default function Page({
                     <InfoIcon className="w-5 h-5 text-[#FF4444]" />
                     <p>Monitization is only available from chapter 4 onwards</p>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
             {/* <InputPictureFloating
@@ -419,4 +629,3 @@ export default function Page({
     </main>
   );
 }
-

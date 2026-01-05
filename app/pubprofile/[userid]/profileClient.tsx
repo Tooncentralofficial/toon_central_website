@@ -18,6 +18,7 @@ const ProfileClient = ({ params }: { params: { userid: string } }) => {
     queryFn: () => getRequest(`/profile/${userid}/view`),
     staleTime: 1000 * 60 * 5, // 5 minutes cache
   });
+  console.log("@@data", data)
 
   useEffect(() => {
     if (isSuccess && data?.success) {
