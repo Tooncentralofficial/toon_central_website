@@ -24,16 +24,23 @@ export default function RecommendtnTabs() {
     isFetching: genresFetching,
   } = useQuery({
     queryKey: ["all_genres"],
-    queryFn: () => getRequest("/genres/pull/list"),
+    queryFn: () => getRequest("/selectables/genres"),
   });
 
   const [recommended, setRecommended] = useState([]);
+  const [genreList, setGenreList]= useState<any>([]);
   const [filter, setFilter] = useState<Filters>("all");
   const { data, isError, isSuccess, isLoading, isFetching } = useQuery({
     queryKey: ["top_recommended", filter],
     queryFn: () =>
       getRequest(`/home/top-recommendations?filter=${filter}&page=1&limit=10`),
   });
+  useEffect(() => {
+    if (isSuccess) {
+      
+      setGenreList(genres?.data || []);
+    }
+  }, [isFetching, isLoading, genres]);
 
   useEffect(() => {
     if (isSuccess) {
