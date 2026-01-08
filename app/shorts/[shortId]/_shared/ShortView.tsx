@@ -187,7 +187,7 @@ export default function ShortView({
   }
 
   return (
-    <div className="w-full flex justify-center items-start mt-6">
+    <div className="w-full flex justify-center items-start mt-6 relative">
       <div className="w-full max-w-4xl flex gap-6">
         {/* Main Video Section */}
         <div className="flex-1">
@@ -306,70 +306,83 @@ export default function ShortView({
             </div>
           )}
         </div>
-
-        {/* Comments Sidebar - Desktop */}
-        <AnimatePresence>
-          {commentsOpen && (
-            <motion.div
-              className="hidden md:flex flex-col border-l border-foreground-300 h-[600px] w-80"
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: "20rem", opacity: 1 }}
-              exit={{ width: 0, opacity: 0 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-            >
-              <div className="flex flex-col h-full p-4">
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-white text-lg font-semibold">
-                    {shortComments.pagination.total || 0} Comments
-                  </span>
-                  <button
-                    onClick={() => setCommentsOpen(false)}
-                    className="text-white hover:text-gray-400 cursor-pointer"
-                  >
-                    ✕
-                  </button>
-                </div>
-                <div className="flex-1 overflow-y-auto no-scrollbar mb-4">
-                  {shortCommentsLoading &&
-                  shortComments.comments.length === 0 ? (
-                    <div className="text-center text-gray-400 animate-pulse">
-                      Loading comments...
-                    </div>
-                  ) : shortComments.comments.length > 0 ? (
-                    <div className="flex flex-col gap-4">
-                      {shortComments.comments.map((comment: any, i: number) => (
-                        <ShortsComments
-                          key={comment.id || i}
-                          shortId={shortId}
-                          comment={comment}
-                        />
-                      ))}
-                      {hasMoreComments && (
-                        <button
-                          onClick={handleLoadMore}
-                          disabled={shortCommentsFetching}
-                          className="text-sm text-blue-500 hover:text-blue-600 disabled:opacity-50 py-2"
-                        >
-                          {shortCommentsFetching
-                            ? "Loading..."
-                            : "Load more comments"}
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-center text-gray-400">
-                      No comments yet. Be the first to comment!
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <ShortCommentInput shortId={shortId} />
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
+
+      {/* Backdrop Overlay - Desktop */}
+      <AnimatePresence>
+        {commentsOpen && (
+          <motion.div
+            className="hidden md:block fixed inset-0 bg-black/50 z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setCommentsOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Comments Sidebar - Desktop */}
+      <AnimatePresence>
+        {commentsOpen && (
+          <motion.div
+            className="hidden md:flex flex-col fixed right-0 top-0 h-screen w-80 bg-[var(--bg-secondary)] border-l border-foreground-300 z-50"
+            initial={{ x: "100%", opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: "100%", opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+          >
+            <div className="flex flex-col h-full p-4">
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-white text-lg font-semibold">
+                  {shortComments.pagination.total || 0} Comments
+                </span>
+                <button
+                  onClick={() => setCommentsOpen(false)}
+                  className="text-white hover:text-gray-400 cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto no-scrollbar mb-4 min-h-0">
+                {shortCommentsLoading && shortComments.comments.length === 0 ? (
+                  <div className="text-center text-gray-400 animate-pulse">
+                    Loading comments...
+                  </div>
+                ) : shortComments.comments.length > 0 ? (
+                  <div className="flex flex-col gap-4">
+                    {shortComments.comments.map((comment: any, i: number) => (
+                      <ShortsComments
+                        key={comment.id || i}
+                        shortId={shortId}
+                        comment={comment}
+                      />
+                    ))}
+                    {hasMoreComments && (
+                      <button
+                        onClick={handleLoadMore}
+                        disabled={shortCommentsFetching}
+                        className="text-sm text-blue-500 hover:text-blue-600 disabled:opacity-50 py-2"
+                      >
+                        {shortCommentsFetching
+                          ? "Loading..."
+                          : "Load more comments"}
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center text-gray-400">
+                    No comments yet. Be the first to comment!
+                  </div>
+                )}
+              </div>
+              <div className="flex-shrink-0">
+                <ShortCommentInput shortId={shortId} />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Comments Panel - Mobile */}
       <AnimatePresence>

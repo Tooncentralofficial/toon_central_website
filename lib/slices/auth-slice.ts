@@ -52,6 +52,7 @@ export const updateProfile = createAsyncThunk(
         phone: data?.phone,
         username: data?.username,
         country_id: data?.countryId,
+        mobile_operator_id: data?.mobileOperatorId,
         email: data?.email,
         welcome_note: data?.welcomeNote,
       };
@@ -126,6 +127,7 @@ export const authSlice = createSlice({
           phone: payload?.data?.phone,
           username: payload?.data?.username,
           country_id: payload?.data?.countryId,
+          mobile_operator_id: payload?.data?.mobileOperatorId,
           email: payload?.data?.email,
           welcome_note: payload?.data?.welcomeNote,
         };

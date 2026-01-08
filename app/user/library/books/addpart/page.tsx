@@ -578,7 +578,7 @@ export default function Page({
                   </div>
                 </div>
 
-                {/* <div className="border-1 border-[#3D434D] rounded-lg py-8 px-10 flex flex-col gap-5">
+                <div className="border-1 border-[#3D434D] rounded-lg py-8 px-10 flex flex-col gap-5">
                   <RadioGroup color="success">
                     <Radio
                       value="Ads"
@@ -598,7 +598,7 @@ export default function Page({
                     <InfoIcon className="w-5 h-5 text-[#FF4444]" />
                     <p>Monitization is only available from chapter 4 onwards</p>
                   </div>
-                </div> */}
+                </div>
               </div>
             </div>
             {/* <InputPictureFloating

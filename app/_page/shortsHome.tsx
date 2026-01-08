@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 //@ts-ignore
@@ -13,7 +13,7 @@ import { ShortsType } from "@/helpers/types";
 import { ToonShortsLogo } from "../_shared/icons/icons";
 
 function HomeShorts() {
-  const {token} = useSelector(selectAuthState)
+  const { token } = useSelector(selectAuthState);
   const [activeIndex, setActiveIndex] = useState(0);
   const videoRefs = useRef<HTMLVideoElement[]>([]);
   const slides = [
@@ -27,8 +27,21 @@ function HomeShorts() {
     queryKey: ["shorts"],
     queryFn: () => getRequest("home/shorts-carousel?page=1&limit=10"),
   });
-  const shorts = data?.data?.shorts || []
-  console.log(shorts)
+  const shorts = data?.data?.shorts || [];
+  console.log(shorts);
+
+  // Calculate initial slide index to fill the space
+  const initialSlide = useMemo(() => {
+    if (shorts.length === 0) return 0;
+    return Math.floor(shorts.length / 2);
+  }, [shorts.length]);
+
+  // Update activeIndex when shorts are loaded for the first time
+  useEffect(() => {
+    if (shorts.length > 0) {
+      setActiveIndex(initialSlide);
+    }
+  }, [shorts.length, initialSlide]);
   useEffect(() => {
     videoRefs.current.forEach((video, index) => {
       if (!video) return;
@@ -42,9 +55,9 @@ function HomeShorts() {
     });
   }, [activeIndex]);
 
-   if (isLoading) {
-     return <ShortsSkeleton />;
-   }
+  if (isLoading) {
+    return <ShortsSkeleton />;
+  }
 
   return (
     <div className="parent-wrap pt-10 md:py-10 md:pt-10 ">
@@ -57,6 +70,7 @@ function HomeShorts() {
             slidesPerView={1.3}
             slidesPerGroupAuto={true}
             centeredSlides={true}
+            initialSlide={initialSlide}
             onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
             className="w-full py-10"
           >
@@ -88,19 +102,20 @@ function HomeShorts() {
         </div>
         <div className="w-full justify-center hidden md:flex">
           <Swiper
-            centeredSlides
+            centeredSlides={true}
             slidesPerGroup={1}
+            initialSlide={initialSlide}
             breakpoints={{
               0: {
                 slidesPerView: 3, // mobile
                 spaceBetween: 10,
               },
               768: {
-                slidesPerView: 5, // tablet
+                slidesPerView: 4, // tablet
                 spaceBetween: 15,
               },
               1024: {
-                slidesPerView: 7, // desktop
+                slidesPerView: 5, // desktop
                 spaceBetween: 20,
               },
             }}
@@ -119,7 +134,7 @@ function HomeShorts() {
                   opacity: index === activeIndex ? 1 : 0.6,
                 }}
               >
-                <div className="bg-[#1e1e1e] rounded-medium h-[200px] flex items-center justify-center ">
+                <div className="bg-[#1e1e1e] rounded-medium h-[135px] sm:h-[250px] md:h-[320px] flex items-center justify-center ">
                   <video
                     ref={(el) => {
                       if (el) videoRefs.current[index] = el;

@@ -87,7 +87,7 @@ export default async function Home() {
         <Originals />
         <Footer />
         <MainfooterWithDelay />
-        <FloatingButton />
+        {/* <FloatingButton /> */}
       </main>
     </HydrationBoundary>
   );
