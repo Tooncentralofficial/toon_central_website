@@ -192,6 +192,18 @@ export default function ShortView({
         {/* Main Video Section */}
         <div className="flex-1">
           <div className="relative h-[82.7vh] md:h-[60vw] md:max-h-[600px] w-full rounded-md overflow-hidden bg-black">
+            {/* Blurred Background Video Layer */}
+            <video
+              className="absolute inset-0 w-full h-full object-cover blur-xl scale-110"
+              autoPlay
+              loop
+              muted
+              playsInline
+              controls={false}
+              src={data.upload}
+              aria-hidden="true"
+            />
+
             {/* Unmute Button */}
             {!hasInteracted && (
               <button
@@ -212,9 +224,10 @@ export default function ShortView({
               </button>
             )}
 
+            {/* Main Video - Centered with full content visible */}
             <video
               ref={videoRef}
-              className="h-full w-full object-contain"
+              className="relative z-10 h-full w-full object-contain"
               autoPlay
               loop
               muted={isMuted}

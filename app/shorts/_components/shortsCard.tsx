@@ -242,7 +242,7 @@ export default function ShortsCard({
             </Link>
           </div>
         </div>
-        <div className="relative h-[82.7vh] md:h-[60vw] md:max-h-[600px] w-full md:max-w-[480px] rounded-md z-10">
+        <div className="relative h-[82.7vh] md:h-[60vw] md:max-h-[600px] w-full md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black">
           {/* Unmute Button - Shows on first load */}
           {!hasInteracted && (
             <button
@@ -277,18 +277,32 @@ export default function ShortsCard({
           >
             {shorts?.map((short: ShortsType, index: number) => (
               <SwiperSlide className="h-full w-full" key={index}>
-                <video
-                  ref={(el) => {
-                    videoRefs.current[index] = el;
-                  }}
-                  className="h-full w-full object-contain"
-                  autoPlay={index === 0} // Only autoplay first video
-                  loop
-                  muted={isMuted}
-                  playsInline
-                  controls={false}
-                  src={short.upload}
-                ></video>
+                <div className="relative h-full w-full overflow-hidden">
+                  {/* Blurred Background Video Layer */}
+                  <video
+                    className="absolute inset-0 w-full h-full object-cover blur-xl scale-110"
+                    autoPlay={index === 0}
+                    loop
+                    muted
+                    playsInline
+                    controls={false}
+                    src={short.upload}
+                    aria-hidden="true"
+                  />
+                  {/* Main Video - Centered with full content visible */}
+                  <video
+                    ref={(el) => {
+                      videoRefs.current[index] = el;
+                    }}
+                    className="relative z-10 h-full w-full object-contain"
+                    autoPlay={index === 0} // Only autoplay first video
+                    loop
+                    muted={isMuted}
+                    playsInline
+                    controls={false}
+                    src={short.upload}
+                  ></video>
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>

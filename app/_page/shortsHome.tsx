@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getRequest, getRequestProtected } from "../utils/queries/requests";
 import { ShortsType } from "@/helpers/types";
 import { ToonShortsLogo } from "../_shared/icons/icons";
+import Link from "next/link";
 
 function HomeShorts() {
   const { token } = useSelector(selectAuthState);
@@ -134,18 +135,20 @@ function HomeShorts() {
                   opacity: index === activeIndex ? 1 : 0.6,
                 }}
               >
-                <div className="bg-[#1e1e1e] rounded-medium h-[135px] sm:h-[250px] md:h-[320px] flex items-center justify-center ">
-                  <video
-                    ref={(el) => {
-                      if (el) videoRefs.current[index] = el;
-                    }}
-                    src={item.upload}
-                    className="w-full h-full object-cover rounded-medium"
-                    controls={false}
-                    playsInline
-                    muted
-                  />
-                </div>
+                <Link href={`/shorts/${item.uuid}`}>
+                  <div className="bg-[#1e1e1e] rounded-medium h-[135px] sm:h-[250px] md:h-[320px] flex items-center justify-center ">
+                    <video
+                      ref={(el) => {
+                        if (el) videoRefs.current[index] = el;
+                      }}
+                      src={item.upload}
+                      className="w-full h-full object-cover rounded-medium"
+                      controls={false}
+                      playsInline
+                      muted
+                    />
+                  </div>
+                </Link>
               </SwiperSlide>
             ))}
           </Swiper>
