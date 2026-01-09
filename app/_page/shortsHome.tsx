@@ -12,10 +12,11 @@ import { getRequest, getRequestProtected } from "../utils/queries/requests";
 import { ShortsType } from "@/helpers/types";
 import { ToonShortsLogo } from "../_shared/icons/icons";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 function HomeShorts() {
   const { token } = useSelector(selectAuthState);
   const [activeIndex, setActiveIndex] = useState(0);
+  const router = useRouter();
   const videoRefs = useRef<HTMLVideoElement[]>([]);
   const slides = [
     { id: 1, title: "3D Animation" },
@@ -135,8 +136,8 @@ function HomeShorts() {
                   opacity: index === activeIndex ? 1 : 0.6,
                 }}
               >
-                <Link href={`/shorts/${item.uuid}`}>
-                  <div className="bg-[#1e1e1e] rounded-medium h-[135px] sm:h-[250px] md:h-[320px] flex items-center justify-center ">
+                
+                  <div className="bg-[#1e1e1e] rounded-medium h-[135px] sm:h-[250px] md:h-[320px] flex items-center justify-center " onClick={() => router.push(`/shorts/${item.uuid}`)}>
                     <video
                       ref={(el) => {
                         if (el) videoRefs.current[index] = el;
@@ -148,7 +149,7 @@ function HomeShorts() {
                       muted
                     />
                   </div>
-                </Link>
+                
               </SwiperSlide>
             ))}
           </Swiper>
