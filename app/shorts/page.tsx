@@ -26,7 +26,12 @@ export default async function ShortsPage() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <main className="overflow-hidden h-[calc(100dvh-9rem)] md:h-[calc(100vh-8rem)] w-full p-0 m-0 relative">
+      <main
+        className="overflow-hidden h-[calc(100vh-9rem)] md:h-[calc(100vh-8rem)] w-full p-0 m-0 relative"
+        style={{
+          minHeight: "calc(100vh - 9rem)",
+        }}
+      >
         <ShortsClient />
       </main>
     </HydrationBoundary>

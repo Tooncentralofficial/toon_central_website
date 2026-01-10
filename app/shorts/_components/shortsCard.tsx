@@ -280,7 +280,7 @@ export default function ShortsCard({
             </Link>
           </div>
         </div>
-        <div className="relative h-full md:h-[60vw] md:max-h-[600px] w-full md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container">
+        <div className="relative h-full min-h-[400px] md:h-[60vw] md:max-h-[600px] md:min-h-0 w-full md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container">
           {/* Unmute Button - Shows on first load */}
           {!hasInteracted && (
             <button
@@ -312,17 +312,9 @@ export default function ShortsCard({
               height: "100%",
               width: "100%",
             }}
-            touchAngle={45}
-            touchMoveStopPropagation={true}
-            preventInteractionOnTransition={false}
             allowTouchMove={true}
-            touchStartPreventDefault={false}
+            touchRatio={1}
             threshold={5}
-            touchRatio={0.75}
-            resistance={true}
-            resistanceRatio={0.85}
-            simulateTouch={true}
-            followFinger={true}
           >
             {shorts?.map((short: ShortsType, index: number) => (
               <SwiperSlide className="h-full w-full" key={index}>
