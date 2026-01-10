@@ -43,6 +43,46 @@
   justify-content: center !important;
 }
 
+/* Prevent page scroll on mobile when shorts Swiper is active */
+@media (max-width: 767px) {
+  .shorts-content-wrapper {
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .shorts-card-container {
+    touch-action: none;
+    -webkit-overflow-scrolling: touch;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .shorts-swiper-container {
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    height: 100vh;
+  }
+
+  .vertical-shorts-swiper {
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Ensure body doesn't scroll when shorts are active on mobile */
+  body.shorts-active {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Prevent touch events from propagating to parent when swiping vertically */
+  .vertical-shorts-swiper .swiper-wrapper {
+    touch-action: pan-y;
+  }
+}
+
 .swiper-pagination {
   right: 20px !important;
   left: auto !important;

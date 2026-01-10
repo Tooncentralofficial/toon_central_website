@@ -61,6 +61,40 @@ export default function ShortsCard({
   const photo = user?.photo || "";
 
   const swiperRef: any = useRef(null);
+  const scrollYRef = useRef(0);
+
+  // Lock body scroll on mobile to prevent page scroll interference
+  useEffect(() => {
+    // Check if mobile device
+    const isMobile = window.innerWidth < 768;
+
+    if (isMobile) {
+      // Save current scroll position
+      scrollYRef.current = window.scrollY;
+
+      // Lock body scroll on mobile
+      const originalOverflow = document.body.style.overflow;
+      const originalPosition = document.body.style.position;
+      const originalTop = document.body.style.top;
+      const originalWidth = document.body.style.width;
+
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollYRef.current}px`;
+      document.body.style.width = "100%";
+      document.body.classList.add("shorts-active");
+
+      // Cleanup: restore scroll when component unmounts
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        document.body.style.position = originalPosition;
+        document.body.style.top = originalTop;
+        document.body.style.width = originalWidth;
+        document.body.classList.remove("shorts-active");
+        window.scrollTo(0, scrollYRef.current);
+      };
+    }
+  }, []);
 
   // Handle video playback when slide changes
   const handleSlideChange = (swiper: any) => {
@@ -210,7 +244,7 @@ export default function ShortsCard({
     return null;
   }
   return (
-    <div className="w-full h-full block md:flex md:justify-center md:items-center relative flex-1 overflow-hidden">
+    <div className="w-full h-full block md:flex md:justify-center md:items-center relative flex-1 overflow-hidden shorts-card-container">
       <div className="block md:flex md:gap-10 overflow-hidden">
         <div className="absolute left-2 z-[22] flex flex-col justify-between h-full">
           <div className="flex flex-col gap-4">
@@ -242,7 +276,7 @@ export default function ShortsCard({
             </Link>
           </div>
         </div>
-        <div className="relative h-[82.7vh] md:h-[60vw] md:max-h-[600px] w-full md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black">
+        <div className="relative h-[82.7vh] md:h-[60vw] md:max-h-[600px] w-full md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container">
           {/* Unmute Button - Shows on first load */}
           {!hasInteracted && (
             <button
@@ -269,11 +303,18 @@ export default function ShortsCard({
             onSlideChange={handleSlideChange}
             direction={"vertical"}
             modules={[Pagination]}
-            className="h-full w-full"
+            className="h-full w-full vertical-shorts-swiper"
             style={{
               height: "100%",
               width: "100%",
             }}
+            touchAngle={45}
+            touchMoveStopPropagation={true}
+            preventInteractionOnTransition={true}
+            allowTouchMove={true}
+            touchStartPreventDefault={false}
+            threshold={10}
+            touchRatio={1}
           >
             {shorts?.map((short: ShortsType, index: number) => (
               <SwiperSlide className="h-full w-full" key={index}>

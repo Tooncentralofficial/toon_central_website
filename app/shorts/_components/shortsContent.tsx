@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import "swiper/css";
 // @ts-ignore
 import "swiper/css/pagination";
+import "../shorts.css";
 import Image from "next/image";
 import ShortsComments from "./shortscomments";
 import ShortCommentInput from "./shortsCommentInut";
@@ -177,7 +178,7 @@ export default function ShortsContent() {
   }
 
   return (
-    <div className="w-full h-full flex">
+    <div className="w-full h-full flex shorts-content-wrapper">
       <ShortsCard
         shortComment={shortComments}
         shorts={shorts}
