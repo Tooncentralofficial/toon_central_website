@@ -18,6 +18,7 @@ function HomeShorts() {
   const [activeIndex, setActiveIndex] = useState(0);
   const router = useRouter();
   const videoRefs = useRef<HTMLVideoElement[]>([]);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const slides = [
     { id: 1, title: "3D Animation" },
     { id: 2, title: "Bestyy Ad" },
@@ -74,6 +75,9 @@ function HomeShorts() {
             centeredSlides={true}
             initialSlide={initialSlide}
             onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+            allowTouchMove={true}
+            touchRatio={1}
+            threshold={10}
             className="w-full py-10"
           >
             {shorts.map((item: ShortsType, index: number) => (
@@ -86,13 +90,47 @@ function HomeShorts() {
                   opacity: index === activeIndex ? 1 : 0.6,
                 }}
               >
-                <div className="bg-[#1e1e1e] rounded-medium h-[350px] flex items-center justify-center ">
+                <div
+                  className="bg-[#1e1e1e] rounded-medium h-[350px] flex items-center justify-center cursor-pointer relative"
+                  onTouchStart={(e) => {
+                    touchStartRef.current = {
+                      x: e.touches[0].clientX,
+                      y: e.touches[0].clientY,
+                    };
+                  }}
+                  onTouchEnd={(e) => {
+                    if (!touchStartRef.current) {
+                      router.push(`/shorts/${item.uuid}`);
+                      return;
+                    }
+                    const touchEnd = {
+                      x: e.changedTouches[0].clientX,
+                      y: e.changedTouches[0].clientY,
+                    };
+                    const deltaX = Math.abs(
+                      touchEnd.x - touchStartRef.current.x
+                    );
+                    const deltaY = Math.abs(
+                      touchEnd.y - touchStartRef.current.y
+                    );
+                    // If movement is less than 10px, treat it as a tap and navigate
+                    if (deltaX < 10 && deltaY < 10) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      router.push(`/shorts/${item.uuid}`);
+                    }
+                    touchStartRef.current = null;
+                  }}
+                  onClick={(e) => {
+                    router.push(`/shorts/${item.uuid}`);
+                  }}
+                >
                   <video
                     ref={(el) => {
                       if (el) videoRefs.current[index] = el;
                     }}
                     src={item.upload}
-                    className="w-full h-full object-cover rounded-medium"
+                    className="w-full h-full object-cover rounded-medium pointer-events-none"
                     controls={false}
                     playsInline
                     muted
@@ -136,20 +174,23 @@ function HomeShorts() {
                   opacity: index === activeIndex ? 1 : 0.6,
                 }}
               >
-                
-                  <div className="bg-[#1e1e1e] rounded-medium h-[135px] sm:h-[250px] md:h-[320px] flex items-center justify-center " onClick={() => router.push(`/shorts/${item.uuid}`)}>
+                <Link
+                  href={`/shorts/${item.uuid}`}
+                  className="block w-full h-full"
+                >
+                  <div className="bg-[#1e1e1e] rounded-medium h-[135px] sm:h-[250px] md:h-[320px] flex items-center justify-center cursor-pointer">
                     <video
                       ref={(el) => {
                         if (el) videoRefs.current[index] = el;
                       }}
                       src={item.upload}
-                      className="w-full h-full object-cover rounded-medium"
+                      className="w-full h-full object-cover rounded-medium pointer-events-none"
                       controls={false}
                       playsInline
                       muted
                     />
                   </div>
-                
+                </Link>
               </SwiperSlide>
             ))}
           </Swiper>
