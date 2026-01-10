@@ -76,7 +76,7 @@ export default function AppProvider({
       <Provider store={Store}>
         <SessionTracker />
         <QueryClientProvider client={queryClient}>
-          <NavHome />
+          {!isShortsPage && <NavHome />}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

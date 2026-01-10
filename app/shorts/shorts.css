@@ -29,13 +29,13 @@
   -webkit-line-clamp: 2;
 }
 
-/* Swiper vertical slider styles */
-.swiper {
+/* Swiper vertical slider styles - scoped to shorts only */
+.vertical-shorts-swiper {
   height: 100vh !important;
   width: 100% !important;
 }
 
-.swiper-slide {
+.vertical-shorts-swiper .swiper-slide {
   height: 100vh !important;
   width: 100% !important;
   display: flex !important;

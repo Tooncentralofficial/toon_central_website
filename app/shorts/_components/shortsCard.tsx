@@ -30,6 +30,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRequestProtected } from "@/app/utils/queries/requests";
 import { prevRoutes } from "@/lib/session/prevRoutes";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 interface ShortsCardProps {
   shorts: ShortsType[];
@@ -51,6 +52,7 @@ export default function ShortsCard({
   shortComment,
 }: ShortsCardProps) {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const [isMuted, setIsMuted] = useState(true);
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -252,6 +254,15 @@ export default function ShortsCard({
       <div className="block md:flex md:gap-10 overflow-hidden">
         <div className="absolute left-2 z-[22] flex flex-col justify-between h-full">
           <div className="flex flex-col gap-4">
+            <div>
+              <button
+                onClick={() => router.back()}
+                className="flex items-center justify-center p-3 md:p-4 rounded-full bg-black/50 backdrop-blur-md text-white hover:bg-black/70 transition-all duration-200 shadow-lg hover:scale-110 active:scale-95"
+                aria-label="Go back to previous page"
+              >
+                <ArrowLeftLong className="w-5 h-5 md:w-6 md:h-6" />
+              </button>
+            </div>
             <div className="flex gap-3">
               <h3 className="text-[#FCFCFDB2] text-xl">
                 {shorts?.[currentSlideIndex]?.title}
@@ -272,7 +283,7 @@ export default function ShortsCard({
               <p className="border-[1px] px-3 py-1 border-[#05834BF5]"> 2023</p>
             </div>
           </div>
-          <div className=" mb-0 lg:mb-10 xl:mb-14">
+          <div className=" mb-0 lg:mb-10 xl:mb-20">
             <Link href={`/pubprofile/${shorts?.[currentSlideIndex]?.user.id}`}>
               <button className="flex items-center gap-2 bg-[#05834B] w-full justify-center py-2 rounded-md md:mb-2">
                 watch more <ArrowRight />
@@ -408,7 +419,7 @@ export default function ShortsCard({
           }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
         >
-          <div className="flex justify-between ">
+          <div className="flex justify-between">
             <span className="py-2 px-4 text-lg flex gap-2">
               <p>{shorts?.[currentSlideIndex]?.comments?.length}</p>{" "}
               <p>Comments </p>
