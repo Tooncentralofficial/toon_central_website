@@ -72,16 +72,19 @@ export default function ShortsCard({
       // Save current scroll position
       scrollYRef.current = window.scrollY;
 
-      // Lock body scroll on mobile
+      // Lock body scroll on mobile - use a less aggressive approach that doesn't interfere with Swiper
       const originalOverflow = document.body.style.overflow;
       const originalPosition = document.body.style.position;
       const originalTop = document.body.style.top;
       const originalWidth = document.body.style.width;
+      const originalHeight = document.body.style.height;
 
+      // Lock body scroll - this prevents page scroll but Swiper can still handle touches
       document.body.style.overflow = "hidden";
       document.body.style.position = "fixed";
       document.body.style.top = `-${scrollYRef.current}px`;
       document.body.style.width = "100%";
+      document.body.style.height = "100%";
       document.body.classList.add("shorts-active");
 
       // Cleanup: restore scroll when component unmounts
@@ -90,6 +93,7 @@ export default function ShortsCard({
         document.body.style.position = originalPosition;
         document.body.style.top = originalTop;
         document.body.style.width = originalWidth;
+        document.body.style.height = originalHeight;
         document.body.classList.remove("shorts-active");
         window.scrollTo(0, scrollYRef.current);
       };
@@ -276,7 +280,7 @@ export default function ShortsCard({
             </Link>
           </div>
         </div>
-        <div className="relative h-[82.7vh] md:h-[60vw] md:max-h-[600px] w-full md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container">
+        <div className="relative h-full md:h-[60vw] md:max-h-[600px] w-full md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container">
           {/* Unmute Button - Shows on first load */}
           {!hasInteracted && (
             <button
@@ -310,11 +314,15 @@ export default function ShortsCard({
             }}
             touchAngle={45}
             touchMoveStopPropagation={true}
-            preventInteractionOnTransition={true}
+            preventInteractionOnTransition={false}
             allowTouchMove={true}
             touchStartPreventDefault={false}
-            threshold={10}
-            touchRatio={1}
+            threshold={5}
+            touchRatio={0.75}
+            resistance={true}
+            resistanceRatio={0.85}
+            simulateTouch={true}
+            followFinger={true}
           >
             {shorts?.map((short: ShortsType, index: number) => (
               <SwiperSlide className="h-full w-full" key={index}>

@@ -29,14 +29,14 @@
   -webkit-line-clamp: 2;
 }
 
-/* Swiper vertical slider styles */
-.swiper {
-  height: 100vh !important;
+/* Swiper vertical slider styles - use parent height instead of 100vh */
+.vertical-shorts-swiper {
+  height: 100% !important;
   width: 100% !important;
 }
 
-.swiper-slide {
-  height: 100vh !important;
+.vertical-shorts-swiper .swiper-slide {
+  height: 100% !important;
   width: 100% !important;
   display: flex !important;
   align-items: center !important;
@@ -46,40 +46,56 @@
 /* Prevent page scroll on mobile when shorts Swiper is active */
 @media (max-width: 767px) {
   .shorts-content-wrapper {
-    height: 100vh;
+    height: 100%;
     overflow: hidden;
     position: relative;
   }
 
   .shorts-card-container {
-    touch-action: none;
+    touch-action: pan-y; /* Allow vertical panning for Swiper */
     -webkit-overflow-scrolling: touch;
-    height: 100vh;
+    height: 100%;
     overflow: hidden;
+    position: relative;
   }
 
   .shorts-swiper-container {
-    touch-action: pan-y;
+    touch-action: pan-y; /* Allow vertical panning for Swiper */
     -webkit-overflow-scrolling: touch;
-    height: 100vh;
+    height: 100%;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .vertical-shorts-swiper {
-    touch-action: pan-y;
+    touch-action: pan-y !important; /* Ensure vertical panning works */
     -webkit-overflow-scrolling: touch;
+    width: 100% !important;
+    height: 100% !important;
+    cursor: grab;
   }
 
-  /* Ensure body doesn't scroll when shorts are active on mobile */
+  .vertical-shorts-swiper:active {
+    cursor: grabbing;
+  }
+
+  /* Ensure body doesn't scroll when shorts are active on mobile, but allow Swiper touches */
   body.shorts-active {
     overflow: hidden !important;
     position: fixed !important;
     width: 100% !important;
     height: 100% !important;
+    touch-action: none; /* Prevent body scroll */
   }
 
-  /* Prevent touch events from propagating to parent when swiping vertically */
+  /* Ensure Swiper wrapper and slides can handle vertical touches */
   .vertical-shorts-swiper .swiper-wrapper {
-    touch-action: pan-y;
+    touch-action: pan-y !important;
+  }
+
+  .vertical-shorts-swiper .swiper-slide {
+    touch-action: pan-y !important;
+    -webkit-tap-highlight-color: transparent;
   }
 }
 

@@ -160,7 +160,7 @@ export default function ShortsContent() {
   // Show loading state while data is being fetched
   if (isLoading || !isSuccess) {
     return (
-      <div className="w-full h-screen flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center">
         <div className="text-center text-gray-500 animate-pulse">
           Loading shorts...
         </div>
@@ -171,7 +171,7 @@ export default function ShortsContent() {
   // Show empty state if no shorts available
   if (!shorts || shorts.length === 0) {
     return (
-      <div className="w-full h-screen flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center">
         <div className="text-center text-gray-500">No shorts available</div>
       </div>
     );
