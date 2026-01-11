@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import Image from "next/image";
 import { Button, Skeleton, useDisclosure } from "@nextui-org/react";
 import BackButton from "@/app/_shared/layout/back";
@@ -11,7 +11,7 @@ import {
   ColouredThumbsupSolid,
 } from "@/app/_shared/icons/icons";
 import ShareModal from "@/app/_shared/modals/shareModal";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getRequestProtected } from "@/app/utils/queries/requests";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
@@ -32,11 +32,74 @@ const ProfileHeader = ({
   userid,
   queryKey,
 }: ProfileHeaderProps) => {
+  console.log("@@data", data);
   const { onClose, onOpen, isOpen, onOpenChange } = useDisclosure();
   const { user, token } = useSelector(selectAuthState);
   const queryClient = useQueryClient();
   const pathname = usePathname();
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const creatorId = data?.id;
+  console.log("@@creatorId", creatorId);
+  const {
+    data: isFollowingdata,
+    isLoading: isCheckingFollow,
+    isFetching: isFetchingFollow,
+  } = useQuery({
+    queryKey: ["isfollowing", userid, creatorId],
+    queryFn: () =>
+      getRequestProtected(
+        `profile/${creatorId}/check-follow-status`,
+        token,
+        pathname
+      ),
+    enabled: !!token && !!creatorId && !!user && user.id !== creatorId,
+  });
+  const isFollowing = isFollowingdata?.data === true;
+
+  const { mutate: follow, isPending: isFollowingPending } = useMutation({
+    mutationKey: ["follow", creatorId],
+    mutationFn: () =>
+      getRequestProtected(`profile/${creatorId}/follow`, token, pathname),
+    onSuccess: (response) => {
+      if (response?.success) {
+        toast(response?.message || "Followed successfully", {
+          toastId: `follow-${creatorId}`,
+          type: "success",
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["isfollowing", userid, creatorId],
+        });
+      }
+    },
+    onError: (error: any) => {
+      toast("Failed to follow", {
+        toastId: `follow-${creatorId}`,
+        type: "error",
+      });
+    },
+  });
+
+  const { mutate: unfollow, isPending: isUnfollowingPending } = useMutation({
+    mutationKey: ["unfollow", creatorId],
+    mutationFn: () =>
+      getRequestProtected(`profile/${creatorId}/unfollow`, token, pathname),
+    onSuccess: (response) => {
+      if (response?.success) {
+        toast(response?.message || "Unfollowed successfully", {
+          toastId: `unfollow-${creatorId}`,
+          type: "success",
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["isfollowing", userid, creatorId],
+        });
+      }
+    },
+    onError: (error: any) => {
+      toast("Failed to unfollow", {
+        toastId: `unfollow-${creatorId}`,
+        type: "error",
+      });
+    },
+  });
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -103,59 +166,19 @@ const ProfileHeader = ({
     return data.username || `${data.first_name} ${data.last_name}` || "Creator";
   }, [data]);
 
-  // Check if user is subscribed (if logged in)
-  useEffect(() => {
-    if (user && data) {
-      // Check subscription status - adjust based on API response
-      // This might need to be fetched separately or included in profile data
-      setIsSubscribed(false); // Placeholder
-    }
-  }, [user, data]);
-
-  // Subscribe mutation
-  const { mutate: subscribe, isPending: isSubscribing } = useMutation({
-    mutationKey: ["subscribe-creator", userid],
-    mutationFn: () =>
-      getRequestProtected(
-        `/profile/${userid}/subscribe`,
-        token || "",
-        pathname
-      ),
-    onSuccess: (response) => {
-      if (response?.success) {
-        toast(response?.message || "Subscription updated", {
-          toastId: `subscribe-${userid}`,
-          type: "success",
-        });
-        setIsSubscribed(!isSubscribed);
-        queryClient.invalidateQueries({
-          queryKey: [queryKey],
-        });
-      } else {
-        toast(response?.message || "Failed to update subscription", {
-          toastId: `subscribe-${userid}`,
-          type: "error",
-        });
-      }
-    },
-    onError: (error: any) => {
-      toast("Failed to update subscription", {
-        toastId: `subscribe-${userid}`,
-        type: "error",
-      });
-    },
-  });
-
-  const handleSubscribe = () => {
+  const handleFollow = () => {
     if (!token) {
-      // Redirect to login or show toast
-      toast("Please login to subscribe", {
-        toastId: "subscribe-login",
+      toast("Please login to follow", {
+        toastId: "follow-login",
         type: "info",
       });
       return;
     }
-    subscribe();
+    if (isFollowing) {
+      unfollow();
+    } else {
+      follow();
+    }
   };
 
   return (
@@ -264,16 +287,25 @@ const ProfileHeader = ({
               </div>
             )}
 
-            {/* Subscribe Button */}
-            <div className="mt-4">
-              <SolidPrimaryButton
-                onClick={handleSubscribe}
-                isLoading={isSubscribing}
-                className="w-full lg:w-auto min-w-[120px]"
-              >
-                {isSubscribed ? "Following" : "Follow"}
-              </SolidPrimaryButton>
-            </div>
+            {/* Follow/Unfollow Button */}
+            {user?.id !== creatorId && (
+              <div className="mt-4">
+                <SolidPrimaryButton
+                  onClick={handleFollow}
+                  isLoading={
+                    isCheckingFollow ||
+                    isFetchingFollow ||
+                    isFollowingPending ||
+                    isUnfollowingPending
+                  }
+                  className={`w-full lg:w-auto min-w-[120px] ${
+                    isFollowing ? "!bg-[#475467]" : ""
+                  }`}
+                >
+                  {isFollowing ? "Following" : "Follow"}
+                </SolidPrimaryButton>
+              </div>
+            )}
           </div>
         </div>
 

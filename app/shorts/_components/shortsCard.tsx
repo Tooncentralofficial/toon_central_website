@@ -12,7 +12,9 @@ import {
   DarkEyeIcon,
   DislikeIcon,
   LikeIcon,
+  MuteIcon,
   ShareShortsIcon,
+  UnmuteIcon,
 } from "../../_shared/icons/icons";
 import Likes from "../../_shared/cards/likes";
 import { Pagination } from "swiper/modules";
@@ -251,36 +253,36 @@ export default function ShortsCard({
   }
   return (
     <div className="w-full h-full block md:flex md:justify-center md:items-center relative flex-1 overflow-hidden shorts-card-container">
+      <div className="absolute top-2 left-2 z-[22]">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center justify-center p-3 md:p-4 rounded-full bg-black/50 backdrop-blur-md text-white hover:bg-black/70 transition-all duration-200 shadow-lg hover:scale-110 active:scale-95"
+          aria-label="Go back to previous page"
+        >
+          <ArrowLeftLong className="w-5 h-5 md:w-6 md:h-6" />
+        </button>
+      </div>
       <div className="block md:flex md:gap-10 overflow-hidden">
-        <div className="absolute left-2 z-[22] flex flex-col justify-between h-full">
-          <div className="flex flex-col gap-4">
-            <div>
-              <button
-                onClick={() => router.back()}
-                className="flex items-center justify-center p-3 md:p-4 rounded-full bg-black/50 backdrop-blur-md text-white hover:bg-black/70 transition-all duration-200 shadow-lg hover:scale-110 active:scale-95"
-                aria-label="Go back to previous page"
-              >
-                <ArrowLeftLong className="w-5 h-5 md:w-6 md:h-6" />
-              </button>
-            </div>
-            <div className="flex gap-3">
-              <h3 className="text-[#FCFCFDB2] text-xl">
+        <div className="absolute left-2 z-[22] flex flex-col justify-end md:justify-between h-full">
+          <div className="flex flex-col gap-4 mb-5 md:mb-0">
+            <div className="flex gap-3 items-center">
+              <h3 className="text-[#FCFCFDB2] text-sm md:text-xl line-clamp-1">
                 {shorts?.[currentSlideIndex]?.title}
               </h3>
-              <div className="bg-[#475467] px-3 py-1 rounded-2xl">
+              <div className="bg-[#475467] px-3 py-1 rounded-2xl text-xs md:text-base">
                 Subscribe
               </div>
             </div>
-            <h3 className="text-lg md:text-2xl">CHRYSALIS Vol. 1: Fallout</h3>
+            <h3 className="text-sm md:text-2xl line-clamp-1">CHRYSALIS Vol. 1: Fallout</h3>
 
             <div className="flex gap-3">
-              <p className="border-[1px] px-3 py-1 border-[#05834BF5]">
+              <p className="border-[1px] px-1 py-[0.1rem] md:px-3 md:py-1 border-[#05834BF5] text-xs md:text-base flex items-center justify-center">
                 Comedy
               </p>
-              <p className="border-[1px] px-3 py-1 border-[#05834BF5]">
+              <p className="border-[1px] px-1 py-[0.1rem] md:px-3 md:py-1 border-[#05834BF5] flex items-center justify-center">
                 Shorts
               </p>
-              <p className="border-[1px] px-3 py-1 border-[#05834BF5]"> 2023</p>
+              <p className=" text-xs md:text-base border-[1px] px-1 py-[0.1rem] md:px-3 md:   md:py-1 border-[#05834BF5] flex items-center justify-center"> 2023</p>
             </div>
           </div>
           <div className=" mb-0 lg:mb-10 xl:mb-20">
@@ -298,7 +300,7 @@ export default function ShortsCard({
               onClick={handleUnmute}
               className="absolute top-4 right-4 z-30 bg-black/50 text-white px-4 py-2 rounded-full hover:bg-black/70 transition-colors"
             >
-              🔇 Tap to Unmute
+              <MuteIcon className="w-5 h-5 text-white" />
             </button>
           )}
 
@@ -308,7 +310,11 @@ export default function ShortsCard({
               onClick={handleToggleMute}
               className="absolute top-4 right-4 z-30 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
             >
-              {isMuted ? "🔇" : "🔊"}
+              {isMuted ? (
+                <MuteIcon className="w-5 h-5 text-white " />
+              ) : (
+                <UnmuteIcon className="w-5 h-5 text-white " />
+              )}
             </button>
           )}
           <Swiper
@@ -365,28 +371,34 @@ export default function ShortsCard({
             className="flex flex-col items-center gap-2"
           >
             <LikeIcon
-              className={`w-10 h-10 ${
+              className={`w-6 md:w-10 h-6 md:h-10 ${
                 hasLiked ? " text-[#05834B]" : "text-[#FCFCFDB2]"
               }`}
             />
-            <p>{lv?.likes?.length || 0}</p>
+            <p className="text-xs md:text-base">{lv?.likes?.length || 0}</p>
           </div>
           <div
             className="flex flex-col items-center gap-2"
             onClick={() => dislikeShorts(shorts?.[currentSlideIndex]?.uuid)}
           >
             <DislikeIcon
-              className={`w-10 h-10 ${
+              className={`w-6 md:w-10 h-6 md:h-10 ${
                 hasdiLiked ? " text-[#05834B]" : "text-[#FCFCFDB2]"
               }`}
             />
-            <p>{lv?.dislikes?.length || 0}</p>
+            <p className="text-xs md:text-base">{lv?.dislikes?.length || 0}</p>
           </div>
-          <div onClick={() => setCommentOpen((prev: any) => !prev)}>
-            <CommentShortsIcon className="w-10 h-10" />
+          <div
+            className="flex flex-col items-center gap-2"
+            onClick={() => setCommentOpen((prev: any) => !prev)}
+          >
+            <CommentShortsIcon className="w-6 md:w-10 h-6 md:h-10" />
+            <p className="text-xs md:text-base">
+              {shorts?.[currentSlideIndex]?.comments?.length || 0}
+            </p>
           </div>
           <div>
-            <ShareShortsIcon className="w-10 h-10" />
+            <ShareShortsIcon className="w-6 md:w-10 h-6 md:h-10 ml-1" />
           </div>
           <div className="overflow-hidden w-10 h-10 rounded-full">
             <Image

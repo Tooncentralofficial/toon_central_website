@@ -13,15 +13,29 @@ export default async function ShortsPage() {
   await queryClient.prefetchInfiniteQuery({
     queryKey: ["shorts"],
     queryFn: async () => {
-      const res = await getRequest(`home/shorts-carousel?page=1&limit=10`);
+      try {
+        const res = await getRequest(`home/shorts-carousel?page=1&limit=10`);
 
-      return {
-        shorts: res?.data?.shorts || [],
-        nextPage: res?.data?.nextPage || null,
-      };
+        // Ensure consistent return structure matching client-side query
+        return {
+          shorts: Array.isArray(res?.data?.shorts) ? res.data.shorts : [],
+          nextPage: res?.data?.nextPage ?? null,
+        };
+      } catch (error) {
+        // Return empty structure on error to prevent crashes
+        console.error("Error prefetching shorts:", error);
+        return {
+          shorts: [],
+          nextPage: null,
+        };
+      }
     },
     initialPageParam: 1,
-    getNextPageParam: (lastPage: any) => lastPage?.nextPage,
+    getNextPageParam: (lastPage: any) => {
+      // Guard against undefined/null lastPage - match client-side structure
+      if (!lastPage) return undefined;
+      return lastPage.nextPage ?? undefined;
+    },
   });
 
   return (

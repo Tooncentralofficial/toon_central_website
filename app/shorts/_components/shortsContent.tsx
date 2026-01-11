@@ -52,27 +52,46 @@ export default function ShortsContent() {
     queryKey: ["shorts"],
     initialPageParam: 1,
     queryFn: async ({ pageParam = 1 }) => {
-      const res = await getRequest(
-        `home/shorts-carousel?page=${pageParam}&limit=10`
-      );
+      try {
+        const res = await getRequest(
+          `home/shorts-carousel?page=${pageParam}&limit=10`
+        );
 
-      return {
-        shorts: res?.data?.shorts || [],
-        nextPage: res?.data?.nextPage || null,
-      };
+        // Ensure consistent return structure even if API response is malformed
+        return {
+          shorts: Array.isArray(res?.data?.shorts) ? res.data.shorts : [],
+          nextPage: res?.data?.nextPage ?? null,
+        };
+      } catch (error) {
+        // Return empty structure on error to prevent crashes
+        console.error("Error fetching shorts:", error);
+        return {
+          shorts: [],
+          nextPage: null,
+        };
+      }
     },
-    getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
+    getNextPageParam: (lastPage) => {
+      // Guard against undefined/null lastPage
+      if (!lastPage) return undefined;
+      return lastPage.nextPage ?? undefined;
+    },
     enabled: !!token,
   });
 
   // Safely extract shorts with proper null checks
-  const pages = data?.pages ?? [];
-  const shorts = pages.flatMap((p) => p?.shorts ?? []);
-  const currentShort = shorts[currentIndex] ?? null;
+  const pages = Array.isArray(data?.pages) ? data.pages : [];
+  const shorts = Array.isArray(pages)
+    ? pages.flatMap((p) => (p && Array.isArray(p.shorts) ? p.shorts : []))
+    : [];
+  const currentShort =
+    Array.isArray(shorts) && shorts.length > 0
+      ? shorts[currentIndex] ?? null
+      : null;
 
   const handleSlideChange = async (swiper: any) => {
     const index = swiper.activeIndex;
-    const shortsLength = shorts.length;
+    const shortsLength = Array.isArray(shorts) ? shorts.length : 0;
     const nearEnd = shortsLength > 0 && index >= shortsLength - 2;
 
     if (nearEnd && hasNextPage && !isFetchingNextPage) {

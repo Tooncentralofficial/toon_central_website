@@ -82,6 +82,8 @@ import ShortsIcon from "@/public/static/svg/shorts/shortsicon.svg"
 import ShortIconSelected from "@/public/static/svg/shorts/shortsiconselected.svg"
 import GreeFlameIcon from "@/public/static/svg/shorts/greenflame.svg"
 import ToonShortsLogo from "@/public/static/svg/shorts/toonshortslogo.svg"
+import MuteIcon from "@/public/static/svg/shorts/mute.svg"
+import UnmuteIcon from "@/public/static/svg/shorts/unmute.svg"
 export {
   ToonCentralIcon,
   ThumbsSolid,
@@ -166,5 +168,7 @@ export {
   ShortsIcon,
   ShortIconSelected,
   GreeFlameIcon,
-  ToonShortsLogo
+  ToonShortsLogo,
+  MuteIcon,
+  UnmuteIcon
 };
