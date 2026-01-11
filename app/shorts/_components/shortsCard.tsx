@@ -59,6 +59,7 @@ export default function ShortsCard({
   const [isMuted, setIsMuted] = useState(true);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const { user, token } = useSelector(selectAuthState);
 
   const [likes, setLikes] = useState<shortLike[]>([]);
@@ -124,6 +125,24 @@ export default function ShortsCard({
       currentVideo.play().catch((error) => {
         console.log("Video play failed:", error);
       });
+    }
+
+    // Reset pause state when slide changes
+    setIsPaused(false);
+  };
+
+  const handleTogglePause = () => {
+    const currentVideo = videoRefs.current[currentSlideIndex];
+    if (currentVideo) {
+      if (isPaused) {
+        currentVideo.play().catch((error) => {
+          console.log("Video play failed:", error);
+        });
+        setIsPaused(false);
+      } else {
+        currentVideo.pause();
+        setIsPaused(true);
+      }
     }
   };
 
@@ -273,7 +292,9 @@ export default function ShortsCard({
                 Subscribe
               </div>
             </div>
-            <h3 className="text-sm md:text-2xl line-clamp-1">CHRYSALIS Vol. 1: Fallout</h3>
+            <h3 className="text-sm md:text-2xl line-clamp-1">
+              CHRYSALIS Vol. 1: Fallout
+            </h3>
 
             <div className="flex gap-3">
               <p className="border-[1px] px-1 py-[0.1rem] md:px-3 md:py-1 border-[#05834BF5] text-xs md:text-base flex items-center justify-center">
@@ -282,7 +303,10 @@ export default function ShortsCard({
               <p className="border-[1px] px-1 py-[0.1rem] md:px-3 md:py-1 border-[#05834BF5] flex items-center justify-center">
                 Shorts
               </p>
-              <p className=" text-xs md:text-base border-[1px] px-1 py-[0.1rem] md:px-3 md:   md:py-1 border-[#05834BF5] flex items-center justify-center"> 2023</p>
+              <p className=" text-xs md:text-base border-[1px] px-1 py-[0.1rem] md:px-3 md:   md:py-1 border-[#05834BF5] flex items-center justify-center">
+                {" "}
+                2023
+              </p>
             </div>
           </div>
           <div className=" mb-0 lg:mb-10 xl:mb-20">
@@ -297,7 +321,10 @@ export default function ShortsCard({
           {/* Unmute Button - Shows on first load */}
           {!hasInteracted && (
             <button
-              onClick={handleUnmute}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleUnmute();
+              }}
               className="absolute top-4 right-4 z-30 bg-black/50 text-white px-4 py-2 rounded-full hover:bg-black/70 transition-colors"
             >
               <MuteIcon className="w-5 h-5 text-white" />
@@ -307,7 +334,10 @@ export default function ShortsCard({
           {/* Mute Toggle Button - Shows after first interaction */}
           {hasInteracted && (
             <button
-              onClick={handleToggleMute}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleToggleMute();
+              }}
               className="absolute top-4 right-4 z-30 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
             >
               {isMuted ? (
@@ -335,7 +365,10 @@ export default function ShortsCard({
           >
             {shorts?.map((short: ShortsType, index: number) => (
               <SwiperSlide className="h-full w-full" key={index}>
-                <div className="relative h-full w-full overflow-hidden">
+                <div
+                  className="relative h-full w-full overflow-hidden cursor-pointer"
+                  onClick={handleTogglePause}
+                >
                   {/* Blurred Background Video Layer */}
                   <video
                     className="absolute inset-0 w-full h-full object-cover blur-xl scale-110"

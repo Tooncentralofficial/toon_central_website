@@ -39,6 +39,7 @@ export default function ShortView({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [shortComments, setShortComments] = useState({
     comments: [],
@@ -137,6 +138,20 @@ export default function ShortView({
     }
   };
 
+  const handleTogglePause = () => {
+    if (videoRef.current) {
+      if (isPaused) {
+        videoRef.current.play().catch((error) => {
+          console.log("Video play failed:", error);
+        });
+        setIsPaused(false);
+      } else {
+        videoRef.current.pause();
+        setIsPaused(true);
+      }
+    }
+  };
+
   const handleLoadMore = () => {
     if (
       shortComments?.pagination.currentPage <
@@ -191,7 +206,10 @@ export default function ShortView({
       <div className="w-full max-w-4xl flex gap-6">
         {/* Main Video Section */}
         <div className="flex-1">
-          <div className="relative h-[82.7vh] md:h-[60vw] md:max-h-[600px] w-full rounded-md overflow-hidden bg-black">
+          <div
+            className="relative h-[82.7vh] md:h-[60vw] md:max-h-[600px] w-full rounded-md overflow-hidden bg-black cursor-pointer"
+            onClick={handleTogglePause}
+          >
             {/* Blurred Background Video Layer */}
             <video
               className="absolute inset-0 w-full h-full object-cover blur-xl scale-110"
@@ -207,7 +225,10 @@ export default function ShortView({
             {/* Unmute Button */}
             {!hasInteracted && (
               <button
-                onClick={handleUnmute}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUnmute();
+                }}
                 className="absolute top-4 right-4 z-30 bg-black/50 text-white px-4 py-2 rounded-full hover:bg-black/70 transition-colors"
               >
                 🔇 Tap to Unmute
@@ -217,7 +238,10 @@ export default function ShortView({
             {/* Mute Toggle Button */}
             {hasInteracted && (
               <button
-                onClick={handleToggleMute}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleToggleMute();
+                }}
                 className="absolute top-4 right-4 z-30 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
               >
                 {isMuted ? "🔇" : "🔊"}
