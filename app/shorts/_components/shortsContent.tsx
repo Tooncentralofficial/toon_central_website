@@ -28,6 +28,8 @@ export interface ShortsInfiniteData {
 
 export default function ShortsContent() {
   const { token } = useSelector(selectAuthState);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [shortComments, setShortComments] = useState({
     comments: [],
@@ -40,6 +42,7 @@ export default function ShortsContent() {
     },
   });
   const [commentsOpen, setCommentsOpen] = useState(false);
+
 
   const {
     data,
@@ -57,10 +60,16 @@ export default function ShortsContent() {
           `home/shorts-carousel?page=${pageParam}&limit=10`
         );
 
+        const pagination = res?.data?.pagination;
+        const current = pagination?.currentPage;
+        const total = pagination?.totalPages;
+        setTotalPages(total);
+        const nextPage = current < total ? current + 1 : null;
+        console.log("@@nextPage", nextPage);
         // Ensure consistent return structure even if API response is malformed
         return {
           shorts: Array.isArray(res?.data?.shorts) ? res.data.shorts : [],
-          nextPage: res?.data?.nextPage ?? null,
+          nextPage
         };
       } catch (error) {
         // Return empty structure on error to prevent crashes
@@ -71,13 +80,16 @@ export default function ShortsContent() {
         };
       }
     },
-    getNextPageParam: (lastPage) => {
-      // Guard against undefined/null lastPage
-      if (!lastPage) return undefined;
-      return lastPage.nextPage ?? undefined;
+    getNextPageParam: (lastPage, allPages) => {
+      console.log("@@allPages", allPages, "@@lastPage", lastPage);
+     const nextPage = allPages.length + 1
+      // Return nextPage if available, otherwise undefined to stop fetching
+      return nextPage;
     },
     enabled: !!token,
   });
+
+  console.log("@@totalPages", totalPages);
 
   // Safely extract shorts with proper null checks
   const pages = Array.isArray(data?.pages) ? data.pages : [];
@@ -188,7 +200,7 @@ export default function ShortsContent() {
   }
 
   // Show empty state if no shorts available
-  if (!shorts || shorts.length === 0) {
+  if (!Array.isArray(shorts) || shorts.length === 0) {
     return (
       <div className="w-full h-full flex items-center justify-center">
         <div className="text-center text-gray-500">No shorts available</div>
@@ -206,6 +218,9 @@ export default function ShortsContent() {
         setCommentOpen={setCommentsOpen}
         commentsOpen={commentsOpen}
         setCurrentIndex={setCurrentIndex}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage ?? false}
+        isFetchingNextPage={isFetchingNextPage}
       />
       <motion.div
         className="border-l-1 border-foreground-300 border-t-1 hidden md:flex flex-col h-[38rem]"

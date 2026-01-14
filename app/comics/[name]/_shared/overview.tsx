@@ -16,9 +16,12 @@ import { parseArray } from "@/helpers/parsArray";
 import { ComicGenre } from "@/app/trending/_components/trendingItem";
 import SearchModal from "@/app/_shared/layout/search";
 import ShareModal from "@/app/_shared/modals/shareModal";
+import Link from "next/link";
 
 const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
   console.log("@@comicOverviewData", data);
+  const userId = data?.userId;
+
   const { onClose, onOpen, isOpen, onOpenChange } = useDisclosure();
   const disabled = useMemo(() => data?.episodes?.length <= 0, [data]);
   const queryClient = useQueryClient();
@@ -108,14 +111,18 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
 
             <div className="flex flex-col mt-1 lg:flex-row lg:w-[70%]  gap-2 justify-between ">
               {data?.publishedByToonCentral === 1 ? (
-                <div className="flex gap-4">
-                  <span>ToonCentral</span> <GreenUser />
-                </div>
+                <Link href={`/pubprofile/${userId}`}>
+                  <div className="flex gap-4">
+                    <span>ToonCentral</span> <GreenUser />
+                  </div>
+                </Link>
               ) : (
-                <div className="flex gap-4">
-                  <span>{data?.user.username}</span>
-                  <GreenUser />
-                </div>
+                <Link href={`/pubprofile/${userId}`}>
+                  <div className="flex gap-4">
+                    <span>{data?.user.username}</span>
+                    <GreenUser />
+                  </div>
+                </Link>
               )}
               <span className="flex flex-wrap text-[0.6rem] md:text-[0.9rem] gap-2">
                 {data?.genres.map((item: ComicGenre, i: number) => (

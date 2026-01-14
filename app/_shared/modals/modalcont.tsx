@@ -38,14 +38,8 @@ const ModalContainer = ({
       classNames={{
         closeButton: "hidden",
       }}
-      size="4xl"
     >
       <ModalContent
-        style={{
-          backgroundImage: `url(${OtakuBanner.src})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
       >
         {(onClose) => (
           <>
@@ -61,7 +55,7 @@ const ModalContainer = ({
               </Button>
             </ModalHeader>
             <ModalBody>{children}</ModalBody>
-            <ModalFooter className="bg-transparent"></ModalFooter>
+            <ModalFooter></ModalFooter>
           </>
         )}
       </ModalContent>

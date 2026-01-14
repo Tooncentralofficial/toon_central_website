@@ -382,11 +382,14 @@ export default function ShortView({
                 </button>
               </div>
               <div className="flex-1 overflow-y-auto no-scrollbar mb-4 min-h-0">
-                {shortCommentsLoading && shortComments.comments.length === 0 ? (
+                {shortCommentsLoading &&
+                (!Array.isArray(shortComments?.comments) ||
+                  shortComments.comments.length === 0) ? (
                   <div className="text-center text-gray-400 animate-pulse">
                     Loading comments...
                   </div>
-                ) : shortComments.comments.length > 0 ? (
+                ) : Array.isArray(shortComments?.comments) &&
+                  shortComments.comments.length > 0 ? (
                   <div className="flex flex-col gap-4">
                     {shortComments.comments.map((comment: any, i: number) => (
                       <ShortsComments

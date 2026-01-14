@@ -28,11 +28,13 @@ import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import ShortsComments from "./shortscomments";
 import { shortLike, ShortsType } from "@/helpers/types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getRequestProtected } from "@/app/utils/queries/requests";
 import { prevRoutes } from "@/lib/session/prevRoutes";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import ShareModal from "@/app/_shared/modals/shareModal";
+import { PUBLICURL } from "@/envs";
 
 interface ShortsCardProps {
   shorts: ShortsType[];
@@ -42,6 +44,9 @@ interface ShortsCardProps {
   commentsOpen: boolean;
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
   shortComment: any;
+  fetchNextPage: () => Promise<any>;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
 }
 
 export default function ShortsCard({
@@ -52,14 +57,19 @@ export default function ShortsCard({
   commentsOpen,
   setCurrentIndex,
   shortComment,
+  fetchNextPage,
+  hasNextPage,
+  isFetchingNextPage,
 }: ShortsCardProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const pathname = usePathname();
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const [isMuted, setIsMuted] = useState(true);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const { user, token } = useSelector(selectAuthState);
 
   const [likes, setLikes] = useState<shortLike[]>([]);
@@ -106,10 +116,35 @@ export default function ShortsCard({
   }, []);
 
   // Handle video playback when slide changes
-  const handleSlideChange = (swiper: any) => {
+  const handleSlideChange = async (swiper: any) => {
     const newIndex = swiper.activeIndex;
     setCurrentSlideIndex(newIndex);
     setCurrentIndex(newIndex);
+
+    // Check if we need to fetch more shorts
+    const shortsLength = Array.isArray(shorts) ? shorts.length : 0;
+    const nearEnd = shortsLength > 0 && newIndex >= shortsLength - 2; // Trigger when less than 2 shorts remaining
+
+    if (nearEnd && hasNextPage && !isFetchingNextPage) {
+      console.log(
+        "Fetching next page - Index:",
+        newIndex,
+        "Length:",
+        shortsLength,
+        "HasNext:",
+        hasNextPage
+      );
+      const nextPage = await fetchNextPage();
+      console.log(nextPage);
+      // Update Swiper to recognize new slides after fetching
+      setTimeout(() => {
+        if (swiperRef.current && !swiperRef.current.destroyed) {
+          swiperRef.current.update();
+          swiperRef.current.updateSlides();
+          swiperRef.current.updateSize();
+        }
+      }, 100);
+    }
 
     // Pause all videos
     videoRefs.current.forEach((video) => {
@@ -130,6 +165,20 @@ export default function ShortsCard({
     // Reset pause state when slide changes
     setIsPaused(false);
   };
+
+  // Update Swiper when shorts array changes (new shorts loaded)
+  useEffect(() => {
+    if (
+      swiperRef.current &&
+      !swiperRef.current.destroyed &&
+      Array.isArray(shorts) &&
+      shorts.length > 0
+    ) {
+      swiperRef.current.update();
+      swiperRef.current.updateSlides();
+      swiperRef.current.updateSize();
+    }
+  }, [Array.isArray(shorts) ? shorts.length : 0]);
 
   const handleTogglePause = () => {
     const currentVideo = videoRefs.current[currentSlideIndex];
@@ -178,13 +227,29 @@ export default function ShortsCard({
     });
   };
 
-  const ArrowCircle = ({ type }: { type: "left" | "right" }) => {
+  const handleShare = () => {
+    setIsShareModalOpen(true);
+  };
+
+  const ArrowCircle = ({
+    type,
+    disabled,
+  }: {
+    type: "left" | "right";
+    disabled?: boolean;
+  }) => {
     return (
       <div
-        onClick={type === "left" ? handlePrev : handleNext}
+        onClick={
+          disabled ? undefined : type === "left" ? handlePrev : handleNext
+        }
         className={` ${
           type === "left" ? "left-[-60px]" : "right-[-60px]"
-        } rounded-[50%] h-10 w-10 bg-[#2E3747] hidden md:inline-grid place-items-center cursor-pointer z-10`}
+        } rounded-[50%] h-10 w-10 bg-[#2E3747] hidden md:inline-grid place-items-center z-10 ${
+          disabled
+            ? "opacity-50 cursor-not-allowed"
+            : "cursor-pointer hover:bg-[#3a4558]"
+        } transition-all`}
       >
         {type === "left" ? <ArrowUpIcon /> : <ArrowDownIcon />}
       </div>
@@ -245,6 +310,79 @@ export default function ShortsCard({
     },
   });
 
+  // Get creator ID from current short
+  const creatorId = shorts?.[currentSlideIndex]?.user?.id;
+
+  // Check follow status
+  const {
+    data: isFollowingdata,
+    isLoading: isCheckingFollow,
+    isFetching: isFetchingFollow,
+  } = useQuery({
+    queryKey: ["isfollowing", creatorId],
+    queryFn: () =>
+      getRequestProtected(
+        `profile/${creatorId}/check-follow-status`,
+        token,
+        pathname
+      ),
+    enabled: !!token && !!creatorId && !!user && user.id !== creatorId,
+  });
+  const isFollowing = isFollowingdata?.data === true;
+
+  // Follow mutation
+  const { mutate: follow, isPending: isFollowingPending } = useMutation({
+    mutationKey: ["follow", creatorId],
+    mutationFn: () =>
+      getRequestProtected(`profile/${creatorId}/follow`, token, pathname),
+    onSuccess: (response) => {
+      if (response?.success) {
+        toast(response?.message || "Followed successfully", {
+          type: "success",
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["isfollowing", creatorId],
+        });
+      }
+    },
+    onError: () => {
+      toast("Failed to follow", { type: "error" });
+    },
+  });
+
+  // Unfollow mutation
+  const { mutate: unfollow, isPending: isUnfollowingPending } = useMutation({
+    mutationKey: ["unfollow", creatorId],
+    mutationFn: () =>
+      getRequestProtected(`profile/${creatorId}/unfollow`, token, pathname),
+    onSuccess: (response) => {
+      if (response?.success) {
+        toast(response?.message || "Unfollowed successfully", {
+          type: "success",
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["isfollowing", creatorId],
+        });
+      }
+    },
+    onError: () => {
+      toast("Failed to unfollow", { type: "error" });
+    },
+  });
+
+  // Handle follow/unfollow
+  const handleFollow = () => {
+    if (!token) {
+      toast("Please login to follow", { type: "info" });
+      return;
+    }
+    if (isFollowing) {
+      unfollow();
+    } else {
+      follow();
+    }
+  };
+
   const hasLiked = useMemo(() => {
     if (!user?.id || !shorts?.[currentSlideIndex]?.likesAndViews) {
       return false;
@@ -266,10 +404,16 @@ export default function ShortsCard({
   }, [shorts, currentSlideIndex, user?.id]);
 
   const lv = shorts?.[currentSlideIndex]?.likesAndViews?.[0];
-  if (!shorts || shorts.length === 0) return null;
+  if (!Array.isArray(shorts) || shorts.length === 0) return null;
   if (!shorts?.[currentSlideIndex]) {
     return null;
   }
+
+  // Calculate if we're at beginning or end
+  const isAtBeginning = currentSlideIndex === 0;
+  const isAtEnd =
+    Array.isArray(shorts) && currentSlideIndex >= shorts.length - 1;
+
   return (
     <div className="w-full h-full block md:flex md:justify-center md:items-center relative flex-1 overflow-hidden shorts-card-container">
       <div className="absolute top-2 left-2 z-[22]">
@@ -288,25 +432,56 @@ export default function ShortsCard({
               <h3 className="text-[#FCFCFDB2] text-sm md:text-xl line-clamp-1">
                 {shorts?.[currentSlideIndex]?.title}
               </h3>
-              <div className="bg-[#475467] px-3 py-1 rounded-2xl text-xs md:text-base">
-                Subscribe
-              </div>
+              {user?.id !== creatorId && (
+                <button
+                  onClick={handleFollow}
+                  disabled={
+                    isCheckingFollow ||
+                    isFetchingFollow ||
+                    isFollowingPending ||
+                    isUnfollowingPending
+                  }
+                  className={`px-3 py-1 rounded-2xl text-xs md:text-base transition-colors ${
+                    isFollowing
+                      ? "bg-[#475467] text-white"
+                      : "bg-[#05834B] text-white hover:bg-[#047a42]"
+                  } ${
+                    isCheckingFollow ||
+                    isFetchingFollow ||
+                    isFollowingPending ||
+                    isUnfollowingPending
+                      ? "opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
+                  }`}
+                >
+                  {isCheckingFollow ||
+                  isFetchingFollow ||
+                  isFollowingPending ||
+                  isUnfollowingPending
+                    ? "Loading..."
+                    : isFollowing
+                    ? "Following"
+                    : "Follow"}
+                </button>
+              )}
             </div>
-            <h3 className="text-sm md:text-2xl line-clamp-1">
-              CHRYSALIS Vol. 1: Fallout
-            </h3>
+            <div className="flex flex-col gap-2 ml-0 md:ml-5">
+              <h3 className="text-sm md:text-2xl line-clamp-1">
+                CHRYSALIS Vol. 1: Fallout
+              </h3>
 
-            <div className="flex gap-3">
-              <p className="border-[1px] px-1 py-[0.1rem] md:px-3 md:py-1 border-[#05834BF5] text-xs md:text-base flex items-center justify-center">
-                Comedy
-              </p>
-              <p className="border-[1px] px-1 py-[0.1rem] md:px-3 md:py-1 border-[#05834BF5] flex items-center justify-center">
-                Shorts
-              </p>
-              <p className=" text-xs md:text-base border-[1px] px-1 py-[0.1rem] md:px-3 md:   md:py-1 border-[#05834BF5] flex items-center justify-center">
-                {" "}
-                2023
-              </p>
+              <div className="flex gap-3">
+                <p className="border-[1px] px-1 py-[0.1rem] md:px-3 md:py-1 border-[#05834BF5] text-xs md:text-base flex items-center justify-center">
+                  Comedy
+                </p>
+                <p className="border-[1px] px-1 py-[0.1rem] md:px-3 md:py-1 border-[#05834BF5] flex items-center justify-center">
+                  Shorts
+                </p>
+                <p className=" text-xs md:text-base border-[1px] px-1 py-[0.1rem] md:px-3 md:   md:py-1 border-[#05834BF5] flex items-center justify-center">
+                  {" "}
+                  2023
+                </p>
+              </div>
             </div>
           </div>
           <div className=" mb-0 lg:mb-10 xl:mb-20">
@@ -364,7 +539,10 @@ export default function ShortsCard({
             threshold={5}
           >
             {shorts?.map((short: ShortsType, index: number) => (
-              <SwiperSlide className="h-full w-full" key={index}>
+              <SwiperSlide
+                className="h-full w-full"
+                key={`${short.uuid || short.id || index}-${index}`}
+              >
                 <div
                   className="relative h-full w-full overflow-hidden cursor-pointer"
                   onClick={handleTogglePause}
@@ -398,7 +576,7 @@ export default function ShortsCard({
             ))}
           </Swiper>
         </div>
-        <div className="absolute md:static right-5 bottom-0 z-[22] flex flex-col gap-10 justify-end mb-5">
+        <div className="absolute md:static right-5 bottom-0 z-[22] flex flex-col gap-5 md:gap-10 justify-end mb-5">
           <div
             onClick={() => likeShorts(shorts?.[currentSlideIndex]?.uuid)}
             className="flex flex-col items-center gap-2"
@@ -430,7 +608,10 @@ export default function ShortsCard({
               {shorts?.[currentSlideIndex]?.comments?.length || 0}
             </p>
           </div>
-          <div>
+          <div
+            className="flex flex-col items-center gap-2 cursor-pointer"
+            onClick={handleShare}
+          >
             <ShareShortsIcon className="w-6 md:w-10 h-6 md:h-10 ml-1" />
           </div>
           <div className="overflow-hidden w-10 h-10 rounded-full">
@@ -449,8 +630,8 @@ export default function ShortsCard({
           </div>
         </div>
         <div className="flex flex-col gap-5 justify-center ml-5">
-          <ArrowCircle type="left" />
-          <ArrowCircle type="right" />
+          <ArrowCircle type="left" disabled={isAtBeginning} />
+          <ArrowCircle type="right" disabled={isAtEnd} />
         </div>
       </div>
       <AnimatePresence>
@@ -486,6 +667,15 @@ export default function ShortsCard({
           </div>
         </motion.div>
       </AnimatePresence>
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        onOpenChange={() => setIsShareModalOpen((prev) => !prev)}
+        comicImageUrl={shorts?.[currentSlideIndex]?.coverImage || ""}
+        customUrl={`${PUBLICURL || "http://localhost:3000"}/shorts/${
+          shorts?.[currentSlideIndex]?.uuid
+        }`}
+      />
     </div>
   );
 }
