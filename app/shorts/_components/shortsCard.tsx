@@ -430,7 +430,7 @@ export default function ShortsCard({
           <div className="flex flex-col gap-4 mb-5 md:mb-0">
             <div className="flex gap-3 items-center">
               <h3 className="text-[#FCFCFDB2] text-sm md:text-xl line-clamp-1">
-                {shorts?.[currentSlideIndex]?.title}
+                {shorts?.[currentSlideIndex]?.user?.username}
               </h3>
               {user?.id !== creatorId && (
                 <button
@@ -467,7 +467,7 @@ export default function ShortsCard({
             </div>
             <div className="flex flex-col gap-2 ml-0 md:ml-5">
               <h3 className="text-sm md:text-2xl line-clamp-1">
-                CHRYSALIS Vol. 1: Fallout
+                {shorts?.[currentSlideIndex]?.title}
               </h3>
 
               <div className="flex gap-3">

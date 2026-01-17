@@ -144,7 +144,8 @@ function HomeShorts() {
           <Swiper
             centeredSlides={true}
             slidesPerGroup={1}
-            initialSlide={initialSlide}
+            
+            loop={true}
             breakpoints={{
               0: {
                 slidesPerView: 3, // mobile

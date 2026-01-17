@@ -25,7 +25,7 @@ export default function Page() {
     queryFn: () =>
       getRequest("/trending/new-and-trending?filter=all&page=1&limit=50"),
   });
-  
+
   const {
     data: readComics,
     isLoading: loadingRead,
@@ -53,7 +53,10 @@ export default function Page() {
           <H2SectionTitle title="New and Trending" />
 
           <div className="flex gap-6 h-[320px] md:h-[500px]">
-            <div className="flex w-full rounded-[8px] overflow-hidden">
+            <Link
+              href={`/comics/${newTrending[0]?.uuid}`}
+              className="flex w-full rounded-[8px] overflow-hidden cursor-pointer"
+            >
               <div className="flex w-full h-full  overflow-hidden relative">
                 <Skeleton
                   isLoaded={!isLoading}
@@ -80,15 +83,23 @@ export default function Page() {
                         </div>
                         <Likes likesNViews={newTrending[0]?.likesAndViews} />
                       </div>
-                      <div>
+                      <div
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                      >
                         <SolidPrimaryButton size="md">Add</SolidPrimaryButton>
                       </div>
                     </div>
                   </div>
                 </Skeleton>
               </div>
-            </div>
-            <div className=" w-full rounded-[8px] overflow-hidden hidden md:flex">
+            </Link>
+            <Link
+              href={`/comics/${newTrending[1]?.uuid}`}
+              className="w-full rounded-[8px] overflow-hidden hidden md:flex cursor-pointer"
+            >
               <div className="flex w-full h-full  overflow-hidden relative">
                 <Skeleton
                   isLoaded={!isLoading}
@@ -115,38 +126,43 @@ export default function Page() {
                         </div>
                         <Likes likesNViews={newTrending[1]?.likesAndViews} />
                       </div>
-                      <div>
+                      <div
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                      >
                         <SolidPrimaryButton size="md">Add</SolidPrimaryButton>
                       </div>
                     </div>
                   </div>
                 </Skeleton>
               </div>
-            </div>
+            </Link>
 
             <div className="hidden md:flex w-full flex-col gap-5">
               <div className="rounded-lg overflow-hidden h-[50%]">
-              <Link href={`/comics/${newTrending[2]?.uuid}`}>
-                <Skeleton
-                  isLoaded={!isLoading}
-                  className="rounded-lg overflow-hidden h-full"
-                >
-                  <Image
-                    src={`${newTrending[2]?.coverImage || ""}`}
-                    width={200}
-                    height={200}
-                    alt={`${newTrending[2]?.title || "toon_central"}`}
-                    objectPosition="center bottom"
-                    objectFit="cover"
-                    style={{
-                      objectFit: "cover",
-                      width: "100%",
-                      height: "100%",
-                    }}
-                    unoptimized
-                    priority
-                  />
-                </Skeleton>
+                <Link href={`/comics/${newTrending[2]?.uuid}`}>
+                  <Skeleton
+                    isLoaded={!isLoading}
+                    className="rounded-lg overflow-hidden h-full"
+                  >
+                    <Image
+                      src={`${newTrending[2]?.coverImage || ""}`}
+                      width={200}
+                      height={200}
+                      alt={`${newTrending[2]?.title || "toon_central"}`}
+                      objectPosition="center bottom"
+                      objectFit="cover"
+                      style={{
+                        objectFit: "cover",
+                        width: "100%",
+                        height: "100%",
+                      }}
+                      unoptimized
+                      priority
+                    />
+                  </Skeleton>
                 </Link>
               </div>
               <div className="rounded-lg overflow-hidden h-[50%]">
@@ -184,7 +200,13 @@ export default function Page() {
             {isLoading || newTrending.length == 0 ? (
               <Skeleton className="w-full h-[60px]"></Skeleton>
             ) : (
-              newTrending.map((item, i) => <TrendingItem key={i} data={item} refetchTrending={refetchTrending} />)
+              newTrending.map((item, i) => (
+                <TrendingItem
+                  key={i}
+                  data={item}
+                  refetchTrending={refetchTrending}
+                />
+              ))
             )}
           </div>
         </div>
@@ -193,7 +215,10 @@ export default function Page() {
         <div className="child-wrap w-full">
           <H2SectionTitle title="Most Read Comics" />
           <div className="flex flex-col lg:flex-row gap-6">
-            <div className="flex w-full h-[320px] md:h-[500px] rounded-[8px] overflow-hidden">
+            <Link
+              href={`/comics/${mostRead[0]?.uuid}`}
+              className="flex w-full h-[320px] md:h-[500px] rounded-[8px] overflow-hidden cursor-pointer"
+            >
               <div className="flex w-full h-full  overflow-hidden relative">
                 <Skeleton
                   isLoaded={!loadingRead}
@@ -220,15 +245,23 @@ export default function Page() {
                         </div>
                         <Likes likesNViews={mostRead[0]?.likesAndViews} />
                       </div>
-                      <div>
+                      <div
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                      >
                         <SolidPrimaryButton size="md">Add</SolidPrimaryButton>
                       </div>
                     </div>
                   </div>
                 </Skeleton>
               </div>
-            </div>
-            <div className="flex w-full h-[320px] md:h-[500px] rounded-[8px] overflow-hidden">
+            </Link>
+            <Link
+              href={`/comics/${mostRead[1]?.uuid}`}
+              className="flex w-full h-[320px] md:h-[500px] rounded-[8px] overflow-hidden cursor-pointer"
+            >
               <div className="flex w-full h-full  overflow-hidden relative">
                 <Skeleton
                   isLoaded={!loadingRead}
@@ -251,23 +284,34 @@ export default function Page() {
                     <div className="flex gap-7 items-center">
                       <div>
                         <div className="font-bold text-xl">
-                          {mostRead[0]?.title}
+                          {mostRead[1]?.title}
                         </div>
-                        <Likes likesNViews={mostRead[0]?.likesAndViews} />
+                        <Likes likesNViews={mostRead[1]?.likesAndViews} />
                       </div>
-                      <div>
+                      <div
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                      >
                         <SolidPrimaryButton size="md">Add</SolidPrimaryButton>
                       </div>
                     </div>
                   </div>
                 </Skeleton>
               </div>
-            </div>
+            </Link>
             <div className="w-full grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-6">
               {loadingRead || mostRead.length == 0 ? (
                 <Skeleton className="w-full h-[60px]"></Skeleton>
               ) : (
-                mostRead.map((item, i) => <TrendingItem key={i} data={item} refetchTrending={refetchTrending}  />)
+                mostRead.map((item, i) => (
+                  <TrendingItem
+                    key={i}
+                    data={item}
+                    refetchTrending={refetchTrending}
+                  />
+                ))
               )}
             </div>
           </div>

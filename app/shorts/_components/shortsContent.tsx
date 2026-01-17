@@ -29,7 +29,7 @@ export interface ShortsInfiniteData {
 export default function ShortsContent() {
   const { token } = useSelector(selectAuthState);
   const [totalPages, setTotalPages] = useState<number>(0);
-  
+
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [shortComments, setShortComments] = useState({
     comments: [],
@@ -42,7 +42,6 @@ export default function ShortsContent() {
     },
   });
   const [commentsOpen, setCommentsOpen] = useState(false);
-
 
   const {
     data,
@@ -61,15 +60,16 @@ export default function ShortsContent() {
         );
 
         const pagination = res?.data?.pagination;
-        const current = pagination?.currentPage;
-        const total = pagination?.totalPages;
+        const current = pagination?.currentPage ?? 1;
+        const total = pagination?.totalPages ?? 1;
         setTotalPages(total);
-        const nextPage = current < total ? current + 1 : null;
+        const nextPage =
+          current && total && current < total ? current + 1 : null;
         console.log("@@nextPage", nextPage);
         // Ensure consistent return structure even if API response is malformed
         return {
           shorts: Array.isArray(res?.data?.shorts) ? res.data.shorts : [],
-          nextPage
+          nextPage,
         };
       } catch (error) {
         // Return empty structure on error to prevent crashes
@@ -82,7 +82,7 @@ export default function ShortsContent() {
     },
     getNextPageParam: (lastPage, allPages) => {
       console.log("@@allPages", allPages, "@@lastPage", lastPage);
-     const nextPage = allPages.length + 1
+      const nextPage = allPages?.length ? allPages?.length + 1 : 1;
       // Return nextPage if available, otherwise undefined to stop fetching
       return nextPage;
     },
@@ -134,15 +134,17 @@ export default function ShortsContent() {
 
   useEffect(() => {
     if (shortCommentsdata?.data) {
+      const pagination = shortCommentsdata.data.pagination;
+      const currentPage = pagination?.currentPage || 1;
       setShortComments((prev) => ({
         comments:
-          shortCommentsdata.data.pagination.currentPage === 1
+          currentPage === 1
             ? shortCommentsdata.data.short_comments || []
             : [
                 ...prev.comments,
                 ...(shortCommentsdata.data.short_comments || []),
               ],
-        pagination: shortCommentsdata.data.pagination || {
+        pagination: pagination || {
           total: 0,
           count: 0,
           perPage: 10,

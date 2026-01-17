@@ -9,6 +9,7 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import Likes from "@/app/_shared/cards/likes";
+import Link from "next/link";
 interface Genre {
   id: number; // Unique identifier for the genre
   name: string; // Name of the genre
@@ -69,7 +70,10 @@ const TrendingItem = ({ data ,refetchTrending}: { data: any,refetchTrending?: an
   console.log(data.genres);
   return (
     <div className="flex items-center gap-4 justify-between">
-      <div className="flex items-center gap-4">
+      <Link
+        href={`/comics/${data.uuid}`}
+        className="flex items-center gap-4 flex-1 cursor-pointer"
+      >
         <div className="w-[60px] h-[60px] overflow-hidden rounded-[6px]">
           <Image
             src={`${data?.coverImage || ""}`}
@@ -106,17 +110,23 @@ const TrendingItem = ({ data ,refetchTrending}: { data: any,refetchTrending?: an
             favourites={data?.favourites}
           />
         </div>
-      </div>
+      </Link>
       {subscribed ? (
         <div
-          onClick={() => likeComic()}
+          onClick={(e) => {
+            e.stopPropagation();
+            likeComic();
+          }}
           className={"cursor-pointer hover:bg-[#afb0af21] p-2 rounded-full"}
         >
           <RemoveBox />
         </div>
       ) : (
         <div
-          onClick={() => likeComic()}
+          onClick={(e) => {
+            e.stopPropagation();
+            likeComic();
+          }}
           className={"cursor-pointer hover:bg-[#afb0af21] p-2 rounded-full"}
         >
           <AddBox />
