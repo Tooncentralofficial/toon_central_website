@@ -28,27 +28,31 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { usePathname } from "next/navigation";
 import { DateInput } from "@nextui-org/react";
-import {  parseDate } from "@internationalized/date";
+import { parseDate } from "@internationalized/date";
 export default function DetailsTab() {
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const dispatch = useDispatch();
   const [profile, setProfile] = useState<any>(null);
   const [countries, setCountries] = useState<any>([]);
+  const [mobileOperators, setMobileOperators] = useState<any>([]);
   const { user, userType, token } = useSelector(selectAuthState);
   const parse = (dateString: any): any => {
     if (!dateString) return null; // Handle undefined or empty values properly
     const [year, month, day] = dateString.split("-");
     return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
   };
+  
   const initialValues = useMemo(() => {
     let vals = {
       photo: profile?.photo || user?.photo || "",
       firstName: profile?.firstName || user?.first_name || "",
       lastName: profile?.lastName || user?.last_name || "",
-      phone: profile?.phone || user?.phone || "",
+      telephone: profile?.telephone || user?.telephone || "",
       username: profile?.username || user?.username || "",
       countryId: profile?.countryId || user?.country_id || null,
+      mobileOperatorId:
+        profile?.mobileOperatorId || user?.mobile_operator_id || null,
       dob: profile?.dob || user?.dob || "",
       email: profile?.email || user?.email || "",
       welcomeNote: profile?.welcomeNote || user?.welcome_note || "",
@@ -68,6 +72,7 @@ export default function DetailsTab() {
     queryFn: () => getRequestProtected("/profile", token, pathname),
     enabled: token !== null,
   });
+  console.log("@@profile", data)
 
   const {
     data: countriesData,
@@ -77,7 +82,16 @@ export default function DetailsTab() {
     queryKey: ["countyList"],
     queryFn: () => getRequest("/selectables/countries"),
   });
-  
+
+  const {
+    data: mobileOperatorsData,
+    isLoading: mobileOperatorsLoading,
+    isSuccess: mobileOperatorsSuccess,
+  } = useQuery({
+    queryKey: ["mobile-operators"],
+    queryFn: () => getRequest("/selectables/mobile-operators"),
+  });
+
   useEffect(() => {
     if (isSuccess) {
       setProfile(data?.data);
@@ -85,13 +99,23 @@ export default function DetailsTab() {
     if (countriesSuccess) {
       setCountries(countriesData?.data);
     }
-  }, [isSuccess, isLoading, isFetching, countriesSuccess]);
+    if (mobileOperatorsSuccess) {
+      setMobileOperators(mobileOperatorsData?.data);
+    }
+  }, [
+    isSuccess,
+    isLoading,
+    isFetching,
+    countriesSuccess,
+    mobileOperatorsSuccess,
+  ]);
 
   const validationSchema = Yup.object().shape({
     welcomeNote: Yup.string().required(" is required"),
     username: Yup.string().required(" is required"),
     // email: Yup.string().required(" is required"),
-    phone: Yup.string().required(" is required"),
+    telephone: Yup.string().required(" is required"),
+    mobileOperatorId: Yup.number().required(" is required"),
     dob: Yup.string()
       .required("Date of birth is required")
       .test("is-18", "You must be at least 18 years old", function (value) {
@@ -119,6 +143,7 @@ export default function DetailsTab() {
     validationSchema,
     enableReinitialize: true,
     onSubmit: (values) => {
+      console.log("@@values", values)
       updateUser.mutate(values);
     },
   });
@@ -278,13 +303,13 @@ export default function DetailsTab() {
                 <label className="text-[#272727]">Phone</label>
                 <input
                   disabled={updateUser.isPending}
-                  name="phone"
-                  aria-label="phone"
-                  placeholder="Enter phone"
+                  name="telephone"
+                  aria-label="telephone"
+                  placeholder="Enter phonenumber"
                   onChange={formik.handleChange}
-                  value={formik.values.phone}
+                  value={formik.values.telephone}
                   className={`text-[#000000] p-2 rounded-md ${
-                    Boolean(formik.errors.phone)
+                    Boolean(formik.errors.telephone)
                       ? "bg-[#efc2c2]"
                       : " bg-[#FBFBFB]"
                   }  outline-none`}
@@ -320,11 +345,9 @@ export default function DetailsTab() {
                     formik.setFieldValue("dob", formattedDate);
                   }}
                   value={
-
                     formik.values.dob
                       ? (parseDate(formik.values.dob) as unknown as any)
                       : undefined
-
                   }
                   variant="flat"
                   color="primary"
@@ -363,22 +386,34 @@ export default function DetailsTab() {
                   ))}
                 </select>
               </div>
-              {/* <div className="flex flex-col gap-2 min-w-[30%]">
-                    <label className="text-[#272727]">Email</label>
-                    <input
-                      disabled={updateUser.isPending}
-                      name="email"
-                      aria-label="email"
-                      placeholder="Enter email"
-                      onChange={formik.handleChange}
-                      value={formik.values.email}
-                      className={`text-[#000000] p-2 rounded-md ${
-                        Boolean(formik.errors.email)
-                          ? "bg-[#efc2c2]"
-                          : " bg-[#FBFBFB]"
-                      }  outline-none`}
-                    />
-                  </div> */}
+              <div className="flex flex-col gap-2 min-w-[30%]">
+                <label className="text-[#272727]">Mobile Operator</label>
+                <select
+                  disabled={!mobileOperatorsSuccess || updateUser.isPending}
+                  name="mobileOperatorId"
+                  aria-label="mobileOperatorId"
+                  onChange={(e) =>
+                    formik.setFieldValue("mobileOperatorId", e.target.value)
+                  }
+                  value={
+                    formik.values.mobileOperatorId
+                      ? parseInt(formik.values.mobileOperatorId)
+                      : ""
+                  }
+                  className={`text-[#000000] p-2 rounded-md ${
+                    Boolean(formik.errors.mobileOperatorId)
+                      ? "bg-[#efc2c2]"
+                      : " bg-[#FBFBFB]"
+                  } outline-none`}
+                >
+                  <option value="" label="Select mobile operator" />
+                  {mobileOperators?.map((operator: any, index: any) => (
+                    <option key={index} value={operator?.id}>
+                      {operator?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="flex justify-between items-center bg-[#FBFBFB] p-4 rounded-[12px]">

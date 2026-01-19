@@ -1,6 +1,6 @@
 import { axiosInstance } from "@/app/utils/queries/axiosInstance";
 import { redirect } from "next/navigation";
-import SetPassword from "./setPass";
+import VerifyEmail from "./VerifyEmail";
 
 export default async function Page({
   params,
@@ -9,10 +9,11 @@ export default async function Page({
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const { verification_code,email } = searchParams;
+  const { verification_code, email } = searchParams;
   if (!verification_code) {
     redirect("/auth/signup");
   }
+
   const verify = await axiosInstance
     .get(`/onboard/verify?verification_code=${verification_code}`)
     .then((data) => data)
@@ -21,8 +22,22 @@ export default async function Page({
     });
 
   if (!verify) {
-    return <div>Could not verify</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <div className="text-red-500 text-5xl mb-4">✕</div>
+        <p className="text-xl text-center text-red-500">Could not verify</p>
+        <p className="text-sm text-gray-400 mt-2 text-center">
+          The verification code is invalid or has expired.
+        </p>
+      </div>
+    );
   }
 
-  return <SetPassword verification_code={verification_code} email={email} />;
+  return (
+    <VerifyEmail
+      verification_code={verification_code}
+      email={email}
+      verifyResult={verify}
+    />
+  );
 }

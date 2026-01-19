@@ -9,6 +9,7 @@ import { ToastContainer } from "react-toastify";
 import { Store } from "./store";
 import { Provider } from "react-redux";
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Mainfooter from "@/app/_shared/layout/footermain";
 import MainfooterWithDelay from "@/app/_shared/layout/footermain";
 import { useSessionTracker } from "./hooks/useSessionTracker";
@@ -60,16 +61,22 @@ export default function AppProvider({
   children: React.ReactNode;
 }>) {
   const queryClient = getQueryClient();
+  const pathname = usePathname();
+
+  // Check if we're on the shorts page or any shorts sub-routes
+  const isShortsPage = pathname?.startsWith("/shorts") ?? false;
+
   useEffect(() => {
     const preferredTheme = getPreferredTheme();
     document.documentElement.setAttribute("data-theme", preferredTheme);
   }, []);
+
   return (
     <NextUIProvider>
       <Provider store={Store}>
         <SessionTracker />
         <QueryClientProvider client={queryClient}>
-          <NavHome />
+          {!isShortsPage && <NavHome />}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

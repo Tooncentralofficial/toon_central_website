@@ -100,6 +100,7 @@ export interface ShortsType {
   title: string;
   description: string;
   upload: string;
+  coverImage: string;
   amount: number;
   audienceId: number;
   isMonetized: number;

@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import "swiper/css";
 // @ts-ignore
 import "swiper/css/pagination";
+import "../shorts.css";
 import Image from "next/image";
 import ShortsComments from "./shortscomments";
 import ShortCommentInput from "./shortsCommentInut";
@@ -27,6 +28,8 @@ export interface ShortsInfiniteData {
 
 export default function ShortsContent() {
   const { token } = useSelector(selectAuthState);
+  const [totalPages, setTotalPages] = useState<number>(0);
+
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [shortComments, setShortComments] = useState({
     comments: [],
@@ -51,27 +54,56 @@ export default function ShortsContent() {
     queryKey: ["shorts"],
     initialPageParam: 1,
     queryFn: async ({ pageParam = 1 }) => {
-      const res = await getRequest(
-        `home/shorts-carousel?page=${pageParam}&limit=10`
-      );
+      try {
+        const res = await getRequest(
+          `home/shorts-carousel?page=${pageParam}&limit=10`
+        );
 
-      return {
-        shorts: res?.data?.shorts || [],
-        nextPage: res?.data?.nextPage || null,
-      };
+        const pagination = res?.data?.pagination;
+        const current = pagination?.currentPage ?? 1;
+        const total = pagination?.totalPages ?? 1;
+        setTotalPages(total);
+        const nextPage =
+          current && total && current < total ? current + 1 : null;
+        console.log("@@nextPage", nextPage);
+        // Ensure consistent return structure even if API response is malformed
+        return {
+          shorts: Array.isArray(res?.data?.shorts) ? res.data.shorts : [],
+          nextPage,
+        };
+      } catch (error) {
+        // Return empty structure on error to prevent crashes
+        console.error("Error fetching shorts:", error);
+        return {
+          shorts: [],
+          nextPage: null,
+        };
+      }
     },
-    getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
+    getNextPageParam: (lastPage, allPages) => {
+      console.log("@@allPages", allPages, "@@lastPage", lastPage);
+      const nextPage = allPages?.length ? allPages?.length + 1 : 1;
+      // Return nextPage if available, otherwise undefined to stop fetching
+      return nextPage;
+    },
     enabled: !!token,
   });
 
+  console.log("@@totalPages", totalPages);
+
   // Safely extract shorts with proper null checks
-  const pages = data?.pages ?? [];
-  const shorts = pages.flatMap((p) => p?.shorts ?? []);
-  const currentShort = shorts[currentIndex] ?? null;
+  const pages = Array.isArray(data?.pages) ? data.pages : [];
+  const shorts = Array.isArray(pages)
+    ? pages.flatMap((p) => (p && Array.isArray(p.shorts) ? p.shorts : []))
+    : [];
+  const currentShort =
+    Array.isArray(shorts) && shorts.length > 0
+      ? shorts[currentIndex] ?? null
+      : null;
 
   const handleSlideChange = async (swiper: any) => {
     const index = swiper.activeIndex;
-    const shortsLength = shorts.length;
+    const shortsLength = Array.isArray(shorts) ? shorts.length : 0;
     const nearEnd = shortsLength > 0 && index >= shortsLength - 2;
 
     if (nearEnd && hasNextPage && !isFetchingNextPage) {
@@ -102,15 +134,17 @@ export default function ShortsContent() {
 
   useEffect(() => {
     if (shortCommentsdata?.data) {
+      const pagination = shortCommentsdata.data.pagination;
+      const currentPage = pagination?.currentPage || 1;
       setShortComments((prev) => ({
         comments:
-          shortCommentsdata.data.pagination.currentPage === 1
+          currentPage === 1
             ? shortCommentsdata.data.short_comments || []
             : [
                 ...prev.comments,
                 ...(shortCommentsdata.data.short_comments || []),
               ],
-        pagination: shortCommentsdata.data.pagination || {
+        pagination: pagination || {
           total: 0,
           count: 0,
           perPage: 10,
@@ -159,7 +193,7 @@ export default function ShortsContent() {
   // Show loading state while data is being fetched
   if (isLoading || !isSuccess) {
     return (
-      <div className="w-full h-screen flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center">
         <div className="text-center text-gray-500 animate-pulse">
           Loading shorts...
         </div>
@@ -168,16 +202,16 @@ export default function ShortsContent() {
   }
 
   // Show empty state if no shorts available
-  if (!shorts || shorts.length === 0) {
+  if (!Array.isArray(shorts) || shorts.length === 0) {
     return (
-      <div className="w-full h-screen flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center">
         <div className="text-center text-gray-500">No shorts available</div>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full flex">
+    <div className="w-full h-full flex shorts-content-wrapper">
       <ShortsCard
         shortComment={shortComments}
         shorts={shorts}
@@ -186,6 +220,9 @@ export default function ShortsContent() {
         setCommentOpen={setCommentsOpen}
         commentsOpen={commentsOpen}
         setCurrentIndex={setCurrentIndex}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage ?? false}
+        isFetchingNextPage={isFetchingNextPage}
       />
       <motion.div
         className="border-l-1 border-foreground-300 border-t-1 hidden md:flex flex-col h-[38rem]"

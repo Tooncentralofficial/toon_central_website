@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 //@ts-ignore
@@ -10,11 +10,15 @@ import { selectAuthState } from "@/lib/slices/auth-slice";
 import { useQuery } from "@tanstack/react-query";
 import { getRequest, getRequestProtected } from "../utils/queries/requests";
 import { ShortsType } from "@/helpers/types";
-
+import { ToonShortsLogo } from "../_shared/icons/icons";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 function HomeShorts() {
-  const {token} = useSelector(selectAuthState)
+  const { token } = useSelector(selectAuthState);
   const [activeIndex, setActiveIndex] = useState(0);
+  const router = useRouter();
   const videoRefs = useRef<HTMLVideoElement[]>([]);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const slides = [
     { id: 1, title: "3D Animation" },
     { id: 2, title: "Bestyy Ad" },
@@ -26,8 +30,21 @@ function HomeShorts() {
     queryKey: ["shorts"],
     queryFn: () => getRequest("home/shorts-carousel?page=1&limit=10"),
   });
-  const shorts = data?.data?.shorts || []
-  console.log(shorts)
+  const shorts = data?.data?.shorts || [];
+  console.log(shorts);
+
+  // Calculate initial slide index to fill the space
+  const initialSlide = useMemo(() => {
+    if (shorts.length === 0) return 0;
+    return Math.floor(shorts.length / 2);
+  }, [shorts.length]);
+
+  // Update activeIndex when shorts are loaded for the first time
+  useEffect(() => {
+    if (shorts.length > 0) {
+      setActiveIndex(initialSlide);
+    }
+  }, [shorts.length, initialSlide]);
   useEffect(() => {
     videoRefs.current.forEach((video, index) => {
       if (!video) return;
@@ -41,14 +58,14 @@ function HomeShorts() {
     });
   }, [activeIndex]);
 
-   if (isLoading) {
-     return <ShortsSkeleton />;
-   }
+  if (isLoading) {
+    return <ShortsSkeleton />;
+  }
 
   return (
-    <div className="parent-wrap pt-10 md:py-10 md:pt-0 ">
+    <div className="parent-wrap pt-10 md:py-10 md:pt-10 ">
       <div className="child-wrap">
-        <H2SectionTitle title="Toon Shorts" />
+        <ToonShortsLogo className="w-18 h-12 mb-4  " />
         <div className="w-full justify-center flex md:hidden">
           <Swiper
             spaceBetween={12}
@@ -56,7 +73,11 @@ function HomeShorts() {
             slidesPerView={1.3}
             slidesPerGroupAuto={true}
             centeredSlides={true}
+            initialSlide={initialSlide}
             onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+            allowTouchMove={true}
+            touchRatio={1}
+            threshold={10}
             className="w-full py-10"
           >
             {shorts.map((item: ShortsType, index: number) => (
@@ -69,13 +90,47 @@ function HomeShorts() {
                   opacity: index === activeIndex ? 1 : 0.6,
                 }}
               >
-                <div className="bg-[#1e1e1e] rounded-medium h-[350px] flex items-center justify-center ">
+                <div
+                  className="bg-[#1e1e1e] rounded-medium h-[350px] flex items-center justify-center cursor-pointer relative"
+                  onTouchStart={(e) => {
+                    touchStartRef.current = {
+                      x: e.touches[0].clientX,
+                      y: e.touches[0].clientY,
+                    };
+                  }}
+                  onTouchEnd={(e) => {
+                    if (!touchStartRef.current) {
+                      router.push(`/shorts/${item.uuid}`);
+                      return;
+                    }
+                    const touchEnd = {
+                      x: e.changedTouches[0].clientX,
+                      y: e.changedTouches[0].clientY,
+                    };
+                    const deltaX = Math.abs(
+                      touchEnd.x - touchStartRef.current.x
+                    );
+                    const deltaY = Math.abs(
+                      touchEnd.y - touchStartRef.current.y
+                    );
+                    // If movement is less than 10px, treat it as a tap and navigate
+                    if (deltaX < 10 && deltaY < 10) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      router.push(`/shorts/${item.uuid}`);
+                    }
+                    touchStartRef.current = null;
+                  }}
+                  onClick={(e) => {
+                    router.push(`/shorts/${item.uuid}`);
+                  }}
+                >
                   <video
                     ref={(el) => {
                       if (el) videoRefs.current[index] = el;
                     }}
                     src={item.upload}
-                    className="w-full h-full object-cover rounded-medium"
+                    className="w-full h-full object-cover rounded-medium pointer-events-none"
                     controls={false}
                     playsInline
                     muted
@@ -87,19 +142,21 @@ function HomeShorts() {
         </div>
         <div className="w-full justify-center hidden md:flex">
           <Swiper
-            centeredSlides
+            centeredSlides={true}
             slidesPerGroup={1}
+            
+            loop={true}
             breakpoints={{
               0: {
                 slidesPerView: 3, // mobile
                 spaceBetween: 10,
               },
               768: {
-                slidesPerView: 5, // tablet
+                slidesPerView: 4, // tablet
                 spaceBetween: 15,
               },
               1024: {
-                slidesPerView: 7, // desktop
+                slidesPerView: 5, // desktop
                 spaceBetween: 20,
               },
             }}
@@ -118,18 +175,23 @@ function HomeShorts() {
                   opacity: index === activeIndex ? 1 : 0.6,
                 }}
               >
-                <div className="bg-[#1e1e1e] rounded-medium h-[200px] flex items-center justify-center ">
-                  <video
-                    ref={(el) => {
-                      if (el) videoRefs.current[index] = el;
-                    }}
-                    src={item.upload}
-                    className="w-full h-full object-cover rounded-medium"
-                    controls={false}
-                    playsInline
-                    muted
-                  />
-                </div>
+                <Link
+                  href={`/shorts/${item.uuid}`}
+                  className="block w-full h-full"
+                >
+                  <div className="bg-[#1e1e1e] rounded-medium h-[135px] sm:h-[250px] md:h-[320px] flex items-center justify-center cursor-pointer">
+                    <video
+                      ref={(el) => {
+                        if (el) videoRefs.current[index] = el;
+                      }}
+                      src={item.upload}
+                      className="w-full h-full object-cover rounded-medium pointer-events-none"
+                      controls={false}
+                      playsInline
+                      muted
+                    />
+                  </div>
+                </Link>
               </SwiperSlide>
             ))}
           </Swiper>
@@ -142,7 +204,7 @@ function ShortsSkeleton() {
   return (
     <div className="parent-wrap pt-10 md:py-10 md:pt-0">
       <div className="child-wrap">
-        {/* Title skeleton */}
+        <ToonShortsLogo className="w-18 h-12 mb-4  " />
         <div className="h-8 w-32 bg-gray-700/30 rounded animate-pulse mb-6"></div>
 
         <div className="w-full flex justify-center">

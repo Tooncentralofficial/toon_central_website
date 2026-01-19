@@ -1,36 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import shortImage from "@/public/static/images/auth_bkg.png";
 import Image from "next/image";
+import Link from "next/link";
 import { PlayIcon } from "@/app/_shared/icons/icons";
-import { array } from "yup";
-import { Skeleton } from "@nextui-org/react";
-import { useQuery } from "@tanstack/react-query";
-import { getRequest } from "@/app/utils/queries/requests";
-import PaginationCustom from "@/app/_shared/sort/pagination";
 
 function ShortsTab({ uid, data }: { uid: string; data: any }) {
-  const [page, setPage] = useState(1);
-  const limit = 12;
+  const shorts = data?.shorts || [];
 
-  // Fetch shorts with pagination
-  const { data: shortsData, isLoading } = useQuery({
-    queryKey: ["shorts", page],
-    queryFn: () => getRequest(`/home/shorts?page=${page}&limit=${limit}`),
-    staleTime: 1000 * 60 * 5, // 5 minutes cache
-  });
-
-  const shorts = shortsData?.data || [];
-  const totalPages = shortsData?.totalPages || 1;
   return (
     <div>
-      {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
-          {Array.from({ length: limit }).map((_, index) => (
-            <SkeletonShortItem key={index} />
-          ))}
-        </div>
-      ) : shorts.length > 0 ? (
+      {shorts.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
           {shorts.map((short: any, index: number) => (
             <ShortItem key={short.id || index} short={short} />
@@ -39,15 +19,6 @@ function ShortsTab({ uid, data }: { uid: string; data: any }) {
       ) : (
         <NoShortsEmpty />
       )}
-
-      {/* Pagination */}
-      <div className="mt-8 flex w-full bg-[#00000]">
-        <PaginationCustom
-          page={page}
-          total={totalPages}
-          onChange={(newPage) => setPage(newPage)}
-        />
-      </div>
     </div>
   );
 }
@@ -59,40 +30,37 @@ const ShortItem = ({ short }: { short: any }) => {
     );
   }
 
-  return (
-    <div className="h-[18.5rem] w-full relative rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
-      <Image
-        src={short.thumbnail || short.image || shortImage}
-        alt={short.title || "short"}
-        width={300}
-        height={400}
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          objectPosition: "center center",
-        }}
-      />
-      <div className="inset-0 bg-[#000] opacity-20 absolute" />
-      <div className="absolute bottom-2 left-2 flex gap-2 text-white">
-        <p>
-          <PlayIcon className="w-6 h-6" />
-        </p>
-        <p>{short.views || short.likesAndViews?.views?.length || 0}</p>
-      </div>
-    </div>
-  );
-};
+  const shortUrl = short.uuid
+    ? `/shorts/${short.uuid}`
+    : short.id
+    ? `/shorts/${short.id}`
+    : "/shorts";
 
-const SkeletonShortItem = () => {
   return (
-    <div className="h-[18.5rem] w-full relative rounded-xl overflow-hidden">
-      <Skeleton className="w-full h-full rounded-xl" />
-      <div className="absolute bottom-2 left-2 flex gap-2">
-        <Skeleton className="w-6 h-6 rounded-full" />
-        <Skeleton className="w-10 h-4 rounded-md" />
+    <Link href={shortUrl}>
+      <div className="h-[18.5rem] w-full relative rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
+        <Image
+          src={short.cover_image || shortImage}
+          alt={short.title || "short"}
+          width={300}
+          height={400}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center center",
+          }}
+          unoptimized
+        />
+        <div className="inset-0 bg-[#000] opacity-20 absolute" />
+        <div className="absolute bottom-2 left-2 flex gap-2 text-white">
+          <p>
+            <PlayIcon className="w-6 h-6" />
+          </p>
+          <p>{short.views || short.likesAndViews?.views?.length || 0}</p>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

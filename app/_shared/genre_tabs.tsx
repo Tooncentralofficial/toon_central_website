@@ -1,29 +1,36 @@
-"use client"
-import { useQuery } from '@tanstack/react-query';
-import React, { useMemo, useState } from 'react'
-import { getRequest } from '../utils/queries/requests';
-import RecommendtnTabs from '../_page/recommendtnTabs';
-import { dummyItems } from './data';
-import LoadingTitleTop from './cards/loadingTitleTop';
-import CardTitleTop from './cards/cardTitleTop';
-import CardTitleOutside from './cards/cardTitleOutside';
+"use client";
+import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useMemo, useState } from "react";
+import { getRequest } from "../utils/queries/requests";
+import { dummyItems } from "./data";
+import LoadingTitleTop from "./cards/loadingTitleTop";
+import CardTitleOutside from "./cards/cardTitleOutside";
 interface Tab {
   id: number;
-  name : string
-  slug : string
-  description : string
-  updatedAt : string
-  createdAt : string
+  name: string;
+  slug: string;
+  description: string;
+  updatedAt: string;
+  createdAt: string;
 }
 
 interface GenreTabsProps {
   tabs: Tab[];
-  children: (activeTab:Tab ) => React.ReactNode;
+  children: (activeTab: Tab) => React.ReactNode;
 }
-function GenreTabs({tabs, children}: GenreTabsProps) {
-  
+function GenreTabs({ tabs, children }: GenreTabsProps) {
   const [activeTab, setActiveTab] = useState<Tab>(tabs?.[0]);
-  
+
+  // Update activeTab when tabs prop changes and activeTab is no longer valid
+  useEffect(() => {
+    if (tabs && tabs.length > 0) {
+      const currentTabExists = tabs.find((t) => t.id === activeTab?.id);
+      if (!currentTabExists) {
+        setActiveTab(tabs[0]);
+      }
+    }
+  }, [tabs, activeTab?.id]);
+
   return (
     <div className="w-full">
       {/* Tabs Container */}
@@ -54,14 +61,14 @@ function GenreTabs({tabs, children}: GenreTabsProps) {
   );
 }
 
-export const GenreTabContent= ({activeTab}:{activeTab:Tab}) => {
+export const GenreTabContent = ({ activeTab }: { activeTab: Tab }) => {
   const { data, isLoading, isFetching, isSuccess } = useQuery({
-    queryKey: [`genre_${activeTab}`, activeTab],
+    queryKey: [`genre_${activeTab.id}`, activeTab.id],
     queryFn: () => getRequest(`/genres/comic/${activeTab.id}/all`),
-    enabled: activeTab !== null,
+    enabled: activeTab !== null && activeTab.id !== undefined,
   });
   const comics = useMemo(() => data?.data?.comics || [], [data]);
-  
+
   return (
     <div className="grid grid-cols-3 xs:grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
       {isLoading ? (
@@ -72,7 +79,6 @@ export const GenreTabContent= ({activeTab}:{activeTab:Tab}) => {
             <>
               {comics?.map((item: any, i: number) => (
                 <div key={i}>
-                  
                   <div className="">
                     <CardTitleOutside cardData={item} index={i} />
                   </div>
@@ -86,5 +92,5 @@ export const GenreTabContent= ({activeTab}:{activeTab:Tab}) => {
       )}
     </div>
   );
-}
-export default GenreTabs
+};
+export default GenreTabs;

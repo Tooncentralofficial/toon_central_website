@@ -46,7 +46,7 @@ import { LogoutUser } from "@/app/auth/logout/logout";
 import { toast } from "react-toastify";
 import { Pivot as Hamburger } from "hamburger-react";
 import UseTailwindMediaQuery from "@/app/utils/useTailwindMediaQuery";
-import { getRequest } from "@/app/utils/queries/requests";
+import { getRequest, getRequestProtected } from "@/app/utils/queries/requests";
 import { parseArray } from "@/helpers/parsArray";
 import { motion } from "framer-motion";
 import SearchModal from "./search";
@@ -59,15 +59,16 @@ import {
   OriginalIcon,
   OriginalIconColored,
 } from "../icons/icons";
+import CreditsBanner from "./CreditsBanner";
 const menuItems: { name: string; link: string }[] = [
   {
     name: "home",
     link: "/",
   },
-  // {
-  //   name: "shorts",
-  //   link: "/shorts",
-  // },
+  {
+    name: "shorts",
+    link: "/shorts",
+  },
   {
     name: "genres",
     link: "/genres",
@@ -107,12 +108,12 @@ const menuItemsMobile: {
     icon: HomeIcon,
     active: HomeIconColored,
   },
-  // {
-  //   name: "shorts",
-  //   link: "/shorts",
-  //   icon: ShortsIcon,
-  //   active: ShortIconSelected,
-  // },
+  {
+    name: "shorts",
+    link: "/shorts",
+    icon: ShortsIcon,
+    active: ShortIconSelected,
+  },
   {
     name: "genres",
     link: "/genres",
@@ -134,15 +135,28 @@ const menuItemsMobile: {
 ];
 
 const NavHome = () => {
+  const { user, token } = useSelector(selectAuthState);
+  const [credits, setCredits] = useState(0);
   let pathname = usePathname();
   const iscomics = usePathname().includes("/comics");
   if (iscomics) {
-    console.log(pathname);
+   
     const uuid = pathname.split("/")[2];
     pathname = `/comics/${uuid}`;
   }
+  const { data: creditsData } = useQuery({
+    queryKey: ["credits"],
+    queryFn: () => getRequestProtected("profile/wallet", token, pathname),
+    enabled: !!token,
+  });
+  
+  useEffect(() => {
+    if (creditsData) {
+      setCredits(creditsData?.data?.coinBalance);
+    }
+  }, [creditsData]);
 
-  const { user, token } = useSelector(selectAuthState);
+  
   const [isSide, setIsSide] = useState(false);
   const dispatch = useDispatch();
   const logout = () => logoutUser("");
@@ -279,6 +293,17 @@ const NavHome = () => {
                   className={`${token ? "flex" : "hidden"} gap-4 items-center`}
                 >
                   <div className="hidden sm:flex gap-4 items-center">
+                    {token && (
+                      <>
+                        <NavbarItem>
+                          <CreditsBanner credits={credits || undefined} />
+                        </NavbarItem>
+                        <Divider
+                          orientation="vertical"
+                          className="h-[36px] border-white"
+                        />
+                      </>
+                    )}
                     {token && (
                       <NavbarItem as={Link} href="/user/library">
                         <div className="relative capitalize">

@@ -2,10 +2,10 @@
 import BackButton from "@/app/_shared/layout/back";
 import H2SectionTitle from "@/app/_shared/layout/h2SectionTitle";
 import Image from "next/image";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useMemo, useState } from "react";
 import img from "@/public/static/images/shortsupload.png";
 import { generateUrl } from "@/helpers/parseImage";
-import { Radio, RadioGroup } from "@nextui-org/react";
+import { Radio, RadioGroup, Select, SelectItem } from "@nextui-org/react";
 import {
   CautionIcon,
   Copyicon,
@@ -21,14 +21,17 @@ import { FacebookShareButton, TelegramShareButton } from "react-share";
 import * as Yup from "yup";
 import { ErrorMessage, Form, Formik } from "formik";
 import { TailwindSwitch } from "@/app/_shared/inputs_actions/switch";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { postRequestProtected } from "@/app/utils/queries/requests";
+import {
+  getRequest,
+  getRequestProtected,
+  postRequestProtected,
+} from "@/app/utils/queries/requests";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { useSelector } from "react-redux";
 import { prevRoutes } from "@/lib/session/prevRoutes";
 import { useRouter } from "next/navigation";
-
 
 const stepsSchema = [
   Yup.object({
@@ -42,6 +45,11 @@ const stepsSchema = [
       .max(100, "Title must be 100 characters or less"),
     description: Yup.string().required("Description is required"),
     isForKids: Yup.string().required("You must select audience type"),
+    comicId: Yup.string().optional(),
+    belongToComic: Yup.string().optional(),
+    genreId: Yup.array()
+      .min(1, "At least one genre is required")
+      .required("At least one genre is required"),
   }),
 
   // Step 3 (Checks)
@@ -54,7 +62,7 @@ const stepsSchema = [
 ];
 
 function Page() {
-  const router = useRouter()
+  const router = useRouter();
   const { user, userType, token } = useSelector(selectAuthState);
   const [formStep, setFormStep] = useState(0);
   const [title, setTitle] = useState("");
@@ -63,6 +71,36 @@ function Page() {
   const [overlayPreview, setOverlayPreview] = useState<string | null>(null);
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
   const [enabled, setEnabled] = useState(false);
+
+  // Fetch user's comics for selection
+  const { data: comicsData, isLoading: isLoadingComics } = useQuery({
+    queryKey: ["comics-for-shorts"],
+    queryFn: () =>
+      getRequestProtected(
+        "selectables/comic-for-shorts",
+        token as string,
+        prevRoutes().library
+      ),
+    enabled: !!token,
+  });
+  console.log(comicsData);
+
+  const comics = useMemo(() => comicsData?.data || [], [comicsData]);
+
+  // Fetch genres for selection
+  const {
+    data: genreResponse,
+    isSuccess: genreSuccess,
+    isLoading: genreLoading,
+  } = useQuery({
+    queryKey: [`fetch_genre`],
+    queryFn: () => getRequest(`genres/pull/list`),
+  });
+
+  const genreData = useMemo(() => {
+    return Array.isArray(genreResponse?.data) ? genreResponse.data : [];
+  }, [genreResponse]);
+
   const initialValues = {
     url: "",
     overlayUrl: "",
@@ -70,6 +108,9 @@ function Page() {
     description: "",
     isForKids: "",
     visibility: "",
+    comicId: "",
+    belongToComic: "0",
+    genreId: [] as string[],
   };
   const uploadShortMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -133,6 +174,19 @@ function Page() {
 
     if (files && files.length > 0) {
       const file = files[0];
+
+      // Validate file size (150MB limit)
+      const maxSize = 50 * 1024 * 1024; // 50MB in bytes
+      if (file.size > maxSize) {
+        toast.error(
+          "File size exceeds 50MB limit. Please select a smaller file.",
+          {
+            toastId: "file-size-error",
+          }
+        );
+        return;
+      }
+
       setSelectedFile(file);
       uploadShortMutation.mutate(file, {
         onSuccess: async (url) => {
@@ -154,7 +208,7 @@ function Page() {
         onError: () => {
           toast.error("Failed to upload video", { toastId: "upload-error" });
         },
-      }); 
+      });
     }
   };
 
@@ -177,18 +231,18 @@ function Page() {
     });
   };
 
- const CreateShort  = useMutation({
-  mutationFn: async (data: any)=>{
-    const response = await postRequestProtected(
-      data,
-      "my-libraries/shorts/create",
-      token as string,
-      prevRoutes().library,
-      "json"
-    );
-    return response
-  }
- })
+  const CreateShort = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await postRequestProtected(
+        data,
+        "my-libraries/shorts/create",
+        token as string,
+        prevRoutes().library,
+        "json"
+      );
+      return response;
+    },
+  });
   const handleNext = async (
     validateForm: any,
     setErrors: any,
@@ -219,9 +273,17 @@ function Page() {
                 videoLink: values.url,
                 audienceId: parseInt(values.isForKids),
                 visibility: values.visibility,
+                coverImage: values.overlayUrl,
+                comicId: values.comicId
+                  ? isNaN(Number(values.comicId))
+                    ? values.comicId
+                    : parseInt(values.comicId)
+                  : null,
+                belongToComic: values.belongToComic === "1" ? 1 : 0,
+                genreId: values.genreId || [],
               };
               console.log(finaleValues);
-              CreateShort.mutate(finaleValues,{
+              CreateShort.mutate(finaleValues, {
                 onSuccess: (response) => {
                   console.log(response);
                   toast.success("Short uploaded successfully!", {
@@ -235,8 +297,8 @@ function Page() {
                   toast.error("Failed to upload short", {
                     toastId: "upload-error",
                   });
-                }
-              })
+                },
+              });
             }}
           >
             {({ values, setFieldValue, validateForm, setErrors }) => (
@@ -384,9 +446,105 @@ function Page() {
                           />
                         </div>
 
+                        {/* Comic Selection Field */}
+                        <div className="flex flex-col gap-2">
+                          <label className="text-sm text-gray-300">
+                            Attach to Comic{" "}
+                            <span className="text-gray-400">(optional)</span>
+                          </label>
+                          <Select
+                            placeholder="Select a comic (optional)"
+                            selectedKeys={
+                              values.comicId ? [values.comicId] : []
+                            }
+                            onSelectionChange={(keys) => {
+                              const selectedKey = Array.from(keys)[0] as string;
+                              setFieldValue("comicId", selectedKey || "");
+                              setFieldValue(
+                                "belongToComic",
+                                selectedKey ? "1" : "0"
+                              );
+                            }}
+                            className="w-full"
+                            classNames={{
+                              trigger:
+                                "bg-[#0f172a] border border-[#05834B] text-white",
+                              value: "text-white",
+                              popoverContent: "bg-[#0f172a]",
+                            }}
+                            isLoading={isLoadingComics}
+                            disabled={isLoadingComics}
+                          >
+                            <SelectItem
+                              key=""
+                              value=""
+                              className="text-white hover:bg-[#05834B]"
+                            >
+                              Independent Short
+                            </SelectItem>
+                            {comics?.map((comic: any) => (
+                              <SelectItem
+                                key={comic.id}
+                                value={comic.id}
+                                className="text-white hover:bg-[#05834B]"
+                              >
+                                {comic.title || comic.name}
+                              </SelectItem>
+                            ))}
+                          </Select>
+                        </div>
+
+                        {/* Genre Selection Field */}
+                        <div className="flex flex-col gap-2">
+                          <label className="text-sm text-gray-300">
+                            Genre{" "}
+                            <span className="text-gray-400">(required)</span>
+                          </label>
+                          <Select
+                            placeholder="Select genre"
+                            selectedKeys={values.genreId || []}
+                            onSelectionChange={(keys) => {
+                              const selectedKeys = Array.from(keys) as string[];
+                              setFieldValue("genreId", selectedKeys);
+                            }}
+                            selectionMode="multiple"
+                            className="w-full"
+                            classNames={{
+                              trigger:
+                                "bg-[#0f172a] border border-[#05834B] text-white",
+                              value: "text-white",
+                              popoverContent: "bg-[#0f172a]",
+                            }}
+                            isLoading={genreLoading}
+                            disabled={genreLoading}
+                            isInvalid={Boolean(
+                              formStep === 1 &&
+                                !values.genreId?.length &&
+                                values.title
+                            )}
+                          >
+                            {genreData.map((item: any) => (
+                              <SelectItem
+                                key={item?.id.toString()}
+                                value={item?.id.toString()}
+                                className="text-white hover:bg-[#05834B]"
+                              >
+                                {item?.name}
+                              </SelectItem>
+                            ))}
+                          </Select>
+                          <ErrorMessage
+                            name="genreId"
+                            component="p"
+                            className="text-[#880808] text-sm"
+                          />
+                        </div>
+
                         {/* Overlay image upload */}
                         <div className="flex flex-col gap-2">
-                          <label className="text-sm text-gray-300">Overlay image (optional)</label>
+                          <label className="text-sm text-gray-300">
+                            Overlay image (optional)
+                          </label>
                           <div className="flex items-center gap-3">
                             <label
                               htmlFor="overlayUpload"
@@ -396,14 +554,18 @@ function Page() {
                                   : "bg-gradient-to-r from-[#00A96E] to-[#22C55E] cursor-pointer"
                               } text-white px-4 py-2 rounded-md inline-block text-sm`}
                             >
-                              {uploadImageMutation.isPending ? "Uploading..." : "Upload overlay image"}
+                              {uploadImageMutation.isPending
+                                ? "Uploading..."
+                                : "Upload overlay image"}
                             </label>
                             <input
                               id="overlayUpload"
                               type="file"
                               accept="image/*"
                               className="hidden"
-                              onChange={(e) => handleOverlayFile(e, setFieldValue)}
+                              onChange={(e) =>
+                                handleOverlayFile(e, setFieldValue)
+                              }
                               disabled={uploadImageMutation.isPending}
                             />
                             {overlayPreview && (
@@ -657,7 +819,7 @@ function Page() {
                           <p>Monetize this episode?</p>
                         </div>
 
-                        <div className="border-1 border-[#3D434D] rounded-lg py-8 px-10 flex flex-col gap-5">
+                        {/* <div className="border-1 border-[#3D434D] rounded-lg py-8 px-10 flex flex-col gap-5">
                           <RadioGroup color="success">
                             <Radio
                               value="Ads"
@@ -680,7 +842,7 @@ function Page() {
                               onwards
                             </p>
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                       <div className="flex justify-between mt-10">
                         <div className="flex gap-1">

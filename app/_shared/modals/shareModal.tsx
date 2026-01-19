@@ -25,6 +25,7 @@ export interface ModalBaseProps {
   onClose: () => void;
   onOpenChange: () => void;
   comicImageUrl: string;
+  customUrl?: string;
 }
 
 const icons = [
@@ -38,9 +39,11 @@ const ShareModal = ({
   onClose,
   onOpenChange,
   comicImageUrl,
+  customUrl,
 }: ModalBaseProps) => {
   const pathname = usePathname();
-  const currentUrl = `${PUBLICURL || "http://localhost:3000"}${pathname}`;
+  const currentUrl =
+    customUrl || `${PUBLICURL || "http://localhost:3000"}${pathname}`;
   const [copied, setCopiedId] = useState<string>();
   const [copiedText, setCopiedText] = useState<string>(currentUrl);
   const [qr, setQr] = useState("");
@@ -48,7 +51,7 @@ const ShareModal = ({
     QRCode.toDataURL(currentUrl)
       .then((url) => setQr(url))
       .catch((err) => console.error(err));
-  }, []);
+  }, [currentUrl]);
   return (
     <ModalContainer
       isOpen={isOpen}
@@ -124,7 +127,9 @@ const ShareModal = ({
             </div>
           </div>
 
-          <div className="mt-4 w-full flex justify-center">{qr && <img src={qr} alt="QR Code" />}</div>
+          <div className="mt-4 w-full flex justify-center">
+            {qr && <img src={qr} alt="QR Code" />}
+          </div>
         </div>
       </div>
     </ModalContainer>

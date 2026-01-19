@@ -5,49 +5,53 @@ import { Button, CheckboxIcon } from "@nextui-org/react";
 import React, { useState } from "react";
 import { usePaystack } from "@/app/utils/hooks/usePaystack";
 import PaymentModal from "@/app/_shared/modals/PaymentModal";
+import { useMutation } from "@tanstack/react-query";
+import { postRequestProtected } from "@/app/utils/queries/requests";
+import { useSelector } from "react-redux";
+import { selectAuthState } from "@/lib/slices/auth-slice";
+import { usePathname } from "next/navigation";
 
 function CreditPlan({
+  id,
   plan,
   setSelectedPlanIndex,
   index,
   selectedPlanIndex,
   activeIndex,
 }: {
-  plan: CreditPlansType;
+  id:number;
+  plan: any;
   setSelectedPlanIndex: (index: number) => void;
   index: number;
   selectedPlanIndex: number;
   activeIndex: number;
 }) {
-  const { initiatePayment, isReady } = usePaystack();
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  const [paymentReference, setPaymentReference] = useState<string | null>(null);
+  const { token } = useSelector(selectAuthState);
+  const pathname = usePathname();
+ const { mutate } = useMutation({
+   mutationKey: ["buy-credits"],
+   mutationFn: (data: { creditPointId: number }) => {
+     const res = postRequestProtected(
+       data,
+       `checkout/coin-purchase/proceed`,
+       token || "",
+       pathname,
+       "json"
+     );
+     return res;
+   },
+   onSuccess: (data) => {
+     const paystackUrl = data.data.check_out_url;
+     if (paystackUrl) {
+       window.location.href = paystackUrl;
+     }
+   },
+   onError: (error) => {
+     console.log("@@error", error);
+   },
+ });
 
-  const handlePaymentSuccess = (reference: string) => {
-    setPaymentReference(reference);
-    setIsPaymentModalOpen(true);
-  };
-
-  const handleBuyCreditsClick = () => {
-    if (!isReady) {
-      return;
-    }
-
-    initiatePayment({
-      amount: plan.price,
-      planType: `${plan.credits} Credits`,
-      onSuccess: handlePaymentSuccess,
-      onClose: () => {
-        console.log("Payment cancelled by user");
-      },
-    });
-  };
-
-  const handleCloseModal = () => {
-    setIsPaymentModalOpen(false);
-    setPaymentReference(null);
-  };
-
+  
   return (
     <div
       className={`border w-full px-4 pt-4 pb-8 rounded-[10px] cursor-pointer transition-colors duration-300 ease-in-out ${
@@ -68,7 +72,7 @@ function CreditPlan({
           <span className="text-3xl font-semibold">$</span>
           <p className="flex items-end gap-1">
             <span className="text-6xl font-bold leading-none">
-              {plan.price}
+              {plan?.amount}
             </span>
           </p>
         </div>
@@ -79,7 +83,7 @@ function CreditPlan({
         <div>
           <p className="text-slate-400 text-xs">Credits</p>
           <p className="text-lg font-semibold text-white">
-            {plan.credits} credits
+            {plan?.unit} credits
           </p>
         </div>
       </div>
@@ -89,8 +93,7 @@ function CreditPlan({
         </Button>
       ) : (
         <Button
-          onClick={handleBuyCreditsClick}
-          isDisabled={!isReady}
+          onPress={() => mutate({ creditPointId: id })}
           isLoading={false}
           className={` w-full mt-6 rounded-xl h-[40px] transition-colors duration-300 ease-in-out ${
             selectedPlanIndex === index
@@ -101,14 +104,6 @@ function CreditPlan({
           Buy Credits
         </Button>
       )}
-
-      <PaymentModal
-        isOpen={isPaymentModalOpen}
-        onClose={handleCloseModal}
-        reference={paymentReference}
-        planType={`${plan.credits} Credits`}
-        amount={plan.price}
-      />
     </div>
   );
 }
