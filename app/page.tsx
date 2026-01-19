@@ -77,6 +77,7 @@ export default async function Home() {
       <main>
         <HomeCarousel />
         <RecommendtnTabs />
+        <HomeShorts />
         <Popular />
         <Trending />
         {/* <TodaysPicks /> */}
