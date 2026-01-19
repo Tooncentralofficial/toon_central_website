@@ -277,6 +277,9 @@ export default function ShortsCard({
         queryClient.invalidateQueries({
           queryKey: ["shorts"],
         });
+        queryClient.invalidateQueries({
+          queryKey: ["shorts-home"],
+        });
       } else {
         toast(data?.message, {
           type: "error",
@@ -301,6 +304,9 @@ export default function ShortsCard({
         });
         queryClient.invalidateQueries({
           queryKey: ["shorts"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["shorts-home"],
         });
       } else {
         toast(data?.message, {
@@ -426,7 +432,7 @@ export default function ShortsCard({
         </button>
       </div>
       <div className="block md:flex md:gap-10 overflow-hidden">
-        <div className="absolute left-2 z-[22] flex flex-col justify-end md:justify-between h-full">
+        <div className="absolute left-2 z-[22]  flex flex-col justify-end md:justify-between h-full">
           <div className="flex flex-col gap-4 mb-5 md:mb-0">
             <div className="flex gap-3 items-center">
               <h3 className="text-[#FCFCFDB2] text-sm md:text-xl line-clamp-1">
@@ -484,7 +490,7 @@ export default function ShortsCard({
               </div>
             </div>
           </div>
-          <div className=" mb-0 lg:mb-10 xl:mb-20">
+          <div className=" mb-12 sm:mb-5 lg:mb-10 xl:mb-20">
             <Link href={`/pubprofile/${shorts?.[currentSlideIndex]?.user.id}`}>
               <button className="flex items-center gap-2 bg-[#05834B] w-full justify-center py-2 rounded-md md:mb-2">
                 watch more <ArrowRight />
@@ -576,7 +582,7 @@ export default function ShortsCard({
             ))}
           </Swiper>
         </div>
-        <div className="absolute md:static right-5 bottom-0 z-[22] flex flex-col gap-5 md:gap-10 justify-end mb-5">
+        <div className="absolute mb-12 md:static right-5 bottom-0 z-[22] flex flex-col gap-5 md:gap-10 justify-end md:mb-5">
           <div
             onClick={() => likeShorts(shorts?.[currentSlideIndex]?.uuid)}
             className="flex flex-col items-center gap-2"

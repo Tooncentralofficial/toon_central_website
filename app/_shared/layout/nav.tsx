@@ -85,6 +85,10 @@ const menuItems: { name: string; link: string }[] = [
     name: "Creator101",
     link: "/creator",
   },
+  {
+    name: "Subscription",
+    link: "/subscription",
+  },
 ];
 const menuItemsmob: { name: string; link: string }[] = [
   {

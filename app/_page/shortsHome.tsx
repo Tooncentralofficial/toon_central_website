@@ -27,7 +27,7 @@ function HomeShorts() {
   ];
 
   const { data, isLoading } = useQuery({
-    queryKey: ["shorts"],
+    queryKey: ["shorts-home"],
     queryFn: () => getRequest("home/shorts-carousel?page=1&limit=10"),
   });
   const shorts = data?.data?.shorts || [];
@@ -35,16 +35,16 @@ function HomeShorts() {
 
   // Calculate initial slide index to fill the space
   const initialSlide = useMemo(() => {
-    if (shorts.length === 0) return 0;
+    if (shorts?.length === 0) return 0;
     return Math.floor(shorts.length / 2);
-  }, [shorts.length]);
+  }, [shorts?.length]);
 
   // Update activeIndex when shorts are loaded for the first time
   useEffect(() => {
-    if (shorts.length > 0) {
+    if (shorts?.length > 0) {
       setActiveIndex(initialSlide);
     }
-  }, [shorts.length, initialSlide]);
+  }, [shorts?.length, initialSlide]);
   useEffect(() => {
     videoRefs.current.forEach((video, index) => {
       if (!video) return;
