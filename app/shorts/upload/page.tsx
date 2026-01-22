@@ -280,7 +280,9 @@ function Page() {
                     : parseInt(values.comicId)
                   : null,
                 belongToComic: values.belongToComic === "1" ? 1 : 0,
-                genreId: values.genreId || [],
+                genreId: Array.isArray(values.genreId)
+                  ? values.genreId.map((id) => parseInt(id)).filter((id) => !isNaN(id))
+                  : [],
               };
               console.log(finaleValues);
               CreateShort.mutate(finaleValues, {
