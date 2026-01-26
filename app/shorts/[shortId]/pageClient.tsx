@@ -27,7 +27,7 @@ const PageClient = ({ params }: { params: { shortId: string } }) => {
     isFetchingNextPage,
     isLoading: shortsLoading,
   } = useInfiniteQuery({
-    queryKey: ["shorts"],
+    queryKey: ["shorts_infinite"],
     initialPageParam: 1,
     queryFn: async ({ pageParam = 1 }) => {
       try {
@@ -54,8 +54,10 @@ const PageClient = ({ params }: { params: { shortId: string } }) => {
       }
     },
     getNextPageParam: (lastPage, allPages) => {
+      console.log("@@allPages", allPages, "@@lastPage", lastPage);
       const nextPage = allPages?.length ? allPages?.length + 1 : 1;
-      return lastPage?.nextPage ? nextPage : undefined;
+      // Return nextPage if available, otherwise undefined to stop fetching
+      return nextPage;
     },
   });
  
