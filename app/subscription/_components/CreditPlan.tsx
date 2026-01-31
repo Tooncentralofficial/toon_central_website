@@ -68,11 +68,11 @@ function CreditPlan({
             : "border-transparent"
         } `}
       >
-        <div className="flex items-center justify-center">
-          <span className="text-3xl font-semibold">$</span>
-          <p className="flex items-end gap-1">
-            <span className="text-6xl font-bold leading-none">
-              {plan?.amount}
+        <div className="flex items-center justify-center min-w-0 overflow-hidden">
+          <span className="text-xl font-semibold flex-shrink-0">₦</span>
+          <p className="flex items-end gap-1 min-w-0">
+            <span className="text-2xl sm:text-3xl font-bold leading-none truncate">
+              {plan?.amount != null ? Number(plan.amount).toLocaleString() : ""}
             </span>
           </p>
         </div>

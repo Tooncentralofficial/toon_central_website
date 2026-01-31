@@ -177,37 +177,81 @@ export default function Page({
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: (values:any) => {
-      let formData = new FormData();
-      formData?.append("backgroundImage", values.backgroundImage);
-      formData?.append("coverImage", values.coverImage);
-      formData?.append("title", values.title);
-      formData?.append("description", values.description);
-      // formData?.append("genreId", values.genreId);
-      formData?.append("status", values.status);
-      formData?.append("updateDays", values.updateDays);
-      formData?.append("socialMediaHandle", values.socialMediaHandle);
-      // formData?.append("genreId",values?.genreId)
-      values?.genreId?.map((val: any, i: number) => {
-        formData.append(`genreId[${i}]`, val);
-      });
-      isEdit ? editComic.mutate(formData) : addNew.mutate(formData);
+    onSubmit: (values: any) => {
+      isEdit ? editComic.mutate({ values }) : addNew.mutate({ values });
     },
     enableReinitialize: true,
   });
 
   const [newUpload, setNewUpload] = useState<null | NewUpload>(null);
 
+  const uploadComicAssets = async (
+    coverImage: unknown,
+    backgroundImage: unknown
+  ): Promise<{ coverImageUrl?: string; backgroundImageUrl?: string }> => {
+    const hasCoverFile =
+      coverImage instanceof File && coverImage.size > 0;
+    const hasBackgroundFile =
+      backgroundImage instanceof File && backgroundImage.size > 0;
+    if (!hasCoverFile && !hasBackgroundFile) return {};
+
+    const formData = new FormData();
+    if (hasCoverFile) formData.append("coverImage", coverImage as File);
+    if (hasBackgroundFile)
+      formData.append("backgroundImage", backgroundImage as File);
+
+    const res = await fetch("/api/upload/comic-assets", {
+      method: "POST",
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error || "Image upload failed");
+    }
+    return res.json();
+  };
+
+  const buildBackendFormData = (
+    values: any,
+    urls: { coverImageUrl?: string; backgroundImageUrl?: string }
+  ) => {
+    console.log(values,urls)
+    const formData = new FormData();
+    const coverUrl =
+      urls.coverImageUrl ??
+      (typeof values.coverImage === "string" ? values.coverImage : "");
+    const backgroundUrl =
+      urls.backgroundImageUrl ??
+      (typeof values.backgroundImage === "string" ? values.backgroundImage : "");
+    formData.append("coverImage", coverUrl);
+    formData.append("backgroundImage", backgroundUrl);
+    formData.append("title", values.title);
+    formData.append("description", values.description);
+    formData.append("status", values.status);
+    formData.append("updateDays", values.updateDays);
+    formData.append("socialMediaHandle", values.socialMediaHandle);
+    values?.genreId?.map((val: any, i: number) => {
+      formData.append(`genreId[${i}]`, val);
+    });
+    return formData;
+  };
+
   const addNew = useMutation({
     mutationKey: ["post_comic"],
-    mutationFn: (data: any) =>
-      postRequestProtected(
-        data,
+    mutationFn: async (data: { values: any }) => {
+      const urls = await uploadComicAssets(
+        data.values.coverImage,
+        data.values.backgroundImage
+      );
+      const formData = buildBackendFormData(data.values, urls);
+      return postRequestProtected(
+        formData,
         "/my-libraries/comics/create",
         token || "",
         prevRoutes().library,
         "form"
-      ),
+      );
+    },
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       console.log(data)
@@ -241,14 +285,20 @@ export default function Page({
 
   const editComic = useMutation({
     mutationKey: ["patch_comic"],
-    mutationFn: (data: any) =>
-      postRequestProtected(
-        data,
+    mutationFn: async (data: { values: any }) => {
+      const urls = await uploadComicAssets(
+        data.values.coverImage,
+        data.values.backgroundImage
+      );
+      const formData = buildBackendFormData(data.values, urls);
+      return postRequestProtected(
+        formData,
         `/my-libraries/comics/${comicId}/update?_method=PATCH`,
         token || "",
         prevRoutes().library,
         "form"
-      ),
+      );
+    },
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {
