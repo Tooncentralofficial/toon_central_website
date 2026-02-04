@@ -52,11 +52,8 @@ function Page() {
   const isLoadingPlans = results[0].isLoading;
   const isLoadingCoins = results[1].isLoading;
 
-  console.log("@@subscriptionCoin", subscriptionCoin);
   const plans = subscriptionPlans?.data;
   const coin = subscriptionCoin?.data;
-  console.log("@@plans", plans);
-  console.log("@@coin", coin);
 
   if(isLoadingPlans || isLoadingCoins) return (
     <div className="parent-wrap py-10">

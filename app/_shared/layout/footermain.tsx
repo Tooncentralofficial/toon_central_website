@@ -64,7 +64,7 @@ const Mainfooter = () => {
         </div>
         <div className="flex justify-center pt-10">
           <p className="text-xs">
-            Copyright © 2024 All Rights Reserved. v1.30.2
+            Copyright © 2026 All Rights Reserved. v1.30.2
           </p>
         </div>
       </div>

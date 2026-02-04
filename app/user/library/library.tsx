@@ -7,6 +7,8 @@ import NotFound from "./_shared/notFound";
 import LoadingLibraryItems from "./_shared/loadingLibraryItem";
 import MyFavourites from "./_shared/favourites";
 import LibraryShorts from "./_shared/shorts";
+import Subscribed from "./_shared/subscribed";
+import ContinueReading from "./_shared/contiueReading";
 
 export default function Library() {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -37,13 +39,13 @@ export default function Library() {
     {
       id: "continue_reading",
       label: "Continue Reading",
-      content:<MyFavourites />,
+      content:<ContinueReading />,
       tabIndex: 3,
     },
     {
       id: "subscribtion",
       label: "Subscription",
-      content:<MyFavourites />,
+      content:<Subscribed />,
       tabIndex: 4,
     },
   ];

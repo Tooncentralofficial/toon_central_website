@@ -72,7 +72,7 @@ export default function DetailsTab() {
     queryFn: () => getRequestProtected("/profile", token, pathname),
     enabled: token !== null,
   });
-  console.log("@@profile", data)
+
 
   const {
     data: countriesData,
@@ -160,12 +160,18 @@ export default function DetailsTab() {
   });
 
   const updateUser = useMutation({
-    mutationFn: (data: any) =>
-      patchRequestProtected(data, "profile/update", token || "", pathname),
+    mutationFn: (data: any) =>{
+      const finalData ={
+        ...data,
+        mobileOperatorId: parseInt(data.mobileOperatorId),
+      }
+      console.log("@@finaldata", finalData )
+      return patchRequestProtected(finalData, "profile/update", token || "", pathname)
+    },
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {
-        dispatch(updateProfile(null) as any);
+        dispatch(updateProfile(data?.data || null) as any);
         toast(message, {
           toastId: "profile",
           type: "success",
@@ -178,6 +184,7 @@ export default function DetailsTab() {
       }
     },
     onError(error, variables, context) {
+      console.log("@@error", error)
       toast("Some error occured. Contact help !", {
         toastId: "profile",
         type: "error",
@@ -209,6 +216,7 @@ export default function DetailsTab() {
       }
     },
     onError(error, variables, context) {
+      console.log("@@error", error)
       toast("Some error occured. Contact help !", {
         toastId: "profile",
         type: "error",

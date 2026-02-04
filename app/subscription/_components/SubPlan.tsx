@@ -77,14 +77,14 @@ export default function SubPlan({
         } `}
       >
         <p className="text-[1.3rem]">{plan?.name}</p>
-        <div className="flex ">
-          <span className="text-3xl font-semibold">$</span>
-          <aside className="flex items-end gap-1">
-            <span className="text-6xl font-bold leading-none">
-              {plan?.amount}
+        <div className="flex min-w-0 overflow-hidden">
+          <span className="text-xl font-semibold flex-shrink-0">₦</span>
+          <aside className="flex items-end gap-1 min-w-0">
+            <span className="text-2xl sm:text-3xl font-bold leading-none truncate">
+              {plan?.amount != null ? Number(plan.amount).toLocaleString() : ""}
             </span>
-            <aside className="text-xs leading-tight ml-1">
-              USD/
+            <aside className="text-xs leading-tight ml-1 flex-shrink-0">
+              NGN/
               <br />
               <span>month</span>
             </aside>

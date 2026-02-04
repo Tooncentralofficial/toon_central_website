@@ -68,7 +68,7 @@ export default function PaymentModal({
             <div className="flex justify-between items-center">
               <span className="text-slate-400 text-sm">Amount Paid:</span>
               <span className="text-[#FCFCFD] font-semibold">
-                ${amount.toFixed(2)} USD
+                ₦{amount.toLocaleString()}
               </span>
             </div>
             <div className="border-t border-slate-700 pt-3">
