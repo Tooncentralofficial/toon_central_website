@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react";
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import { Button, Skeleton, useDisclosure } from "@nextui-org/react";
 import BackButton from "@/app/_shared/layout/back";
 import {
@@ -207,12 +208,11 @@ const ProfileHeader = ({
           <div className="flex-shrink-0 mx-auto lg:mx-0">
             <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden border-2 border-[var(--green100)]">
               <Image
-                src={data?.photo || ""}
+                src={optimizeCloudinaryUrl(data?.photo) || ""}
                 alt={creatorName}
                 width={160}
                 height={160}
                 className="w-full h-full object-cover"
-                unoptimized
               />
             </div>
           </div>

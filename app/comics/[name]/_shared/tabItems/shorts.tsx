@@ -2,6 +2,7 @@
 import React from "react";
 import shortImage from "@/public/static/images/auth_bkg.png";
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import Link from "next/link";
 import { PlayIcon } from "@/app/_shared/icons/icons";
 
@@ -40,7 +41,7 @@ const ShortItem = ({ short }: { short: any }) => {
     <Link href={shortUrl}>
       <div className="h-[18.5rem] w-full relative rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
         <Image
-          src={short.cover_image || shortImage}
+          src={optimizeCloudinaryUrl(short.cover_image) || shortImage}
           alt={short.title || "short"}
           width={300}
           height={400}
@@ -50,7 +51,6 @@ const ShortItem = ({ short }: { short: any }) => {
             objectFit: "cover",
             objectPosition: "center center",
           }}
-          unoptimized
         />
         <div className="inset-0 bg-[#000] opacity-20 absolute" />
         <div className="absolute bottom-2 left-2 flex gap-2 text-white">

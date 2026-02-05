@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import { usePathname, useRouter } from "next/navigation";
 import { ViewComicProps } from "../page";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -98,7 +99,7 @@ const LibraryBookOverview = ({
             <div className=" flex gap-6">
               <div className="base:w-full sm:w-[30%] min-w-[120px] max-w-[241px] h-[140px] md:h-[271px] rounded-lg overflow-hidden">
                 <Image
-                  src={`${ data?.coverImage|| ""}`}
+                  src={optimizeCloudinaryUrl(data?.coverImage ?? "")}
                   alt={`${data?.title || "toon_central"}`}
                   width={200}
                   height={271}
@@ -108,7 +109,6 @@ const LibraryBookOverview = ({
                     width: "100%",
                     height: "100%",
                   }}
-                  unoptimized
                 />
               </div>
               <div className="w-[80%] ">

@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import Likes from "./likes";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -28,12 +29,9 @@ const CardTitleBottom = ({
   queryKey?: string;
   small?: boolean;
 }) => {
+  const date: number = Date.now();
+  const finaltime = date * 9000;
 
-  
-
-  const date:number = Date.now();
-  const finaltime = date * 9000
-  
   // const adLink = process.env.NEXT_PUBLIC_AD_LINK;
   const router = useRouter();
   const { user, token } = useSelector(selectAuthState);
@@ -50,13 +48,13 @@ const CardTitleBottom = ({
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const [lastClickTime, setLastClickTime] = useState(0);
-  const [hasSeenAd, setHasSeenAd]= useState(false)
-  useEffect(()=>{
+  const [hasSeenAd, setHasSeenAd] = useState(false);
+  useEffect(() => {
     const storedTime = localStorage.getItem(STORAGE_KEY);
     if (storedTime) {
       setLastClickTime(parseInt(storedTime));
     }
-  },[])
+  }, []);
 
   // const handleClick= ()=>{
   //   const currentTime = Date.now()
@@ -71,17 +69,17 @@ const CardTitleBottom = ({
 
   //       if(currentTime - (lastClickTime)>COOLDOWN_TIME){
   //         window.open(adLink, "_blank");
-          
+
   //       }
   //     }
   //     setLastClickTime(currentTime);
   //     localStorage.setItem(STORAGE_KEY, currentTime.toString());
-      
+
   //   }else{
   //     router.push(`/comics/${cardData?.uuid}`);
   //   }
   // }
-  
+
   const { mutate: subscibe, isPending } = useMutation({
     mutationKey: ["subscribe"],
     mutationFn: () =>
@@ -120,7 +118,7 @@ const CardTitleBottom = ({
     >
       <div className="h-full overflow-hidden w-auto relative">
         <Image
-          src={`${cardData?.coverImage || ""}`}
+          src={optimizeCloudinaryUrl(cardData?.coverImage ?? "")}
           alt={`${cardData?.title || "toon_central"}`}
           width={200}
           height={260}
@@ -130,12 +128,9 @@ const CardTitleBottom = ({
             maxWidth: "100%",
             height: "100%",
           }}
-          unoptimized
           priority
         />
-        <Link 
-          href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}
-        >
+        <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
           <div className="absolute top-0 left-0  h-full w-full flex flex-col  p-4 justify-end bg-[#0D111D70] ">
             <div>
               <div className="font-bold text-xl">{cardData?.title}</div>
@@ -146,22 +141,25 @@ const CardTitleBottom = ({
                   uid={cardData?.uuid}
                   favourites={cardData?.favourites}
                 />
-                {expand && user?.id && ( //check if user is logged in and expand is true
-                  <motion.a
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      subscibe();
-                    }}
-                    href=""
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.2 }}
-                    className="bg-[--green100] px-4 py-1 rounded-[4px] hover:cursor-pointer"
-                  >{/*check if logged in user is subscibed to this comic */}
-                    {isSubscribed? "Unsubscribe" : "Subscribe"} {/*if subscribed then show unsubscribe else subscribe*/}
-                  </motion.a>
-                )}
+                {expand &&
+                  user?.id && ( //check if user is logged in and expand is true
+                    <motion.a
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        subscibe();
+                      }}
+                      href=""
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.2 }}
+                      className="bg-[--green100] px-4 py-1 rounded-[4px] hover:cursor-pointer"
+                    >
+                      {/*check if logged in user is subscibed to this comic */}
+                      {isSubscribed ? "Unsubscribe" : "Subscribe"}{" "}
+                      {/*if subscribed then show unsubscribe else subscribe*/}
+                    </motion.a>
+                  )}
               </div>
             </div>
           </div>

@@ -18,6 +18,7 @@ import { selectAuthState } from "@/lib/slices/auth-slice";
 import { Button } from "@nextui-org/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import React, {
@@ -522,7 +523,7 @@ const Page = ({
                       }}
                     >
                       <Image
-                        src={`${image?.image || ""}`}
+                        src={optimizeCloudinaryUrl(image?.image ?? "")}
                         alt="image"
                         width={500}
                         height={600}
@@ -535,7 +536,6 @@ const Page = ({
                           filter: isLocked ? "blur(20px)" : "none",
                           transition: "filter 0.3s ease",
                         }}
-                        unoptimized
                       />
                       {isLocked && (
                         <div className="absolute inset-0 bg-[#0000]/70 flex items-center justify-center z-10">

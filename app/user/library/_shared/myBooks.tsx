@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import NotFound from "./notFound";
 import { formatDate, parseArray } from "@/helpers/parsArray";
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
 import Link from "next/link";
 import PaginationCustom from "@/app/_shared/sort/pagination";
@@ -19,18 +20,18 @@ import { toast } from "react-toastify";
 import IconLoader from "@/app/_shared/icon_loader";
 import { DeleteIcon } from "@/app/_shared/icons/icons";
 
-const MyBooksTab = ({tabName}: {tabName: string}) => {
+const MyBooksTab = ({ tabName }: { tabName: string }) => {
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
   const [comics, setComics] = useState<any[]>([]);
   const [pagination, setPagination] = useState({ page: 1, total: 1 });
   const [deletingComic, setDeletingComic] = useState<string | null>(null);
   const { token } = useSelector(selectAuthState);
-  const queryKey = "delete_comic"
-  const queryClient = useQueryClient()
+  const queryKey = "delete_comic";
+  const queryClient = useQueryClient();
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [`my_library`, pagination],
-  queryFn: () =>
+    queryFn: () =>
       getRequestProtected(
         `/my-libraries/comics?page=${pagination.page}&limit=6`,
         token,
@@ -39,7 +40,7 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
     enabled: !!token,
   });
 
-  const { mutate: deleteComic} = useMutation({
+  const { mutate: deleteComic } = useMutation({
     mutationKey: [queryKey],
     mutationFn: (id) =>
       deleteRequestProtected(
@@ -55,9 +56,9 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
           type: "success",
         });
         queryClient.invalidateQueries({
-          queryKey: ['my_library'],
+          queryKey: ["my_library"],
         });
-        return
+        return;
       } else {
         toast(message, {
           toastId: "comic_delete",
@@ -71,9 +72,9 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
         type: "error",
       });
     },
-    onSettled(){
-      setDeletingComic(null)
-    }
+    onSettled() {
+      setDeletingComic(null);
+    },
   });
   useEffect(() => {
     if (isSuccess) {
@@ -110,9 +111,9 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
                     <div className=" flex gap-6">
                       <div className="base:w-full sm:w-[30%] min-w-[120px] max-w-[241px] h-[140px] md:h-[271px] rounded-lg overflow-hidden">
                         <Image
-                          src={`${
-                            item?.coverImage || item?.backgroundImage || ""
-                          }`}
+                          src={optimizeCloudinaryUrl(
+                            item?.coverImage ?? item?.backgroundImage ?? ""
+                          )}
                           alt={`${item?.title || "toon_central"}`}
                           width={200}
                           height={271}
@@ -122,7 +123,6 @@ const MyBooksTab = ({tabName}: {tabName: string}) => {
                             width: "100%",
                             height: "100%",
                           }}
-                          unoptimized
                         />
                       </div>
                       <div className="w-[80%] relative">

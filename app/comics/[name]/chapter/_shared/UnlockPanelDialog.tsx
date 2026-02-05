@@ -11,6 +11,7 @@ import { selectAuthState } from "@/lib/slices/auth-slice";
 import { usePathname } from "next/navigation";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 
 interface UnlockOption {
   id: number;
@@ -245,12 +246,11 @@ export default function UnlockPanelDialog({
                 <div className="w-full h-48 bg-[#0f1724] rounded-lg mb-6 overflow-hidden flex items-center justify-center">
                   {previewImage ? (
                     <Image
-                      src={previewImage}
+                      src={optimizeCloudinaryUrl(previewImage)}
                       alt="Panel preview"
                       width={400}
                       height={200}
                       className="w-full h-full object-cover"
-                      unoptimized
                     />
                   ) : (
                     <div className="text-gray-500 text-sm">Preview Image</div>

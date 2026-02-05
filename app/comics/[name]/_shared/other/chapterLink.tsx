@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useCallback } from "react";
 
@@ -16,7 +17,6 @@ const ChapterLink = ({
   comicId: string;
   chapter: any;
 }) => {
-
   const adLink = "https://otieu.com/4/9441919";
   const pathname = usePathname();
   const router = useRouter();
@@ -32,7 +32,7 @@ const ChapterLink = ({
     <div className="flex gap-4">
       <div className="w-[60px] h-[60px] rounded-lg overflow-hidden">
         <Image
-          src={image}
+          src={optimizeCloudinaryUrl(image)}
           width={60}
           height={60}
           alt={`${chapter?.title || "toon_central"}`}
@@ -42,7 +42,6 @@ const ChapterLink = ({
             width: "100%",
             height: "100%",
           }}
-          unoptimized
         />
       </div>
       <div className="cursor-pointer " onClick={readChapter}>

@@ -2,6 +2,7 @@
 
 import H2SectionTitle from "../_shared/layout/h2SectionTitle";
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "../utils/imageUtils";
 import Likes from "../_shared/cards/likes";
 import { SolidPrimaryButton } from "../_shared/inputs_actions/buttons";
 import { useQuery } from "@tanstack/react-query";
@@ -63,7 +64,9 @@ export default function Page() {
                   className="w-full overflow-hidden h-full"
                 >
                   <Image
-                    src={`${newTrending[0]?.coverImage || ""}`}
+                    src={optimizeCloudinaryUrl(
+                      newTrending[0]?.coverImage ?? ""
+                    )}
                     width={200}
                     height={496}
                     alt={`${newTrending[0]?.title || "toon_central"}`}
@@ -72,7 +75,6 @@ export default function Page() {
                       minHeight: "100%",
                       objectFit: "cover",
                     }}
-                    unoptimized
                     priority
                   />
                   <div className="absolute top-0 left-0 outline h-full w-full flex flex-col  p-12 justify-end bg-[#0D111D70] ">
@@ -106,7 +108,9 @@ export default function Page() {
                   className="w-full overflow-hidden h-full"
                 >
                   <Image
-                    src={`${newTrending[1]?.coverImage || ""}`}
+                    src={optimizeCloudinaryUrl(
+                      newTrending[1]?.coverImage ?? ""
+                    )}
                     width={200}
                     height={496}
                     alt={`${newTrending[1]?.title || "toon_central"}`}
@@ -115,7 +119,6 @@ export default function Page() {
                       minHeight: "100%",
                       objectFit: "cover",
                     }}
-                    unoptimized
                     priority
                   />
                   <div className="absolute top-0 left-0 outline h-full w-full flex flex-col  p-12 justify-end bg-[#0D111D70] ">
@@ -148,7 +151,9 @@ export default function Page() {
                     className="rounded-lg overflow-hidden h-full"
                   >
                     <Image
-                      src={`${newTrending[2]?.coverImage || ""}`}
+                      src={optimizeCloudinaryUrl(
+                        newTrending[2]?.coverImage ?? ""
+                      )}
                       width={200}
                       height={200}
                       alt={`${newTrending[2]?.title || "toon_central"}`}
@@ -159,7 +164,6 @@ export default function Page() {
                         width: "100%",
                         height: "100%",
                       }}
-                      unoptimized
                       priority
                     />
                   </Skeleton>
@@ -172,11 +176,11 @@ export default function Page() {
                     className="rounded-lg overflow-hidden h-full"
                   >
                     <Image
-                      src={`${
-                        newTrending[3]?.coverImage ||
-                        newTrending[4]?.coverImage ||
-                        ""
-                      }`}
+                      src={optimizeCloudinaryUrl(
+                        newTrending[3]?.coverImage ??
+                          newTrending[4]?.coverImage ??
+                          ""
+                      )}
                       width={200}
                       height={200}
                       alt={`${newTrending[3]?.title || "toon_central"}`}
@@ -188,7 +192,6 @@ export default function Page() {
                         height: "100%",
                         transform: "rotate(180deg)",
                       }}
-                      unoptimized
                       priority
                     />
                   </Skeleton>
@@ -225,7 +228,7 @@ export default function Page() {
                   className="w-full overflow-hidden h-full"
                 >
                   <Image
-                    src={`${mostRead[0]?.coverImage || ""}`}
+                    src={optimizeCloudinaryUrl(mostRead[0]?.coverImage ?? "")}
                     width={200}
                     height={496}
                     alt={`${mostRead[0]?.title || "toon_central"}`}
@@ -234,7 +237,6 @@ export default function Page() {
                       minHeight: "100%",
                       objectFit: "cover",
                     }}
-                    unoptimized
                     priority
                   />
                   <div className="absolute top-0 left-0 outline h-full w-full flex flex-col  p-12 justify-end bg-[#0D111D70] ">
@@ -268,7 +270,7 @@ export default function Page() {
                   className="w-full overflow-hidden h-full"
                 >
                   <Image
-                    src={`${mostRead[1]?.coverImage || ""}`}
+                    src={optimizeCloudinaryUrl(mostRead[1]?.coverImage ?? "")}
                     width={200}
                     height={496}
                     alt={`${mostRead[1]?.title || "toon_central"}`}
@@ -277,7 +279,6 @@ export default function Page() {
                       minHeight: "100%",
                       objectFit: "cover",
                     }}
-                    unoptimized
                     priority
                   />
                   <div className="absolute top-0 left-0 outline h-full w-full flex flex-col  p-12 justify-end bg-[#0D111D70] ">

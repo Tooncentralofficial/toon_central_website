@@ -4,6 +4,7 @@ import Likes from "@/app/_shared/cards/likes";
 import { GreenUser, SearchIcon, ShareIcon } from "@/app/_shared/icons/icons";
 import { Button, Skeleton, useDisclosure } from "@nextui-org/react";
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import { usePathname, useRouter } from "next/navigation";
 import { ViewComicProps } from "../pageClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -27,10 +28,12 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const router = useRouter();
-  const comicId = data?.id
+  const comicId = data?.id;
   const { user, token } = useSelector(selectAuthState);
   const readChapter = () =>
-    router.push(`${pathname}/chapter?chapter=${0}&uid=${uid}&comicid=${comicId}`);
+    router.push(
+      `${pathname}/chapter?chapter=${0}&uid=${uid}&comicid=${comicId}`
+    );
   const { mutate: likeComic, isPending } = useMutation({
     mutationKey: ["like"],
     mutationFn: () =>
@@ -51,10 +54,15 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
         });
         return;
       }
-      toast(data?.message === "you have successfully liked this comic" ? "subscribed" : "unsubscribed", {
-        toastId: `toast_${uid}`,
-        type: "error",
-      });
+      toast(
+        data?.message === "you have successfully liked this comic"
+          ? "subscribed"
+          : "unsubscribed",
+        {
+          toastId: `toast_${uid}`,
+          type: "error",
+        }
+      );
     },
     onError(error, variables, context) {
       toast("Failed to like", {
@@ -71,7 +79,7 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
     return parseArray(data?.likesAndViews?.likes).some((value) => {
       return value?.user_id === user?.id;
     });
-  }, [user,data]);
+  }, [user, data]);
   return (
     <Skeleton
       isLoaded={data !== null}
@@ -83,7 +91,7 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
         <div className="flex gap-6">
           <div className="w-[20%] h-[120px] md:h-[240px] min-w-[120px] max-w-[240px] rounded-lg overflow-hidden">
             <Image
-              src={`${data?.coverImage || ""}`}
+              src={optimizeCloudinaryUrl(data?.coverImage ?? "")}
               alt={`${data?.title || "toon_central"}`}
               width={200}
               height={240}
@@ -93,7 +101,6 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
                 width: "100%",
                 height: "100%",
               }}
-              unoptimized
             />
           </div>
           <div className="w-[80%]">
