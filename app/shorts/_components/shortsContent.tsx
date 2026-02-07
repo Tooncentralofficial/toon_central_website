@@ -50,6 +50,7 @@ export default function ShortsContent() {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
+    isFetching,
   } = useInfiniteQuery({
     queryKey: ["shorts"],
     initialPageParam: 1,
@@ -191,7 +192,7 @@ export default function ShortsContent() {
     shortComments.pagination.currentPage < shortComments.pagination.totalPages;
 
   // Show loading state while data is being fetched
-  if (isLoading || !isSuccess) {
+  if (isLoading || !isSuccess || (isFetching && shorts.length === 0)) {
     return (
       <div className="w-full h-full flex items-center justify-center">
         <div className="text-center text-gray-500 animate-pulse">
@@ -211,7 +212,7 @@ export default function ShortsContent() {
   }
 
   return (
-    <div className="w-full h-full flex shorts-content-wrapper">
+    <div className="w-full h-full flex relative shorts-content-wrapper">
       <ShortsCard
         shortComment={shortComments}
         shorts={shorts}
@@ -225,7 +226,7 @@ export default function ShortsContent() {
         isFetchingNextPage={isFetchingNextPage}
       />
       <motion.div
-        className="border-l-1 border-foreground-300 border-t-1 hidden md:flex flex-col h-[38rem]"
+        className="hidden md:flex flex-col absolute top-0 right-0 z-10 h-screen overflow-hidden bg-[#1A202C] border-l border-slate-600/50"
         initial={{ width: 0, opacity: 0 }}
         animate={{
           width: commentsOpen ? "26rem" : "0rem",
@@ -236,23 +237,47 @@ export default function ShortsContent() {
           ease: "easeInOut",
         }}
       >
-        <div className="flex flex-col h-full">
-          <div className="flex flex-col p-3 gap-5 flex-1">
-            <div className="flex justify-between text-sm">
-              <span>{shortComments?.pagination?.total ?? 0} Comments</span>
-              <span
-                onClick={() => setCommentsOpen(false)}
-                className="cursor-pointer"
+        <div className="flex flex-col h-full min-w-0">
+          {/* Header */}
+          <div className="flex justify-between items-center py-3 px-4 border-b border-slate-700/40">
+            <span className="text-[#FCFCFD] font-medium">
+              {shortComments?.pagination?.total ?? 0} Comments
+            </span>
+            <button
+              type="button"
+              onClick={() => setCommentsOpen(false)}
+              className="rounded-full p-1.5 hover:bg-white/10 transition-colors text-slate-400 hover:text-[#FCFCFD]"
+              aria-label="Close comments"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                x
-              </span>
-            </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* Comments list */}
+          <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar flex flex-col p-4 gap-5">
             {shortCommentsLoading && shortComments?.comments?.length === 0 ? (
-              <div className="text-center text-sm text-gray-500 animate-pulse">
+              <div className="text-center text-sm text-slate-400 animate-pulse py-8">
                 Loading comments...
               </div>
+            ) : !shortComments?.comments?.length ? (
+              <div className="text-slate-400 text-sm text-center py-8">
+                No comments yet. Be the first to comment!
+              </div>
             ) : (
-              <div className="overflow-y-auto no-scrollbar flex flex-col p-3 gap-5 h-[30rem]">
+              <>
                 {shortComments?.comments?.map((item: any, i: number) => (
                   <ShortsComments
                     key={item.id || i}
@@ -260,22 +285,23 @@ export default function ShortsContent() {
                     comment={item}
                   />
                 ))}
-
                 {hasMoreComments && (
                   <button
                     onClick={handleLoadMore}
                     disabled={shortCommentsFetching}
-                    className="text-sm text-blue-500 hover:text-blue-600 disabled:opacity-50 py-2"
+                    className="text-sm text-[#05834B] hover:text-[#05834B]/80 disabled:opacity-50 py-2"
                   >
                     {shortCommentsFetching
                       ? "Loading..."
                       : "Load more comments"}
                   </button>
                 )}
-              </div>
+              </>
             )}
           </div>
-          <div>
+
+          {/* Input footer */}
+          <div className="border-t border-slate-700/50 px-4 py-3">
             <ShortCommentInput shortId={currentShort?.id} />
           </div>
         </div>
