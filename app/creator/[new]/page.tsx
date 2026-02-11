@@ -24,7 +24,7 @@ import { Button, Select, SelectItem, useDisclosure } from "@nextui-org/react";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Comic, ComicFormValues } from "@/helpers/types";
 import CheckCountry from "./modals/checkCountry";
 import AddStrips from "./modals/addStrips";
@@ -119,10 +119,9 @@ export default function Page({
         token,
         prevRoutes().library
       ),
-    enabled: (isEdit && token!== null),
+    enabled: isEdit && token !== null,
   });
   useEffect(() => {
-    console.log(formik.values.genreId)
     if (genreSuccess && genreResponse?.data) {
       setgenreData(genreResponse.data);
     }
@@ -189,8 +188,7 @@ export default function Page({
     coverImage: unknown,
     backgroundImage: unknown
   ): Promise<{ coverImageUrl?: string; backgroundImageUrl?: string }> => {
-    const hasCoverFile =
-      coverImage instanceof File && coverImage.size > 0;
+    const hasCoverFile = coverImage instanceof File && coverImage.size > 0;
     const hasBackgroundFile =
       backgroundImage instanceof File && backgroundImage.size > 0;
     if (!hasCoverFile && !hasBackgroundFile) return {};
@@ -215,14 +213,16 @@ export default function Page({
     values: any,
     urls: { coverImageUrl?: string; backgroundImageUrl?: string }
   ) => {
-    console.log(values,urls)
+    console.log(values, urls);
     const formData = new FormData();
     const coverUrl =
       urls.coverImageUrl ??
       (typeof values.coverImage === "string" ? values.coverImage : "");
     const backgroundUrl =
       urls.backgroundImageUrl ??
-      (typeof values.backgroundImage === "string" ? values.backgroundImage : "");
+      (typeof values.backgroundImage === "string"
+        ? values.backgroundImage
+        : "");
     formData.append("coverImage", coverUrl);
     formData.append("backgroundImage", backgroundUrl);
     formData.append("title", values.title);
@@ -230,7 +230,10 @@ export default function Page({
     formData.append("status", values.status);
     formData.append("updateDays", values.updateDays);
     formData.append("socialMediaHandle", values.socialMediaHandle);
-    values?.genreId?.map((val: any, i: number) => {
+    const validGenreIds = (values?.genreId ?? []).filter(
+      (val: any) => val != null && String(val).trim() !== ""
+    );
+    validGenreIds.forEach((val: any, i: number) => {
       formData.append(`genreId[${i}]`, val);
     });
     return formData;
@@ -254,7 +257,7 @@ export default function Page({
     },
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
-      console.log(data)
+      console.log(data);
       if (success) {
         toast("Comic added", {
           toastId: "add_comic",
@@ -275,7 +278,7 @@ export default function Page({
       }
     },
     onError(error, variables, context) {
-      console.log(error)
+      console.log(error);
       toast("Some error occured. Contact help !", {
         toastId: "add_comic",
         type: "error",
@@ -375,19 +378,16 @@ export default function Page({
                       name="genreId"
                       label="Genre"
                       placeholder="Select genre"
-                      onChange={(option: ChangeEvent<HTMLSelectElement>) =>
-                        formik.setFieldValue(
-                          "genreId",
-                          option.target.value.split(",")
-                        )
-                      }
+                      onSelectionChange={(keys) => {
+                        const selectedKeys = Array.from(keys) as string[];
+                        formik.setFieldValue("genreId", selectedKeys);
+                      }}
                       onBlur={formik.handleBlur}
                       selectionMode="multiple"
                       isInvalid={Boolean(
                         formik.errors.genreId && formik.touched.genreId
                       )}
                       selectedKeys={formik.values.genreId}
-                      value={formik.values.genreId}
                       isDisabled={genreLoading}
                     >
                       {genreData.map((item: any) => (
