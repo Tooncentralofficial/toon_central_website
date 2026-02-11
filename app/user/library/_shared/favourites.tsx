@@ -1,4 +1,3 @@
-
 import { getRequestProtected } from "@/app/utils/queries/requests";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { useQuery } from "@tanstack/react-query";
@@ -7,6 +6,7 @@ import { useSelector } from "react-redux";
 import NotFound from "./notFound";
 import { formatDate, parseArray } from "@/helpers/parsArray";
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
 import Link from "next/link";
 import PaginationCustom from "@/app/_shared/sort/pagination";
@@ -32,7 +32,7 @@ const MyFavourites = () => {
     queryKey: [`my_likes`],
     queryFn: () => getRequestProtected(`/user-likes`, token, pathname),
     enabled: token !== null,
-    refetchOnWindowFocus:true
+    refetchOnWindowFocus: true,
   });
   useEffect(() => {
     if (isSuccess) {
@@ -69,11 +69,11 @@ const MyFavourites = () => {
                     <div className=" flex gap-6">
                       <div className="base:w-full sm:w-[30%] min-w-[120px] max-w-[241px] h-[140px] md:h-[271px] rounded-lg overflow-hidden">
                         <Image
-                          src={`${
-                            item?.comic?.cover_image ||
-                            item?.comic?.background_image ||
-                            ""
-                          }`}
+                          src={optimizeCloudinaryUrl(
+                            item?.comic?.cover_image ??
+                              item?.comic?.background_image ??
+                              ""
+                          )}
                           alt={`${item?.comic?.title || "toon_central"}`}
                           width={200}
                           height={271}
@@ -83,7 +83,6 @@ const MyFavourites = () => {
                             width: "100%",
                             height: "100%",
                           }}
-                          unoptimized
                         />
                       </div>
                       <div className="w-[80%] ">
@@ -152,6 +151,6 @@ const MyFavourites = () => {
       />
     </div>
   );
-}
+};
 
-export default MyFavourites
+export default MyFavourites;

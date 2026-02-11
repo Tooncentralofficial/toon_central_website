@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "../utils/imageUtils";
 import EllipseGray from "../_shared/ellipse/ellipseGray";
 import H2SectionTitle from "../_shared/layout/h2SectionTitle";
 import {
@@ -96,10 +97,8 @@ const Popular = () => {
           <div className=" slider-container hidden md:block">
             <EllipseGray />
 
-
             <Slider
               ref={(slider: typeof Slider) => {
-
                 sliderRef = slider;
               }}
               {...settings}
@@ -116,7 +115,9 @@ const Popular = () => {
                         ) : (
                           <div className="h-full overflow-hidden w-auto relative">
                             <Image
-                              src={`${item?.backgroundImage || ""}`}
+                              src={optimizeCloudinaryUrl(
+                                item?.backgroundImage ?? ""
+                              )}
                               alt={`${item?.title || "toon_central"}`}
                               width={200}
                               height={290}
@@ -126,7 +127,6 @@ const Popular = () => {
                                 maxWidth: "100%",
                                 height: "100%",
                               }}
-                              unoptimized
                             />
                             <div className="absolute top-0 left-0  h-full w-full flex flex-col  p-4 justify-center bg-[#0D111D70] ">
                               <div className="">
@@ -157,7 +157,9 @@ const Popular = () => {
                         ) : (
                           <div className="h-full overflow-hidden w-auto relative">
                             <Image
-                              src={`${item?.backgroundImage || ""}`}
+                              src={optimizeCloudinaryUrl(
+                                item?.backgroundImage ?? ""
+                              )}
                               alt={`${item?.title || "toon_central"}`}
                               width={200}
                               height={290}
@@ -167,7 +169,6 @@ const Popular = () => {
                                 maxWidth: "100%",
                                 height: "100%",
                               }}
-                              unoptimized
                             />
                             <div className="absolute bottom-0 left-0  h-full w-full flex flex-col px-4 py-1 justify-end bg-[#0D111D70] ">
                               <div className="">
@@ -218,7 +219,9 @@ const Popular = () => {
                     ) : (
                       <div className="h-full overflow-hidden w-auto relative">
                         <Image
-                          src={`${item?.backgroundImage || ""}`}
+                          src={optimizeCloudinaryUrl(
+                            item?.backgroundImage ?? ""
+                          )}
                           alt={`${item?.title || "toon_central"}`}
                           width={200}
                           height={290}
@@ -228,7 +231,6 @@ const Popular = () => {
                             maxWidth: "100%",
                             height: "100%",
                           }}
-                          unoptimized
                         />
                         <div className="absolute top-0 left-0  h-full w-full flex flex-col  p-4 justify-center bg-[#0D111D70] ">
                           <div className="">
@@ -259,7 +261,9 @@ const Popular = () => {
                     ) : (
                       <div className="h-full overflow-hidden w-auto relative">
                         <Image
-                          src={`${item?.backgroundImage || ""}`}
+                          src={optimizeCloudinaryUrl(
+                            item?.backgroundImage ?? ""
+                          )}
                           alt={`${item?.title || "toon_central"}`}
                           width={200}
                           height={290}
@@ -269,7 +273,6 @@ const Popular = () => {
                             maxWidth: "100%",
                             height: "100%",
                           }}
-                          unoptimized
                         />
                         <div className="absolute bottom-0 left-0  h-full w-full flex flex-col px-4 py-1 justify-end bg-[#0D111D70] ">
                           <div className="">

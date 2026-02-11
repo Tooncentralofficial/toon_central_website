@@ -1,5 +1,7 @@
 import React, { useRef } from "react";
 import { useDrag, useDrop, DndProvider } from "react-dnd";
+import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 
 // Define ItemTypes
 const ItemTypes = { CARD: "card" };
@@ -82,7 +84,17 @@ const DraggableImage = ({
         isLocked ? "border-2 border-[#FFA500]" : ""
       }`}
     >
-      <img src={value} alt="" className="w-full h-full object-cover" />
+      {typeof value === "string" && value.startsWith("http") ? (
+        <Image
+          src={optimizeCloudinaryUrl(value)}
+          alt=""
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 312px"
+        />
+      ) : (
+        <img src={value} alt="" className="w-full h-full object-cover" />
+      )}
 
       {/* Lock overlay when locked */}
       {isLocked && (

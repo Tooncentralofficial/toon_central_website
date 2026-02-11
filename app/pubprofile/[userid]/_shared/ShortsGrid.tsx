@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import Link from "next/link";
 import { PlayIcon } from "@/app/_shared/icons/icons";
 import { Skeleton } from "@nextui-org/react";
@@ -59,15 +60,16 @@ const ShortItem = ({ short }: { short: any }) => {
 
   const thumbnail = short.cover_image || short.upload || shortImage;
   // Use short ID for the route (prefer id over uuid for cleaner URLs)
-  const shortUrl = short.uuid
-    ? `/shorts/${short.uuid}`
-    : "/shorts";
+  const shortUrl = short.uuid ? `/shorts/${short.uuid}` : "/shorts";
 
   return (
     <Link href={shortUrl}>
       <div className="h-[18.5rem] w-full relative rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity group">
         <Image
-          src={thumbnail}
+          src={
+            optimizeCloudinaryUrl(short.cover_image ?? short.upload) ||
+            shortImage
+          }
           alt={short.title || "short"}
           width={300}
           height={400}
@@ -77,7 +79,6 @@ const ShortItem = ({ short }: { short: any }) => {
             objectFit: "cover",
             objectPosition: "center center",
           }}
-          unoptimized
         />
         <div className="inset-0 bg-[#000] opacity-20 absolute" />
         <div className="absolute bottom-2 left-2 flex gap-2 text-white">

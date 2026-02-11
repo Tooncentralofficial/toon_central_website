@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import Link from "next/link";
 import Likes from "./likes";
 import { DarkEyeIcon } from "../icons/icons";
@@ -32,7 +33,7 @@ const CardTitleOutside = ({
           </div>
           <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
             <Image
-              src={`${cardData?.coverImage || ""}`}
+              src={optimizeCloudinaryUrl(cardData?.coverImage ?? "")}
               alt={`${cardData?.title || "toon_central"}`}
               width={200}
               height={240}

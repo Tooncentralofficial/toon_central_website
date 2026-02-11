@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import React from "react";
 import image from "@/public/static/images/comics/new_0.png";
 import { Comic } from "@/helpers/types";
@@ -17,8 +18,7 @@ const PopularToonscard = ({ item, index }: { item: Comic; index: number }) => {
         </p>
         <div className="w-[45px] h-[45px] overflow-hidden rounded-[6px]">
           <Image
-            src={item.coverImage}
-            layout="responsive"
+            src={optimizeCloudinaryUrl(item.coverImage)}
             width={40}
             height={40}
             alt={`item`}
@@ -62,10 +62,9 @@ export const PopularToonscardDesktop = ({
         </p>
         <div className="w-[6rem] h-[8rem] overflow-hidden rounded-[6px]">
           <Image
-            src={item.coverImage}
-            layout="responsive"
-            width={70}
-            height={70}
+            src={optimizeCloudinaryUrl(item.coverImage)}
+            width={96}
+            height={128}
             alt={`item`}
             style={{
               objectFit: "cover",
