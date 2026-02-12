@@ -117,7 +117,8 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
             </div>
 
             <div className="flex flex-col mt-1 lg:flex-row lg:w-[70%]  gap-2 justify-between ">
-              {data?.publishedByToonCentral === 1 ? (
+              
+              {data?.user?.username === null || data?.user?.username === "" ? (
                 <Link href={`/pubprofile/${userId}`}>
                   <div className="flex gap-4">
                     <span>ToonCentral</span> <GreenUser />
@@ -131,6 +132,7 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
                   </div>
                 </Link>
               )}
+
               <span className="flex flex-wrap text-[0.6rem] md:text-[0.9rem] gap-2">
                 {data?.genres.map((item: ComicGenre, i: number) => (
                   <p
