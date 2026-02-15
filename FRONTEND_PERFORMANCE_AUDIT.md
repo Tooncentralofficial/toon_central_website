@@ -45,9 +45,11 @@ return isClient ? <AppProvider>{children}</AppProvider> : <div className="..." /
 ## HIGH (Significant slowdown)
 
 ### 5. `priority` set on ALL card images — defeats the purpose
-**Files:** `app/_shared/cards/cardTitleBottom.tsx` line 131, `app/_shared/cards/cardTitleOutside.tsx` line 47
-**Problem:** Both card components set `priority` on every `<Image>`. When ALL images are priority, NONE are prioritized. The browser preloads 50+ images simultaneously instead of prioritizing the first few visible ones.
-**Impact:** Above-the-fold images load slower because they compete with below-the-fold images for bandwidth.
+**Files:** `app/_shared/cards/cardTitleBottom.tsx` line 131, `app/_shared/cards/cardTitleOutside.tsx` line 46
+**What `priority` does:** Next.js `<Image priority>` tells the browser "download this image immediately at highest priority, before anything else." It adds a `<link rel="preload">` to the page head. This is useful for above-the-fold hero images — but when set on ALL card images, every single one gets preloaded simultaneously.
+**What was wrong:** `CardTitleOutside` is used in 10 places (originals, todaysPicks, topRecommendations, genre tabs, comic detail "you may also like", etc.) — all below-the-fold or on secondary pages. Setting `priority` on these images means the browser tries to eagerly download 30-50+ card images at highest priority, competing with the actual above-the-fold carousel images for bandwidth. The result is that everything loads slower.
+**Fix:** Removed `priority` from `CardTitleOutside`. Next.js `<Image>` already defaults to `loading="lazy"` when `priority` is not set, so simply removing it is enough — the images will now only load when the user scrolls near them. Kept `priority` on `CardTitleBottom` since it's ONLY used in the homepage carousel — the one place where eager loading is correct.
+**Status:** ✅ FIXED
 
 ### 6. DndProvider (drag-and-drop) wraps the entire app
 **File:** `app/clientLayout.tsx` line 15
