@@ -83,7 +83,6 @@ export default async function Home() {
         {/* <TodaysPicks /> */}
         <TodaysPicksMobile />
         <PopularByToons />
-        <HomeShorts />
         <HorizontalScroll />
         <Originals />
         <Footer />
