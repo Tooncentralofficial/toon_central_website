@@ -142,12 +142,11 @@ Removed `console.log(shorts)` that logged the full shorts array on every render.
 **Why it matters:** Next.js `<Script>` without a `strategy` defaults to `beforeInteractive`, meaning the browser fetches the ~90KB gtag.js file during initial page load, before React hydration starts. This blocks the page from becoming interactive while waiting for Google's server to respond. With `strategy="afterInteractive"`, the script loads only after the page is already interactive — analytics still work, but users see and interact with the page faster.
 **Fix:** Added `strategy="afterInteractive"` to the loader `<Script>`.
 
-### 19. `loading.tsx` renders empty div — no visual feedback
+### 19. ✅ FIXED — `loading.tsx` rendered empty div — no visual feedback
 **File:** `app/loading.tsx`
-```tsx
-return <div className="h-full w-full flex justify-center"></div>;
-```
-**Impact:** During route transitions, user sees nothing — no spinner, no skeleton.
+**What happened:** Next.js App Router uses `loading.tsx` as an automatic loading UI during route transitions (it wraps page content in a `<Suspense>` boundary). The file existed but rendered an empty `<div>` — so when users navigated between pages, they saw a blank screen with no indication that anything was happening.
+**Why it matters:** Without loading feedback, users think the app is frozen and may click again or leave. A visible loading state reassures them the page is loading.
+**Fix:** Added a centered spinner using the app's accent color (`#3EFFA2`) with Tailwind's `animate-spin`. Lightweight — no extra dependencies, pure CSS animation.
 
 ### 20. ✅ FIXED — `react-slick` imported via require() prevents tree-shaking
 **File:** `app/_page/popular.tsx` line 27
