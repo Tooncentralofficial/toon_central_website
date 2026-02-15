@@ -24,6 +24,8 @@ import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import Likes from "../_shared/cards/likes";
 import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const Popular = () => {
   let sliderRef: any = useRef(null);

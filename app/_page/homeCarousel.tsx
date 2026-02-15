@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { ArrowLeft, ArrowRight } from "../_shared/icons/icons";
 import CardTitleBottom from "../_shared/cards/cardTitleBottom";
 import { getRequest } from "../utils/queries/requests";

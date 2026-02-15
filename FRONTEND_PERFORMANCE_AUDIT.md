@@ -65,14 +65,11 @@ return isClient ? <AppProvider>{children}</AppProvider> : <div className="..." /
 **Problem:** Every page transition triggers Framer Motion's animation system. This adds Framer Motion (~30KB gzipped) to the critical rendering path and causes a 750ms fade-in delay before content is fully visible.
 **Impact:** Perceived slowness — content fades in over 0.75 seconds even when data is already available.
 
-### 8. Slick Carousel CSS loaded globally
+### 8. ✅ FIXED — Slick Carousel CSS loaded globally
 **File:** `app/layout.tsx` lines 4-5
-```tsx
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-```
-**Problem:** These CSS files are imported in the root layout and included in the critical CSS for EVERY page, even pages that don't use slick (most pages).
-**Impact:** Increases initial CSS payload size.
+**What happened:** The two slick-carousel CSS files (`slick.css` and `slick-theme.css`) were imported in the root layout, which means they were bundled into the critical CSS for every single page — the discover page, comic detail pages, shorts, user profile, etc. — even though react-slick is only used by two components: `homeCarousel.tsx` and `popular.tsx`, both on the homepage.
+**Why it matters:** CSS in the root layout is render-blocking — the browser must download and parse all of it before painting anything. Adding unused CSS to every page increases this blocking time for no benefit.
+**Fix:** Moved the imports into the two components that actually use react-slick. Next.js bundles CSS from client components into their respective chunks, so the slick CSS now only loads when those components render.
 
 ### 9. ✅ FIXED — No image `sizes` prop on CardTitleOutside
 **File:** `app/_shared/cards/cardTitleOutside.tsx` line 40
