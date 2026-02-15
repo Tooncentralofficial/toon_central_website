@@ -31,7 +31,6 @@ function HomeShorts() {
     queryFn: () => getRequest("home/shorts-carousel?page=1&limit=10"),
   });
   const shorts = data?.data?.shorts || [];
-  console.log(shorts);
 
   // Calculate initial slide index to fill the space
   const initialSlide = useMemo(() => {

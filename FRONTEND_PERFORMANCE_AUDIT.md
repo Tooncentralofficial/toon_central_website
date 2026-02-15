@@ -136,12 +136,9 @@ const timer = setTimeout(() => setIsVisible(true), delay); // delay = 2000
 
 ## LOW (Minor issues)
 
-### 17. `console.log` in production code
+### 17. ✅ FIXED — `console.log` in shortsHome.tsx
 **File:** `app/_page/shortsHome.tsx` line 34
-```tsx
-console.log(shorts);
-```
-**Impact:** Logs potentially large data array on every render. Minor performance hit, but messy.
+Removed `console.log(shorts)` that logged the full shorts array on every render.
 **Note:** ~80 other `console.log` calls exist across the codebase. A full cleanup is a separate task.
 
 ### 18. Google Analytics script missing `strategy` prop
