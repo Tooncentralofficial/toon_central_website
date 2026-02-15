@@ -89,14 +89,10 @@ import "slick-carousel/slick/slick-theme.css";
 
 ## MEDIUM (Noticeable inefficiency)
 
-### 11. Duplicate API calls — Popular vs PopularByToons use same queryKey
-**Files:** `app/_page/popular.tsx` line 48, `app/_page/popularbytoons.tsx` line 18
-**Problem:** Both components use queryKey `"popular_by_toon"` but fetch different URLs:
-- Popular: `/home/popular-by-toon-central?filter=all&page=1&limit=10`
-- PopularByToons: `/home/popular-by-toon-central?filter=all&page=1&limit=5`
-
-Since they share the same cache key, whichever resolves first fills the cache, and the other component uses stale/wrong data (10 items when it wanted 5, or vice versa).
-**Impact:** Data inconsistency between components + one wasted API call.
+### 11. ✅ FIXED — Popular vs PopularByToons shared the same queryKey
+**Files:** `app/_page/popular.tsx` line 34, `app/_page/popularbytoons.tsx` line 17
+**What happened:** Both components used queryKey `"popular_by_toon"` but fetched different amounts from the same endpoint — Popular fetches `limit=10` (slider) and PopularByToons fetches `limit=5` (grid). React Query deduplicates by queryKey, so whichever component mounts first caches its result and the second component silently uses that cached data instead of ever running its own queryFn. On the homepage, Popular is higher so it caches 10 items — PopularByToons then gets those 10 items from cache (it slices to 5 so it still "works", but its own limit=5 query never actually runs). If PopularByToons were ever rendered on a different page without Popular, it would cache 5 items under the shared key, and Popular would then only get 5 instead of 10.
+**Fix:** Renamed PopularByToons queryKey to `"popular_by_toon_grid"` so each component has its own independent cache entry.
 
 ### 12. TodaysPicksMobile duplicates the Originals API call
 **Files:** `app/_page/todaysPicksMobile.tsx` line 23-27, `app/_page/originals.tsx` line 16-20
