@@ -74,10 +74,11 @@ import "slick-carousel/slick/slick-theme.css";
 **Problem:** These CSS files are imported in the root layout and included in the critical CSS for EVERY page, even pages that don't use slick (most pages).
 **Impact:** Increases initial CSS payload size.
 
-### 9. No image `sizes` prop — Next.js can't optimize responsive delivery
-**Files:** All card components
-**Problem:** Images use fixed `width={200}` with inline styles `width: "100%"` but no `sizes` prop. Without `sizes`, Next.js generates a `srcset` but the browser can't pick the right size because it doesn't know the rendered width. It defaults to downloading the largest size.
-**Impact:** Users download larger images than needed, especially on mobile.
+### 9. ✅ FIXED — No image `sizes` prop on CardTitleOutside
+**File:** `app/_shared/cards/cardTitleOutside.tsx` line 40
+**What `sizes` does:** When Next.js `<Image>` generates a `srcset` (multiple image resolutions), the browser needs the `sizes` prop to know which resolution to download. Without it, the browser defaults to assuming the image fills the full viewport width (`100vw`) and downloads the largest available size — even if the image is actually rendered at 33% width inside a 3-column grid.
+**What was wrong:** `CardTitleOutside` used `width={200}` with CSS `width: "100%"` but no `sizes` prop. On mobile, cards sit in a 3-column grid (~33vw each), but the browser downloaded images sized for 100vw — roughly 3x larger than needed.
+**Fix:** Added `sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 20vw"` matching the actual grid breakpoints (3 cols mobile, 4 cols tablet, 5 cols desktop). The browser now downloads appropriately sized images for each screen size.
 
 ### 10. Search fires API call on every keystroke — no debounce
 **File:** `app/_shared/layout/search.tsx` lines 40-46

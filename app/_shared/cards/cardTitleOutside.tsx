@@ -37,6 +37,7 @@ const CardTitleOutside = ({
               alt={`${cardData?.title || "toon_central"}`}
               width={200}
               height={240}
+              sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 20vw"
               style={{
                 objectFit: "cover",
                 maxWidth: "100%",
