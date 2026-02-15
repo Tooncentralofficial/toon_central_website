@@ -141,13 +141,11 @@ const timer = setTimeout(() => setIsVisible(true), delay); // delay = 2000
 Removed `console.log(shorts)` that logged the full shorts array on every render.
 **Note:** ~80 other `console.log` calls exist across the codebase. A full cleanup is a separate task.
 
-### 18. Google Analytics script missing `strategy` prop
-**File:** `app/layout.tsx` lines 67-71
-```tsx
-<Script id="gtag-script" async src="https://www.googletagmanager.com/gtag/js?id=G-RZFRHC7QTN" />
-```
-**Problem:** No `strategy="afterInteractive"` on the gtag loader script. It may block rendering.
-**Impact:** Could delay First Contentful Paint slightly.
+### 18. ✅ FIXED — Google Analytics loader script missing `strategy` prop
+**File:** `app/layout.tsx` line 68
+**What happened:** There are two Google Analytics `<Script>` tags — the loader (fetches the external `gtag.js` file from Google) and the setup (inline JS that configures the tracker). The setup script already had `strategy="afterInteractive"`, but the loader did not.
+**Why it matters:** Next.js `<Script>` without a `strategy` defaults to `beforeInteractive`, meaning the browser fetches the ~90KB gtag.js file during initial page load, before React hydration starts. This blocks the page from becoming interactive while waiting for Google's server to respond. With `strategy="afterInteractive"`, the script loads only after the page is already interactive — analytics still work, but users see and interact with the page faster.
+**Fix:** Added `strategy="afterInteractive"` to the loader `<Script>`.
 
 ### 19. `loading.tsx` renders empty div — no visual feedback
 **File:** `app/loading.tsx`

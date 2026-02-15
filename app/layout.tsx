@@ -68,6 +68,7 @@ export default function RootLayout({
           id="gtag-script"
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-RZFRHC7QTN"
+          strategy="afterInteractive"
         />
         <Script id="gtag-setup" strategy="afterInteractive">
           {`
