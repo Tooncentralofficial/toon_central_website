@@ -21,9 +21,9 @@ export default function TodaysPicksMobile() {
 
 
    const { isLoading, isFetching, data, isSuccess } = useQuery({
-     queryKey: ["todayspicks"],
+     queryKey: ["originals"],
      queryFn: () =>
-       getRequest("/home/toon-central-originals?filter=all&page=1&limit=6"),
+       getRequest("/home/toon-central-originals?filter=all&page=1&limit=10"),
    });
    useEffect(() => {
      if (isSuccess) {
@@ -46,7 +46,7 @@ export default function TodaysPicksMobile() {
         </H2SectionTitle>
 
         <div className="grid grid-cols-3 sm:grid-cols-4  md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-          {cardItems.map((items, i) => (
+          {cardItems.slice(0, 6).map((items, i) => (
             <CardTitleOutside key={i} cardData={items} index={i} />
           ))}
         </div>

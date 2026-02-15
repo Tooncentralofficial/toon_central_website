@@ -89,15 +89,15 @@ import "slick-carousel/slick/slick-theme.css";
 
 ## MEDIUM (Noticeable inefficiency)
 
-### 11. ✅ FIXED — Popular vs PopularByToons shared the same queryKey
+### 11. ✅ FIXED — Popular vs PopularByToons had conflicting queryKey/queryFn
 **Files:** `app/_page/popular.tsx` line 34, `app/_page/popularbytoons.tsx` line 17
-**What happened:** Both components used queryKey `"popular_by_toon"` but fetched different amounts from the same endpoint — Popular fetches `limit=10` (slider) and PopularByToons fetches `limit=5` (grid). React Query deduplicates by queryKey, so whichever component mounts first caches its result and the second component silently uses that cached data instead of ever running its own queryFn. On the homepage, Popular is higher so it caches 10 items — PopularByToons then gets those 10 items from cache (it slices to 5 so it still "works", but its own limit=5 query never actually runs). If PopularByToons were ever rendered on a different page without Popular, it would cache 5 items under the shared key, and Popular would then only get 5 instead of 10.
-**Fix:** Renamed PopularByToons queryKey to `"popular_by_toon_grid"` so each component has its own independent cache entry.
+**What happened:** Both components used queryKey `"popular_by_toon"` but their queryFn fetched different limits from the same endpoint — Popular fetched `limit=10` (slider) and PopularByToons fetched `limit=5` (grid). React Query deduplicates by queryKey, so whichever mounts first caches its result and the second component silently uses that cached data instead of ever running its own queryFn. The queryKey and queryFn were out of sync — same key but different fetch functions, which is a React Query anti-pattern.
+**Fix:** Aligned PopularByToons to use the same queryKey `"popular_by_toon"` AND the same `limit=10` queryFn as Popular. React Query now makes one API call and both components share the result. PopularByToons already had `.slice(0, 5)` in both its mobile and desktop render paths, so it still displays only 5 items. One API call instead of a confusing mismatch.
 
-### 12. TodaysPicksMobile duplicates the Originals API call
-**Files:** `app/_page/todaysPicksMobile.tsx` line 23-27, `app/_page/originals.tsx` line 16-20
-**Problem:** Both fetch `/home/toon-central-originals` but with different queryKeys (`"todayspicks"` vs `"originals"`), so React Query caches them separately and fires two identical API calls.
-**Impact:** Redundant API call — same data fetched twice.
+### 12. ✅ FIXED — TodaysPicksMobile duplicated the Originals API call
+**Files:** `app/_page/todaysPicksMobile.tsx` lines 23-27, `app/_page/originals.tsx` lines 16-20
+**What happened:** Both components fetch the same endpoint (`/home/toon-central-originals`) but used different queryKeys — TodaysPicksMobile used `"todayspicks"` with `limit=6`, Originals used `"originals"` with `limit=10`. React Query treats different queryKeys as separate cache entries, so two API calls were fired for overlapping data on every page load.
+**Fix:** Changed TodaysPicksMobile to use the same queryKey `"originals"` and same `limit=10` as Originals. React Query now deduplicates the call — one API request serves both components. Added `.slice(0, 6)` to TodaysPicksMobile's render to keep displaying only 6 items as before.
 
 ### 13. HorizontalScroll (test.tsx) makes 3 hardcoded API calls
 **File:** `app/_page/test.tsx` lines 26-44

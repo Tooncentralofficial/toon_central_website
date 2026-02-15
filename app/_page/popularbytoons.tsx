@@ -14,11 +14,11 @@ import { adGateToken } from '@/envs';
 const PopularByToons = () => {
   const [popularItems, setPopularItems] = useState<any[]>([]);
   const { user,token } = useSelector(selectAuthState);
-  const queryKey = "popular_by_toon_grid";
+  const queryKey = "popular_by_toon";
   const { data, isFetching, isLoading, isError, isSuccess } = useQuery({
     queryKey: [queryKey],
     queryFn: () =>
-      getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=5"),
+      getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
   });
   useEffect(() => {
     setPopularItems(dummyItems);
