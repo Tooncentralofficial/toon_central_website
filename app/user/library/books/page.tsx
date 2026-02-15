@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import LibraryBookOverview from "./_shared/overview";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { prevRoutes } from "@/lib/session/prevRoutes";
 
 export interface ViewComicProps {
@@ -19,26 +19,30 @@ export interface ViewComicProps {
 }
 const Page = ({
   params,
-  searchParams,
+  searchParams: _searchParams,
 }: {
   params: { slug: string };
   searchParams: { uuid: any; id: any };
 }) => {
+  const searchParams = useSearchParams();
   const [comic, setComic] = useState(null);
-  const uuid2 = new URLSearchParams(window.location.search).get("uuid");
-  const id2 = new URLSearchParams(window.location.search).get("id");
+  const uuid2 = searchParams.get("uuid");
+  const id2 = searchParams.get("id");
 
   const pathname = usePathname();
   const { token } = useSelector(selectAuthState);
   const { data, isLoading, isFetching, isSuccess } = useQuery({
-    queryKey: [`comic_${uuid2}`,id2],
+    queryKey: [`comic_${uuid2}`, id2],
     queryFn: () =>
-      getRequestProtected(`/my-libraries/comics/${Number(id2)}/get`, token, prevRoutes().library),
-    enabled: token !== null 
+      getRequestProtected(
+        `/my-libraries/comics/${Number(id2)}/get`,
+        token,
+        prevRoutes().library
+      ),
+    enabled: token !== null && id2 != null,
   });
   useEffect(() => {
     if (isSuccess) {
-   
       setComic(data?.data || null);
     }
   }, [data, isFetching, isSuccess]);
