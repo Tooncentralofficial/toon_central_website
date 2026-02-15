@@ -23,8 +23,7 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import Likes from "../_shared/cards/likes";
-
-const Slider = require("react-slick").default;
+import Slider from "react-slick";
 
 const Popular = () => {
   let sliderRef: any = useRef(null);

@@ -44,12 +44,11 @@ return isClient ? <AppProvider>{children}</AppProvider> : <div className="..." /
 
 ## HIGH (Significant slowdown)
 
-### 5. `priority` set on ALL card images — defeats the purpose
+### 5. ✅ FIXED — `priority` set on ALL card images — defeats the purpose
 **Files:** `app/_shared/cards/cardTitleBottom.tsx` line 131, `app/_shared/cards/cardTitleOutside.tsx` line 46
 **What `priority` does:** Next.js `<Image priority>` tells the browser "download this image immediately at highest priority, before anything else." It adds a `<link rel="preload">` to the page head. This is useful for above-the-fold hero images — but when set on ALL card images, every single one gets preloaded simultaneously.
 **What was wrong:** `CardTitleOutside` is used in 10 places (originals, todaysPicks, topRecommendations, genre tabs, comic detail "you may also like", etc.) — all below-the-fold or on secondary pages. Setting `priority` on these images means the browser tries to eagerly download 30-50+ card images at highest priority, competing with the actual above-the-fold carousel images for bandwidth. The result is that everything loads slower.
 **Fix:** Removed `priority` from `CardTitleOutside`. Next.js `<Image>` already defaults to `loading="lazy"` when `priority` is not set, so simply removing it is enough — the images will now only load when the user scrolls near them. Kept `priority` on `CardTitleBottom` since it's ONLY used in the homepage carousel — the one place where eager loading is correct.
-**Status:** ✅ FIXED
 
 ### 6. DndProvider (drag-and-drop) wraps the entire app
 **File:** `app/clientLayout.tsx` line 15
@@ -152,12 +151,10 @@ return <div className="h-full w-full flex justify-center"></div>;
 ```
 **Impact:** During route transitions, user sees nothing — no spinner, no skeleton.
 
-### 20. `react-slick` imported via require() prevents tree-shaking
+### 20. ✅ FIXED — `react-slick` imported via require() prevents tree-shaking
 **File:** `app/_page/popular.tsx` line 27
-```tsx
-const Slider = require("react-slick").default;
-```
-**Impact:** Minor — prevents webpack from tree-shaking unused exports.
+**What happened:** Used CommonJS `require("react-slick").default` instead of ES module `import Slider from "react-slick"`. CommonJS `require()` is evaluated at runtime, so the bundler (webpack/turbopack) cannot statically analyze which exports are used and cannot tree-shake unused code from the `react-slick` package. ES `import` is statically analyzable, allowing the bundler to drop any unused exports from the final bundle.
+**Fix:** Replaced with `import Slider from "react-slick"`.
 
 ---
 
