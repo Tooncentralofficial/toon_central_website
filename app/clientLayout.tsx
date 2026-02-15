@@ -9,17 +9,9 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
   const [isClient, setIsClient] = useState(false);
   useLayoutEffect(() => setIsClient(true), []);
   return (
-    <>
-      {isClient ? (
-        <AppProvider>
-          <DndProvider backend={HTML5Backend}>{children}
-          
-          </DndProvider>
-        </AppProvider>
-      ) : (
-        <div className="h-full w-full flex justify-center bg-[var(--bg-primary)]"></div>
-      )}
-    </>
+    <AppProvider>
+      <DndProvider backend={HTML5Backend}>{children}</DndProvider>
+    </AppProvider>
   );
 };
 

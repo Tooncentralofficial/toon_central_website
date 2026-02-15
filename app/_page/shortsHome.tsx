@@ -13,6 +13,7 @@ import { ShortsType } from "@/helpers/types";
 import { ToonShortsLogo } from "../_shared/icons/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { optimizeCloudinaryUrl } from "../utils/imageUtils";
 function HomeShorts() {
   const { token } = useSelector(selectAuthState);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -131,6 +132,7 @@ function HomeShorts() {
                     }}
                     src={item.upload}
                     className="w-full h-full object-cover rounded-medium pointer-events-none"
+                    // poster={optimizeCloudinaryUrl(item?.coverImage) ?? undefined}
                     controls={false}
                     playsInline
                     muted
@@ -144,7 +146,6 @@ function HomeShorts() {
           <Swiper
             centeredSlides={true}
             slidesPerGroup={1}
-            
             loop={true}
             breakpoints={{
               0: {
@@ -186,6 +187,7 @@ function HomeShorts() {
                       }}
                       src={item.upload}
                       className="w-full h-full object-cover rounded-medium pointer-events-none"
+                      // poster={optimizeCloudinaryUrl(item?.coverImage) ?? undefined}
                       controls={false}
                       playsInline
                       muted
