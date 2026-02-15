@@ -35,10 +35,11 @@ return isClient ? <AppProvider>{children}</AppProvider> : <div className="..." /
 **Why it matters:** Both instances use the same queryKey `"shorts-home"` and render identical content. React Query deduplicates the API call, but the browser still builds 2x the DOM — two Swiper carousels, two sets of `<video>` elements (up to 20 videos downloading instead of 10), and two sets of event listeners.
 **Fix:** Removed the old (lower) instance, kept the newer (higher) position that the developer intentionally moved it to.
 
-### 4. All 10 short videos load on homepage
+### 4. ✅ FIXED — All 10 short videos loaded on homepage
 **File:** `app/_page/shortsHome.tsx` lines 128-137, 183-189
-**Problem:** Each short renders a `<video src={item.upload}>` tag. Even though only the active slide plays, the browser begins downloading ALL video files immediately. With 10 shorts x 2 component instances = potentially 20 video downloads.
-**Impact:** Massive bandwidth waste. A single short video could be 5-50MB. This competes with image and API downloads.
+**What happened:** Every short in both the mobile and desktop Swiper carousels rendered `<video src={item.upload}>` without a `preload` attribute. The browser defaults to `preload="auto"`, which tells it to start downloading the entire video file for ALL 10 slides immediately — even though only the active (centered) slide plays. A single short video can be 5-50MB, so 10 concurrent video downloads compete with images and API calls for bandwidth.
+**Why it matters:** On mobile connections, this could mean 50-500MB of video downloads before the user even scrolls. The page feels slow because the browser is saturating the network with video downloads instead of loading visible content.
+**Fix:** Added `preload={index === activeIndex ? "auto" : "none"}` to both mobile and desktop video elements. Only the active slide's video downloads immediately; others wait until the user swipes to them (the existing `useEffect` that calls `video.play()` on slide change triggers the download at that point).
 
 ---
 

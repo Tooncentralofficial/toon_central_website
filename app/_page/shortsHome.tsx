@@ -129,6 +129,7 @@ function HomeShorts() {
                       if (el) videoRefs.current[index] = el;
                     }}
                     src={item.upload}
+                    preload={index === activeIndex ? "auto" : "none"}
                     className="w-full h-full object-cover rounded-medium pointer-events-none"
                     controls={false}
                     playsInline
@@ -184,6 +185,7 @@ function HomeShorts() {
                         if (el) videoRefs.current[index] = el;
                       }}
                       src={item.upload}
+                      preload={index === activeIndex ? "auto" : "none"}
                       className="w-full h-full object-cover rounded-medium pointer-events-none"
                       controls={false}
                       playsInline
