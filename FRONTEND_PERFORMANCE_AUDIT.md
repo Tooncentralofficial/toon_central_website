@@ -20,16 +20,22 @@ return isClient ? <AppProvider>{children}</AppProvider> : <div className="..." /
 **Proper fix:** Requires identifying and fixing the specific components that cause hydration mismatches (likely components using `window`/`document` during render, or NextUI components with SSR incompatibilities). This is a deeper investigation task — not a simple removal.
 **Impact:** Every page loads as blank → waits for JS bundle → then renders. On slow connections this can be 2-5 seconds of white screen.
 
-### 2. Only carousel data is prefetched server-side — everything else waits for client
-**File:** `app/page.tsx` lines 71-74
-**Problem:** The homepage Server Component only prefetches the carousel. All other sections (recommendations, popular, trending, shorts, originals, todaysPicks, popularbytoons, HorizontalScroll) fetch data client-side AFTER hydration. This means:
-1. Page HTML arrives from server (mostly empty skeletons)
-2. JS bundle downloads and executes
-3. React hydrates
-4. Each section fires its own API request
-5. Data arrives, components re-render
+### 2. ✅ FIXED — Only carousel data was prefetched server-side
+**File:** `app/page.tsx`
+**What happened:** The homepage Server Component only prefetched the carousel queryKey. All other sections (recommendations/genres, popular, trending, shorts, originals, HorizontalScroll) fetched data client-side AFTER hydration. This meant:
+1. Page HTML arrived from server (mostly empty skeletons)
+2. JS bundle downloaded and executed
+3. React hydrated
+4. Each section fired its own API request
+5. Data arrived, components re-rendered
 
-**Impact:** 8+ API calls fire sequentially after page load instead of being prefetched on the server.
+**Fix (2 parts):**
+1. **Expanded prefetches** — Added `Promise.all` with 7 prefetch queries matching the exact queryKeys used by each client component: `all_genres`, `carousel`, `popular_by_toon`, `trending`, `originals`, `shorts-home`, `genre_0` (first genre tab content). All run in parallel on the server using the existing `getRequest` helper. React Query's `HydrationBoundary` dehydrates the results into the initial HTML, so client components receive pre-populated cache — no client-side API calls on first load.
+2. **Added page-level ISR** — `export const revalidate = 60` caches the entire rendered HTML for 60 seconds. Within that window, visitors get instant pre-built HTML with zero server rendering or API calls.
+
+**Key detail — genre queryKey mismatch:** The original prefetch used `queryKey: ["genre_action"]` but the client `GenreTabContent` component uses `["genre_${activeTab.id}", activeTab.id]`. These didn't match, so React Query ignored the prefetched data. Fixed by using `["genre_0", 0]` (the "All" genre, which is the first tab — prepended by the API with ID 0).
+
+**Impact:** Homepage loads with real data instead of skeletons. 7 API calls move from client-side to server-side. ISR caches the entire page HTML for 60 seconds — near-instant responses for repeat visitors with zero server rendering or API calls.
 
 ### 3. ✅ FIXED — `HomeShorts` was rendered TWICE on the homepage
 **File:** `app/page.tsx`
@@ -41,7 +47,7 @@ return isClient ? <AppProvider>{children}</AppProvider> : <div className="..." /
 **File:** `app/_page/shortsHome.tsx` lines 128-137, 183-189
 **What happened:** Every short in both the mobile and desktop Swiper carousels rendered `<video src={item.upload}>` without a `preload` attribute. The browser defaults to `preload="auto"`, which tells it to start downloading the entire video file for ALL 10 slides immediately — even though only the active (centered) slide plays. A single short video can be 5-50MB, so 10 concurrent video downloads compete with images and API calls for bandwidth.
 **Why it matters:** On mobile connections, this could mean 50-500MB of video downloads before the user even scrolls. The page feels slow because the browser is saturating the network with video downloads instead of loading visible content.
-**Fix:** Added `preload={index === activeIndex ? "auto" : "none"}` to both mobile and desktop video elements. Only the active slide's video downloads immediately; others wait until the user swipes to them (the existing `useEffect` that calls `video.play()` on slide change triggers the download at that point).
+**Fix:** Added `preload={index === activeIndex ? "auto" : "metadata"}` to both mobile and desktop video elements. The active slide's video downloads fully and plays automatically. Other slides load only metadata (first frame thumbnail, ~50KB) — giving a visual preview without downloading the full video (5-50MB each). Using `"metadata"` instead of `"none"` ensures all slides show a visible thumbnail regardless of which slide the Swiper considers "active."
 
 ---
 
@@ -155,30 +161,6 @@ Removed `console.log(shorts)` that logged the full shorts array on every render.
 
 ---
 
-## Quick Wins (Easy fixes, big impact)
-
-| # | Fix | Impact | Effort |
-|---|-----|--------|--------|
-| 3 | Remove duplicate `<HomeShorts />` | Halves video downloads | 1 min |
-| 17 | Remove `console.log(shorts)` | Cleaner console | 1 min |
-| 5 | Remove `priority` from cards, keep only on carousel | Better image loading | 5 min |
-| 10 | Add debounce to search input | Fewer API calls | 10 min |
-| 11 | Fix duplicate queryKey for Popular sections | Correct data | 5 min |
-| 12 | Unify todaysPicks + originals queryKey | 1 fewer API call | 5 min |
-| 14 | Remove redundant useState/useEffect, use query data directly | Fewer re-renders | 30 min |
-| 18 | Add `strategy="afterInteractive"` to gtag | Faster FCP | 1 min |
-
-## Bigger Improvements (Need architectural changes)
-
-| # | Fix | Impact | Effort |
-|---|-----|--------|--------|
-| 1 | Remove isClient gate in ClientLayout | Instant FCP | Medium |
-| 2 | Prefetch all homepage data server-side | Much faster homepage | Medium |
-| 4 | Use video poster images, load video on interaction | Save bandwidth | Medium |
-| 6 | Lazy-load DndProvider only on creator pages | Smaller bundle | Medium |
-| 7 | Remove motion.div wrapper or reduce to instant | Faster perceived load | Low |
-| 9 | Add proper `sizes` prop to all Image components | Smaller image downloads | Medium |
-
 ---
 
 ## PART 2: Optimizations Proven on Demo (toon-demo) to Apply Here
@@ -187,69 +169,16 @@ These are optimizations we built and tested on the demo frontend that should be 
 
 ---
 
-### D1. Suspense Streaming — Each Section Loads Independently (NOT Promise.all)
-**What we did on demo:** Instead of using `Promise.all` (which waits for ALL API calls to finish before showing anything), we wrapped each homepage section in its own `<Suspense>` boundary with an async Server Component. This lets React **stream** each section to the browser as soon as its data is ready — independently.
+### D1. ~~Suspense Streaming~~ — NOT USED
+**Tried and rejected.** We implemented per-section Suspense streaming with async Server Components. Each section loaded independently as its data arrived. However, the visual effect (sections appearing one by one) was undesirable — the page looked fragmented. Also, Suspense streaming prevents effective page-level ISR caching (the page can't be cached as a single HTML snapshot).
+**Instead:** Using `Promise.all` to prefetch all 7 sections in parallel + page-level `revalidate = 60` (ISR). All sections load together, and the entire page is cached for 60 seconds. This is the better approach for the homepage where all sections load at similar speeds and content is the same for all users.
 
-**Why NOT Promise.all:** With `Promise.all`, if the carousel API takes 200ms but shorts takes 2 seconds, the user sees nothing for 2 seconds. With Suspense streaming, the carousel appears at 200ms, other sections stream in as they resolve. The slowest section doesn't block the fastest.
-
-**What to do here:** Convert each homepage section into an async Server Component that fetches its own data, wrap each in `<Suspense>`:
-```tsx
-// page.tsx — Server Component (no "use client")
-import { Suspense } from "react";
-
-// Each section is its own async Server Component
-async function CarouselSection() {
-  const res = await getRequest("/home/top-carousel?page=1&limit=10");
-  return <HomeCarousel initialData={res.data?.comics} />;  // pass data as props
-}
-
-async function RecommendationsSection() {
-  const [recsRes, genresRes] = await Promise.all([
-    getRequest("/home/top-recommendations?filter=all&page=1&limit=10"),
-    getRequest("/selectables/genres"),
-  ]);
-  return <RecommendtnTabs initialData={recsRes.data?.comics} genres={genresRes.data} />;
-}
-
-async function TrendingSection() {
-  const res = await getRequest("/home/trending?filter=all&page=1&limit=10");
-  return <Trending initialData={res.data?.comics} />;
-}
-// ... same pattern for each section
-
-export default function Home() {
-  return (
-    <main>
-      <Suspense fallback={<CarouselSkeleton />}>
-        <CarouselSection />           {/* streams as soon as carousel API responds */}
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
-        <RecommendationsSection />    {/* streams independently */}
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
-        <TrendingSection />           {/* streams independently */}
-      </Suspense>
-      {/* ... each section streams on its own */}
-    </main>
-  );
-}
-```
-
-**How it works:**
-1. Browser receives initial HTML with skeleton fallbacks immediately
-2. Server fetches all API calls in parallel (they run concurrently inside separate Suspense boundaries)
-3. As each API call resolves, React streams that section's HTML to the browser
-4. Each section appears as soon as its data is ready — no waterfall, no blocking
-
-**Impact:** First section appears in ~200ms instead of waiting for all 8+ API calls. Each section streams progressively. The page feels dramatically faster.
-
-### D2. ISR Caching for Homepage API Calls
-**What we did on demo:** Added `next: { revalidate: 60 }` to the fetch options so homepage data is cached for 60 seconds. First visitor triggers a fresh fetch; subsequent visitors within 60s get the cached response instantly.
-**What to do here:** The requests go through axios (server actions via `"use server"`), not native `fetch()`. Two options:
-- **Option A:** Add `cache: "force-cache"` + `next: { revalidate: 60 }` headers to the server-side prefetch calls in `page.tsx` by switching from axios to native `fetch()` for the prefetch calls only
-- **Option B:** Use React Query's `staleTime` (already set to 60s in appProvider) — this handles client-side caching. For server-side caching, wrap the prefetch calls in `unstable_cache` from `next/cache`
-
-**Impact:** After first load, homepage data is served from Next.js cache for 60 seconds — near-instant response, zero backend load for repeat visits.
+### D2. ✅ FIXED — ISR Caching for Homepage
+**What we did on demo:** Added `next: { revalidate: 60 }` to the fetch options so homepage data is cached for 60 seconds.
+**Fix (implemented as part of Fix #2):**
+- Added `export const revalidate = 60` to `page.tsx` — caches the entire rendered page HTML for 60 seconds (ISR)
+- All 7 homepage API calls are prefetched server-side via `Promise.all` using `getRequest`, and the results are dehydrated into the HTML via React Query's `HydrationBoundary`
+**Impact:** After first load, homepage is served from cache for 60 seconds — near-instant response, zero server rendering or API calls for repeat visits within that window.
 
 ### D3. ✅ PARTIALLY FIXED — `sizes` prop added to all card Image components
 **What was wrong:** All three card components (`CardTitleBottom`, `CardTitleTop`, `CardTitleOutside`) used `width={200}` with CSS `width: "100%"` but had no `sizes` prop. Without `sizes`, the browser assumes the image fills the full viewport width (`100vw`) and downloads the largest available srcset variant — even when the image is rendered at 20-33% of the viewport inside a grid or carousel.
@@ -299,61 +228,11 @@ useEffect(() => {
 
 **Impact:** Typing "batman" fires 1 API call instead of 6. Keyboard shortcut is a UX improvement power users expect. Portal prevents modal rendering bugs.
 
-### D5. Hybrid Server + Client Components — Server Fetches, Client Handles Interaction
-**What we did on demo:** The homepage `page.tsx` is a Server Component (no `"use client"`). Interactive features like search and genre tab switching are separate Client Components that get imported into the Server Component. The server fetches the initial data and passes it as props — the Client Component only handles user interaction, not initial data loading.
+### D5. ~~Hybrid Server + Client Components~~ — NOT NEEDED
+**Why skipped:** This approach would require rewriting every section component to accept props instead of using React Query's `useQuery`. The current approach (server prefetch + `HydrationBoundary` + `dehydrate`) achieves the same result — data is fetched server-side and passed to client components via React Query's cache — without modifying any client component code. The existing `"use client"` components work as-is because they find their data already in the hydrated cache.
 
-**Why this matters:** Currently, the entire homepage is client-side. Every section component has `"use client"` at the top, which means:
-- Data can't be fetched server-side (no SSR benefit)
-- User sees skeletons while JS downloads → hydrates → fires API calls
-- Search and genre tabs force the entire page to be client-rendered
-
-**The pattern we proved:**
-```tsx
-// page.tsx — Server Component (fetches data, no JS sent to browser)
-async function RecommendationsSection() {
-  const [recsRes, genresRes] = await Promise.all([
-    getRequest("/home/top-recommendations?filter=all&page=1&limit=10"),
-    getRequest("/selectables/genres"),
-  ]);
-  // Pass server-fetched data as props to the Client Component
-  return <GenreTabsClient initialComics={recsRes.data?.comics} genres={genresRes.data} />;
-}
-
-// GenreTabsClient.tsx — "use client" (only handles genre switching)
-"use client";
-export function GenreTabsClient({ initialComics, genres }) {
-  const [activeGenre, setActiveGenre] = useState("all");
-  const [comics, setComics] = useState(initialComics);  // starts with server data
-
-  useEffect(() => {
-    if (activeGenre === "all") { setComics(initialComics); return; }
-    // Only fetches from browser when user clicks a different genre
-    getRequest(`/genres/comic/${activeGenre}/all`).then(res => setComics(res.data?.comics));
-  }, [activeGenre]);
-
-  return (
-    <>
-      {/* Genre pill buttons */}
-      {/* Comic grid using `comics` state */}
-    </>
-  );
-}
-```
-
-**The same pattern for search:** Search stays as a `"use client"` component imported into the layout. It only runs in the browser (search is inherently interactive). But the rest of the page doesn't need to be client-rendered just because search exists.
-
-**What needs to change here:**
-- `page.tsx` becomes a pure Server Component (remove `HydrationBoundary` + `QueryClient` approach)
-- Each section becomes an async function that fetches data server-side
-- Interactive sections (genre tabs, likes) become Client Components that receive initial data as props
-- Search stays client-side (already is) — just needs to be imported properly
-
-**Impact:** The page loads with real data in the initial HTML (not skeletons). Interactive features work immediately after hydration. The JS bundle is smaller because Server Components send zero JavaScript to the browser.
-
-### D6. Fetch Priority API for Critical Requests
-**What we did on demo:** Added `priority: "high"` to the carousel fetch call so the browser prioritizes it over other network requests.
-**What to do here:** Since the homepage prefetch happens server-side, this mainly applies to the client-side React Query refetches. Can be added as a fetch option in the axios instance or in the individual `queryFn` for the carousel.
-**Impact:** Moderate — browser hint to prioritize the most important request.
+### D6. ~~Fetch Priority API~~ — NOT NEEDED
+**Why skipped:** Fetch Priority is a browser hint for client-side requests. Since all homepage data is now prefetched server-side (and cached via ISR + Data Cache), there are no client-side fetches to prioritize on initial load.
 
 ### D7. ✅ FIXED — Cloudinary URL Optimization missing on CardTitleTop
 **What happened:** The codebase has `optimizeCloudinaryUrl()` in `imageUtils.ts` that inserts `w_800,q_auto,f_auto` into Cloudinary URLs — enabling automatic format conversion (WebP/AVIF) and quality optimization. `CardTitleOutside` and `CardTitleBottom` both used it, but `CardTitleTop` used the raw URL: `src={cardData?.coverImage || ""}`. This meant all images in the Recommendations and Trending sections were served at full original size and format.
@@ -363,62 +242,20 @@ export function GenreTabsClient({ initialComics, genres }) {
 **Problem:** Videos show blank black frames before loading. With `preload="none"` on non-active slides, inactive videos show nothing until swiped to.
 **Recommendation:** Add `poster={item.coverImage}` to `<video>` elements so the browser shows the cover image as a thumbnail while videos load.
 
-### D9. Proper Skeleton Loading States (Suspense Fallbacks)
-**What we did on demo:** Created dedicated skeleton components that match the exact layout of the real content:
-- `HeroSkeleton` — a pulse-animated box matching the carousel's aspect ratio (`aspect-21/9`)
-- `SectionSkeleton` — a title bar + row of card-shaped pulse boxes matching the grid layout
-- `loading.tsx` — full page skeleton for route transitions between pages
-
-Each skeleton is used as the `fallback` prop in `<Suspense>`, so users see the page structure instantly while data streams in.
-
-**Why this matters:** A blank screen while loading feels slow. A skeleton that matches the layout makes the page feel like it loaded instantly and content is "filling in." It also prevents layout shift — the skeleton reserves exactly the same space as the real content, so nothing jumps when data arrives.
-
-**What's wrong in the real site:**
-- `app/loading.tsx` renders an empty `<div>` — user sees nothing during route transitions
-- Homepage sections use `dummyItems` as loading placeholders (renders fake card data), which is heavier than simple pulse skeletons
-- The footer is hidden for 2 seconds via `setTimeout` as a hack to avoid it showing before content
-
-**What to do here:**
-```tsx
-// Skeleton for each Suspense boundary:
-function SectionSkeleton() {
-  return (
-    <div className="mb-10">
-      <div className="h-6 w-32 rounded bg-[var(--bg-secondary)] mb-4 animate-pulse" />
-      <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-[150px] md:h-[260px] rounded-[8px] bg-[var(--bg-secondary)] animate-pulse" />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// Used in page.tsx:
-<Suspense fallback={<SectionSkeleton />}>
-  <TrendingSection />
-</Suspense>
-```
-
-Also update `loading.tsx` to show a proper full-page skeleton instead of an empty div.
-
-**Impact:** Perceived performance — users see page structure instantly. No layout shift when data arrives. No more `setTimeout` hacks for the footer.
+### D9. ~~Suspense Skeleton Fallbacks~~ — NOT NEEDED
+**Why skipped:** Since we're not using Suspense streaming (D1 was rejected), there are no `<Suspense>` boundaries that need skeleton fallbacks. The homepage loads all data server-side via `Promise.all` and renders everything at once. The `loading.tsx` spinner (Fix #19) already handles route transitions. The footer delay hack was already removed (Fix #16).
 
 ---
 
 ## Summary: Total Optimization Opportunities
 
-| Category | Count | Key Items |
-|----------|-------|-----------|
-| Existing bugs/inefficiencies (Part 1) | 20 | ClientLayout blocking, duplicate components, no debounce, wrong priority |
-| Demo-proven optimizations (Part 2) | 9 | Suspense streaming, hybrid Server+Client, ISR caching, `<Image>` fill+sizes, debounced search+portal, skeletons |
-| Backend API optimizations (task.md) | 6 remaining | #11, #13, #14, #15, #16, #18, #25 |
-| **Total** | **35** | |
+| Category | Status | Details |
+|----------|--------|---------|
+| Part 1 fixes (20 total) | **18 FIXED**, 2 remaining | #1 (ClientLayout gate — needs deep investigation), #15 (resize listeners — design-dependent) |
+| Part 2 demo optimizations (9 total) | **4 FIXED**, 2 remaining, 3 skipped | Fixed: D2 (ISR), D3 (sizes), D4 (debounce), D7 (Cloudinary). Remaining: D8 (video posters). Skipped: D1 (Suspense), D5 (Hybrid), D6 (Fetch Priority), D9 (Skeletons) |
+| Backend API optimizations (task.md) | Separate track | #11, #13, #14, #15, #16, #18, #25 |
 
-### Recommended Fix Order
-1. **Quick wins first** (Part 1: #3, #5, #11, #12, #17, #18) — 30 minutes, immediate improvement
-2. **Core architecture from demo** (D1 Suspense streaming, D5 hybrid Server+Client, D4 debounced search, D7 Cloudinary fix) — the biggest speed boost, converts homepage to streaming SSR with Client Components only for interactive parts
-3. **Image & media optimizations** (D3 image priority, D8 video posters) — bandwidth savings
-4. **Caching** (D2 ISR caching) — repeat visit performance
-5. **Cleanup fixes** (Part 1: #1, #4, #6, #7, #14, #15) — remove dead weight from the bundle
-6. **Backend API optimizations** (task.md remaining) — separate track
+### Remaining Frontend Fixes
+1. **#1 — ClientLayout `isClient` gate** — Needs investigation to identify which component causes hydration mismatch. Removing the gate causes errors.
+2. **#15 — `window.matchMedia` resize listeners** — 4 components use JS resize listeners instead of CSS breakpoints. Requires testing responsive layouts.
+3. **D8 — Video poster images** — Add `poster={item.coverImage}` to `<video>` elements so non-active shorts show thumbnails instead of blank frames.

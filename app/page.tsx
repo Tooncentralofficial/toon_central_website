@@ -65,13 +65,42 @@ export const metadata: Metadata = {
   },
 };
 
+// ISR: cache the entire page HTML for 60 seconds
+export const revalidate = 60;
+
 export default async function Home() {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["carousel"],
-    queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
-  });
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ["all_genres"],
+      queryFn: () => getRequest("/selectables/genres"),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["carousel"],
+      queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["popular_by_toon"],
+      queryFn: () => getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["trending"],
+      queryFn: () => getRequest("/home/trending?filter=all&page=1&limit=10"),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["originals"],
+      queryFn: () => getRequest("/home/toon-central-originals?filter=all&page=1&limit=10"),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["shorts-home"],
+      queryFn: () => getRequest("/home/shorts-carousel?page=1&limit=10"),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["genre_0", 0],
+      queryFn: () => getRequest("/genres/comic/0/all"),
+    }),
+  ]);
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <main>
