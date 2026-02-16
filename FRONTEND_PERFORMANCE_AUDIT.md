@@ -16,6 +16,8 @@ const [isClient, setIsClient] = useState(false);
 useLayoutEffect(() => setIsClient(true), []);
 return isClient ? <AppProvider>{children}</AppProvider> : <div className="..." />;
 ```
+**Why it exists:** Removing the gate causes React hydration errors — one or more child components render differently on server vs client. The gate is a brute-force workaround that prevents SSR of the entire tree.
+**Proper fix:** Requires identifying and fixing the specific components that cause hydration mismatches (likely components using `window`/`document` during render, or NextUI components with SSR incompatibilities). This is a deeper investigation task — not a simple removal.
 **Impact:** Every page loads as blank → waits for JS bundle → then renders. On slow connections this can be 2-5 seconds of white screen.
 
 ### 2. Only carousel data is prefetched server-side — everything else waits for client
@@ -249,44 +251,17 @@ export default function Home() {
 
 **Impact:** After first load, homepage data is served from Next.js cache for 60 seconds — near-instant response, zero backend load for repeat visits.
 
-### D3. Next.js `<Image>` with `fill` + `sizes` + Selective `priority`
-**What we did on demo:** Replaced the raw `<img>` approach with Next.js `<Image>` using `fill` mode + `sizes` prop across all pages (homepage, comic detail, shorts). Only the hero carousel gets `priority`. Every other image lazy-loads automatically.
+### D3. ✅ PARTIALLY FIXED — `sizes` prop added to all card Image components
+**What was wrong:** All three card components (`CardTitleBottom`, `CardTitleTop`, `CardTitleOutside`) used `width={200}` with CSS `width: "100%"` but had no `sizes` prop. Without `sizes`, the browser assumes the image fills the full viewport width (`100vw`) and downloads the largest available srcset variant — even when the image is rendered at 20-33% of the viewport inside a grid or carousel.
 
-**What's wrong in the real site:** The site already uses `next/image` but incorrectly — every card uses fixed `width={200} height={240}` with inline styles to stretch to 100%:
-```tsx
-// Current pattern in all card components — suboptimal
-<Image
-  src={...}
-  width={200}       // tells Next.js to generate a 200px image
-  height={240}
-  style={{ width: "100%", height: "100%" }}  // then stretches it via CSS
-  priority          // on EVERY card — defeats the purpose
-/>
-```
-This tells Next.js the image is 200px wide, but CSS stretches it to fill its container (often 300-400px). The browser downloads a too-small image and upscales it (blurry), OR downloads extra srcset sizes wastefully. And `priority` on every card means nothing is prioritized.
+**What was fixed:**
+- **Fix #9:** Added `sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 20vw"` to `CardTitleOutside` (grid cards)
+- **Fix #5:** Removed `priority` from `CardTitleOutside` (was on every card, defeating the purpose). Kept `priority` only on `CardTitleBottom` (carousel — above-the-fold)
+- **Fix D3:** Added `sizes` to `CardTitleTop` (`"(max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"` — desktop-only grid) and `CardTitleBottom` (`"(max-width: 550px) 83vw, (max-width: 700px) 50vw, (max-width: 1024px) 33vw, 25vw"` — carousel breakpoints)
 
-**What to do here:**
-1. Switch to `fill` mode (image fills its `position: relative` parent)
-2. Add `sizes` prop so the browser picks the right srcset variant per screen
-3. Remove `priority` from all cards — keep only on the carousel's visible slide
-```tsx
-// Correct pattern from the demo:
-<div className="relative h-[260px]">  {/* parent must be position: relative */}
-  <Image
-    src={optimizeCloudinaryUrl(cardData?.coverImage ?? "")}
-    alt={cardData?.title || "toon_central"}
-    fill                                    // fills the parent container
-    sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 20vw"
-    className="object-cover"                // CSS handles aspect ratio
-    // NO priority — lazy loads by default
-  />
-</div>
-```
+**What's NOT changed:** The `fill` mode switch (replacing `width/height` with `fill` + relative parent) would require restructuring HTML in all card components. This is a larger refactor that risks breaking layouts and should be done separately with visual testing.
 
-**Impact:**
-- `fill` + `sizes` = browser downloads exactly the right image size per device (phone gets 200px, desktop gets 400px)
-- Removing `priority` from cards = above-the-fold carousel images load first, off-screen images lazy-load
-- Next.js auto-converts to WebP/AVIF (smaller files than JPEG/PNG)
+**Impact:** The browser now downloads appropriately sized images for each screen size across all card components. Mobile users no longer download desktop-sized images — typically 50-75% bandwidth savings on card images.
 
 ### D4. ✅ FIXED — Search debounce
 **What was wrong:** The search fired an API call on every keystroke with no debounce or minimum character requirement. Typing "batman" triggered 6 API requests.
