@@ -78,10 +78,11 @@ return isClient ? <AppProvider>{children}</AppProvider> : <div className="..." /
 **What was wrong:** `CardTitleOutside` used `width={200}` with CSS `width: "100%"` but no `sizes` prop. On mobile, cards sit in a 3-column grid (~33vw each), but the browser downloaded images sized for 100vw — roughly 3x larger than needed.
 **Fix:** Added `sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 20vw"` matching the actual grid breakpoints (3 cols mobile, 4 cols tablet, 5 cols desktop). The browser now downloads appropriately sized images for each screen size.
 
-### 10. Search fires API call on every keystroke — no debounce
-**File:** `app/_shared/layout/search.tsx` lines 40-46
-**Problem:** `useQuery` with `queryKey: ["search", filter]` triggers a new API call every time the filter state changes. Since `handleSearch` updates filter on every `onChange`, typing "batman" fires 6 API requests.
-**Impact:** Unnecessary API load and wasted bandwidth. On slow connections, stale results flash before final results appear.
+### 10. ✅ FIXED — Search fired API call on every keystroke — no debounce
+**File:** `app/_shared/layout/search.tsx`
+**What happened:** The search input's `onChange` updated `filter.search` immediately, and the entire `filter` object was in the queryKey `["search", filter]`. Every character typed changed the queryKey, triggering a new API request — typing "batman" fired 6 requests ("b", "ba", "bat", "batm", "batma", "batman"). Most of these responses were discarded as the next one arrived.
+**Why it matters:** 6 API requests instead of 1 per search. On the server, this means 6x the database queries. On slow connections, results flash in and out as each intermediate response arrives and gets replaced.
+**Fix:** Split into `searchInput` (updates instantly for responsive typing) and `debouncedSearch` (updates 300ms after the user stops typing, used in the queryKey). Also added `enabled: debouncedSearch.length >= 2` so the API isn't called for empty or single-character searches. No extra dependencies — uses a simple `setTimeout`/`clearTimeout` via `useRef`.
 
 ---
 
