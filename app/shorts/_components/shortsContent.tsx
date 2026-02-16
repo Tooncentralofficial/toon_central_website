@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+// import { Autoplay, Pagination } from "swiper/modules";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getRequest, getRequestProtected } from "../../utils/queries/requests";
 import ShortsCard from "./shortsCard";

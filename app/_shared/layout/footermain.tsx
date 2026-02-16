@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Appstore,
   Facebook,
@@ -71,18 +71,8 @@ const Mainfooter = () => {
     </div>
   );
 };
-const MainfooterWithDelay = ({ delay = 2000 }: { delay?: number }) => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, delay);
-
-    return () => clearTimeout(timer);
-  }, [delay]);
-
-  return isVisible ? <Mainfooter /> : null;
+const MainfooterWithDelay = () => {
+  return <Mainfooter />;
 };
 
 export default MainfooterWithDelay;

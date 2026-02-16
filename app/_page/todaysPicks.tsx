@@ -25,7 +25,7 @@ const TodaysPicks = () => {
           <Link href="/original">See all</Link>
         </H2SectionTitle>
         <div className="grid grid-cols-3 sm:grid-cols-4  md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-          {cardItems.map((items, i) => (
+          {cardItems.map((items: any, i: number) => (
             <CardTitleInMobile key={i} cardData={items} index={i} />
           ))}
         </div>

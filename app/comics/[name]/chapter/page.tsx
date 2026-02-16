@@ -440,7 +440,7 @@ const Page = ({
     [chapter, data]
   );
   const subscribed = useMemo(() => {
-    return parseArray(data?.data?.likesAndViews?.likes).some((value) => {
+    return parseArray(data?.data?.likesAndViews?.likes).some((value: any) => {
       return value?.user_id === user?.id;
     });
   }, [user, data]);
@@ -511,7 +511,7 @@ const Page = ({
                   <div className="w-full max-w-[80%] h-[600px] bg-gray-800 animate-pulse rounded" />
                 </div>
               ) : images && images.length > 0 ? (
-                images.map((image, i) => {
+                images.map((image: any, i: number) => {
                   const isLocked = image?.is_lock === 1;
                   return (
                     <div

@@ -40,7 +40,7 @@ const TopRecommendations = ({
   return (
     <div className="grid grid-cols-3 xs:grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
       {isLoading ? (
-        dummyItems.map((item, i) => <LoadingTitleTop key={i} />)
+        dummyItems.map((item: number, i: number) => <LoadingTitleTop key={i} />)
       ) : (
         <>
           {cardItems?.length > 0 ? (
@@ -57,7 +57,7 @@ const TopRecommendations = ({
               ))}
             </>
           ) : (
-            dummyItems.map((item, i) => <LoadingTitleTop key={i} />)
+            dummyItems.map((item: number, i: number) => <LoadingTitleTop key={i} />)
           )}
         </>
       )}

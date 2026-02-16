@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import H2SectionTitle from '../_shared/layout/h2SectionTitle';
 import PopularToonscard, { PopularToonscardDesktop } from '../_shared/cards/populartoons';
 import { getRequest, getRequestProtected } from '../utils/queries/requests';
@@ -12,20 +12,14 @@ import { Seeall } from '../_shared/icons/icons';
 import { adGateToken } from '@/envs';
 
 const PopularByToons = () => {
-  const [popularItems, setPopularItems] = useState<any[]>([]);
   const { user,token } = useSelector(selectAuthState);
   const queryKey = "popular_by_toon";
-  const { data, isFetching, isLoading, isError, isSuccess } = useQuery({
+  const { data } = useQuery({
     queryKey: [queryKey],
     queryFn: () =>
-      getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=5"),
+      getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
   });
-  useEffect(() => {
-    setPopularItems(dummyItems);
-    if (isSuccess) {
-      setPopularItems(data?.data?.comics || dummyItems);
-    }
-  }, [isLoading, isFetching, data]);
+  const popularItems = data?.data?.comics || dummyItems;
   return (
     <div className="parent-wrap  pt-10">
       <div className="child-wrap">
@@ -36,13 +30,13 @@ const PopularByToons = () => {
           </Link>
         </div>
         <div className="flex md:hidden  flex-col gap-5">
-          {popularItems.slice(0, 5).map((item, i) => (
+          {popularItems.slice(0, 5).map((item: any, i: number) => (
             <PopularToonscard key={i} item={item} index={i} />
           ))}
         </div>
         
           <div className="hidden grid-rows-3 grid-flow-col place-content-between gap-y-8 md:grid px-12">
-            {popularItems.slice(0, 5).map((item, i) => (
+            {popularItems.slice(0, 5).map((item: any, i: number) => (
               <PopularToonscardDesktop key={i} item={item} index={i} />
             ))}
           </div>

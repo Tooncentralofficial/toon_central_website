@@ -4,7 +4,7 @@ import NavHome from "@/app/_shared/layout/nav";
 import { NextUIProvider } from "@nextui-org/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { motion } from "framer-motion";
+
 import { ToastContainer } from "react-toastify";
 import { Store } from "./store";
 import { Provider } from "react-redux";
@@ -77,15 +77,11 @@ export default function AppProvider({
         <SessionTracker />
         <QueryClientProvider client={queryClient}>
           {!isShortsPage && <NavHome />}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ ease: "easeInOut", duration: 0.75 }}
-          >
+          <div>
             {children}
             <ToastContainer />
             <ReactQueryDevtools initialIsOpen={false} />
-          </motion.div>
+          </div>
         </QueryClientProvider>
       </Provider>
     </NextUIProvider>

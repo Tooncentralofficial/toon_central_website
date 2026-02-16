@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+// import { Autoplay, Pagination } from "swiper/modules";
 //@ts-ignore
 import "swiper/css";
 import H2SectionTitle from "../_shared/layout/h2SectionTitle";
@@ -32,7 +32,6 @@ function HomeShorts() {
     queryFn: () => getRequest("home/shorts-carousel?page=1&limit=10"),
   });
   const shorts = data?.data?.shorts || [];
-  console.log(shorts);
 
   // Calculate initial slide index to fill the space
   const initialSlide = useMemo(() => {
@@ -131,6 +130,8 @@ function HomeShorts() {
                       if (el) videoRefs.current[index] = el;
                     }}
                     src={item.upload}
+                    poster={item.coverImage || undefined}
+                    preload={index === activeIndex ? "auto" : "metadata"}
                     className="w-full h-full object-cover rounded-medium pointer-events-none"
                     // poster={optimizeCloudinaryUrl(item?.coverImage) ?? undefined}
                     controls={false}
@@ -186,6 +187,8 @@ function HomeShorts() {
                         if (el) videoRefs.current[index] = el;
                       }}
                       src={item.upload}
+                      poster={item.coverImage || undefined}
+                      preload={index === activeIndex ? "auto" : "metadata"}
                       className="w-full h-full object-cover rounded-medium pointer-events-none"
                       // poster={optimizeCloudinaryUrl(item?.coverImage) ?? undefined}
                       controls={false}

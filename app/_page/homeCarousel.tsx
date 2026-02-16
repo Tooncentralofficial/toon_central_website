@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { ArrowLeft, ArrowRight } from "../_shared/icons/icons";
 import CardTitleBottom from "../_shared/cards/cardTitleBottom";
 import { getRequest } from "../utils/queries/requests";
@@ -14,7 +16,6 @@ import { motion } from "framer-motion";
 export const staticCardItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 function HomeCarousel() {
   
-  const [carouselItems, setCarouselItems] = useState<any>([]);
   const [screenSize, setScreenSize] = useState<string>("");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [hoverIndex, setHoverIndex] = useState(-1);
@@ -24,19 +25,13 @@ function HomeCarousel() {
   const [currentGroup, setCurrentGroup] = useState(0);
   const carouselQueryKey = "carousel";
   // reduce the time to fetch new data not cached data
-  const { data, isFetching, isLoading, isError, isSuccess } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [carouselQueryKey],
     queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
     staleTime:10000,
     refetchOnMount:"always"
   });
- 
-  
-  useEffect(() => {
-    if (isSuccess) {
-      setCarouselItems(data?.data?.comics || dummyItems);
-    }
-  }, [isLoading, isFetching, data]);
+  const carouselItems = data?.data?.comics || dummyItems;
   useEffect(() => {
     if (swiperRef.current && swiperRef.current.params) {
       const { slidesPerView } = swiperRef.current.params;

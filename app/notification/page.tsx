@@ -19,7 +19,7 @@ export default function Notification() {
             <div className="flex flex-col gap-5 mt-5">
               {Array(10)
                 .fill(0)
-                .map((item, i) => (
+                .map((item: number, i: number) => (
                   <NotificationPanel key={i} />
                 ))}
               

@@ -54,7 +54,7 @@ const GenreTab = ({ selectedTab }: { selectedTab: number | null }) => {
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 mt-5">
         {isLoading ? (
-          dummyItems.map((item, i) => <LoadingTitleOutside key={i} />)
+          dummyItems.map((item: number, i: number) => <LoadingTitleOutside key={i} />)
         ) : (
           <>
             {comics?.length > 0 ? (
@@ -67,7 +67,7 @@ const GenreTab = ({ selectedTab }: { selectedTab: number | null }) => {
                 ))}
               </>
             ) : (
-              dummyItems.map((item, i) => <LoadingTitleOutside key={i} />)
+              dummyItems.map((item: number, i: number) => <LoadingTitleOutside key={i} />)
             )}
           </>
         )}

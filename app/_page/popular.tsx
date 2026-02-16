@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useMemo, useRef } from "react";
 import Image from "next/image";
 import { optimizeCloudinaryUrl } from "../utils/imageUtils";
 import EllipseGray from "../_shared/ellipse/ellipseGray";
@@ -18,22 +18,29 @@ import { dummyItems } from "../_shared/data";
 import { Skeleton } from "@nextui-org/react";
 import "../popular.css";
 import { parseArray } from "@/helpers/parsArray";
+import { Comic } from "@/helpers/types";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import Likes from "../_shared/cards/likes";
-
-const Slider = require("react-slick").default;
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const Popular = () => {
-  let sliderRef: any = useRef(null);
+  let sliderRef = useRef<Slider | null>(null);
 
-  const [carouselItems, setCarouselItems] = useState<any[]>([]);
   const { user, token } = useSelector(selectAuthState);
   const queryKey = "popular_by_toon";
   const pathname = usePathname();
-  const infinite = useMemo(() => carouselItems.length > 1, [carouselItems]);
+  const { data, isLoading } = useQuery({
+    queryKey: [queryKey],
+    queryFn: () =>
+      getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
+  });
+  const carouselItems = data?.data?.comics || dummyItems;
+  const infinite = carouselItems.length > 1;
   const settings = {
     dots: false,
     infinite: infinite,
@@ -44,17 +51,6 @@ const Popular = () => {
     autoplay: true,
     arrows: false,
   };
-  const { data, isFetching, isLoading, isError, isSuccess } = useQuery({
-    queryKey: [queryKey],
-    queryFn: () =>
-      getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
-  });
-  useEffect(() => {
-    setCarouselItems(dummyItems);
-    if (isSuccess) {
-      setCarouselItems(data?.data?.comics || dummyItems);
-    }
-  }, [isLoading, isFetching, data]);
   const router = useRouter();
 
   const goToComic = (uuid: string | undefined) => {
@@ -62,7 +58,7 @@ const Popular = () => {
   };
   const { mutate: likeComic, isPending } = useMutation({
     mutationKey: ["like"],
-    mutationFn: (uid) =>
+    mutationFn: (uid: string) =>
       getRequestProtected(`/comics/${uid}/like`, token, pathname),
     onSuccess: (data) => {
       if (data?.success) {
@@ -98,12 +94,12 @@ const Popular = () => {
             <EllipseGray />
 
             <Slider
-              ref={(slider: typeof Slider) => {
-                sliderRef = slider;
+              ref={(slider: Slider) => {
+                sliderRef.current = slider;
               }}
               {...settings}
             >
-              {carouselItems.map((item, i) => {
+              {carouselItems.map((item: Comic, i: number) => {
                 return (
                   <Fragment key={i}>
                     <div key={i} className="px-2.5">
@@ -202,12 +198,12 @@ const Popular = () => {
       <div className=" slider-container block md:hidden">
         {/* @ts-ignore */}
         <Slider
-          ref={(slider: typeof Slider) => {
-            sliderRef = slider;
+          ref={(slider: Slider) => {
+            sliderRef.current = slider;
           }}
           {...settings}
         >
-          {carouselItems.map((item, i) => {
+          {carouselItems.map((item: Comic, i: number) => {
             return (
               <Fragment key={i}>
                 <div key={i} className="px-2.5">
