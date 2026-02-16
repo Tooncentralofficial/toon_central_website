@@ -64,7 +64,8 @@ function GenreTabs({ tabs, children }: GenreTabsProps) {
 export const GenreTabContent = ({ activeTab }: { activeTab: Tab }) => {
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [`genre_${activeTab.id}`, activeTab.id],
-    queryFn: () => getRequest(`/genres/comic/${activeTab.id}/all`),
+    queryFn: () =>
+      getRequest(`/genres/comic/${activeTab.id}/all?page=1&limit=10`),
     enabled: activeTab !== null && activeTab.id !== undefined,
   });
   const comics = useMemo(() => data?.data?.comics || [], [data]);
