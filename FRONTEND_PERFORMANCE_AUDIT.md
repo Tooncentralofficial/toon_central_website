@@ -95,10 +95,10 @@ return isClient ? <AppProvider>{children}</AppProvider> : <div className="..." /
 **What happened:** Both components fetch the same endpoint (`/home/toon-central-originals`) but used different queryKeys — TodaysPicksMobile used `"todayspicks"` with `limit=6`, Originals used `"originals"` with `limit=10`. React Query treats different queryKeys as separate cache entries, so two API calls were fired for overlapping data on every page load.
 **Fix:** Changed TodaysPicksMobile to use the same queryKey `"originals"` and same `limit=10` as Originals. React Query now deduplicates the call — one API request serves both components. Added `.slice(0, 6)` to TodaysPicksMobile's render to keep displaying only 6 items as before.
 
-### 13. HorizontalScroll (test.tsx) makes 3 hardcoded API calls
-**File:** `app/_page/test.tsx` lines 26-44
-**Problem:** Fetches genre list, then hardcodes genre IDs 1 (action) and 3 (comedy). Fires 3 API calls for a mobile-only component that desktop users never see.
-**Impact:** 3 unnecessary network requests on mobile. Desktop users still download the component JS.
+### 13. ✅ FIXED — HorizontalScroll (test.tsx) made 3 API calls, only used 1
+**File:** `app/_page/test.tsx`
+**What happened:** This mobile-only component (`block md:hidden`) made 3 API calls on every page load: (1) `/genres/pull/list` for the genre list — never used in the render, (2) `/genres/comic/1/all` for action genre comics — the only data actually rendered, (3) `/genres/comic/3/all` for comedy genre comics — `ComedyItems` state was populated but never referenced in the JSX. It also had pagination functions (`fetchMoreData`, `fetchMoreComedyData`) that were defined but never called, and the same redundant `useState` + `useEffect` pattern from issue #14.
+**Fix:** Removed the 2 unused queries (genre list and comedy), removed all unused state variables and pagination functions. The component now makes 1 API call instead of 3 and derives `actionItems` directly from the query result.
 
 ### 14. ✅ FIXED — Redundant state management pattern everywhere
 **Files:** `homeCarousel.tsx`, `popular.tsx`, `trending.tsx`, `originals.tsx`, `popularbytoons.tsx`, `todaysPicksMobile.tsx`

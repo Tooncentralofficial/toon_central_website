@@ -33,6 +33,13 @@ const Popular = () => {
   const { user, token } = useSelector(selectAuthState);
   const queryKey = "popular_by_toon";
   const pathname = usePathname();
+  const { data, isLoading } = useQuery({
+    queryKey: [queryKey],
+    queryFn: () =>
+      getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
+  });
+  const carouselItems = data?.data?.comics || dummyItems;
+  const infinite = carouselItems.length > 1;
   const settings = {
     dots: false,
     infinite: infinite,
@@ -43,13 +50,6 @@ const Popular = () => {
     autoplay: true,
     arrows: false,
   };
-  const { data, isLoading } = useQuery({
-    queryKey: [queryKey],
-    queryFn: () =>
-      getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
-  });
-  const carouselItems = data?.data?.comics || dummyItems;
-  const infinite = carouselItems.length > 1;
   const router = useRouter();
 
   const goToComic = (uuid: string | undefined) => {
