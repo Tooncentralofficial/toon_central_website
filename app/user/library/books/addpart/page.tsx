@@ -28,6 +28,8 @@ import { generateUrl } from "@/helpers/parseImage";
 import InputPictureFloating from "@/app/_shared/inputs_actions/inputPictureFloating";
 import axios from "axios";
 import DraggableImage from "./_shared/draggableimage";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import { prevRoutes } from "@/lib/session/prevRoutes";
 import { parseArray } from "@/helpers/parsArray";
 import { Switch } from "@nextui-org/react";
@@ -425,6 +427,7 @@ export default function Page({
   });
 
   return (
+    <DndProvider backend={HTML5Backend}>
     <main className="">
       <div className="parent-wrap min-h-dvh   py-10">
         <div className="child-wrap ">
@@ -627,5 +630,6 @@ export default function Page({
         </div>
       </div>
     </main>
+    </DndProvider>
   );
 }

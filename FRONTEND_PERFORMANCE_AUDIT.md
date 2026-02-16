@@ -51,10 +51,11 @@ return isClient ? <AppProvider>{children}</AppProvider> : <div className="..." /
 **What was wrong:** `CardTitleOutside` is used in 10 places (originals, todaysPicks, topRecommendations, genre tabs, comic detail "you may also like", etc.) — all below-the-fold or on secondary pages. Setting `priority` on these images means the browser tries to eagerly download 30-50+ card images at highest priority, competing with the actual above-the-fold carousel images for bandwidth. The result is that everything loads slower.
 **Fix:** Removed `priority` from `CardTitleOutside`. Next.js `<Image>` already defaults to `loading="lazy"` when `priority` is not set, so simply removing it is enough — the images will now only load when the user scrolls near them. Kept `priority` on `CardTitleBottom` since it's ONLY used in the homepage carousel — the one place where eager loading is correct.
 
-### 6. DndProvider (drag-and-drop) wraps the entire app
+### 6. ✅ FIXED — DndProvider (drag-and-drop) wrapped the entire app
 **File:** `app/clientLayout.tsx` line 15
-**Problem:** `react-dnd` and `HTML5Backend` are imported and mounted on every page. Drag-and-drop is only used in the creator's comic upload flow. This adds ~40KB+ of JS to the initial bundle that 99% of page views never use.
-**Impact:** Larger initial JS bundle = slower Time to Interactive (TTI).
+**What happened:** `react-dnd` and `HTML5Backend` were imported in `clientLayout.tsx` and wrapped around every page via `<DndProvider backend={HTML5Backend}>`. But drag-and-drop is only used in one place: `DraggableImage` on the creator's "add part" page (`app/user/library/books/addpart/`). Every other page — homepage, comic detail, shorts, discover, profile — loaded ~40KB+ of drag-and-drop JS that was never used.
+**Why it matters:** The `react-dnd` and `react-dnd-html5-backend` packages are added to the initial JS bundle for every page. This increases download size and Time to Interactive for all users, even though only creators uploading comic panels ever need drag-and-drop.
+**Fix:** Removed `DndProvider` from `clientLayout.tsx` and moved it into the addpart page component that actually uses it. The drag-and-drop JS now only loads when a creator navigates to that specific page.
 
 ### 7. ✅ FIXED — Framer Motion wrapped ALL page content with 750ms fade-in
 **File:** `lib/appProvider.tsx` lines 80-88
