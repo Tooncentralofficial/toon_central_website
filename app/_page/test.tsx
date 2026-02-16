@@ -58,7 +58,7 @@ const HorizontalScroll = () => {
           initialSlide={0}
           centeredSlides={hasEnoughSlidesForLoop}
         >
-          {actionItems.map((item, i) => {
+          {actionItems.map((item: any, i: number) => {
             return (
               <SwiperSlide key={`${item.uuid || item.id || i}-${i}`}>
                 <CardTitleOutside cardData={item} index={i} noTitle />

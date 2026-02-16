@@ -37,7 +37,7 @@ const Originals = () => {
           {isLoading ? (
             dummyItems
               .slice(0, 5)
-              .map((item, i) => <LoadingTitleOutside key={i} />)
+              .map((item: number, i: number) => <LoadingTitleOutside key={i} />)
           ) : (
             <>
               {comics.length > 0 ? (
@@ -55,7 +55,7 @@ const Originals = () => {
               ) : (
                 dummyItems
                   .slice(0, 5)
-                  .map((item, i) => <LoadingTitleOutside key={i} />)
+                  .map((item: number, i: number) => <LoadingTitleOutside key={i} />)
               )}
             </>
           )}

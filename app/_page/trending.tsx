@@ -48,7 +48,7 @@ const Trending = () => {
         </div>
         <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
           {isLoading ? (
-            dummyItems.map((item, i) => <LoadingTitleTop key={i} />)
+            dummyItems.map((item: number, i: number) => <LoadingTitleTop key={i} />)
           ) : (
             <>
               {comics.length > 0 ? (
@@ -65,7 +65,7 @@ const Trending = () => {
                   ))}
                 </>
               ) : (
-                dummyItems.map((item, i) => <LoadingTitleTop key={i} />)
+                dummyItems.map((item: number, i: number) => <LoadingTitleTop key={i} />)
               )}
             </>
           )}

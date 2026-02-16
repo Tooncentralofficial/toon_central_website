@@ -32,7 +32,7 @@ export default function TodaysPicksMobile() {
             onChange={(e: any) => setFilter(e.target.value)}
             startContent={<Calendar className="text-[#05834B] w-10" />}
           >
-            {SelectFilters.map((filter, i) => (
+            {SelectFilters.map((filter: string, i: number) => (
               <SelectItem key={filter}>{filter}</SelectItem>
             ))}
           </SelectFilter>

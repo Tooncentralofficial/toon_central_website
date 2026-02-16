@@ -203,7 +203,7 @@ export default function Page() {
             {isLoading || newTrending.length == 0 ? (
               <Skeleton className="w-full h-[60px]"></Skeleton>
             ) : (
-              newTrending.map((item, i) => (
+              newTrending.map((item: any, i: number) => (
                 <TrendingItem
                   key={i}
                   data={item}
@@ -306,7 +306,7 @@ export default function Page() {
               {loadingRead || mostRead.length == 0 ? (
                 <Skeleton className="w-full h-[60px]"></Skeleton>
               ) : (
-                mostRead.map((item, i) => (
+                mostRead.map((item: any, i: number) => (
                   <TrendingItem
                     key={i}
                     data={item}

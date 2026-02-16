@@ -59,10 +59,10 @@ function Page() {
     <div className="parent-wrap py-10">
       <div className="child-wrap h-full">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: 4 }).map((_: unknown, i: number) => (
             <SubPlanSkeleton key={i} />
           ))}
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: 4 }).map((_: unknown, i: number) => (
             <CreditPlanSkeleton key={i} />
           ))}
         </div>
@@ -88,7 +88,7 @@ function Page() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5">
               {isLoadingPlans
-                ? Array.from({ length: 4 }).map((_, i) => (
+                ? Array.from({ length: 4 }).map((_: unknown, i: number) => (
                     <SubPlanSkeleton key={i} />
                   ))
                 : plans?.map((plan: any, i: number) => (
@@ -107,7 +107,7 @@ function Page() {
               <h3>By Credits</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5 items-stretch w-full">
                 {isLoadingCoins
-                  ? Array.from({ length: 4 }).map((_, i) => (
+                  ? Array.from({ length: 4 }).map((_: unknown, i: number) => (
                       <CreditPlanSkeleton key={i} />
                     ))
                   : coin?.map((plan: any, i: number) => (

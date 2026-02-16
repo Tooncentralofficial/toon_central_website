@@ -84,7 +84,7 @@ const SearchModal = ({
               />
               <Divider />
               <div className="flex flex-col gap-2 max-h-[40vh] overflow-y-auto">
-                {searched.map((item, i) => (
+                {searched.map((item: any, i: number) => (
                   <div key={i} className="h-[48px] w-full">
                     <Button
                       as={Link}

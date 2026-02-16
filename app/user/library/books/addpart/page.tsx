@@ -98,13 +98,13 @@ export default function Page({
   });
 
   const images = useMemo(
-    () => parseArray(data?.data?.comicImages).map((val) => val.image),
+    () => parseArray(data?.data?.comicImages).map((val: any) => val.image),
     [data?.data?.comicImages]
   );
 
   // Memoized array of image IDs for API calls in edit mode
   const comicImageIds = useMemo(
-    () => parseArray(data?.data?.comicImages).map((val) => val.id),
+    () => parseArray(data?.data?.comicImages).map((val: any) => val.id),
     [data?.data?.comicImages]
   );
 
@@ -370,7 +370,7 @@ export default function Page({
           ...formik.values,
           comicImages: [
             ...formik.values.comicImages.filter(
-              (image) => typeof image === "string"
+              (image: any) => typeof image === "string"
             ),
             ...imageUrls,
           ],

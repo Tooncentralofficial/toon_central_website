@@ -30,13 +30,13 @@ const PopularByToons = () => {
           </Link>
         </div>
         <div className="flex md:hidden  flex-col gap-5">
-          {popularItems.slice(0, 5).map((item, i) => (
+          {popularItems.slice(0, 5).map((item: any, i: number) => (
             <PopularToonscard key={i} item={item} index={i} />
           ))}
         </div>
         
           <div className="hidden grid-rows-3 grid-flow-col place-content-between gap-y-8 md:grid px-12">
-            {popularItems.slice(0, 5).map((item, i) => (
+            {popularItems.slice(0, 5).map((item: any, i: number) => (
               <PopularToonscardDesktop key={i} item={item} index={i} />
             ))}
           </div>
