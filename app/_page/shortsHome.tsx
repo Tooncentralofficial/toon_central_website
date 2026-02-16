@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+// import { Autoplay, Pagination } from "swiper/modules";
 //@ts-ignore
 import "swiper/css";
 import H2SectionTitle from "../_shared/layout/h2SectionTitle";
@@ -129,6 +129,7 @@ function HomeShorts() {
                       if (el) videoRefs.current[index] = el;
                     }}
                     src={item.upload}
+
                     preload={index === activeIndex ? "auto" : "none"}
                     className="w-full h-full object-cover rounded-medium pointer-events-none"
                     controls={false}
@@ -185,6 +186,7 @@ function HomeShorts() {
                         if (el) videoRefs.current[index] = el;
                       }}
                       src={item.upload}
+  
                       preload={index === activeIndex ? "auto" : "none"}
                       className="w-full h-full object-cover rounded-medium pointer-events-none"
                       controls={false}

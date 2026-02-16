@@ -288,14 +288,9 @@ This tells Next.js the image is 200px wide, but CSS stretches it to fill its con
 - Removing `priority` from cards = above-the-fold carousel images load first, off-screen images lazy-load
 - Next.js auto-converts to WebP/AVIF (smaller files than JPEG/PNG)
 
-### D4. Search Modal with Debounce, Portal, and Keyboard Shortcuts
-**What we did on demo:** Built a full search experience:
-- **300ms debounce** — waits for the user to stop typing before calling the API. Minimum 2 characters required.
-- **`createPortal`** — renders the modal directly on `<body>` so it escapes any parent stacking context (the nav's `backdrop-blur` was trapping the modal overlay on the demo — same risk here with NextUI's `Navbar`).
-- **Keyboard shortcuts** — `Ctrl+K` / `Cmd+K` to open, `ESC` to close. Auto-focuses the input on open.
-- **Thumbnail results** — search results show cover images, not just text buttons.
-
-**What's wrong in the real site:** The current search (`app/_shared/layout/search.tsx`) fires a `useQuery` on every keystroke with no debounce, no minimum character requirement, and no keyboard shortcuts.
+### D4. ✅ FIXED — Search debounce
+**What was wrong:** The search fired an API call on every keystroke with no debounce or minimum character requirement. Typing "batman" triggered 6 API requests.
+**Fix (Fix #10):** Split into `searchInput` (instant for responsive typing) and `debouncedSearch` (300ms delay, used in queryKey). Added `enabled: debouncedSearch.length >= 2`. Typing "batman" now fires 1 API call instead of 6.
 
 **What to do here:** Add debounce to the existing search:
 ```tsx
@@ -389,18 +384,9 @@ export function GenreTabsClient({ initialComics, genres }) {
 **What happened:** The codebase has `optimizeCloudinaryUrl()` in `imageUtils.ts` that inserts `w_800,q_auto,f_auto` into Cloudinary URLs — enabling automatic format conversion (WebP/AVIF) and quality optimization. `CardTitleOutside` and `CardTitleBottom` both used it, but `CardTitleTop` used the raw URL: `src={cardData?.coverImage || ""}`. This meant all images in the Recommendations and Trending sections were served at full original size and format.
 **Fix:** Added `import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils"` and wrapped the src: `src={optimizeCloudinaryUrl(cardData?.coverImage ?? "")}`. These images now get automatic WebP/AVIF conversion and quality optimization — typically 50-80% smaller file sizes.
 
-### D8. Video Poster Images Instead of Autoloading Videos
-**What we did on demo:** The demo didn't have shorts videos on the homepage, so this is a new recommendation based on what we learned about lazy loading.
-**What to do here:** Replace `<video src={item.upload}>` with a poster/thumbnail approach:
-```tsx
-// Instead of loading the full video:
-<video src={item.upload} ... />
-
-// Use a poster image, load video only on interaction:
-<video poster={item.coverImage || item.thumbnail} preload="none" ... />
-```
-Or better yet, show a static `<Image>` with a play button overlay, and only load the `<video>` element when the user clicks or the slide becomes active.
-**Impact:** Eliminates 10 video downloads (potentially 50-500MB) from homepage load. Replaces with ~10 thumbnail images (~500KB total).
+### D8. Video Poster Images Instead of Blank Frames
+**Problem:** Videos show blank black frames before loading. With `preload="none"` on non-active slides, inactive videos show nothing until swiped to.
+**Recommendation:** Add `poster={item.coverImage}` to `<video>` elements so the browser shows the cover image as a thumbnail while videos load.
 
 ### D9. Proper Skeleton Loading States (Suspense Fallbacks)
 **What we did on demo:** Created dedicated skeleton components that match the exact layout of the real content:

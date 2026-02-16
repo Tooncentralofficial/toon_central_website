@@ -19,7 +19,7 @@ import {
 import Likes from "../../_shared/cards/likes";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
-import { Autoplay } from "swiper/modules";
+// import { Autoplay } from "swiper/modules";
 //@ts-ignore
 import "swiper/css";
 //@ts-ignore
