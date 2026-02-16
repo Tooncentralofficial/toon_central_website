@@ -118,13 +118,11 @@ React Query already manages loading/success/error states. This pattern causes ex
 **Problem:** Multiple components attach `window.addEventListener("resize", ...)` to determine how many items to show. This is what CSS media queries (via Tailwind's responsive classes) or CSS `display: none` handle for free, without JavaScript.
 **Impact:** Unnecessary re-renders on window resize. Each resize event triggers state updates and re-renders across 4+ components simultaneously.
 
-### 16. Footer artificially delayed by 2 seconds
+### 16. ✅ FIXED — Footer artificially delayed by 2 seconds
 **File:** `app/_shared/layout/footermain.tsx` lines 74-86
-```tsx
-const timer = setTimeout(() => setIsVisible(true), delay); // delay = 2000
-```
-**Problem:** The footer is hidden for 2 seconds via setTimeout. This is a hack to avoid it appearing before content. A proper solution would use Intersection Observer or CSS.
-**Impact:** Footer flashes in after 2 seconds, creating a layout shift.
+**What happened:** `MainfooterWithDelay` hid the footer entirely for 2 seconds using `useState(false)` + `setTimeout(() => setIsVisible(true), 2000)`. This was a workaround to prevent the footer from appearing at the top of the page before content loaded and pushed it down.
+**Why it matters:** Users see no footer for 2 seconds, then it suddenly appears — causing a layout shift (CLS). The workaround also delays the footer on subsequent page visits where content is cached and loads instantly, adding unnecessary wait time.
+**Fix:** Removed the delay logic — the footer now renders immediately. With the other performance fixes (removed framer-motion fade, removed DndProvider, etc.), content loads fast enough that the footer renders in its correct position at the bottom.
 
 ---
 
