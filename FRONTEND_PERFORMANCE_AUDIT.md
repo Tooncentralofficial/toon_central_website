@@ -56,15 +56,11 @@ return isClient ? <AppProvider>{children}</AppProvider> : <div className="..." /
 **Problem:** `react-dnd` and `HTML5Backend` are imported and mounted on every page. Drag-and-drop is only used in the creator's comic upload flow. This adds ~40KB+ of JS to the initial bundle that 99% of page views never use.
 **Impact:** Larger initial JS bundle = slower Time to Interactive (TTI).
 
-### 7. Framer Motion wraps ALL page content
-**File:** `lib/appProvider.tsx` lines 80-86
-```tsx
-<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.75 }}>
-  {children}
-</motion.div>
-```
-**Problem:** Every page transition triggers Framer Motion's animation system. This adds Framer Motion (~30KB gzipped) to the critical rendering path and causes a 750ms fade-in delay before content is fully visible.
-**Impact:** Perceived slowness — content fades in over 0.75 seconds even when data is already available.
+### 7. ✅ FIXED — Framer Motion wrapped ALL page content with 750ms fade-in
+**File:** `lib/appProvider.tsx` lines 80-88
+**What happened:** Every page's content was wrapped in `<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.75 }}>`. This meant the entire page started invisible (`opacity: 0`) and took 750ms to fade in — even when the content was ready immediately. This also imported Framer Motion's animation system (~30KB gzipped) into the critical rendering path for every page, regardless of whether any page actually needed animations.
+**Why it matters:** Users saw a blank page for up to 750ms after content was already rendered. The fade makes the app feel slower than it actually is. And the Framer Motion JS had to download and execute before any content could appear.
+**Fix:** Replaced `motion.div` with a plain `div` and removed the unused `motion` import from `framer-motion`. Content now appears instantly when ready. If specific page transitions need animation in the future, they can be added to individual components rather than wrapping the entire app.
 
 ### 8. ✅ FIXED — Slick Carousel CSS loaded globally
 **File:** `app/layout.tsx` lines 4-5
