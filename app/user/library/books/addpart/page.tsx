@@ -44,11 +44,24 @@ export default function Page({
 
   const { uuid, comicId, chapterid } = searchParams;
   const { user, userType, token } = useSelector(selectAuthState);
-  const comicid = new URLSearchParams(window.location.search).get("comicId");
-  const uuId = new URLSearchParams(window.location.search).get("uuid");
-  const episodeId = new URLSearchParams(window.location.search).get(
-    "chapterid"
-  );
+  const comicid =
+    typeof comicId === "string"
+      ? comicId
+      : Array.isArray(comicId)
+      ? comicId[0] ?? null
+      : null;
+  const uuId =
+    typeof uuid === "string"
+      ? uuid
+      : Array.isArray(uuid)
+      ? uuid[0] ?? null
+      : null;
+  const episodeId =
+    typeof chapterid === "string"
+      ? chapterid
+      : Array.isArray(chapterid)
+      ? chapterid[0] ?? null
+      : null;
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [enabled, setEnabled] = useState<boolean>(false);
   const [panelLockStates, setPanelLockStates] = useState<boolean[]>([]);
@@ -64,7 +77,7 @@ export default function Page({
       getRequestProtected(
         `/my-libraries/chapters/${episodeId}/comic/${comicid}/get`,
         token,
-        prevRoutes(uuid).comic
+        prevRoutes(uuId).comic
       ),
     enabled: episodeId !== null && token !== null,
   });
@@ -77,7 +90,7 @@ export default function Page({
       getRequestProtected(
         `/my-libraries/comics/${comicid}/get`,
         token,
-        prevRoutes(uuid).comic
+        prevRoutes(uuId).comic
       ),
     enabled: comicid !== null && token !== null,
   });
@@ -319,6 +332,7 @@ export default function Page({
         "form"
       ),
     onSuccess(data, variables, context) {
+      console.log("@@publishChapter success", data);
       setisLoading(false);
       const { success, message, data: resData } = data;
       if (success) {
@@ -335,6 +349,7 @@ export default function Page({
       }
     },
     onError(error, variables, context) {
+      console.log("@@publishChapter error", error);
       toast("Some error occured. Contact help !", {
         toastId: "add_comic",
         type: "error",

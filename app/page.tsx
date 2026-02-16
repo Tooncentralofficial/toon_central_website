@@ -68,10 +68,21 @@ export const metadata: Metadata = {
 export default async function Home() {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["carousel"],
-    queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
-  });
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ["carousel"],
+      queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["all_genres"],
+      queryFn: () => getRequest("/selectables/genres"),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["shorts-home"],
+    queryFn: () => getRequest("home/shorts-carousel?page=1&limit=10")
+  }),
+  ]);
+  
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <main>

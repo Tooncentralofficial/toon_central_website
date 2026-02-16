@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+
 import "./globals.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -9,7 +9,6 @@ import Script from "next/script";
 import localFont from "next/font/local";
 
 import PropellerAdsScript from "./Scripts";
-const inter = Inter({ subsets: ["latin"] });
 export const DEFAULT_OG_URL = `https://tooncentralhub.com/opengraph-image.png`;
 
 const satoshi = localFont({
