@@ -100,18 +100,19 @@ return isClient ? <AppProvider>{children}</AppProvider> : <div className="..." /
 **Problem:** Fetches genre list, then hardcodes genre IDs 1 (action) and 3 (comedy). Fires 3 API calls for a mobile-only component that desktop users never see.
 **Impact:** 3 unnecessary network requests on mobile. Desktop users still download the component JS.
 
-### 14. Redundant state management pattern everywhere
-**Files:** Almost every section component (homeCarousel, popular, trending, originals, popularbytoons, todaysPicksMobile)
-**Problem:** Components duplicate React Query's state into local useState:
+### 14. ✅ FIXED — Redundant state management pattern everywhere
+**Files:** `homeCarousel.tsx`, `popular.tsx`, `trending.tsx`, `originals.tsx`, `popularbytoons.tsx`, `todaysPicksMobile.tsx`
+**What happened:** Every section component duplicated React Query's managed state into a local `useState` + `useEffect` pattern:
 ```tsx
 const [items, setItems] = useState([]);
 const { data, isSuccess } = useQuery({...});
 useEffect(() => {
   if (isSuccess) setItems(data?.data?.comics || []);
 }, [isLoading, isFetching, data]);
+// render uses `items` instead of `data` directly
 ```
-React Query already manages loading/success/error states. This pattern causes extra re-renders (query resolves → effect runs → setState → re-render).
-**Impact:** Double re-render per data fetch, unnecessary code complexity.
+React Query already tracks loading/success/error states and holds the data. The `useEffect` copies that data into a separate state variable, which triggers a second render cycle: (1) query resolves → component re-renders with new `data`, (2) `useEffect` fires → `setState` → component re-renders again with the copied data. Every data fetch caused 2 renders instead of 1.
+**Fix:** Removed the `useState` and `useEffect` in all 6 components. Each now derives the items directly from the query result: `const items = data?.data?.comics || []` (or `|| dummyItems` for components that show placeholder cards during loading). One render per data fetch instead of two.
 
 ### 15. `window.matchMedia` resize listeners instead of CSS
 **Files:** `homeCarousel.tsx` lines 63-79, `topRecommendations.tsx` lines 20-38, `trending.tsx` lines 21-39, `originals.tsx` lines 27-35

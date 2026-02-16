@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import H2SectionTitle from '../_shared/layout/h2SectionTitle';
 import PopularToonscard, { PopularToonscardDesktop } from '../_shared/cards/populartoons';
 import { getRequest, getRequestProtected } from '../utils/queries/requests';
@@ -12,20 +12,14 @@ import { Seeall } from '../_shared/icons/icons';
 import { adGateToken } from '@/envs';
 
 const PopularByToons = () => {
-  const [popularItems, setPopularItems] = useState<any[]>([]);
   const { user,token } = useSelector(selectAuthState);
   const queryKey = "popular_by_toon";
-  const { data, isFetching, isLoading, isError, isSuccess } = useQuery({
+  const { data } = useQuery({
     queryKey: [queryKey],
     queryFn: () =>
       getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
   });
-  useEffect(() => {
-    setPopularItems(dummyItems);
-    if (isSuccess) {
-      setPopularItems(data?.data?.comics || dummyItems);
-    }
-  }, [isLoading, isFetching, data]);
+  const popularItems = data?.data?.comics || dummyItems;
   return (
     <div className="parent-wrap  pt-10">
       <div className="child-wrap">

@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useMemo, useRef } from "react";
 import Image from "next/image";
 import { optimizeCloudinaryUrl } from "../utils/imageUtils";
 import EllipseGray from "../_shared/ellipse/ellipseGray";
@@ -30,11 +30,9 @@ import "slick-carousel/slick/slick-theme.css";
 const Popular = () => {
   let sliderRef: any = useRef(null);
 
-  const [carouselItems, setCarouselItems] = useState<any[]>([]);
   const { user, token } = useSelector(selectAuthState);
   const queryKey = "popular_by_toon";
   const pathname = usePathname();
-  const infinite = useMemo(() => carouselItems.length > 1, [carouselItems]);
   const settings = {
     dots: false,
     infinite: infinite,
@@ -45,17 +43,13 @@ const Popular = () => {
     autoplay: true,
     arrows: false,
   };
-  const { data, isFetching, isLoading, isError, isSuccess } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [queryKey],
     queryFn: () =>
       getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
   });
-  useEffect(() => {
-    setCarouselItems(dummyItems);
-    if (isSuccess) {
-      setCarouselItems(data?.data?.comics || dummyItems);
-    }
-  }, [isLoading, isFetching, data]);
+  const carouselItems = data?.data?.comics || dummyItems;
+  const infinite = carouselItems.length > 1;
   const router = useRouter();
 
   const goToComic = (uuid: string | undefined) => {

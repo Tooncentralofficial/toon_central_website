@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import UseTailwindMediaQuery from "@/app/utils/useTailwindMediaQuery";
 import H2SectionTitle from "../_shared/layout/h2SectionTitle";
 import CardTitleOutside from "../_shared/cards/cardTitleOutside";
@@ -12,27 +12,20 @@ import { dummyItems } from "../_shared/data";
 const Originals = () => {
   const { sm, base } = UseTailwindMediaQuery();
   const originalsqueryKey = "originals";
-  const [cardItems, setCardItems] = useState([]);
-  const { isLoading, isFetching, data, isSuccess } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: [originalsqueryKey],
     queryFn: () =>
       getRequest("/home/toon-central-originals?filter=all&page=1&limit=10"),
   });
-  useEffect(() => {
-    if (isSuccess) {
-      setCardItems(data?.data?.comics || []);
-    }
-  }, [isLoading, isFetching, data]);
+  const comics = data?.data?.comics || [];
 
   const responsiveCardItems = useMemo(() => {
     if (base) {
-      let cards = cardItems.slice(0, 4);
-      return cards;
+      return comics.slice(0, 4);
     } else {
-      let cards = cardItems.slice(0, 10);
-      return cards;
+      return comics.slice(0, 10);
     }
-  }, [base,cardItems]);
+  }, [base, comics]);
 
   return (
     <div className="parent-wrap py-10">
@@ -47,7 +40,7 @@ const Originals = () => {
               .map((item, i) => <LoadingTitleOutside key={i} />)
           ) : (
             <>
-              {cardItems?.length > 0 ? (
+              {comics.length > 0 ? (
                 <>
                   {responsiveCardItems.map((item: any, i: number) => (
                     <div key={i}>
