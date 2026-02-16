@@ -129,7 +129,7 @@ function HomeShorts() {
                       if (el) videoRefs.current[index] = el;
                     }}
                     src={item.upload}
-
+                    poster={item.coverImage || undefined}
                     preload={index === activeIndex ? "auto" : "metadata"}
                     className="w-full h-full object-cover rounded-medium pointer-events-none"
                     controls={false}
@@ -186,7 +186,7 @@ function HomeShorts() {
                         if (el) videoRefs.current[index] = el;
                       }}
                       src={item.upload}
-
+                      poster={item.coverImage || undefined}
                       preload={index === activeIndex ? "auto" : "metadata"}
                       className="w-full h-full object-cover rounded-medium pointer-events-none"
                       controls={false}

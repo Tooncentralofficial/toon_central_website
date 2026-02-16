@@ -238,9 +238,9 @@ useEffect(() => {
 **What happened:** The codebase has `optimizeCloudinaryUrl()` in `imageUtils.ts` that inserts `w_800,q_auto,f_auto` into Cloudinary URLs — enabling automatic format conversion (WebP/AVIF) and quality optimization. `CardTitleOutside` and `CardTitleBottom` both used it, but `CardTitleTop` used the raw URL: `src={cardData?.coverImage || ""}`. This meant all images in the Recommendations and Trending sections were served at full original size and format.
 **Fix:** Added `import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils"` and wrapped the src: `src={optimizeCloudinaryUrl(cardData?.coverImage ?? "")}`. These images now get automatic WebP/AVIF conversion and quality optimization — typically 50-80% smaller file sizes.
 
-### D8. Video Poster Images Instead of Blank Frames
-**Problem:** Videos show blank black frames before loading. With `preload="none"` on non-active slides, inactive videos show nothing until swiped to.
-**Recommendation:** Add `poster={item.coverImage}` to `<video>` elements so the browser shows the cover image as a thumbnail while videos load.
+### D8. ✅ FIXED — Video Poster Images Instead of Blank Frames
+**Problem:** Videos showed blank black frames before loading. With `preload="metadata"` on non-active slides, inactive videos only showed metadata-derived thumbnails (if available) rather than a proper cover image.
+**Fix:** Added `poster={item.coverImage || undefined}` to both mobile and desktop `<video>` elements in `shortsHome.tsx`. If a cover image exists, the browser displays it as a thumbnail immediately — no waiting for video data. If no cover image is available, `undefined` is passed and the browser falls back to `preload="metadata"` behavior (first frame thumbnail).
 
 ### D9. ~~Suspense Skeleton Fallbacks~~ — NOT NEEDED
 **Why skipped:** Since we're not using Suspense streaming (D1 was rejected), there are no `<Suspense>` boundaries that need skeleton fallbacks. The homepage loads all data server-side via `Promise.all` and renders everything at once. The `loading.tsx` spinner (Fix #19) already handles route transitions. The footer delay hack was already removed (Fix #16).
@@ -252,10 +252,10 @@ useEffect(() => {
 | Category | Status | Details |
 |----------|--------|---------|
 | Part 1 fixes (20 total) | **18 FIXED**, 2 remaining | #1 (ClientLayout gate — needs deep investigation), #15 (resize listeners — design-dependent) |
-| Part 2 demo optimizations (9 total) | **4 FIXED**, 2 remaining, 3 skipped | Fixed: D2 (ISR), D3 (sizes), D4 (debounce), D7 (Cloudinary). Remaining: D8 (video posters). Skipped: D1 (Suspense), D5 (Hybrid), D6 (Fetch Priority), D9 (Skeletons) |
+| Part 2 demo optimizations (9 total) | **5 FIXED**, 1 remaining, 3 skipped | Fixed: D2 (ISR), D3 (sizes), D4 (debounce), D7 (Cloudinary), D8 (video posters). Remaining: none besides D3 partial (fill mode). Skipped: D1 (Suspense), D5 (Hybrid), D6 (Fetch Priority), D9 (Skeletons) |
 | Backend API optimizations (task.md) | Separate track | #11, #13, #14, #15, #16, #18, #25 |
 
 ### Remaining Frontend Fixes
 1. **#1 — ClientLayout `isClient` gate** — Needs investigation to identify which component causes hydration mismatch. Removing the gate causes errors.
 2. **#15 — `window.matchMedia` resize listeners** — 4 components use JS resize listeners instead of CSS breakpoints. Requires testing responsive layouts.
-3. **D8 — Video poster images** — Add `poster={item.coverImage}` to `<video>` elements so non-active shorts show thumbnails instead of blank frames.
+3. ~~**D8 — Video poster images**~~ — ✅ FIXED
