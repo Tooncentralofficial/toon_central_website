@@ -385,17 +385,9 @@ export function GenreTabsClient({ initialComics, genres }) {
 **What to do here:** Since the homepage prefetch happens server-side, this mainly applies to the client-side React Query refetches. Can be added as a fetch option in the axios instance or in the individual `queryFn` for the carousel.
 **Impact:** Moderate — browser hint to prioritize the most important request.
 
-### D7. Cloudinary URL Optimization (Already Partially Done)
-**What we did on demo:** Transformed Cloudinary URLs to include `w_800,q_auto,f_auto` for automatic format conversion (WebP/AVIF) and quality optimization.
-**What's already here:** `imageUtils.ts` already has `optimizeCloudinaryUrl()` that inserts `w_800,q_auto,f_auto`. However, `CardTitleTop` on line 20 does NOT use it — it uses the raw URL:
-```tsx
-// cardTitleTop.tsx line 20 — raw URL, not optimized
-src={`${cardData?.coverImage || ""}`}
-
-// Should be:
-src={optimizeCloudinaryUrl(cardData?.coverImage ?? "")}
-```
-**Impact:** `CardTitleTop` images (used in recommendations and trending) are served unoptimized — full size, original format. Fixing this reduces image size by 50-80%.
+### D7. ✅ FIXED — Cloudinary URL Optimization missing on CardTitleTop
+**What happened:** The codebase has `optimizeCloudinaryUrl()` in `imageUtils.ts` that inserts `w_800,q_auto,f_auto` into Cloudinary URLs — enabling automatic format conversion (WebP/AVIF) and quality optimization. `CardTitleOutside` and `CardTitleBottom` both used it, but `CardTitleTop` used the raw URL: `src={cardData?.coverImage || ""}`. This meant all images in the Recommendations and Trending sections were served at full original size and format.
+**Fix:** Added `import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils"` and wrapped the src: `src={optimizeCloudinaryUrl(cardData?.coverImage ?? "")}`. These images now get automatic WebP/AVIF conversion and quality optimization — typically 50-80% smaller file sizes.
 
 ### D8. Video Poster Images Instead of Autoloading Videos
 **What we did on demo:** The demo didn't have shorts videos on the homepage, so this is a new recommendation based on what we learned about lazy loading.

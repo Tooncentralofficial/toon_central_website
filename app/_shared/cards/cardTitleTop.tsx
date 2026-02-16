@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Likes from "./likes";
+import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 
 const link = `/comics/0`;
 const CardTitleTop = ({
@@ -17,7 +18,7 @@ const CardTitleTop = ({
     <div className="h-[150px] md:h-[260px]  rounded-[8px] overflow-hidden">
       <div className="h-full w-auto relative">
         <Image
-          src={`${cardData?.coverImage || ""}`}
+          src={optimizeCloudinaryUrl(cardData?.coverImage ?? "")}
           alt={`${cardData?.title || "toon_central"}`}
           width={200}
           height={240}
