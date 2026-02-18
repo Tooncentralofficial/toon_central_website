@@ -14,24 +14,27 @@ import { ToonShortsLogo } from "../_shared/icons/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { optimizeCloudinaryUrl } from "../utils/imageUtils";
-function HomeShorts() {
+function HomeShorts({ offset = 0 }: { offset?: number } = {}) {
   const { token } = useSelector(selectAuthState);
   const [activeIndex, setActiveIndex] = useState(0);
   const router = useRouter();
   const videoRefs = useRef<HTMLVideoElement[]>([]);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
-  const slides = [
-    { id: 1, title: "3D Animation" },
-    { id: 2, title: "Bestyy Ad" },
-    { id: 3, title: "Ratatouille" },
-    { id: 4, title: "Another Slide" },
-  ];
+  // const slides = [
+  //   { id: 1, title: "3D Animation" },
+  //   { id: 2, title: "Bestyy Ad" },
+  //   { id: 3, title: "Ratatouille" },
+  //   { id: 4, title: "Another Slide" },
+  // ];
 
   const { data, isLoading } = useQuery({
     queryKey: ["shorts-home"],
     queryFn: () => getRequest("home/shorts-carousel?page=1&limit=10"),
   });
-  const shorts = data?.data?.shorts || [];
+  const allShorts = data?.data?.shorts || [];
+  const shorts = offset > 0
+    ? [...allShorts.slice(offset), ...allShorts.slice(0, offset)]
+    : allShorts;
 
   // Calculate initial slide index to fill the space
   const initialSlide = useMemo(() => {
@@ -130,7 +133,6 @@ function HomeShorts() {
                       if (el) videoRefs.current[index] = el;
                     }}
                     src={item.upload}
-                    poster={item.coverImage || undefined}
                     preload={index === activeIndex ? "auto" : "metadata"}
                     className="w-full h-full object-cover rounded-medium pointer-events-none"
                     // poster={optimizeCloudinaryUrl(item?.coverImage) ?? undefined}
@@ -187,11 +189,10 @@ function HomeShorts() {
                         if (el) videoRefs.current[index] = el;
                       }}
                       src={item.upload}
-                      poster={item.coverImage || undefined}
                       preload={index === activeIndex ? "auto" : "metadata"}
                       className="w-full h-full object-cover rounded-medium pointer-events-none"
                       // poster={optimizeCloudinaryUrl(item?.coverImage) ?? undefined}
-                      controls={false}
+                        controls={false}
                       playsInline
                       muted
                     />
