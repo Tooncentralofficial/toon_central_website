@@ -8,7 +8,7 @@ These are categorized by severity: how much they impact load time and user exper
 
 ## CRITICAL (Kills page load speed)
 
-### 1. ClientLayout blocks ALL rendering until JS hydrates
+### 1. ✅ FIXED — ClientLayout blocks ALL rendering until JS hydrates
 **File:** `app/clientLayout.tsx` lines 9-23
 **Problem:** Uses `useLayoutEffect` + `isClient` state to conditionally render children. Until JavaScript executes and sets `isClient = true`, the user sees a completely blank page. This destroys First Contentful Paint (FCP) — the #1 metric Google uses for page speed ranking.
 ```tsx
@@ -251,11 +251,90 @@ useEffect(() => {
 
 | Category | Status | Details |
 |----------|--------|---------|
-| Part 1 fixes (20 total) | **18 FIXED**, 2 remaining | #1 (ClientLayout gate — needs deep investigation), #15 (resize listeners — design-dependent) |
+| Part 1 fixes (20 total) | **19 FIXED**, 1 remaining | #15 (resize listeners in `homeCarousel.tsx` and `topRecommendations.tsx`) |
 | Part 2 demo optimizations (9 total) | **5 FIXED**, 1 remaining, 3 skipped | Fixed: D2 (ISR), D3 (sizes), D4 (debounce), D7 (Cloudinary), D8 (video posters). Remaining: none besides D3 partial (fill mode). Skipped: D1 (Suspense), D5 (Hybrid), D6 (Fetch Priority), D9 (Skeletons) |
-| Backend API optimizations (task.md) | Separate track | #11, #13, #14, #15, #16, #18, #25 |
+| Post-audit fixes | **1 FIXED** | #21 (hydration mismatch — root cause of #1) |
 
 ### Remaining Frontend Fixes
-1. **#1 — ClientLayout `isClient` gate** — Needs investigation to identify which component causes hydration mismatch. Removing the gate causes errors.
-2. **#15 — `window.matchMedia` resize listeners** — 4 components use JS resize listeners instead of CSS breakpoints. Requires testing responsive layouts.
+1. ~~**#1 — ClientLayout `isClient` gate**~~ — ✅ FIXED (see #21 below)
+2. **#15 — `window.matchMedia` resize listeners** — 2 of 4 components still use JS resize listeners (`homeCarousel.tsx`, `topRecommendations.tsx`). `originals.tsx` and `nav.tsx` have been fixed.
 3. ~~**D8 — Video poster images**~~ — ✅ FIXED
+
+---
+
+## POST-AUDIT: Additional Fixes
+
+### 21. ✅ FIXED — Hydration mismatch caused by `UseTailwindMediaQuery` hook
+**Root cause of issue #1.**
+
+**Files:** `app/utils/useTailwindMediaQuery.ts`, `app/_shared/layout/nav.tsx`, `app/_page/originals.tsx`
+
+**What happened:** The `UseTailwindMediaQuery` hook used `react-responsive`'s `useMediaQuery` to detect breakpoints (`base`, `sm`, `md`, `lg`, etc.) in JavaScript. This caused React hydration errors #418 and #422 whenever the `isClient` gate from issue #1 was removed.
+
+**Why it caused hydration errors:** `useMediaQuery` reads the browser viewport to return `true`/`false`. But during server-side rendering, there is no browser — no viewport, no `window.matchMedia`. So on the server, every breakpoint returns `false`. On the client, React runs the same components again during hydration, but now `useMediaQuery` reads the real screen width and returns different values. React compares the server HTML to the client's expectation and finds a mismatch — that's error #418.
+
+**Concrete example — `originals.tsx`:**
+- Server: `base = false` → renders `comics.slice(0, 10)` → **10 cards** in the HTML
+- Client (phone, 400px): `base = true` → expects `comics.slice(0, 4)` → **4 cards**
+- React sees 10 cards in the DOM but expects 4 → hydration error → tears down server HTML and rebuilds from scratch
+
+**Concrete example — `nav.tsx`:**
+- Server: `md = false` → renders `height="4rem"`
+- Client (desktop): `md = true` → expects `height="3rem"`
+- Mismatch → hydration error
+
+**Fix — two approaches depending on the use case:**
+
+**1. Pure CSS (for visual/layout differences):** Replace JS breakpoint checks with Tailwind responsive classes. The server and client render identical HTML — the browser's CSS engine handles the responsive behavior.
+- `originals.tsx`: Render all 10 cards, add `className="hidden sm:block"` to cards 5-10. On mobile (`<640px`), CSS hides them. On desktop, CSS shows them. Same HTML on server and client.
+- `nav.tsx` height: The original `height={md ? "3rem" : "4rem"}` was replaced with a static `height="4rem"` prop. The responsive switch (3rem vs 4rem) had no visual effect because `py-10` padding (80px total) was already larger than either value — the padding controls the actual header size, not the `height` prop. **Note:** Using a CSS class like `h-[4rem]` doesn't work here because NextUI's `height` prop sets a soft minimum (content can grow beyond it), while a CSS `height` class sets a hard fixed limit that squeezes the padding and visually compresses the header.
+
+**2. Hydration-safe `useMediaBreakpoint` hook (for JS logic that can't be pure CSS):** When a JS breakpoint value is genuinely needed (e.g., `isMenuOpen={isSide && !lg}` is a prop, not a CSS class), use the new `useMediaBreakpoint` hook at `app/utils/useMediaBreakpoint.ts`. It's a hydration-safe replacement for the old `UseTailwindMediaQuery`:
+```tsx
+import useMediaBreakpoint from "@/app/utils/useMediaBreakpoint";
+const { lg: isLg } = useMediaBreakpoint();
+```
+All breakpoint values (`base`, `sm`, `md`, `lg`, `xl`, `xl2`) start as `false` on both server and client — no hydration mismatch. After hydration, `useEffect` reads the real viewport and updates. It also listens for resize/orientation changes.
+
+**Result:** The `isClient` gate in `clientLayout.tsx` (issue #1) was removed. The old `UseTailwindMediaQuery` hook (which used `react-responsive`) is no longer imported anywhere and has been commented out. The new `useMediaBreakpoint` hook is available for any component that needs JS breakpoint values. Hydration errors #418 and #422 are resolved.
+
+### 22. ✅ FIXED — ReactQueryDevtools shipped to production bundle
+**File:** `lib/appProvider.tsx`
+**Problem:** `<ReactQueryDevtools initialIsOpen={false} />` was rendered unconditionally. While the devtools internally hide their UI in production mode (the floating debug button disappears), the entire devtools JavaScript code was still included in the production bundle — dead weight downloaded by every user.
+**Fix:** Wrapped in a build-time environment check:
+```tsx
+{process.env.NODE_ENV === "development" && (
+  <ReactQueryDevtools initialIsOpen={false} />
+)}
+```
+`process.env.NODE_ENV` is replaced at build time by Next.js. In production builds, the bundler sees `"production" === "development"` → `false`, and tree-shakes the entire devtools code out of the bundle. Zero bytes shipped to users while still available during development.
+
+### 23. ✅ FIXED — NextUI Select/Tabs key case mismatch causing console warning
+**File:** `app/original/originals.tsx`
+**Problem:** The `filter` state was typed as `Filters` (`"ongoing"`, `"completed"` — lowercase), but the `categories` array used capitalized labels (`"Ongoing"`, `"Completed"`) as both display text and item keys. When NextUI's `<Tabs selectedKey={filter}>` and `<Select selectedKeys={[filter]}>` received `"ongoing"`, they couldn't find it in the collection (which had `"Ongoing"`), producing: `Select: Keys "Ongoing" passed to "selectedKeys" are not present in the collection.`
+**Fix:** Added a separate `value` field (lowercase) to categories for use as keys, keeping `label` (capitalized) for display:
+```tsx
+const categories = [
+  { value: "ongoing", label: "Ongoing" },
+  { value: "completed", label: "Completed" },
+];
+// Tab: key={item.value} title={item.label}
+// SelectItem: key={item.value}>{item.label}
+```
+
+### 24. ✅ FIXED — Shared queryKey with different endpoints caused genre list cache conflict
+**Files:** `app/_page/recommendtnTabs.tsx`, `app/page.tsx`
+**Problem:** The homepage and genres page both used `queryKey: ["all_genres"]` but called different API endpoints:
+- Homepage: `/selectables/genres` — returns genres with `{id: 0, name: "All"}` prepended by the backend
+- Genres page: `/genres/pull/list` — returns raw genres without "All"
+
+React Query deduplicates by queryKey. Whichever page loaded first cached its response, and the other page reused it. Visiting the genres page first meant the homepage lost its "All" tab. Visiting the homepage first meant the genres page got an unexpected "All" option.
+**Fix:** Unified both to use the same endpoint (`/genres/pull/list`) and prepend the "All" option in the frontend where needed:
+```tsx
+// recommendtnTabs.tsx — prepend "All" in the UI layer
+const allOption = { id: 0, name: "All", slug: "all" };
+const tabs = genresSuccess && genres?.data?.length > 0
+  ? [allOption, ...genres.data]
+  : [];
+```
+Also updated the server-side prefetch in `app/page.tsx` to match. One API call, one cache entry, no conflict.
