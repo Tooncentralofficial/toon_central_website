@@ -15,12 +15,8 @@ export default function Originals() {
   const [pagination, setPagination] = useState({ page: 1, total: 1 });
   const [filter, setFilter] = useState<Filters>("ongoing");
   const categories = [
-    {
-      label: "Ongoing",
-    },
-    {
-      label: "Completed",
-    },
+    { value: "ongoing", label: "Ongoing" },
+    { value: "completed", label: "Completed" },
   ];
   const [comics, setComics] = useState([]);
   const { data, isLoading, isFetching, isSuccess } = useQuery({
@@ -75,8 +71,8 @@ export default function Originals() {
               // }}
               
             >
-              {categories.map((item: { label: string }, i: number) => (
-                <Tab className="p-0" key={item.label} title={item.label} />
+              {categories.map((item, i: number) => (
+                <Tab className="p-0" key={item.value} title={item.label} />
               ))}
             </Tabs>
           </div>
@@ -85,8 +81,8 @@ export default function Originals() {
             selectedKeys={[filter]}
             onChange={handleSelectionChange}
           >
-            {categories.map((filter: { label: string }, i: number) => (
-              <SelectItem key={filter.label}>{filter.label}</SelectItem>
+            {categories.map((item, i: number) => (
+              <SelectItem key={item.value}>{item.label}</SelectItem>
             ))}
           </SelectFilter>
           <SelectFilter
