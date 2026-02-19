@@ -51,52 +51,63 @@ export default function VerifyEmail({
   });
 
   const handleVerificationSuccess = (data: any) => {
-    if (data?.success) {
-      setVerificationStatus("success");
-
-      // Check if verify endpoint returns auth data (profile, accessToken, userType)
-      if (
-        data?.data?.accessToken &&
-        data?.data?.profile &&
-        data?.data?.userType
-      ) {
-        // Verify endpoint returned auth data, use it directly
-        dispatch(loginSuccess(data.data));
-        toast("Email verified successfully! Logging you in...", {
-          toastId: "verify-email",
-          type: "success",
-        });
-        setTimeout(() => {
-          router.push("/");
-        }, 1000);
-      } else {
-        // Verification succeeded but no auth data
-        // Since password is already set during registration,
-        // we'll redirect to login page with a message
-        toast("Email verified successfully! Please login to continue.", {
-          toastId: "verify-email-success",
-          type: "success",
-        });
-        setTimeout(() => {
-          const userEmail =
-            typeof email === "string" ? email : email?.[0] || "";
-          router.push(`/auth/login?email=${encodeURIComponent(userEmail)}`);
-        }, 2000);
-      }
-    } else {
+    const isSuccess = data?.success === true || data?.status === true;
+    if (!isSuccess) {
       setVerificationStatus("error");
       toast(data?.message || "Verification failed", {
         toastId: "verify-email-error",
         type: "error",
       });
+      return;
     }
+
+    setVerificationStatus("success");
+
+    const resolveEmail = () => {
+      const fromData = data?.data?.email;
+      if (fromData)
+        return typeof fromData === "string" ? fromData : fromData[0] ?? "";
+      return typeof email === "string" ? email : email?.[0] || "";
+    };
+
+    // Check if verify endpoint returns auth data (profile, accessToken, userType)
+    if (
+      data?.data?.accessToken &&
+      data?.data?.profile &&
+      data?.data?.userType
+    ) {
+      dispatch(loginSuccess(data.data));
+      toast("Email verified successfully! Logging you in...", {
+        toastId: "verify-email",
+        type: "success",
+      });
+      setTimeout(() => router.push("/"), 1000);
+      return;
+    }
+
+    // MOVE_USER_TO_SET_PASSWORD or other success without auth: redirect to login (skip set-password)
+    const loginToast =
+      data?.message === "MOVE_USER_TO_SET_PASSWORD"
+        ? "Email verified! Please sign in with your password."
+        : "Email verified successfully! Please login to continue.";
+    toast(loginToast, {
+      toastId: "verify-email-success",
+      type: "success",
+    });
+    const userEmail = resolveEmail();
+    setTimeout(
+      () => router.push(`/auth/login?email=${encodeURIComponent(userEmail)}`),
+      2000
+    );
   };
 
   useEffect(() => {
+    if (verificationStatus !== "verifying") return;
     // If verifyResult is provided from server component, use it
     if (verifyResult) {
-      if (verifyResult.success !== false) {
-        // Server verification succeeded, process the result
+      const isFailure =
+        verifyResult.success === false || verifyResult.status === false;
+      if (!isFailure) {
         handleVerificationSuccess(verifyResult);
       } else {
         setVerificationStatus("error");

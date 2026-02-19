@@ -23,7 +23,6 @@ const Page = () => {
     queryKey: ["countries"],
     queryFn: () => getRequest("/selectables/countries"),
   });
-  
 
   const countriesList = useMemo(() => {
     return countries?.data || [];
@@ -120,6 +119,7 @@ const Page = () => {
           type: "success",
         });
         const code = resData;
+        console.log("@@code", code);
         router.push(
           `/auth/signup/verify?email=${formik.values.email}&verification_code=${code}`
         );

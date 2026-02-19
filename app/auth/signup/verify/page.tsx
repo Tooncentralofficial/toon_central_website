@@ -16,10 +16,11 @@ export default async function Page({
 
   const verify = await axiosInstance
     .get(`/onboard/verify?verification_code=${verification_code}`)
-    .then((data) => data)
+    .then((res) => res?.data)
     .catch((error: any) => {
-      return null;
+      return { success: false, message: error?.response?.data?.message, data: null };
     });
+  console.log("@@verify", verify);
 
   if (!verify) {
     return (
