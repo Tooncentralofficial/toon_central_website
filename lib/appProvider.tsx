@@ -80,7 +80,9 @@ export default function AppProvider({
           <div>
             {children}
             <ToastContainer />
-            <ReactQueryDevtools initialIsOpen={false} />
+            {process.env.NODE_ENV === "development" && (
+              <ReactQueryDevtools initialIsOpen={false} />
+            )}
           </div>
         </QueryClientProvider>
       </Provider>

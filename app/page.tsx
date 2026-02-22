@@ -98,7 +98,7 @@ export default async function Home() {
     }),
     queryClient.prefetchQuery({
       queryKey: ["genre_0", 0],
-      queryFn: () => getRequest("/genres/comic/0/all"),
+      queryFn: () => getRequest("/genres/comic/0/all?page=1&limit=10"),
     }),
   ]);
   return (
@@ -112,6 +112,7 @@ export default async function Home() {
         {/* <TodaysPicks /> */}
         <TodaysPicksMobile />
         <PopularByToons />
+        <HomeShorts offset={5} />
         <HorizontalScroll />
         <Originals />
         <Footer />

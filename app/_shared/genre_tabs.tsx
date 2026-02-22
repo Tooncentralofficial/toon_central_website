@@ -79,10 +79,8 @@ export const GenreTabContent = ({ activeTab }: { activeTab: Tab }) => {
           {comics?.length > 0 ? (
             <>
               {comics?.map((item: any, i: number) => (
-                <div key={i}>
-                  <div className="">
-                    <CardTitleOutside cardData={item} index={i} />
-                  </div>
+                <div key={i} className={i >= 6 ? "hidden lg:block" : ""}>
+                  <CardTitleOutside cardData={item} index={i} />
                 </div>
               ))}
             </>

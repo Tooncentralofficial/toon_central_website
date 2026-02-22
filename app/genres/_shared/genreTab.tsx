@@ -1,5 +1,6 @@
 import CardTitleOutside from "@/app/_shared/cards/cardTitleOutside";
 import LoadingTitleOutside from "@/app/_shared/cards/loadingTitleOutside";
+import PaginationCustom from "@/app/_shared/sort/pagination";
 import { dummyItems } from "@/app/_shared/data";
 import { getRequest } from "@/app/utils/queries/requests";
 import { Tab, Tabs } from "@nextui-org/react";
@@ -8,15 +9,25 @@ import React, { useEffect, useState } from "react";
 
 const GenreTab = ({ selectedTab }: { selectedTab: number | null }) => {
   const [comics, setComics] = useState([]);
+  const [pagination, setPagination] = useState({ page: 1, total: 1 });
   const { data, isLoading, isFetching, isSuccess } = useQuery({
-    queryKey: [`genre_${selectedTab}`, selectedTab],
-    queryFn: () => getRequest(`/genres/comic/${selectedTab}/all`),
+    queryKey: [`genre_${selectedTab}`, selectedTab, pagination.page],
+    queryFn: () => getRequest(`/genres/comic/${selectedTab}/all?page=${pagination.page}&limit=10`),
     enabled: selectedTab !== null,
   });
+
+  // Reset to page 1 when genre changes
+  useEffect(() => {
+    setPagination({ page: 1, total: 1 });
+  }, [selectedTab]);
 
   useEffect(() => {
     if (isSuccess) {
       setComics(data?.data?.comics || []);
+      setPagination((prev) => ({
+        ...prev,
+        total: data?.data?.pagination?.totalPages || 1,
+      }));
     }
   }, [isFetching, isLoading, data, selectedTab]);
   const categories = [
@@ -72,6 +83,14 @@ const GenreTab = ({ selectedTab }: { selectedTab: number | null }) => {
           </>
         )}
       </div>
+      {pagination.total > 1 && (
+        <PaginationCustom
+          className="mt-[60px]"
+          onChange={(page: number) => setPagination((prev) => ({ ...prev, page }))}
+          total={pagination.total}
+          page={pagination.page}
+        />
+      )}
     </div>
   );
 };

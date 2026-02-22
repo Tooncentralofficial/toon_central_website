@@ -5,13 +5,11 @@ import GenreTab from "./_shared/genreTab";
 import { useEffect, useState } from "react";
 import { getRequest } from "../utils/queries/requests";
 import { useQuery } from "@tanstack/react-query";
-import PaginationCustom from "../_shared/sort/pagination";
 import SelectFilter from "../_shared/sort/selects";
 
 export default function Genres() {
   const [genres, setGenres] = useState<any>([]);
   const [selectedTab, setSelectedTab] = useState<any>(null);
-  // const [pagination, setPagination] = useState({ page: 1, total: 1 });
   const defaultGenre = [
     {
       id: 1,
@@ -24,22 +22,15 @@ export default function Genres() {
   ];
   const { data, isError, isSuccess, isLoading, isFetching } = useQuery({
     queryKey: ["all_genres"],
-    queryFn: () => getRequest("/genres/pull/list"),
+    queryFn: () => getRequest("/selectables/genres"),
   });
 
   useEffect(() => {
     if (isSuccess) {
-      
       setGenres(data?.data || defaultGenre);
     }
   }, [isFetching, isLoading, data]);
 
-  // const changePage = (page: number) => {
-  //   setPagination((prevState) => ({
-  //     ...prevState,
-  //     page: page,
-  //   }));
-  // };
   const handleSelectionChange = (e: any) => {
     setSelectedTab(e.target.value);
   };
@@ -81,12 +72,6 @@ export default function Genres() {
           </SelectFilter>
         </div>
         <GenreTab selectedTab={selectedTab} />
-        {/* <PaginationCustom
-          className="mt-[60px]"
-          onChange={changePage}
-          total={pagination.total}
-          page={pagination.page}
-        /> */}
       </div>
     </div>
   );
