@@ -115,8 +115,8 @@ const Popular = () => {
                                 item?.backgroundImage ?? ""
                               )}
                               alt={`${item?.title || "toon_central"}`}
-                              width={200}
-                              height={290}
+                              width={600}
+                              height={690}
                               style={{
                                 objectFit: "cover",
                                 width: "100%",
@@ -157,8 +157,8 @@ const Popular = () => {
                                 item?.backgroundImage ?? ""
                               )}
                               alt={`${item?.title || "toon_central"}`}
-                              width={200}
-                              height={290}
+                              width={600}
+                              height={690}
                               style={{
                                 objectFit: "cover",
                                 width: "100%",
