@@ -45,10 +45,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { LogoutUser } from "@/app/auth/logout/logout";
 import { toast } from "react-toastify";
 import { Pivot as Hamburger } from "hamburger-react";
-import UseTailwindMediaQuery from "@/app/utils/useTailwindMediaQuery";
 import { getRequest, getRequestProtected } from "@/app/utils/queries/requests";
 import { parseArray } from "@/helpers/parsArray";
 import { motion } from "framer-motion";
+import useMediaBreakpoint from "@/app/utils/useMediaBreakpoint";
 import SearchModal from "./search";
 import {
   HomeIcon,
@@ -181,7 +181,7 @@ const NavHome = () => {
   });
 
   const handleToggle = () => setIsSide(!isSide);
-  const { sm, md, lg } = UseTailwindMediaQuery();
+  const { lg: isLg } = useMediaBreakpoint();
 
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const variant = {
@@ -206,10 +206,10 @@ const NavHome = () => {
       <Navbar
         isBlurred={false}
         shouldHideOnScroll
+        height="4rem"
         className="bg-[var(--bg-menu-cont)] py-10 flex"
-        height={md ? "3rem" : "4rem"}
         maxWidth="2xl"
-        isMenuOpen={isSide && !lg}
+        isMenuOpen={isSide && !isLg}
         classNames={{
           menu: "bg-[var(--bg-menu-cont)]",
         }}

@@ -42,7 +42,7 @@ const MyBooksTab = ({ tabName }: { tabName: string }) => {
 
   const { mutate: deleteComic } = useMutation({
     mutationKey: [queryKey],
-    mutationFn: (id) =>
+    mutationFn: (id: any) =>
       deleteRequestProtected(
         `/my-libraries/comics/${id}/delete`,
         token,
@@ -103,7 +103,7 @@ const MyBooksTab = ({ tabName }: { tabName: string }) => {
           {!loading && comics.length != 0 && (
             <>
               <div className="w-full flex flex-col gap-8 ">
-                {comics?.map((item, i) => (
+                {comics?.map((item: any, i: number) => (
                   <div
                     key={i}
                     className="flex flex-col gap-[18px] bg-[var(--bg-secondary)] rounded-[8px] p-6 lg:p-9"

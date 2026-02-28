@@ -20,11 +20,12 @@ const Page = () => {
   const dispatch = useDispatch();
   const [isText, setIsText] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams()
-  
+  const searchParams = useSearchParams();
+  const emailFromParams = searchParams?.get("email") ?? "";
+
   const initialValues = {
+    email: emailFromParams,
     password: "",
-    email: "",
     remembered: false,
   };
   const validationSchema = Yup.object().shape({
@@ -40,37 +41,36 @@ const Page = () => {
     },
   });
 
-//  const routeUser = () => {
-//    const searchParams = new URLSearchParams(window.location.search);
+  //  const routeUser = () => {
+  //    const searchParams = new URLSearchParams(window.location.search);
 
-//    const next = searchParams.get("next");
-//    const previous = searchParams.get("previous");
+  //    const next = searchParams.get("next");
+  //    const previous = searchParams.get("previous");
 
-//    if (next) {
-//      router.push(decodeURIComponent(next));
-//      return;
-//    }
+  //    if (next) {
+  //      router.push(decodeURIComponent(next));
+  //      return;
+  //    }
 
-//    if (previous) {
-//      router.push(decodeURIComponent(previous));
-//      return;
-//    }
+  //    if (previous) {
+  //      router.push(decodeURIComponent(previous));
+  //      return;
+  //    }
 
-//    router.push("/");
-//  };
-const nextParam = (() => {
-  const next = searchParams?.get("next");
-  const previous = searchParams?.get("previous");
+  //    router.push("/");
+  //  };
+  const nextParam = (() => {
+    const next = searchParams?.get("next");
+    const previous = searchParams?.get("previous");
 
-  if (next && next.startsWith("/")) {
-    return decodeURIComponent(next);
-  }
-  if (previous && previous.startsWith("/")) {
-    return decodeURIComponent(previous);
-  }
-  return "/";
-})();
-
+    if (next && next.startsWith("/")) {
+      return decodeURIComponent(next);
+    }
+    if (previous && previous.startsWith("/")) {
+      return decodeURIComponent(previous);
+    }
+    return "/";
+  })();
 
   const loginUser = useMutation({
     mutationFn: (data: any) => LoginUser(data, "/onboard/login"),
@@ -107,6 +107,7 @@ const nextParam = (() => {
             label="Email"
             labelPlacement="outside"
             placeholder=" "
+            value={formik.values.email}
             onChange={formik.handleChange}
             isInvalid={Boolean(formik.touched.email && formik.errors.email)}
             //  errorMessage={formik.errors.email}

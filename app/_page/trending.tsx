@@ -6,17 +6,17 @@ import H2SectionTitle from "../_shared/layout/h2SectionTitle";
 import { getRequest } from "../utils/queries/requests";
 import LoadingTitleTop from "../_shared/cards/loadingTitleTop";
 import { dummyItems } from "../_shared/data";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Seeall } from "../_shared/icons/icons";
 import Link from "next/link";
 
 const Trending = () => {
-  const [cardItems, setCardItems] = useState([]);
   const trendingQueryKey = "trending"
-  const { isLoading, isFetching, data, isSuccess } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: [trendingQueryKey],
     queryFn: () => getRequest("/home/trending?filter=all&page=1&limit=10"),
   });
+  const comics = data?.data?.comics || [];
   const [sliced, setSliced] = useState<number>(10);
   useEffect(() => {
     const updateSliced = () => {
@@ -37,12 +37,6 @@ const Trending = () => {
       window.removeEventListener("resize", resizeListener);
     };
   }, []);
-  useEffect(() => {
-    if (isSuccess) {
-      setCardItems(data?.data?.comics || []);
-    }
-  }, [isLoading, isFetching, data]);
-
   return (
     <div className="parent-wrap py-10 hidden">
       <div className="child-wrap hidden md:block">
@@ -54,13 +48,13 @@ const Trending = () => {
         </div>
         <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
           {isLoading ? (
-            dummyItems.map((item, i) => <LoadingTitleTop key={i} />)
+            dummyItems.map((item: number, i: number) => <LoadingTitleTop key={i} />)
           ) : (
             <>
-              {cardItems?.length > 0 ? (
+              {comics.length > 0 ? (
                 <>
                   {" "}
-                  {cardItems.slice(0, sliced).map((item: any, i: number) => (
+                  {comics.slice(0, sliced).map((item: any, i: number) => (
                     <div key={i}>
                       <CardTitleTop
                         cardData={item}
@@ -71,7 +65,7 @@ const Trending = () => {
                   ))}
                 </>
               ) : (
-                dummyItems.map((item, i) => <LoadingTitleTop key={i} />)
+                dummyItems.map((item: number, i: number) => <LoadingTitleTop key={i} />)
               )}
             </>
           )}

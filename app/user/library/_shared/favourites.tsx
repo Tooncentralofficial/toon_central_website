@@ -61,7 +61,7 @@ const MyFavourites = () => {
           {!loading && comics.length != 0 && (
             <>
               <div className="w-full flex flex-col gap-8 ">
-                {comics?.map((item, i) => (
+                {comics?.map((item: any, i: number) => (
                   <div
                     key={i}
                     className="flex flex-col gap-[18px] bg-[var(--bg-secondary)] rounded-[8px] p-6 lg:p-9"

@@ -13,7 +13,7 @@ export default async function Page() {
 
   await queryClient.prefetchQuery({
     queryKey: ["all_genres"],
-    queryFn: () => getRequest("/genres/pull/list"),
+    queryFn: () => getRequest("/selectables/genres"),
   });
 
   return (

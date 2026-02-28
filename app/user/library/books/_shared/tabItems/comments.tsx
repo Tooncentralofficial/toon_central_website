@@ -10,7 +10,7 @@ const Comments = ({ data }: ComicTab) => {
     <div>
       <div className="pb-10">
         <div className="grid grid-cols-1 gap-8">
-          {comments.map((item, i) => (
+          {comments.map((item: any, i: number) => (
             <div key={i}>
               <Comment />
             </div>

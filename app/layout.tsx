@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import "react-toastify/dist/ReactToastify.css";
 import ClientLayout from "./clientLayout";
 import Script from "next/script";
@@ -67,6 +65,7 @@ export default function RootLayout({
           id="gtag-script"
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-RZFRHC7QTN"
+          strategy="afterInteractive"
         />
         <Script id="gtag-setup" strategy="afterInteractive">
           {`

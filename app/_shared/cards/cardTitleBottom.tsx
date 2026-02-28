@@ -122,6 +122,7 @@ const CardTitleBottom = ({
           alt={`${cardData?.title || "toon_central"}`}
           width={200}
           height={260}
+          sizes="(max-width: 550px) 83vw, (max-width: 700px) 50vw, (max-width: 1024px) 33vw, 25vw"
           style={{
             objectFit: "cover",
             width: "100%",

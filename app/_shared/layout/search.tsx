@@ -10,7 +10,7 @@ import {
   Spinner,
 } from "@nextui-org/react";
 import { SearchIcon } from "../icons/icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getRequest } from "@/app/utils/queries/requests";
 import { parseArray } from "@/helpers/parsArray";
 import { useQuery } from "@tanstack/react-query";
@@ -30,31 +30,36 @@ const SearchModal = ({
   onClose,
 }: ModalBaseProps) => {
   const pathname = usePathname();
-  const [filter, setFilter] = useState({
-    page: 1,
-    limit: 10,
-    search: "",
-  });
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [searched, setSearched] = useState<any[]>([]);
+  const debounceRef = useRef<NodeJS.Timeout>();
+
+  const handleSearch = (e: any) => {
+    const value = e.target.value;
+    setSearchInput(value);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setDebouncedSearch(value);
+    }, 300);
+  };
 
   const { data, isSuccess, isLoading } = useQuery({
-    queryKey: ["search", filter],
+    queryKey: ["search", debouncedSearch],
     queryFn: () =>
       getRequest(
-        `/search?query=${filter.search}&page=${filter.page}&limit=${filter.limit}`
+        `/search?query=${debouncedSearch}&page=1&limit=10`
       ),
+    enabled: debouncedSearch.length >= 2,
   });
   useEffect(() => {
     if (isSuccess) {
       setSearched(parseArray(data?.data?.comics));
     }
-  }, [isSuccess, data, isLoading]);
-  const handleSearch = (e: any) => {
-    setFilter((prev) => ({
-      ...prev,
-      search: e.target.value,
-    }));
-  };
+    if (debouncedSearch.length < 2) {
+      setSearched([]);
+    }
+  }, [isSuccess, data, isLoading, debouncedSearch]);
   useEffect(() => {
     onClose();
   }, [pathname]);
@@ -67,7 +72,7 @@ const SearchModal = ({
             <ModalBody>
               <Input
                 autoFocus
-                value={filter.search}
+                value={searchInput}
                 onChange={handleSearch}
                 size="lg"
                 labelPlacement="outside"
@@ -79,7 +84,7 @@ const SearchModal = ({
               />
               <Divider />
               <div className="flex flex-col gap-2 max-h-[40vh] overflow-y-auto">
-                {searched.map((item, i) => (
+                {searched.map((item: any, i: number) => (
                   <div key={i} className="h-[48px] w-full">
                     <Button
                       as={Link}
