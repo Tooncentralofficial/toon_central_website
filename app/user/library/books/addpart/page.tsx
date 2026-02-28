@@ -101,6 +101,7 @@ export default function Page({
     () => parseArray(data?.data?.comicImages).map((val: any) => val.image),
     [data?.data?.comicImages]
   );
+  
 
   // Memoized array of image IDs for API calls in edit mode
   const comicImageIds = useMemo(
