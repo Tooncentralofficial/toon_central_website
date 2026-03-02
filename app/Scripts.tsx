@@ -1,25 +1,36 @@
 "use client";
 import { useCallback, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function PropellerAdsScript() {
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://groleegni.net/401/9441972";
-    script.async = true;
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
 
-    try {
-      (document.body || document.documentElement).appendChild(script);
-      console.log("PropellerAds script appended successfully");
-    } catch (e) {
-      console.error("Failed to append PropellerAds script:", e);
-    }
+  useEffect(() => {
+    if (isHomePage) return;
+
+    let script: HTMLScriptElement | null = null;
+
+    const loadAd = () => {
+      script = document.createElement("script");
+      script.src = "https://groleegni.net/401/9441972";
+      script.async = true;
+      try {
+        (document.body || document.documentElement).appendChild(script);
+      } catch (e) {
+        console.error("Failed to append PropellerAds script:", e);
+      }
+    };
+
+    const id = setTimeout(loadAd, 2500);
 
     return () => {
-      if (script.parentNode) {
+      clearTimeout(id);
+      if (script?.parentNode) {
         script.parentNode.removeChild(script);
       }
     };
-  }, []);
+  }, [isHomePage]);
 
   const showAdPopup = useCallback(() => {
     try {

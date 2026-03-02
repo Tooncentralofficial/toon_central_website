@@ -1,13 +1,13 @@
+"use client";
 import Image from "next/image";
 import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import React from "react";
-import image from "@/public/static/images/comics/new_0.png";
 import { Comic } from "@/helpers/types";
-import Link from "next/link";
+import { ComicLink } from "./ComicLink";
 import { GreeFlameIcon } from "../icons/icons";
 const PopularToonscard = ({ item, index }: { item: Comic; index: number }) => {
   return (
-    <Link href={`${item?.uuid ? `/comics/${item?.uuid}` : ""}`}>
+    <ComicLink uuid={item?.uuid} className="block">
       <div className="flex gap-5">
         <p
           className={`${
@@ -36,7 +36,7 @@ const PopularToonscard = ({ item, index }: { item: Comic; index: number }) => {
           <p className="text-[1.1rem] font-[700]">{item?.title}</p>
         </div>
       </div>
-    </Link>
+    </ComicLink>
   );
 };
 
@@ -48,7 +48,7 @@ export const PopularToonscardDesktop = ({
   index: number;
 }) => {
   return (
-    <Link href={`${item?.uuid ? `/comics/${item?.uuid}` : ""}`}>
+    <ComicLink uuid={item?.uuid} className="block">
       <div className="flex gap-5 relative mt-5">
         {index === 0 && (
           <div className="absolute z-10">
@@ -80,7 +80,7 @@ export const PopularToonscardDesktop = ({
           <p className="text-[1.8rem] font-[700]">{item?.title}</p>
         </div>
       </div>
-    </Link>
+    </ComicLink>
   );
 };
 

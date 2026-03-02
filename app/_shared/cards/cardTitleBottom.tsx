@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import Likes from "./likes";
-import Link from "next/link";
+import { ComicLink } from "./ComicLink";
 import { motion } from "framer-motion";
 import { getRequestProtected } from "@/app/utils/queries/requests";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -131,40 +131,39 @@ const CardTitleBottom = ({
           }}
           priority
         />
-        <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
-          <div className="absolute top-0 left-0  h-full w-full flex flex-col  p-4 justify-end bg-[#0D111D70] ">
-            <div>
-              <div className="font-bold text-xl">{cardData?.title}</div>
-              <div className="flex justify-between">
-                <Likes
-                  likesNViews={cardData?.likesAndViews}
-                  queryKey={queryKey}
-                  uid={cardData?.uuid}
-                  favourites={cardData?.favourites}
-                />
-                {expand &&
-                  user?.id && ( //check if user is logged in and expand is true
-                    <motion.a
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        subscibe();
-                      }}
-                      href=""
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.2 }}
-                      className="bg-[--green100] px-4 py-1 rounded-[4px] hover:cursor-pointer"
-                    >
-                      {/*check if logged in user is subscibed to this comic */}
-                      {isSubscribed ? "Unsubscribe" : "Subscribe"}{" "}
-                      {/*if subscribed then show unsubscribe else subscribe*/}
-                    </motion.a>
-                  )}
-              </div>
+        <ComicLink
+          uuid={cardData?.uuid}
+          className="absolute top-0 left-0 h-full w-full flex flex-col p-4 justify-end bg-[#0D111D70]"
+        >
+          <div>
+            <div className="font-bold text-xl">{cardData?.title}</div>
+            <div className="flex justify-between">
+              <Likes
+                likesNViews={cardData?.likesAndViews}
+                queryKey={queryKey}
+                uid={cardData?.uuid}
+                favourites={cardData?.favourites}
+              />
+              {expand &&
+                user?.id && (
+                  <motion.button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      subscibe();
+                    }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.2 }}
+                    className="bg-[--green100] px-4 py-1 rounded-[4px] hover:cursor-pointer"
+                  >
+                    {isSubscribed ? "Unsubscribe" : "Subscribe"}
+                  </motion.button>
+                )}
             </div>
           </div>
-        </Link>
+        </ComicLink>
       </div>
     </div>
   );

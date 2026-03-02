@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
+import { ComicLink } from "./ComicLink";
 import Likes from "./likes";
 import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 
@@ -31,20 +31,21 @@ const CardTitleTop = ({
           }}
           //unoptimized
         />
-        <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
-          <div className="absolute top-0 left-0  h-full w-full flex flex-col justify-between  p-4 bg-[#FCFCFD10] ">
-            <div>
-              <div className="font-bold text-md">{cardData?.title}</div>
-              <Likes
-                likesNViews={cardData?.likesAndViews}
-                queryKey={queryKey}
-                uid={cardData?.uuid}
-                favourites={cardData?.favourites}
-              />
-            </div>
-            <div>{cardData?.genre?.name}</div>
+        <ComicLink
+          uuid={cardData?.uuid}
+          className="absolute top-0 left-0 h-full w-full flex flex-col justify-between p-4 bg-[#FCFCFD10]"
+        >
+          <div>
+            <div className="font-bold text-md">{cardData?.title}</div>
+            <Likes
+              likesNViews={cardData?.likesAndViews}
+              queryKey={queryKey}
+              uid={cardData?.uuid}
+              favourites={cardData?.favourites}
+            />
           </div>
-        </Link>
+          <div>{cardData?.genre?.name}</div>
+        </ComicLink>
       </div>
     </div>
   );

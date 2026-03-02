@@ -54,7 +54,7 @@ const Popular = () => {
   const router = useRouter();
 
   const goToComic = (uuid: string | undefined) => {
-    router.push(uuid ? `/comics/${uuid}` : "");
+    if (uuid) router.push(`/comics/${uuid}`);
   };
   const { mutate: likeComic, isPending } = useMutation({
     mutationKey: ["like"],

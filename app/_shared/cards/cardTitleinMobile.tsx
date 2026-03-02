@@ -1,7 +1,7 @@
+"use client";
 import React from "react";
 import Likes from "./likes";
-import image from "@/public/static/images/comics/new_0.png";
-import Link from "next/link";
+import { ComicLink } from "./ComicLink";
 const CardTitleInMobile = ({
   cardData,
   index,
@@ -17,28 +17,27 @@ const CardTitleInMobile = ({
 }) => {
   return (
     <div className="rounded-xl">
-      <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
-        <div
-          className={`w-[7.1rem] h-[6.5rem] flex flex-col justify-end pl-1 pb-1`}
-          style={{
-            backgroundImage: `url(${cardData?.backgroundImage})`,
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-            backgroundSize: "cover",
-          }}
-        >
-          <div>
-            <p>{cardData?.title}</p>
-            <Likes
-              likesNViews={cardData?.likesAndViews}
-              queryKey={queryKey}
-              uid={cardData?.uuid}
-              favourites={cardData?.favourites}
-              small
-            />
-          </div>
+      <ComicLink
+        uuid={cardData?.uuid}
+        className="block w-[7.1rem] h-[6.5rem] flex flex-col justify-end pl-1 pb-1"
+        style={{
+          backgroundImage: `url(${cardData?.backgroundImage})`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+        }}
+      >
+        <div>
+          <p>{cardData?.title}</p>
+          <Likes
+            likesNViews={cardData?.likesAndViews}
+            queryKey={queryKey}
+            uid={cardData?.uuid}
+            favourites={cardData?.favourites}
+            small
+          />
         </div>
-      </Link>
+      </ComicLink>
     </div>
   );
 };
