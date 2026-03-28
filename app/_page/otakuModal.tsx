@@ -2,8 +2,7 @@
 
 import { ReactNode, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import OtakuBanner from "@/public/static/images/events/otakubanner.jpg";
+import ItelPopup from "@/public/static/images/events/itel/tooncent_itel_popup.jpeg";
 
 interface OtakuModalProps {
   isOpen: boolean;
@@ -55,7 +54,7 @@ export default function OtakuModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998]"
+            className="fixed inset-0 bg-black/55 backdrop-blur-sm z-[9998]"
             onClick={handleBackdropClick}
             aria-hidden="true"
           />
@@ -76,19 +75,19 @@ export default function OtakuModal({
             >
               {/* Modal Content with Background */}
               <div
-                className="relative rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden shadow-2xl"
+                className="relative rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden shadow-2xl border border-white/20"
                 style={{
-                  backgroundImage: `url(${OtakuBanner.src})`,
+                  backgroundImage: `url(${ItelPopup.src})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   backgroundRepeat: "no-repeat",
                 }}
               >
-                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#000000]/10 to-[#000000]/90"></div>
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#000000]/5 via-[#000000]/35 to-[#000000]/75"></div>
                 {/* Close Button */}
                 <button
                   onClick={onClose}
-                  className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-black/30 hover:bg-black/50 text-white transition-colors duration-200 backdrop-blur-sm"
+                  className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors duration-200 backdrop-blur-sm border border-white/30"
                   aria-label="Close modal"
                 >
                   <span className="text-lg sm:text-xl font-bold">✕</span>

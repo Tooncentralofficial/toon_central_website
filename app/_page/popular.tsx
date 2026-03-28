@@ -27,6 +27,14 @@ import Likes from "../_shared/cards/likes";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import ItelBanner from "@/public/static/images/events/itel/tooncent_itel_banner.jpeg";
+
+/** Replace with the live itel / campaign URL when ready */
+const ITEL_SPONSORED_BANNER_HREF = "https://example.com";
+
+type PopularSlide =
+  | { kind: "sponsored" }
+  | { kind: "comic"; comic: Comic };
 
 const Popular = () => {
   let sliderRef = useRef<Slider | null>(null);
@@ -40,17 +48,30 @@ const Popular = () => {
       getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
   });
   const carouselItems = data?.data?.comics || dummyItems;
-  const infinite = carouselItems.length > 1;
-  const settings = {
-    dots: false,
-    infinite: infinite,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    initialSlide: 1,
-    autoplay: true,
-    arrows: false,
-  };
+  const sliderSlides: PopularSlide[] = useMemo(
+    () => [
+      { kind: "sponsored" },
+      ...carouselItems.map((comic: Comic) => ({
+        kind: "comic" as const,
+        comic,
+      })),
+    ],
+    [carouselItems],
+  );
+  const sliderSettings = useMemo(
+    () => ({
+      dots: false,
+      infinite: sliderSlides.length > 1,
+      speed: 500,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      initialSlide:
+        carouselItems.length > 1 ? 2 : carouselItems.length === 1 ? 1 : 0,
+      autoplay: true,
+      arrows: false,
+    }),
+    [sliderSlides.length, carouselItems.length],
+  );
   const router = useRouter();
 
   const goToComic = (uuid: string | undefined) => {
@@ -83,6 +104,143 @@ const Popular = () => {
       });
     },
   });
+
+  const renderSlide = (slide: PopularSlide, i: number) => {
+    if (slide.kind === "sponsored") {
+      return (
+        <Fragment key="popular-sponsored-itel">
+          <div className="px-2.5">
+            <div className="hidden md:block h-[290px] rounded-[8px] overflow-hidden relative ring-1 ring-white/10">
+              <p className="absolute top-2 left-3 z-10 text-[10px] uppercase tracking-wider text-white/90 drop-shadow-md font-medium">
+                Sponsored
+              </p>
+              <a
+                href={ITEL_SPONSORED_BANNER_HREF}
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                className="block relative h-full w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#E31B23] rounded-[8px]"
+              >
+                <Image
+                  src={ItelBanner}
+                  alt="itel City 200 — Sponsored"
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width: 768px) 0px, 100vw"
+                />
+              </a>
+            </div>
+            <div className="visible md:hidden h-[99px] rounded-[8px] overflow-hidden relative ring-1 ring-white/10">
+              <p className="absolute top-1 left-2 z-10 text-[9px] uppercase tracking-wider text-white/90 drop-shadow-md font-medium">
+                Sponsored
+              </p>
+              <a
+                href={ITEL_SPONSORED_BANNER_HREF}
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                className="block relative h-full w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#E31B23] rounded-[8px]"
+              >
+                <Image
+                  src={ItelBanner}
+                  alt="itel City 200 — Sponsored"
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width: 768px) 100vw, 0px"
+                />
+              </a>
+            </div>
+          </div>
+        </Fragment>
+      );
+    }
+
+    const item = slide.comic;
+    return (
+      <Fragment key={item?.uuid ?? `comic-${i}`}>
+        <div className="px-2.5">
+          <div className="hidden md:block h-[290px] rounded-[8px] overflow-hidden ">
+            {isLoading ? (
+              <>
+                <Skeleton className="h-full bg-[var(--bg-secondary)]" />
+              </>
+            ) : (
+              <div className="h-full overflow-hidden w-auto relative">
+                <Image
+                  src={optimizeCloudinaryUrl(item?.backgroundImage ?? "")}
+                  alt={`${item?.title || "toon_central"}`}
+                  width={600}
+                  height={690}
+                  style={{
+                    objectFit: "cover",
+                    width: "100%",
+                    maxWidth: "100%",
+                    height: "100%",
+                  }}
+                />
+                <div className="absolute top-0 left-0  h-full w-full flex flex-col  p-4 justify-center bg-[#0D111D70] ">
+                  <div className="">
+                    <div
+                      className="font-bold text-[48px] uppercase cursor-pointer "
+                      onClick={() => goToComic(item?.uuid)}
+                    >
+                      {item?.title}
+                    </div>
+                    <div className="flex items-center gap-[9px] my-4">
+                      <Likes
+                        likesNViews={item?.likesAndViews}
+                        uid={item?.uuid}
+                        queryKey={queryKey}
+                      />
+                    </div>
+                    <div>{item?.genre?.name}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="visible md:hidden h-[99px] rounded-[8px] overflow-hidden ">
+            {isLoading ? (
+              <>
+                <Skeleton className="h-full bg-[var(--bg-secondary)]" />
+              </>
+            ) : (
+              <div className="h-full overflow-hidden w-auto relative">
+                <Image
+                  src={optimizeCloudinaryUrl(item?.backgroundImage ?? "")}
+                  alt={`${item?.title || "toon_central"}`}
+                  width={600}
+                  height={690}
+                  style={{
+                    objectFit: "cover",
+                    width: "100%",
+                    maxWidth: "100%",
+                    height: "100%",
+                  }}
+                />
+                <div className="absolute bottom-0 left-0  h-full w-full flex flex-col px-4 py-1 justify-end bg-[#0D111D70] ">
+                  <div className="">
+                    <div
+                      className="font-bold text-[15px] uppercase cursor-pointer "
+                      onClick={() => goToComic(item?.uuid)}
+                    >
+                      {item?.title}
+                    </div>
+                    <div className="flex items-center gap-[9px] ">
+                      <Likes
+                        likesNViews={item?.likesAndViews}
+                        uid={item?.uuid}
+                        queryKey={queryKey}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </Fragment>
+    );
+  };
+
   return (
     <div>
       <div className="parent-wrap py-0 md:py-10 relative">
@@ -97,100 +255,9 @@ const Popular = () => {
               ref={(slider: Slider) => {
                 sliderRef.current = slider;
               }}
-              {...settings}
+              {...sliderSettings}
             >
-              {carouselItems.map((item: Comic, i: number) => {
-                return (
-                  <Fragment key={i}>
-                    <div key={i} className="px-2.5">
-                      <div className="hidden md:block h-[290px] rounded-[8px] overflow-hidden ">
-                        {isLoading ? (
-                          <>
-                            <Skeleton className="h-full bg-[var(--bg-secondary)]" />
-                          </>
-                        ) : (
-                          <div className="h-full overflow-hidden w-auto relative">
-                            <Image
-                              src={optimizeCloudinaryUrl(
-                                item?.backgroundImage ?? ""
-                              )}
-                              alt={`${item?.title || "toon_central"}`}
-                              width={600}
-                              height={690}
-                              style={{
-                                objectFit: "cover",
-                                width: "100%",
-                                maxWidth: "100%",
-                                height: "100%",
-                              }}
-                            />
-                            <div className="absolute top-0 left-0  h-full w-full flex flex-col  p-4 justify-center bg-[#0D111D70] ">
-                              <div className="">
-                                <div
-                                  className="font-bold text-[48px] uppercase cursor-pointer "
-                                  onClick={() => goToComic(item?.uuid)}
-                                >
-                                  {item?.title}
-                                </div>
-                                <div className="flex items-center gap-[9px] my-4">
-                                  <Likes
-                                    likesNViews={item?.likesAndViews}
-                                    uid={item?.uuid}
-                                    queryKey={queryKey}
-                                  />
-                                </div>
-                                <div>{item?.genre?.name}</div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      <div className="visible md:hidden h-[99px] rounded-[8px] overflow-hidden ">
-                        {isLoading ? (
-                          <>
-                            <Skeleton className="h-full bg-[var(--bg-secondary)]" />
-                          </>
-                        ) : (
-                          <div className="h-full overflow-hidden w-auto relative">
-                            <Image
-                              src={optimizeCloudinaryUrl(
-                                item?.backgroundImage ?? ""
-                              )}
-                              alt={`${item?.title || "toon_central"}`}
-                              width={600}
-                              height={690}
-                              style={{
-                                objectFit: "cover",
-                                width: "100%",
-                                maxWidth: "100%",
-                                height: "100%",
-                              }}
-                            />
-                            <div className="absolute bottom-0 left-0  h-full w-full flex flex-col px-4 py-1 justify-end bg-[#0D111D70] ">
-                              <div className="">
-                                <div
-                                  className="font-bold text-[15px] uppercase cursor-pointer "
-                                  onClick={() => goToComic(item?.uuid)}
-                                >
-                                  {item?.title}
-                                </div>
-                                <div className="flex items-center gap-[9px] ">
-                                  <Likes
-                                    likesNViews={item?.likesAndViews}
-                                    uid={item?.uuid}
-                                    queryKey={queryKey}
-                                  />
-                                </div>
-                                {/* <div>{item?.genre?.name}</div> */}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </Fragment>
-                );
-              })}
+              {sliderSlides.map((slide, i) => renderSlide(slide, i))}
             </Slider>
           </div>
         </div>
@@ -201,100 +268,9 @@ const Popular = () => {
           ref={(slider: Slider) => {
             sliderRef.current = slider;
           }}
-          {...settings}
+          {...sliderSettings}
         >
-          {carouselItems.map((item: Comic, i: number) => {
-            return (
-              <Fragment key={i}>
-                <div key={i} className="px-2.5">
-                  <div className="hidden md:block h-[290px] rounded-[8px] overflow-hidden ">
-                    {isLoading ? (
-                      <>
-                        <Skeleton className="h-full bg-[var(--bg-secondary)]" />
-                      </>
-                    ) : (
-                      <div className="h-full overflow-hidden w-auto relative">
-                        <Image
-                          src={optimizeCloudinaryUrl(
-                            item?.backgroundImage ?? ""
-                          )}
-                          alt={`${item?.title || "toon_central"}`}
-                          width={200}
-                          height={290}
-                          style={{
-                            objectFit: "cover",
-                            width: "100%",
-                            maxWidth: "100%",
-                            height: "100%",
-                          }}
-                        />
-                        <div className="absolute top-0 left-0  h-full w-full flex flex-col  p-4 justify-center bg-[#0D111D70] ">
-                          <div className="">
-                            <div
-                              className="font-bold text-[48px] uppercase cursor-pointer "
-                              onClick={() => goToComic(item?.uuid)}
-                            >
-                              {item?.title}
-                            </div>
-                            <div className="flex items-center gap-[9px] my-4">
-                              <Likes
-                                likesNViews={item?.likesAndViews}
-                                uid={item?.uuid}
-                                queryKey={queryKey}
-                              />
-                            </div>
-                            <div>{item?.genre?.name}</div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="visible md:hidden h-[99px] rounded-[8px] overflow-hidden ">
-                    {isLoading ? (
-                      <>
-                        <Skeleton className="h-full bg-[var(--bg-secondary)]" />
-                      </>
-                    ) : (
-                      <div className="h-full overflow-hidden w-auto relative">
-                        <Image
-                          src={optimizeCloudinaryUrl(
-                            item?.backgroundImage ?? ""
-                          )}
-                          alt={`${item?.title || "toon_central"}`}
-                          width={200}
-                          height={290}
-                          style={{
-                            objectFit: "cover",
-                            width: "100%",
-                            maxWidth: "100%",
-                            height: "100%",
-                          }}
-                        />
-                        <div className="absolute bottom-0 left-0  h-full w-full flex flex-col px-4 py-1 justify-end bg-[#0D111D70] ">
-                          <div className="">
-                            <div
-                              className="font-bold text-[15px] uppercase cursor-pointer "
-                              onClick={() => goToComic(item?.uuid)}
-                            >
-                              {item?.title}
-                            </div>
-                            <div className="flex items-center gap-[9px] ">
-                              <Likes
-                                likesNViews={item?.likesAndViews}
-                                uid={item?.uuid}
-                                queryKey={queryKey}
-                              />
-                            </div>
-                            {/* <div>{item?.genre?.name}</div> */}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Fragment>
-            );
-          })}
+          {sliderSlides.map((slide, i) => renderSlide(slide, i))}
         </Slider>
       </div>
     </div>
