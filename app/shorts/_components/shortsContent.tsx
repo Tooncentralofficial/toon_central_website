@@ -90,7 +90,7 @@ export default function ShortsContent() {
     enabled: !!token,
   });
 
-  console.log("@@totalPages", totalPages);
+  console.log("@@data", data);
 
   // Safely extract shorts with proper null checks
   const pages = Array.isArray(data?.pages) ? data.pages : [];

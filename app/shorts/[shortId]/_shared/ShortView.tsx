@@ -114,7 +114,8 @@ export default function ShortView({
 
   // Get current short from shorts array
   const currentShort = shorts[currentIndex] || data;
-  const currentShortId = currentShort?.uuid || currentShort?.id?.toString() || shortId;
+  const currentShortId =
+    currentShort?.uuid || currentShort?.id?.toString() || shortId;
 
   // Fetch comments for current short
   const {
@@ -122,12 +123,16 @@ export default function ShortView({
     isLoading: shortCommentsLoading,
     isFetching: shortCommentsFetching,
   } = useQuery({
-    queryKey: [`short-comments`, currentShortId, shortComments.pagination.currentPage],
+    queryKey: [
+      `short-comments`,
+      currentShortId,
+      shortComments.pagination.currentPage,
+    ],
     queryFn: () =>
       getRequestProtected(
         `/short-comments/${currentShortId}?page=${shortComments.pagination.currentPage}&limit=10`,
         token || "",
-        pathname
+        pathname,
       ),
     enabled: !!currentShortId && !!token,
   });
@@ -173,11 +178,11 @@ export default function ShortView({
   const handleSlideChange = async (swiper: any) => {
     const index = swiper.activeIndex;
     setCurrentIndex(index);
-    
+
     // Fetch next page if near end
     const shortsLength = Array.isArray(shorts) ? shorts.length : 0;
     const nearEnd = shortsLength > 0 && index >= shortsLength - 2;
-    
+
     if (nearEnd && hasNextPage && !isFetchingNextPage) {
       await fetchNextPage();
     }
@@ -201,11 +206,13 @@ export default function ShortView({
       getRequestProtected(
         `shorts/${uuid}/like`,
         token || "",
-        prevRoutes().library
+        prevRoutes().library,
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [queryKey] });
-      queryClient.invalidateQueries({ queryKey: ["short-comments", currentShortId] });
+      queryClient.invalidateQueries({
+        queryKey: ["short-comments", currentShortId],
+      });
       queryClient.invalidateQueries({ queryKey: ["shorts"] });
       queryClient.invalidateQueries({ queryKey: ["shorts-home"] });
     },
@@ -221,7 +228,9 @@ export default function ShortView({
       getRequestProtected(`shorts/${uuid}/dislike`, token || "", pathname),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [queryKey] });
-      queryClient.invalidateQueries({ queryKey: ["short-comments", currentShortId] });
+      queryClient.invalidateQueries({
+        queryKey: ["short-comments", currentShortId],
+      });
       queryClient.invalidateQueries({ queryKey: ["shorts"] });
       queryClient.invalidateQueries({ queryKey: ["shorts-home"] });
     },
@@ -287,11 +296,11 @@ export default function ShortView({
   }) => {
     return (
       <div
-        onClick={disabled ? undefined : type === "left" ? handlePrev : handleNext}
+        onClick={
+          disabled ? undefined : type === "left" ? handlePrev : handleNext
+        }
         className={`flex flex-col items-center gap-2 ${
-          disabled
-            ? "opacity-50 cursor-not-allowed"
-            : "cursor-pointer"
+          disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
         } transition-all`}
       >
         {type === "left" ? (
@@ -348,9 +357,12 @@ export default function ShortView({
       getRequestProtected(
         `shorts/${currentShortId}/view`,
         token || "",
-        pathname
+        pathname,
       ),
-    enabled: !!currentShortId && !!token && (!currentShort || (!currentShort.likesAndViews && !currentShort.user)),
+    enabled:
+      !!currentShortId &&
+      !!token &&
+      (!currentShort || (!currentShort.likesAndViews && !currentShort.user)),
   });
 
   // Use currentShort from array if available, otherwise use fetched data or fallback to data prop
@@ -360,14 +372,14 @@ export default function ShortView({
   const hasLiked = React.useMemo(() => {
     if (!displayData?.likesAndViews || !user?.id) return false;
     return displayData.likesAndViews.some((item: any) =>
-      item?.likes?.find((like: any) => like.user_id === user.id)
+      item?.likes?.find((like: any) => like.user_id === user.id),
     );
   }, [displayData, user?.id]);
 
   const hasdiLiked = React.useMemo(() => {
     if (!displayData?.likesAndViews || !user?.id) return false;
     return displayData.likesAndViews.some((item: any) =>
-      item?.dislikes?.find((like: any) => like.user_id === user.id)
+      item?.dislikes?.find((like: any) => like.user_id === user.id),
     );
   }, [displayData, user?.id]);
 
@@ -388,107 +400,111 @@ export default function ShortView({
   }
 
   // Use shorts array if available, otherwise fallback to single data
-  const shortsToDisplay = shorts.length > 0 ? shorts : (data ? [data] : []);
-
-
+  const shortsToDisplay = shorts.length > 0 ? shorts : data ? [data] : [];
 
   return (
-    <div className="w-full h-full flex shorts-content-wrapper " style={{ height: "100vh", overflow: "hidden" }}>
-      <div className="w-full h-full block md:flex md:justify-center md:items-center relative flex-1 overflow-hidden shorts-card-container" style={{ height: "100vh" }}>
+    <div
+      className="w-full h-full flex shorts-content-wrapper "
+      style={{ height: "100vh", overflow: "hidden" }}
+    >
+      <div
+        className="w-full h-full block md:flex md:justify-center md:items-center relative flex-1 overflow-hidden shorts-card-container"
+        style={{ height: "100vh" }}
+      >
         <div className="block md:flex md:items-center md:justify-center md:gap-10 overflow-hidden h-full w-full relative">
           {/* Main Video Section with Swiper */}
           {shortsToDisplay.length > 0 ? (
             <div className="relative w-full h-full md:h-[60vw] md:max-h-[600px] md:min-h-0 md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container">
-            {/* Unmute Button - Shows on first load */}
-            {!hasInteracted && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleUnmute();
-                }}
-                className="absolute top-4 right-4 z-30 bg-black/50 text-white px-4 py-2 rounded-full hover:bg-black/70 transition-colors"
-              >
-                <MuteIcon className="w-5 h-5 text-white" />
-              </button>
-            )}
-
-            {/* Mute Toggle Button - Shows after first interaction */}
-            {hasInteracted && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleToggleMute();
-                }}
-                className="absolute top-4 right-4 z-30 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
-              >
-                {isMuted ? (
-                  <MuteIcon className="w-5 h-5 text-white " />
-                ) : (
-                  <UnmuteIcon className="w-5 h-5 text-white " />
-                )}
-              </button>
-            )}
-            <div className="h-full w-full ">
-              <div className="h-full w-full flex items-center justify-center shorts-swiper-wrapper ">
-            <Swiper
-                onSwiper={(swiper) => {
-                  swiperRef.current = swiper;
-                }}
-                onSlideChange={handleSlideChange}
-                direction="vertical"
-                modules={[Pagination]}
-                className="h-full w-full vertical-shorts-swiper"
-                style={{
-                  height: "100%",
-                  width: "100%",
-                }}
-                allowTouchMove={true}
-                touchRatio={1}
-                threshold={5}
-                initialSlide={currentIndex}
-              >
-              {shortsToDisplay.map((short: any, index: number) => (
-                <SwiperSlide
-                  className="h-full w-full"
-                  key={`${short.uuid || short.id || index}-${index}`}
+              {/* Unmute Button - Shows on first load */}
+              {!hasInteracted && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleUnmute();
+                  }}
+                  className="absolute top-4 right-4 z-30 bg-black/50 text-white px-4 py-2 rounded-full hover:bg-black/70 transition-colors"
                 >
-                  <div
-                    className="relative h-full w-full overflow-hidden cursor-pointer"
-                    onClick={handleTogglePause}
+                  <MuteIcon className="w-5 h-5 text-white" />
+                </button>
+              )}
+
+              {/* Mute Toggle Button - Shows after first interaction */}
+              {hasInteracted && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleMute();
+                  }}
+                  className="absolute top-4 right-4 z-30 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
+                >
+                  {isMuted ? (
+                    <MuteIcon className="w-5 h-5 text-white " />
+                  ) : (
+                    <UnmuteIcon className="w-5 h-5 text-white " />
+                  )}
+                </button>
+              )}
+              <div className="h-full w-full ">
+                <div className="h-full w-full flex items-center justify-center shorts-swiper-wrapper ">
+                  <Swiper
+                    onSwiper={(swiper) => {
+                      swiperRef.current = swiper;
+                    }}
+                    onSlideChange={handleSlideChange}
+                    direction="vertical"
+                    modules={[Pagination]}
+                    className="h-full w-full vertical-shorts-swiper"
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                    }}
+                    allowTouchMove={true}
+                    touchRatio={1}
+                    threshold={5}
+                    initialSlide={currentIndex}
                   >
-                    {/* Blurred Background Video Layer */}
-                    <video
-                      className="absolute inset-0 w-full h-full object-cover blur-xl scale-110"
-                      autoPlay={index === currentIndex}
-                      loop
-                      muted
-                      playsInline
-                      controls={false}
-                      src={short.upload}
-                      aria-hidden="true"
-                    />
-                    {/* Main Video - Centered with full content visible */}
-                    <video
-                      ref={(el) => {
-                        videoRefs.current[index] = el;
-                      }}
-                      className="relative z-10 h-full w-full object-contain"
-                      autoPlay={index === currentIndex}
-                      loop
-                      muted={isMuted}
-                      playsInline
-                      controls={false}
-                      src={short.upload}
-                    />
-                  </div>
-                  </SwiperSlide>
-                ))}
-                </Swiper>
+                    {shortsToDisplay.map((short: any, index: number) => (
+                      <SwiperSlide
+                        className="h-full w-full"
+                        key={`${short.uuid || short.id || index}-${index}`}
+                      >
+                        <div
+                          className="relative h-full w-full overflow-hidden cursor-pointer"
+                          onClick={handleTogglePause}
+                        >
+                          {/* Blurred Background Video Layer */}
+                          <video
+                            className="absolute inset-0 w-full h-full object-cover blur-xl scale-110"
+                            autoPlay={index === currentIndex}
+                            loop
+                            muted
+                            playsInline
+                            controls={false}
+                            src={short.upload}
+                            aria-hidden="true"
+                          />
+                          {/* Main Video - Centered with full content visible */}
+                          <video
+                            ref={(el) => {
+                              videoRefs.current[index] = el;
+                            }}
+                            className="relative z-10 h-full w-full object-contain"
+                            autoPlay={index === currentIndex}
+                            loop
+                            muted={isMuted}
+                            playsInline
+                            controls={false}
+                            src={short.upload}
+                          />
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="relative w-full h-full md:h-[60vw] md:max-h-[600px] md:min-h-0 md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container cursor-pointer">
+          ) : (
+            <div className="relative w-full h-full md:h-[60vw] md:max-h-[600px] md:min-h-0 md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container cursor-pointer">
               <video
                 className="absolute inset-0 w-full h-full object-cover blur-xl scale-110"
                 autoPlay
@@ -499,7 +515,7 @@ export default function ShortView({
                 src={data?.upload}
                 aria-hidden="true"
               />
-              
+
               {/* Unmute Button */}
               {!hasInteracted && (
                 <button
@@ -542,12 +558,14 @@ export default function ShortView({
                 controls={false}
                 src={data?.upload}
               />
-          </div>
-        )}
+            </div>
+          )}
           {/* Right Sidebar - Actions */}
           <div className="absolute mb-12 md:static right-5 bottom-0 md:bottom-auto z-[22] flex flex-col gap-5 md:gap-10 justify-end md:justify-center md:mb-5">
             <div
-              onClick={() => currentShort?.uuid && likeShorts(currentShort.uuid)}
+              onClick={() =>
+                currentShort?.uuid && likeShorts(currentShort.uuid)
+              }
               className="flex flex-col items-center gap-2"
             >
               <LikeIcon
@@ -559,14 +577,18 @@ export default function ShortView({
             </div>
             <div
               className="flex flex-col items-center gap-2"
-              onClick={() => currentShort?.uuid && dislikeShorts(currentShort.uuid)}
+              onClick={() =>
+                currentShort?.uuid && dislikeShorts(currentShort.uuid)
+              }
             >
               <DislikeIcon
                 className={`w-6 md:w-10 h-6 md:h-10 ${
                   hasdiLiked ? " text-[#05834B]" : "text-[#FCFCFDB2]"
                 }`}
               />
-              <p className="text-xs md:text-base">{lv?.dislikes?.length || 0}</p>
+              <p className="text-xs md:text-base">
+                {lv?.dislikes?.length || 0}
+              </p>
             </div>
             <div
               className="flex flex-col items-center gap-2"
@@ -577,9 +599,7 @@ export default function ShortView({
                 {shortComments.pagination.total || 0}
               </p>
             </div>
-            <div
-              className="flex flex-col items-center gap-2 cursor-pointer"
-            >
+            <div className="flex flex-col items-center gap-2 cursor-pointer">
               <ShareShortsIcon className="w-6 md:w-10 h-6 md:h-10 ml-1" />
             </div>
             {displayData?.user && (
@@ -712,7 +732,11 @@ export default function ShortView({
           </div>
           <div className="flex flex-col gap-4 p-4 overflow-y-auto h-full">
             {shortComments.comments.map((comment: any, idx: number) => (
-              <ShortsComments key={comment.id || idx} shortId={currentShortId} comment={comment} />
+              <ShortsComments
+                key={comment.id || idx}
+                shortId={currentShortId}
+                comment={comment}
+              />
             ))}
             {hasMoreComments && (
               <button

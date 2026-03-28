@@ -132,7 +132,7 @@ export default function ShortsCard({
         "Length:",
         shortsLength,
         "HasNext:",
-        hasNextPage
+        hasNextPage,
       );
       const nextPage = await fetchNextPage();
       console.log(nextPage);
@@ -265,11 +265,12 @@ export default function ShortsCard({
       const response = await getRequestProtected(
         `shorts/${uuid}/like`,
         token,
-        prevRoutes().library
+        pathname,
       );
       return response;
     },
     onSuccess: (data) => {
+      console.log("@@data", data);
       if (data?.success) {
         toast(data?.message, {
           type: "success",
@@ -285,6 +286,12 @@ export default function ShortsCard({
           type: "error",
         });
       }
+    },
+    onError: (error) => {
+      console.log("@@error", error);
+      toast(error?.message, {
+        type: "error",
+      });
     },
   });
 
@@ -293,7 +300,7 @@ export default function ShortsCard({
       const response = await getRequestProtected(
         `shorts/${uuid}/dislike`,
         token,
-        prevRoutes().library
+        prevRoutes().library,
       );
       return response;
     },
@@ -315,9 +322,15 @@ export default function ShortsCard({
       }
     },
   });
+  //TODO REMOVE AFTER LIKE ISSUE HAS BEEN FIXED
+console.log("@@shorts?.[currentSlideIndex]", shorts?.[currentSlideIndex]);
 
   // Get creator ID from current short
   const creatorId = shorts?.[currentSlideIndex]?.user?.id;
+  console.log(
+    "@@shorts?.[currentSlideIndex]?.genres",
+    shorts?.[currentSlideIndex]?.genres,
+  );
 
   // Check follow status
   const {
@@ -330,7 +343,7 @@ export default function ShortsCard({
       getRequestProtected(
         `profile/${creatorId}/check-follow-status`,
         token,
-        pathname
+        pathname,
       ),
     enabled: !!token && !!creatorId && !!user && user.id !== creatorId,
   });
@@ -395,7 +408,7 @@ export default function ShortsCard({
     }
 
     return shorts?.[currentSlideIndex]?.likesAndViews.some((item) =>
-      item.likes?.find((like) => like.user_id === user?.id)
+      item.likes?.find((like) => like.user_id === user?.id),
     );
   }, [shorts, currentSlideIndex, user?.id]);
 
@@ -405,7 +418,7 @@ export default function ShortsCard({
     }
 
     return shorts?.[currentSlideIndex].likesAndViews.some((item) =>
-      item?.dislikes?.find((like) => like.user_id === user?.id)
+      item?.dislikes?.find((like) => like.user_id === user?.id),
     );
   }, [shorts, currentSlideIndex, user?.id]);
 
@@ -466,8 +479,8 @@ export default function ShortsCard({
                   isUnfollowingPending
                     ? "Loading..."
                     : isFollowing
-                    ? "Following"
-                    : "Follow"}
+                      ? "Following"
+                      : "Follow"}
                 </button>
               )}
             </div>
@@ -477,16 +490,13 @@ export default function ShortsCard({
               </h3>
 
               <div className="flex gap-3">
-                <p className="border-[1px] px-1 py-[0.1rem] md:px-3 md:py-1 border-[#05834BF5] text-xs md:text-base flex items-center justify-center">
-                  Comedy
-                </p>
-                <p className="border-[1px] px-1 py-[0.1rem] md:px-3 md:py-1 border-[#05834BF5] flex items-center justify-center">
-                  Shorts
-                </p>
-                <p className=" text-xs md:text-base border-[1px] px-1 py-[0.1rem] md:px-3 md:   md:py-1 border-[#05834BF5] flex items-center justify-center">
-                  {" "}
-                  2023
-                </p>
+                {shorts?.[currentSlideIndex]?.genres.map((genre) => (
+                  <React.Fragment key={genre.id}>
+                    <p className="border-[1px] px-1 py-[0.1rem] md:px-3 md:py-1 border-[#05834BF5] text-xs md:text-base flex items-center justify-center">
+                      {genre.genre.name}
+                    </p>
+                  </React.Fragment>
+                ))}
               </div>
             </div>
           </div>
@@ -668,7 +678,7 @@ export default function ShortsCard({
             {shorts?.[currentSlideIndex]?.comments?.map(
               (comment: any, idx: number) => (
                 <ShortsComments key={idx} comment={comment} />
-              )
+              ),
             )}
           </div>
         </motion.div>

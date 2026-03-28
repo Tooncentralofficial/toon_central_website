@@ -94,6 +94,30 @@ export interface ComicFormValues {
   genres: ComicGenre[];
 }
 
+// genre
+// : 
+// {id: 6, name: 'Historical', slug: 'Historical'}
+// genre_id
+// : 
+// 6
+// id
+// : 
+// 1
+// short_id
+// : 
+// 23
+
+export interface ShortsGenre  {
+  id: number;
+  genre: {
+    id: number;
+    name: string;
+    slug: string;
+  };
+  genre_id: number;
+  short_id: number;
+}
+
 export interface ShortsType {
   id: number;
   uuid: string;
@@ -111,7 +135,9 @@ export interface ShortsType {
   comments: any[];
   likesAndViews: ShortsLikesAndViews;
   user :Partial<User>
+  genres: ShortsGenre[];
 }
+
 
 export interface ShortsResponse {
   success: boolean;
