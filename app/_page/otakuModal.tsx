@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import ItelPopup from "@/public/static/images/events/itel/tooncent_itel_popup.jpeg";
+import ItelPopup from "@/public/static/images/events/itel/tooncent_itel_popup.png";
 
 interface OtakuModalProps {
   isOpen: boolean;
@@ -15,7 +15,7 @@ export default function OtakuModal({
   isOpen,
   onClose,
   children,
-  maxWidth = "50rem",
+  maxWidth = "40rem",
 }: OtakuModalProps) {
   // Handle escape key press
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function OtakuModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/55 backdrop-blur-sm z-[9998]"
+            className="fixed inset-0 bg-[#000000]/55 backdrop-blur-sm z-[9998]"
             onClick={handleBackdropClick}
             aria-hidden="true"
           />
@@ -68,33 +68,34 @@ export default function OtakuModal({
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
               className="relative w-full max-w-[95vw] sm:max-w-[90vw] pointer-events-auto my-auto"
-              style={{ maxWidth: `min(${maxWidth}, 95vw)` }}
+              style={{ maxWidth: `min(${maxWidth}, 95vw)`, height: "auto" }}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-title"
             >
               {/* Modal Content with Background */}
               <div
-                className="relative rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden shadow-2xl border border-white/20"
+                className="relative min-h-[68vh] sm:min-h-[72vh] md:min-h-[min(86vh,920px)] lg:min-h-[min(90vh,1000px)] xl:min-h-[min(92vh,1080px)] rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden shadow-2xl border border-white/20 flex flex-col"
                 style={{
                   backgroundImage: `url(${ItelPopup.src})`,
                   backgroundSize: "cover",
-                  backgroundPosition: "top-center",
+                  backgroundPosition: "center top",
                   backgroundRepeat: "no-repeat",
                 }}
               >
-                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#000000]/5 via-[#000000]/35 to-[#000000]/75"></div>
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#000000]/25 via-[#000000]/15 to-[#000000]/55" />
+
                 {/* Close Button */}
-                <button
+                {/* <button
                   onClick={onClose}
                   className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors duration-200 backdrop-blur-sm border border-white/30"
                   aria-label="Close modal"
                 >
                   <span className="text-lg sm:text-xl font-bold">✕</span>
-                </button>
+                </button> */}
 
                 {/* Modal Content */}
-                <div className="relative">{children}</div>
+                <div className="relative z-10 flex flex-1 flex-col">{children}</div>
               </div>
             </motion.div>
           </div>
