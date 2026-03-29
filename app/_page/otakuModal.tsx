@@ -79,7 +79,7 @@ export default function OtakuModal({
                 style={{
                   backgroundImage: `url(${ItelPopup.src})`,
                   backgroundSize: "cover",
-                  backgroundPosition: "center",
+                  backgroundPosition: "top-center",
                   backgroundRepeat: "no-repeat",
                 }}
               >

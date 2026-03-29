@@ -30,7 +30,8 @@ import "slick-carousel/slick/slick-theme.css";
 import ItelBanner from "@/public/static/images/events/itel/tooncent_itel_banner.jpeg";
 
 /** Replace with the live itel / campaign URL when ready */
-const ITEL_SPONSORED_BANNER_HREF = "https://example.com";
+const ITEL_SPONSORED_BANNER_HREF =
+  "https://www.jumia.com.ng/itel-city-200-7.45mm-12844gb-unibody-metallic-deco-6.78-120hz-ip65-5200mah-android-purple-419283461.html";
 
 type PopularSlide =
   | { kind: "sponsored" }
