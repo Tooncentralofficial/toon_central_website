@@ -95,11 +95,11 @@ export default function FloatingButton() {
             {/* Main Heading */}
 
             {/* Description Text */}
-            <p className="text-base md:text-lg text-white mb-6 md:mb-8 text-center leading-relaxed">
+            {/* <p className="text-base md:text-lg text-white mb-6 md:mb-8 text-center leading-relaxed">
               Toon Central and itel are giving readers an exclusive chance to
               earn rewards and explore more stories. Tap the button below, and
               claim your reward now.
-            </p>
+            </p> */}
           </div>
 
           <div className="mt-auto mb-2 md:mb-4 rounded-xl  bg-black/35 p-4 md:p-5 backdrop-blur-sm text-center">
