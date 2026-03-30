@@ -63,7 +63,7 @@ export default function FloatingButton() {
         />
       </motion.div>
 
-      <OtakuModal isOpen={isOpen} onClose={onClose} maxWidth="50rem">
+      <OtakuModal isOpen={isOpen} onClose={onClose} maxWidth="39rem">
         <div className="w-full mx-auto flex flex-1 flex-col p-4 pt-24 pb-8 sm:pt-32 md:p-8 md:pt-40 lg:pt-48 md:pb-10 text-white">
           {/* Header with Logos */}
           <div className="flex justify-between items-center mb-2 md:mb-4 relative px-0 sm:px-4">
@@ -91,28 +91,18 @@ export default function FloatingButton() {
             </div> */}
           </div>
 
-          <div className="flex-shrink-0 mt-4 sm:mt-6 md:mt-12">
+          <div className="flex-shrink-0 mt-14 sm:mt-24 md:mt-32">
             {/* Main Heading */}
-            <h2
-              className="text-2xl md:text-4xl lg:text-5xl font-bold text-white uppercase mb-4 md:mb-6 text-center tracking-wider"
-              style={{
-                textShadow:
-                  "2px 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.1)",
-                fontFamily: "var(--font-satoshi-bold, sans-serif)",
-              }}
-            >
-              READ MORE, SAVE MORE!
-            </h2>
 
             {/* Description Text */}
             <p className="text-base md:text-lg text-white mb-6 md:mb-8 text-center leading-relaxed">
               Toon Central and itel are giving readers an exclusive chance to
-              earn rewards and explore more stories. Tap the button below, and claim
-              your reward now.
+              earn rewards and explore more stories. Tap the button below, and
+              claim your reward now.
             </p>
           </div>
 
-          <div className="mt-auto mb-2 md:mb-4 rounded-xl border border-white/20 bg-black/35 p-4 md:p-5 backdrop-blur-sm text-center">
+          <div className="mt-auto mb-2 md:mb-4 rounded-xl  bg-black/35 p-4 md:p-5 backdrop-blur-sm text-center">
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
               <a
                 href={PROMO_REWARD_LINK}
@@ -123,12 +113,6 @@ export default function FloatingButton() {
               >
                 Claim Reward
               </a>
-              <button
-                onClick={onClose}
-                className="w-24 sm:w-auto bg-[#E31B23] text-white font-bold text-sm md:text-base px-6 py-3 md:px-8 md:py-3.5 rounded-lg hover:bg-[#c5161d] transition-all duration-200 shadow-lg hover:shadow-xl min-w-[180px] cursor-pointer"
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>

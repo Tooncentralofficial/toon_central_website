@@ -15,7 +15,7 @@ export default function OtakuModal({
   isOpen,
   onClose,
   children,
-  maxWidth = "40rem",
+  maxWidth = "34rem",
 }: OtakuModalProps) {
   // Handle escape key press
   useEffect(() => {
@@ -58,7 +58,6 @@ export default function OtakuModal({
             onClick={handleBackdropClick}
             aria-hidden="true"
           />
-          
 
           {/* Modal Container */}
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 md:p-6 pointer-events-none overflow-y-auto">
@@ -75,28 +74,27 @@ export default function OtakuModal({
             >
               {/* Modal Content with Background */}
               <div
-                className="relative min-h-[68vh] sm:min-h-[72vh] md:min-h-[min(86vh,920px)] lg:min-h-[min(90vh,1000px)] xl:min-h-[min(92vh,1080px)] rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden shadow-2xl border border-white/20 flex flex-col"
+                className="relative min-h-[60vh] sm:min-h-[64vh] md:min-h-[min(74vh,820px)] lg:min-h-[min(78vh,900px)] xl:min-h-[min(80vh,980px)] rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden shadow-2xl  flex flex-col bg-no-repeat bg-top bg-contain lg:bg-cover"
                 style={{
                   backgroundImage: `url(${ItelPopup.src})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center top",
-                  backgroundRepeat: "no-repeat",
                 }}
               >
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#000000]/25 via-[#000000]/15 to-[#000000]/55" />
 
-                {/* Close Button */}
-                {/* <button
-                  onClick={onClose}
-                  className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors duration-200 backdrop-blur-sm border border-white/30"
-                  aria-label="Close modal"
-                >
-                  <span className="text-lg sm:text-xl font-bold">✕</span>
-                </button> */}
-
                 {/* Modal Content */}
-                <div className="relative z-10 flex flex-1 flex-col">{children}</div>
+                <div className="relative z-10 flex flex-1 flex-col">
+                  {children}
+                </div>
               </div>
+
+              {/* Bottom-centered Close Button */}
+              <button
+                onClick={onClose}
+                className="absolute left-1/2 -translate-x-1/2 -bottom-10 z-50 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors duration-200 backdrop-blur-sm border border-white/35 shadow-md "
+                aria-label="Close modal"
+              >
+                <span className="text-lg leading-none">×</span>
+              </button>
             </motion.div>
           </div>
         </>
