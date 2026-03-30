@@ -102,7 +102,7 @@ export default function FloatingButton() {
             </p> */}
           </div>
 
-          <div className="mt-auto mb-2 md:mb-4 rounded-xl  bg-black/35 p-4 md:p-5 backdrop-blur-sm text-center">
+          <div className="mt-auto mb-2 md:mb-4 rounded-xl  bg-black/35 p-4 md:p-5  text-center">
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
               <a
                 href={PROMO_REWARD_LINK}
