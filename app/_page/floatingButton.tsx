@@ -119,13 +119,13 @@ export default function FloatingButton() {
                 target="_blank"
                 rel="noopener noreferrer sponsored"
                 onClick={handleClaimReward}
-                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-[#4ADD80] px-6 py-3 md:px-8 md:py-3.5 text-white font-bold text-sm md:text-base hover:bg-[#3a4554] transition-colors duration-200 shadow-lg hover:shadow-xl min-w-[180px]"
+                className="w-24 sm:w-auto inline-flex items-center justify-center rounded-lg bg-[#4ADD80] px-6 py-3 md:px-8 md:py-3.5 text-white font-bold text-sm md:text-base hover:bg-[#3a4554] transition-colors duration-200 shadow-lg hover:shadow-xl min-w-[180px]"
               >
                 Claim Reward
               </a>
               <button
                 onClick={onClose}
-                className="w-full sm:w-auto bg-[#E31B23] text-white font-bold text-sm md:text-base px-6 py-3 md:px-8 md:py-3.5 rounded-lg hover:bg-[#c5161d] transition-all duration-200 shadow-lg hover:shadow-xl min-w-[180px] cursor-pointer"
+                className="w-24 sm:w-auto bg-[#E31B23] text-white font-bold text-sm md:text-base px-6 py-3 md:px-8 md:py-3.5 rounded-lg hover:bg-[#c5161d] transition-all duration-200 shadow-lg hover:shadow-xl min-w-[180px] cursor-pointer"
               >
                 Close
               </button>
