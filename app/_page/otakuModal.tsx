@@ -79,7 +79,7 @@ export default function OtakuModal({
                   backgroundImage: `url(${ItelPopup.src})`,
                 }}
               >
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#000000]/25 via-[#000000]/15 to-[#000000]/55" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#000000]/10 via-[#000000]/15 to-[#000000]/25" />
 
                 {/* Modal Content */}
                 <div className="relative z-10 flex flex-1 flex-col">
