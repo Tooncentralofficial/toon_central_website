@@ -1,17 +1,13 @@
 "use client";
 
-import { Button } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import OtakuModal from "./otakuModal";
 import Image from "next/image";
-import OtakuLogo from "@/public/static/images/events/otakulogo.png";
-import ToonsLogo from "@/public/static/images/events/tooncentral.png";
-import { MouseEvent, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
-import { toast } from "react-toastify";
 import ItelLogo from "@/public/static/images/events/itel/Itel_logo.png";
-import OtakuButton from "@/public/static/images/events/otakuload.png";
+import { useRouter } from "next/navigation";
 
 /** Replace with final reward destination URL when ready */
 const PROMO_REWARD_LINK =
@@ -20,19 +16,19 @@ const PROMO_REWARD_LINK =
 export default function FloatingButton() {
   const [isOpen, setIsOpen] = useState(true);
   const { user, token } = useSelector(selectAuthState);
+  const router = useRouter();
 
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
   const isLoggedIn = Boolean(token && user);
 
-  const handleClaimReward = (e: MouseEvent<HTMLAnchorElement>) => {
-    if (!isLoggedIn) {
-      e.preventDefault();
-      toast("loggin to claim rewards", {
-        type: "info",
-        toastId: "login-claim-reward",
-      });
+  const handleModalClick = () => {
+    if (isLoggedIn) {
+      window.location.assign(PROMO_REWARD_LINK);
+      return;
     }
+
+    router.push("/auth/login");
   };
 
   return (
@@ -64,7 +60,18 @@ export default function FloatingButton() {
       </motion.div>
 
       <OtakuModal isOpen={isOpen} onClose={onClose} maxWidth="39rem">
-        <div className="w-full mx-auto flex flex-1 flex-col p-4 pt-24 pb-8 sm:pt-32 md:p-8 md:pt-40 lg:pt-48 md:pb-10 text-white">
+        <div
+          className="w-full mx-auto flex flex-1 flex-col p-4 pt-24 pb-8 sm:pt-32 md:p-8 md:pt-40 lg:pt-48 md:pb-10 text-white cursor-pointer"
+          onClick={handleModalClick}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              handleModalClick();
+            }
+          }}
+        >
           {/* Header with Logos */}
           <div className="flex justify-between items-center mb-2 md:mb-4 relative px-0 sm:px-4">
             {/* Stylized X Separator - Center */}
@@ -103,7 +110,7 @@ export default function FloatingButton() {
           </div>
 
           <div className="mt-auto mb-2 md:mb-4 rounded-xl  bg-black/35 p-4 md:p-5  text-center">
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
+            {/* <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
               <a
                 href={PROMO_REWARD_LINK}
                 target="_blank"
@@ -113,7 +120,7 @@ export default function FloatingButton() {
               >
                 Claim Reward
               </a>
-            </div>
+            </div> */}
           </div>
         </div>
       </OtakuModal>
