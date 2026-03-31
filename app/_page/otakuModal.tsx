@@ -75,13 +75,11 @@ export default function OtakuModal({
             >
               {/* Modal Content with Background */}
               <div
-                className="relative min-h-[70vh] sm:min-h-[74vh] md:min-h-[min(74vh,820px)] lg:min-h-[min(78vh,900px)] xl:min-h-[min(80vh,980px)] rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden shadow-2xl  flex flex-col bg-no-repeat bg-top bg-contain lg:bg-contain"
+                className="relative min-h-[57vh] sm:min-h-[74vh] md:min-h-[min(74vh,820px)] lg:min-h-[min(78vh,900px)] xl:min-h-[min(80vh,980px)] rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden shadow-2xl  flex flex-col bg-no-repeat bg-top bg-contain lg:bg-contain"
                 style={{
                   backgroundImage: `url(${ItelPopup2.src})`,
                 }}
               >
-                
-
                 {/* Modal Content */}
                 <div className="relative z-10 flex flex-1 flex-col">
                   {children}
@@ -91,7 +89,7 @@ export default function OtakuModal({
               {/* Bottom-centered Close Button */}
               <button
                 onClick={onClose}
-                className="absolute left-1/2 -translate-x-1/2 -bottom-10 z-50 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors duration-200 backdrop-blur-sm border border-white/35 shadow-md  "
+                className="absolute left-1/2 -translate-x-1/2 -bottom-10 z-50 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors duration-200 backdrop-blur-sm border border-white/35 shadow-md"
                 aria-label="Close modal"
               >
                 <span className="text-lg leading-none">×</span>
