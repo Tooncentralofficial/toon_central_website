@@ -74,7 +74,7 @@ export default function OtakuModal({
             >
               {/* Modal Content with Background */}
               <div
-                className="relative min-h-[60vh] sm:min-h-[64vh] md:min-h-[min(74vh,820px)] lg:min-h-[min(78vh,900px)] xl:min-h-[min(80vh,980px)] rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden shadow-2xl  flex flex-col bg-no-repeat bg-top bg-contain lg:bg-cover"
+                className="relative min-h-[70vh] sm:min-h-[74vh] md:min-h-[min(74vh,820px)] lg:min-h-[min(78vh,900px)] xl:min-h-[min(80vh,980px)] rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden shadow-2xl  flex flex-col bg-no-repeat bg-top bg-contain lg:bg-cover"
                 style={{
                   backgroundImage: `url(${ItelPopup.src})`,
                 }}
