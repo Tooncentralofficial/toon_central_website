@@ -28,9 +28,12 @@ export default function FloatingButton() {
    const { data, isLoading } = useQuery({
     queryKey: ["list_offers"],
     queryFn: () => getRequestProtected("offers",token,pathname),
+    enabled: isLoggedIn,
   });
- const itelOffer = data?.data?.find((offer:Offer)=>offer.name === "itel_offer")
- console.log("itelOffer", itelOffer);
+const itelOffer = (Array.isArray(data?.data) ? data.data : []).find(
+  (offer: Offer) => offer.name === "itel_offer",
+);
+console.log("itelOffer", itelOffer);
  const {mutate: claimOffer} = useMutation({
   mutationKey: ["claim_offer"],
   mutationFn: () => postRequestProtected({},`offers/${itelOffer?.id}/claim`,token as any,pathname,"json"),
