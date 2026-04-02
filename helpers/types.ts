@@ -188,4 +188,11 @@ export interface LikesAndViewsItem {
   updated_at: string;
 }
 
+export interface Offer {
+  id: number;
+  name: string;
+  description: string;
+  created_at: string;
+  updated_at: string;
+}
 export type ShortsLikesAndViews = LikesAndViewsItem[];

@@ -52,7 +52,7 @@ export default function RootLayout({
         <meta name="monetag" content="b1560b2812f90a46572fbf59094c6458" />
       </head>
       <body className={` ${satoshi.className} `}>
-         <PropellerAdsScript />
+        <PropellerAdsScript />
         {/* <Script
           id="adsense-script"
           async
@@ -75,6 +75,10 @@ export default function RootLayout({
           gtag('config', 'G-RZFRHC7QTN');
         `}
         </Script>
+        <Script
+          src="https://accounts.google.com/gsi/client"
+          strategy="afterInteractive"
+        />
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

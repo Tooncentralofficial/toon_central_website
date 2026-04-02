@@ -7,7 +7,10 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import ItelLogo from "@/public/static/images/events/itel/Itel_logo.png";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getRequestProtected, postRequestProtected } from "../utils/queries/requests";
+import { Offer } from "@/helpers/types";
 
 /** Replace with final reward destination URL when ready */
 const PROMO_REWARD_LINK =
@@ -17,13 +20,24 @@ export default function FloatingButton() {
   const [isOpen, setIsOpen] = useState(true);
   const { user, token } = useSelector(selectAuthState);
   const router = useRouter();
+  const pathname = usePathname()
 
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
   const isLoggedIn = Boolean(token && user);
-
+   const { data, isLoading } = useQuery({
+    queryKey: ["list_offers"],
+    queryFn: () => getRequestProtected("offers",token,pathname),
+  });
+ const itelOffer = data?.data?.find((offer:Offer)=>offer.name === "itel_offer")
+ console.log("itelOffer", itelOffer);
+ const {mutate: claimOffer} = useMutation({
+  mutationKey: ["claim_offer"],
+  mutationFn: () => postRequestProtected({},`offers/${itelOffer?.id}/claim`,token as any,pathname,"json"),
+ });
   const handleModalClick = () => {
     if (isLoggedIn) {
+      claimOffer();
       window.location.assign(PROMO_REWARD_LINK);
       return;
     }

@@ -9,12 +9,17 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "@/lib/slices/auth-slice";
+import { GoogleLoginUser } from "../login/login";
+import GoogleSignInButton from "@/app/_shared/googleSignInButton";
 import { CountryCodeSelector } from "./_shared/CountryCodeSelector";
 import { MobileOperatorSelect } from "./_shared/MobileOperatorSelect";
 
 const Page = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
@@ -137,6 +142,54 @@ const Page = () => {
       });
     },
   });
+
+  const countryIdRaw = process.env.NEXT_PUBLIC_DEFAULT_COUNTRY_ID;
+  const defaultCountryIdFromEnv =
+    countryIdRaw !== undefined && countryIdRaw !== ""
+      ? Number(countryIdRaw)
+      : NaN;
+  const envFallbackCountry = Number.isFinite(defaultCountryIdFromEnv)
+    ? defaultCountryIdFromEnv
+    : 1;
+
+  const countryIdForGoogle = useMemo(() => {
+    const fromForm = parseInt(formik.values.countryCode, 10);
+    if (Number.isFinite(fromForm) && fromForm > 0) return fromForm;
+    return envFallbackCountry;
+  }, [formik.values.countryCode, envFallbackCountry]);
+
+  const googleSignupUser = useMutation({
+    mutationFn: (vars: { credential: string; countryId: number }) =>
+      GoogleLoginUser(vars.credential, vars.countryId, false),
+    onSuccess(data) {
+      const { success, message, data: resData } = data;
+      if (success) {
+        toast(message, {
+          toastId: "google-signup",
+          type: "success",
+        });
+        dispatch(loginSuccess(resData));
+        router.replace("/");
+      } else {
+        toast(message, {
+          toastId: "google-signup",
+          type: "error",
+        });
+      }
+    },
+    onError() {},
+  });
+
+  const handleGoogleCredential = useCallback(
+    (credential: string) => {
+      googleSignupUser.mutate({
+        credential,
+        countryId: countryIdForGoogle,
+      });
+    },
+    [countryIdForGoogle, googleSignupUser],
+  );
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className=" ">
@@ -352,6 +405,16 @@ const Page = () => {
         >
           Create Account
         </SolidPrimaryButton>
+
+        <div
+          className={`mt-4 ${googleSignupUser.isPending ? "pointer-events-none opacity-60" : ""}`}
+        >
+          <GoogleSignInButton
+            onCredential={handleGoogleCredential}
+            disabled={googleSignupUser.isPending}
+          />
+        </div>
+
         <div className="flex gap-1 text-md justify-center mt-2">
           <span>Already have an Account ? </span>
           <Link href="/auth/login">
