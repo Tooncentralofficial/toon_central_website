@@ -647,7 +647,7 @@ function Page() {
                         </div>
                         <p>Filename</p>
 
-                        <p>BigBuckBunny.mp4</p>
+                        <p>{selectedFile?.name}</p>
                       </div>
                     </div>
                     <div className="flex justify-between mt-10  items-center">

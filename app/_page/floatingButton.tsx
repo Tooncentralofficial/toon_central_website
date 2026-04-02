@@ -1,184 +1,48 @@
 "use client";
 
-import { Button } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import OtakuModal from "./otakuModal";
 import Image from "next/image";
-import OtakuLogo from "@/public/static/images/events/otakulogo.png";
-import ToonsLogo from "@/public/static/images/events/tooncentral.png";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
-import {
-  getSessionTrackingData,
-  getActiveSession,
-} from "@/lib/utils/sessionTracker";
+import ItelLogo from "@/public/static/images/events/itel/Itel_logo.png";
+import { usePathname, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "react-toastify";
-import copy from "copy-to-clipboard";
-import OtakuButton from "@/public/static/images/events/otakuload.png";
-import { usePathname } from "next/navigation";
-import { getRequestProtected } from "@/app/utils/queries/requests";
+import { getRequestProtected, postRequestProtected } from "../utils/queries/requests";
+import { Offer } from "@/helpers/types";
+
+/** Replace with final reward destination URL when ready */
+const PROMO_REWARD_LINK =
+  "https://www.jumia.com.ng/itel-city-200-7.45mm-12844gb-unibody-metallic-deco-6.78-120hz-ip65-5200mah-android-purple-419283461.html";
 
 export default function FloatingButton() {
   const [isOpen, setIsOpen] = useState(true);
+  const { user, token } = useSelector(selectAuthState);
+  const router = useRouter();
+  const pathname = usePathname()
 
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  const { user, token } = useSelector(selectAuthState);
-  const userId = user?.id || user?.userId || undefined;
-  const pathname = usePathname();
-
-  const [minutesRemaining, setMinutesRemaining] = useState(40);
-  const [progress, setProgress] = useState(0);
-  const [couponCode, setCouponCode] = useState<string | null>(null);
-  const TOTAL_MINUTES = 40;
-  const TOTAL_MS = TOTAL_MINUTES * 60 * 1000; // 40 minutes in milliseconds
-
-  const isProgressCompleted = progress >= 100;
-
-  // Calculate session duration and update timer/progress
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const updateTimerAndProgress = () => {
-      // Get total session duration
-      const trackingData = getSessionTrackingData(userId);
-      const activeSession = getActiveSession(userId);
-
-      // Calculate current total duration
-      let totalDuration = trackingData.totalDuration;
-
-      // Add current active session duration if exists
-      if (activeSession) {
-        const currentTime = Date.now();
-        // Calculate how long the active session has been running
-        const activeSessionElapsed = currentTime - activeSession.startTime;
-        // The totalDuration already includes activeSession.duration, so we need to replace it
-        // with the current elapsed time
-        totalDuration =
-          totalDuration - activeSession.duration + activeSessionElapsed;
-      }
-
-      // Calculate progress percentage (max 100% at 60 minutes)
-      const progressPercent = Math.min((totalDuration / TOTAL_MS) * 100, 100);
-      setProgress(progressPercent);
-
-      // Calculate remaining minutes
-      const elapsedMinutes = totalDuration / (60 * 1000);
-      const remaining = Math.max(0, Math.ceil(TOTAL_MINUTES - elapsedMinutes));
-      setMinutesRemaining(remaining);
-    };
-
-    // Update immediately
-    updateTimerAndProgress();
-
-    // Update every second
-    const interval = setInterval(updateTimerAndProgress, 1000);
-
-    return () => clearInterval(interval);
-  }, [isOpen, userId]);
-
-  // Fetch existing coupon when progress is completed and user is authenticated
-  const {
-    data: existingCoupon,
-    isLoading: loadingCoupon,
-    isSuccess: isSuccessCoupon,
-  } = useQuery({
-    queryKey: ["user-coupon", userId],
-    queryFn: () => getRequestProtected("/coupons", token, pathname),
-    enabled: !!token && !!userId && isProgressCompleted,
+  const isLoggedIn = Boolean(token && user);
+   const { data, isLoading } = useQuery({
+    queryKey: ["list_offers"],
+    queryFn: () => getRequestProtected("offers",token,pathname),
   });
-  console.log("@@ existingCoupon", existingCoupon);
-
-  // Update couponCode state when existing coupon is found
-  useEffect(() => {
-    if (existingCoupon?.success && existingCoupon?.data?.coupon) {
-      setCouponCode(existingCoupon.data.coupon);
-    }
-  }, [existingCoupon, isSuccessCoupon]);
-
-  console.log("@@couponCode", couponCode);
-
-  // Generate coupon mutation
-  const generateCoupon = useMutation({
-    mutationKey: ["generate-coupon"],
-    mutationFn: async () => {
-      const response = await fetch("/api/coupon", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Failed to generate coupon");
-      }
-
-      const data = await response.json();
-      return data;
-    },
-    onSuccess: (data) => {
-      // Extract coupon code from response
-      // The response structure may vary, adjust based on actual API response
-      const coupon =
-        data.coupon?.coupon ||
-        data.coupon?.code ||
-        data.coupon ||
-        data.data?.coupon;
-      if (coupon) {
-        setCouponCode(coupon);
-        toast("Coupon generated successfully!", {
-          toastId: "coupon-success",
-          type: "success",
-        });
-      } else {
-        toast("Coupon generated but format is unexpected", {
-          toastId: "coupon-warning",
-          type: "warning",
-        });
-      }
-    },
-    onError: (error: any) => {
-      toast(error.message || "Failed to generate coupon. Please try again.", {
-        toastId: "coupon-error",
-        type: "error",
-      });
-    },
-  });
-
-  const handleClaimCoupon = () => {
-    // Prevent generation if coupon already exists
-    if (couponCode) {
-      toast("You already have a coupon code", {
-        toastId: "coupon-exists",
-        type: "info",
-      });
+ const itelOffer = data?.data?.find((offer:Offer)=>offer.name === "itel_offer")
+ console.log("itelOffer", itelOffer);
+ const {mutate: claimOffer} = useMutation({
+  mutationKey: ["claim_offer"],
+  mutationFn: () => postRequestProtected({},`offers/${itelOffer?.id}/claim`,token as any,pathname,"json"),
+ });
+  const handleModalClick = () => {
+    if (isLoggedIn) {
+      claimOffer();
+      window.location.assign(PROMO_REWARD_LINK);
       return;
     }
 
-    if (isProgressCompleted && !couponCode) {
-      generateCoupon.mutate();
-    }
-  };
-
-  const handleCopyCoupon = () => {
-    if (couponCode) {
-      const copied = copy(couponCode);
-      if (copied) {
-        toast("Coupon code copied to clipboard!", {
-          toastId: "copy-success",
-          type: "success",
-        });
-      } else {
-        toast("Failed to copy coupon code", {
-          toastId: "copy-error",
-          type: "error",
-        });
-      }
-    }
+    router.push("/auth/login");
   };
 
   return (
@@ -193,11 +57,11 @@ export default function FloatingButton() {
         }}
         className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-50"
         onClick={onOpen}
-        aria-label="Open Otaku Modal"
+        aria-label="Open Itel Modal"
       >
         <Image
-          src={OtakuButton}
-          alt="Otaku Button"
+          src={ItelLogo}
+          alt="Itel Logo"
           width={100}
           height={100}
           className="w-24 h-24 animate-pulse hover:scale-110 transition-all duration-300"
@@ -209,23 +73,23 @@ export default function FloatingButton() {
         />
       </motion.div>
 
-      <OtakuModal isOpen={isOpen} onClose={onClose} maxWidth="50rem">
-        <div className="w-full mx-auto p-4 md:p-8 text-white">
+      <OtakuModal isOpen={isOpen} onClose={onClose} maxWidth="39rem">
+        <div
+          className="w-full mx-auto flex flex-1 flex-col p-4 pt-24 pb-8 sm:pt-32 md:p-8 md:pt-40 lg:pt-48 md:pb-10 text-white cursor-pointer"
+          onClick={handleModalClick}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              handleModalClick();
+            }
+          }}
+        >
           {/* Header with Logos */}
-          <div className="flex justify-between items-center mb-6 md:mb-8 relative px-0 sm:px-4">
-            {/* TOON CENTRAL Logo - Left */}
-            <div className="flex flex-col items-start z-10">
-              <Image
-                src={ToonsLogo}
-                alt="Toons Logo"
-                width={200}
-                height={200}
-                className="w-36 h-36 md:w-44 md:h-44 lg:w-52 lg:h-52 object-contain"
-              />
-            </div>
-
+          <div className="flex justify-between items-center mb-2 md:mb-4 relative px-0 sm:px-4">
             {/* Stylized X Separator - Center */}
-            <div className="flex flex-col items-center absolute left-1/2 transform -translate-x-1/2 z-20">
+            {/* <div className="flex flex-col items-center absolute left-1/2 transform -translate-x-1/2 z-20">
               <span
                 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-bold text-[#ffffff] leading-none"
                 style={{
@@ -245,103 +109,33 @@ export default function FloatingButton() {
               >
                 🔥
               </span>
-            </div>
-
-            {/* OTAKU CONNECT MATSURI Logo - Right */}
-            <div className="flex flex-col items-end z-10">
-              <Image
-                src={OtakuLogo}
-                alt="Otaku Connect Matsuri Logo"
-                width={200}
-                height={200}
-                className="w-36 h-36 md:w-44 md:h-44 lg:w-52 lg:h-52 object-contain"
-                style={{ filter: "drop-shadow(0 0 10px rgba(0,0,0,0.5))" }}
-              />
-            </div>
+            </div> */}
           </div>
 
-          {/* Main Heading */}
-          <h2
-            className="text-2xl md:text-4xl lg:text-5xl font-bold text-white uppercase mb-4 md:mb-6 text-center tracking-wider"
-            style={{
-              textShadow:
-                "2px 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.1)",
-              fontFamily: "var(--font-satoshi-bold, sans-serif)",
-            }}
-          >
-            READ MORE, SAVE MORE!
-          </h2>
+          <div className="flex-shrink-0 mt-14 sm:mt-24 md:mt-32">
+            {/* Main Heading */}
 
-          {/* Description Text */}
-          <p className="text-base md:text-lg text-white mb-6 md:mb-8 text-center leading-relaxed">
-            Otaku Connect is giving Toon Central top readers an exclusive{" "}
-            <span className="text-[#05834B] font-bold text-xl md:text-2xl">
-              10% OFF
-            </span>{" "}
-            their Lagos & Abuja event tickets! Keep reading, climb the leader
-            board, and unlock your discount code!
-          </p>
-
-          {/* Progress Bar */}
-          <div className="mb-4">
-            <div className="w-full h-5 md:h-7 bg-[#475467] rounded-full overflow-hidden shadow-inner">
-              <div
-                className="h-full bg-gradient-to-r from-[#05834B] via-[#06A855] to-[#4A9EFF] transition-all duration-500 ease-out rounded-full shadow-lg"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+            {/* Description Text */}
+            {/* <p className="text-base md:text-lg text-white mb-6 md:mb-8 text-center leading-relaxed">
+              Toon Central and itel are giving readers an exclusive chance to
+              earn rewards and explore more stories. Tap the button below, and
+              claim your reward now.
+            </p> */}
           </div>
 
-          {/* Time Remaining */}
-          <p className="text-sm md:text-base text-white text-center mb-6 md:mb-8">
-            {minutesRemaining} {minutesRemaining === 1 ? "minute" : "minutes"}{" "}
-            remaining
-          </p>
-
-          {/* Coupon Display or Action Buttons */}
-          {couponCode ? (
-            <div className="flex flex-col gap-4 items-center">
-              <div className="bg-[#05834B]/20 border-2 border-[#05834B] rounded-lg p-6 w-full max-w-md">
-                <p className="text-white text-sm md:text-base mb-2 text-center">
-                  Your Discount Code:
-                </p>
-                <div className="flex items-center justify-center gap-3">
-                  <code className="text-2xl md:text-3xl font-bold text-[#05834B] bg-white/10 px-4 py-2 rounded">
-                    {couponCode}
-                  </code>
-                  <button
-                    onClick={handleCopyCoupon}
-                    className="bg-[#05834B] text-white px-4 py-2 rounded-lg hover:bg-[#047a42] transition-colors text-sm font-semibold"
-                    aria-label="Copy coupon code"
-                  >
-                    Copy
-                  </button>
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="bg-[#475467] text-white font-bold text-base md:text-lg px-10 py-7 rounded-lg hover:bg-[#3a4554] transition-all duration-200 shadow-lg hover:shadow-xl min-w-[180px] cursor-pointer"
+          <div className="mt-auto mb-2 md:mb-4 rounded-xl  bg-black/35 p-4 md:p-5  text-center">
+            {/* <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
+              <a
+                href={PROMO_REWARD_LINK}
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                onClick={handleClaimReward}
+                className="w-24 sm:w-auto inline-flex items-center justify-center rounded-lg bg-[#4ADD80] px-6 py-3 md:px-8 md:py-3.5 text-white font-bold text-sm md:text-base hover:bg-[#3a4554] transition-colors duration-200 shadow-lg hover:shadow-xl min-w-[180px]"
               >
-                Close
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button
-                disabled={!isProgressCompleted || generateCoupon.isPending || loadingCoupon}
-                onClick={handleClaimCoupon}
-                className="bg-[#05834B] text-white font-bold text-base md:text-lg px-10 py-7 rounded-lg hover:bg-[#047a42] transition-all duration-200 shadow-lg hover:shadow-xl min-w-[180px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {generateCoupon.isPending ? "Generating..." : "Claim Coupon"}
-              </button>
-              <button
-                onClick={onClose}
-                className="bg-[#475467] text-white font-bold text-base md:text-lg px-10 py-7 rounded-lg hover:bg-[#3a4554] transition-all duration-200 shadow-lg hover:shadow-xl min-w-[180px] cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
-          )}
+                Claim Reward
+              </a>
+            </div> */}
+          </div>
         </div>
       </OtakuModal>
     </>

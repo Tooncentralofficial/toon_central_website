@@ -7,14 +7,14 @@ import Link from "next/link";
 
 import { useMutation } from "@tanstack/react-query";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
-import { useState } from "react";
-import { postRequest } from "@/app/utils/queries/requests";
+import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/lib/slices/auth-slice";
 import { useRouter, useSearchParams } from "next/navigation";
-import { LoginUser } from "./login";
+import { GoogleLoginUser, LoginUser } from "./login";
 import { Checkbox } from "@nextui-org/react";
+import GoogleSignInButton from "@/app/_shared/googleSignInButton";
 
 const Page = () => {
   const dispatch = useDispatch();
@@ -72,6 +72,15 @@ const Page = () => {
     return "/";
   })();
 
+  const countryIdRaw = process.env.NEXT_PUBLIC_DEFAULT_COUNTRY_ID;
+  const defaultCountryId =
+    countryIdRaw !== undefined && countryIdRaw !== ""
+      ? Number(countryIdRaw)
+      : NaN;
+  const countryIdForGoogle = Number.isFinite(defaultCountryId)
+    ? defaultCountryId
+    : 1;
+
   const loginUser = useMutation({
     mutationFn: (data: any) => LoginUser(data, "/onboard/login"),
     onSuccess(data, variables, context) {
@@ -92,6 +101,38 @@ const Page = () => {
     },
     onError(error, variables, context) {},
   });
+
+  const googleLoginUser = useMutation({
+    mutationFn: (vars: { credential: string; remembered: boolean }) =>
+      GoogleLoginUser(vars.credential, countryIdForGoogle, vars.remembered),
+    onSuccess(data) {
+      const { success, message, data: resData } = data;
+      if (success) {
+        toast(message, {
+          toastId: "google-login",
+          type: "success",
+        });
+        dispatch(loginSuccess(resData));
+        router.replace(nextParam);
+      } else {
+        toast(message, {
+          toastId: "google-login",
+          type: "error",
+        });
+      }
+    },
+    onError() {},
+  });
+
+  const handleGoogleCredential = useCallback(
+    (credential: string) => {
+      googleLoginUser.mutate({
+        credential,
+        remembered: formik.values.remembered,
+      });
+    },
+    [formik.values.remembered, googleLoginUser],
+  );
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -121,7 +162,7 @@ const Page = () => {
             placeholder=" "
             onChange={formik.handleChange}
             isInvalid={Boolean(
-              formik.touched.password && formik.errors.password
+              formik.touched.password && formik.errors.password,
             )}
             //errorMessage={formik.errors.password}
             endContent={
@@ -161,6 +202,7 @@ const Page = () => {
             </Link>
           </div>
         </div>
+
         <SolidPrimaryButton
           className="w-full mt-6"
           type="submit"
@@ -168,6 +210,15 @@ const Page = () => {
         >
           Login
         </SolidPrimaryButton>
+
+        <div
+          className={`mt-4 ${googleLoginUser.isPending ? "pointer-events-none opacity-60" : ""}`}
+        >
+          <GoogleSignInButton
+            onCredential={handleGoogleCredential}
+            disabled={googleLoginUser.isPending}
+          />
+        </div>
         <div className="flex gap-1 text-md justify-center mt-2">
           <span>Don’t have an account ?</span>
           <Link href="/auth/signup">

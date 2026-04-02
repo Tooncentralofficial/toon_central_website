@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
-import Link from "next/link";
+import { ComicLink } from "./ComicLink";
 import Likes from "./likes";
 import { DarkEyeIcon } from "../icons/icons";
 import { ComicGenre } from "@/app/trending/_components/trendingItem";
@@ -31,7 +31,10 @@ const CardTitleOutside = ({
               <DarkEyeIcon width={10} height={10} />
             </div>
           </div>
-          <Link href={`${cardData?.uuid ? `/comics/${cardData?.uuid}` : ""}`}>
+          <ComicLink
+            uuid={cardData?.uuid}
+            className="block absolute inset-0"
+          >
             <Image
               src={optimizeCloudinaryUrl(cardData?.coverImage ?? "")}
               alt={`${cardData?.title || "toon_central"}`}
@@ -54,7 +57,7 @@ const CardTitleOutside = ({
                 favourites={cardData?.favourites}
               />
             </div>
-          </Link>
+          </ComicLink>
         </div>
       </div>
       <div className="flex flex-col flex-wrap gap-2 justify-center mt-1.5">
