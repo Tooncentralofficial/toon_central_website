@@ -17,13 +17,19 @@ const CardTitleOutside = ({
   queryKey?: string;
   noTitle?: boolean;
 }) => {
-  const views = cardData?.likesAndViews?.views?.length;
+
+  const views =
+    cardData?.viewCount ??
+    cardData?.views ??
+    (Array.isArray(cardData?.likesAndViews?.views)
+      ? cardData.likesAndViews.views.length
+      : (cardData?.likesAndViews?.views ?? 0));
   return (
     <div>
       <div className="h-[135px] sm:h-[250px] md:h-[320px]  rounded-[4px] overflow-hidden">
         <div className="h-full w-auto relative">
-          <div className="absolute top-0 left-0 ">
-            <div className="font-bold text-xl  bg-[#3EFFA2] flex  items-center gap-[0.2rem] m-1 rounded-full px-1 h-3 overflow-hidden ">
+          <div className="absolute top-0 left-0 z-20 pointer-events-none">
+            <div className="font-bold text-xl  bg-[#3EFFA2] flex  items-center gap-[0.2rem] m-1 rounded-full px-1 h-3 overflow-hidden">
               <p className="text-[6.7px] md:text-[12px] text-[#061A29] ">
                 {views}
               </p>
@@ -33,7 +39,7 @@ const CardTitleOutside = ({
           </div>
           <ComicLink
             uuid={cardData?.uuid}
-            className="block absolute inset-0"
+            className="block absolute inset-0 z-10"
           >
             <Image
               src={optimizeCloudinaryUrl(cardData?.coverImage ?? "")}
@@ -49,7 +55,7 @@ const CardTitleOutside = ({
               }}
             />
 
-            <div className="hidden absolute top-0 left-0 p-1  h-full w-full md:hidden flex-col justify-end sm:p-4 bg-[#FCFCFD10] ">
+            <div className="absolute top-0 left-0 p-1  h-full w-full flex flex-col justify-end sm:p-4 bg-[#FCFCFD10] md:hidden">
               <Likes
                 likesNViews={cardData?.likesAndViews}
                 queryKey={queryKey}
@@ -66,15 +72,15 @@ const CardTitleOutside = ({
         )}
 
         <span className="flex flex-wrap">
-          {cardData.genres.map((item: ComicGenre, i: number) => (
+          {(cardData?.genres ?? []).map((item: ComicGenre, i: number) => (
             <p
               key={i}
               className={`text-[#FCFCFD] font-extralight text-[0.75rem] ${
-                i < cardData.genres.length - 1 && "mr-1"
+                i < (cardData?.genres ?? []).length - 1 && "mr-1"
               }`}
             >
               {item.genre.name}
-              {i < cardData.genres.length - 1 && ","}
+              {i < (cardData?.genres ?? []).length - 1 && ","}
             </p>
           ))}
         </span>
