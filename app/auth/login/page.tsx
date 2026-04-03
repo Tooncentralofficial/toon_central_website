@@ -128,10 +128,10 @@ const Page = () => {
     (credential: string) => {
       googleLoginUser.mutate({
         credential,
-        remembered: formik.values.remembered,
+        remembered: true,
       });
     },
-    [formik.values.remembered, googleLoginUser],
+    [googleLoginUser],
   );
 
   return (
