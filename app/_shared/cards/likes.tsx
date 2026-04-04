@@ -23,17 +23,24 @@ import { useMemo } from "react";
 
 const Likes = ({
   likesNViews,
+  viewsCount,
+  likesCount,
+  favouritesCount,
   queryKey,
   uid,
   favourites,
   small,
 }: {
   likesNViews: any;
+  viewsCount?: number;
+  likesCount?: number;
+  favouritesCount?: number;
   queryKey?: string | undefined;
   uid?: string;
   favourites?: string;
   small?: boolean;
 }) => {
+  
   const { user, token } = useSelector(selectAuthState);
   const isLiked = useMemo(() => {
     return parseArray(likesNViews?.likes).some((value) => {
@@ -106,10 +113,9 @@ const Likes = ({
       });
     },
   });
-  let views = parseArray(likesNViews?.views).length;
-  let likes = parseArray(likesNViews?.likes).length;
-  let fav = parseArray(favourites).length;
-
+  let views = viewsCount ?? parseArray(likesNViews?.views).length;
+  let likes = likesCount ?? parseArray(likesNViews?.likes).length;
+  let fav = favouritesCount ?? parseArray(favourites).length;
   return (
     <div
       className={`flex items-center gap-[9px]  ${

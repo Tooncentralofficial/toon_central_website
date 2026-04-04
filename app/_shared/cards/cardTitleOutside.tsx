@@ -17,13 +17,8 @@ const CardTitleOutside = ({
   queryKey?: string;
   noTitle?: boolean;
 }) => {
-
   const views =
-    cardData?.viewCount ??
-    cardData?.views ??
-    (Array.isArray(cardData?.likesAndViews?.views)
-      ? cardData.likesAndViews.views.length
-      : (cardData?.likesAndViews?.views ?? 0));
+    cardData?.viewsCount ?? 0;
   return (
     <div>
       <div className="h-[135px] sm:h-[250px] md:h-[320px]  rounded-[4px] overflow-hidden">

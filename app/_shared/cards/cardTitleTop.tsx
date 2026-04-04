@@ -14,6 +14,7 @@ const CardTitleTop = ({
   index: number;
   queryKey?:string
 }) => {
+
   return (
     <div className="h-[150px] md:h-[260px]  rounded-[8px] overflow-hidden">
       <div className="h-full w-auto relative">
@@ -39,6 +40,9 @@ const CardTitleTop = ({
             <div className="font-bold text-md">{cardData?.title}</div>
             <Likes
               likesNViews={cardData?.likesAndViews}
+              viewsCount={cardData?.viewsCount}
+              likesCount={cardData?.likesCount}
+              favouritesCount={cardData?.favouritesCount ?? 0}
               queryKey={queryKey}
               uid={cardData?.uuid}
               favourites={cardData?.favourites}
