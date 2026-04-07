@@ -2,14 +2,13 @@
 import Image from "next/image";
 import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
 import { ComicLink } from "./ComicLink";
-import Likes from "./likes";
 import { DarkEyeIcon } from "../icons/icons";
 import { ComicGenre } from "@/app/trending/_components/trendingItem";
 
 const CardTitleOutside = ({
   cardData,
   index,
-  queryKey,
+  queryKey: _queryKey,
   noTitle,
 }: {
   cardData: any;
@@ -49,15 +48,6 @@ const CardTitleOutside = ({
                 height: "100%",
               }}
             />
-
-            <div className="absolute top-0 left-0 p-1  h-full w-full flex flex-col justify-end sm:p-4 bg-[#FCFCFD10] md:hidden">
-              <Likes
-                likesNViews={cardData?.likesAndViews}
-                queryKey={queryKey}
-                uid={cardData?.uuid}
-                favourites={cardData?.favourites}
-              />
-            </div>
           </ComicLink>
         </div>
       </div>
