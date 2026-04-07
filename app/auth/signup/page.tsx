@@ -54,6 +54,7 @@ const Page = () => {
       password: "",
       confirmPassword: "",
       referralCode: "",
+      acceptedTerms: false,
     }),
     [defaultCountry]
   );
@@ -90,13 +91,16 @@ const Page = () => {
       .required("Confirm password is required")
       .oneOf([Yup.ref("password")], "Passwords must match"),
     referralCode: Yup.string(),
+    acceptedTerms: Yup.boolean().oneOf(
+      [true],
+      "You must accept Terms & Conditions"
+    ),
   });
   const formik = useFormik({
     initialValues,
     validationSchema,
     enableReinitialize: true,
     onSubmit: (values) => {
-      console.log("@@values", values);
       // Map form values to API expected format
       const submitData = {
         firstName: values.firstName,
@@ -106,16 +110,20 @@ const Page = () => {
         countryId: parseInt(values.countryCode),
         telephone: values.phoneNumber,
         mobileOperatorId: parseInt(values.mobileOperator),
+        acceptedTerms: values.acceptedTerms,
         password: values.password,
         confirmedPassword: values.confirmPassword,
         ...(values.referralCode && { referralCode: values.referralCode }),
+
       };
       registerUser.mutate(submitData);
     },
   });
 
   const registerUser = useMutation({
-    mutationFn: (data: any) => postRequest(data, "/onboard/register"),
+    mutationFn: (data: any) =>{ 
+      return (postRequest(data, "/onboard/register"))
+    },
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {
@@ -124,7 +132,7 @@ const Page = () => {
           type: "success",
         });
         const code = resData;
-        console.log("@@code", code);
+      
         router.push(
           `/auth/signup/verify?email=${formik.values.email}&verification_code=${code}`
         );
@@ -397,6 +405,32 @@ const Page = () => {
             )}
             errorMessage={formik.errors.referralCode}
           />
+
+          <div>
+            <label className="flex items-start gap-2 text-sm text-white/90">
+              <input
+                type="checkbox"
+                name="acceptedTerms"
+                checked={formik.values.acceptedTerms}
+                onChange={(e) =>
+                  formik.setFieldValue("acceptedTerms", e.target.checked)
+                }
+                onBlur={() => formik.setFieldTouched("acceptedTerms", true)}
+                className="mt-0.5 h-4 w-4 accent-[var(--green100)] cursor-pointer"
+              />
+              <span>
+                I agree to the{" "}
+                <Link href="/terms" className="text-[var(--green100)] underline">
+                  Terms & Conditions
+                </Link>
+              </span>
+            </label>
+            {formik.touched.acceptedTerms && formik.errors.acceptedTerms ? (
+              <p className="mt-1 text-xs text-red-500">
+                {formik.errors.acceptedTerms}
+              </p>
+            ) : null}
+          </div>
         </div>
         <SolidPrimaryButton
           className="w-full mt-6"

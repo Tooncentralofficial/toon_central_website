@@ -109,6 +109,9 @@ const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
             </p>
             <div className="py-3">
               <Likes
+                viewsCount={data?.viewsCount}
+                likesCount={data?.likesCount}
+                favouritesCount={data?.favouritesCount ?? 0}
                 likesNViews={data?.likesAndViews}
                 queryKey={queryKey}
                 uid={data?.uuid}
