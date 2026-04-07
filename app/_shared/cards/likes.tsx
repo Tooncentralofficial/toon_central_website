@@ -113,8 +113,8 @@ const Likes = ({
       });
     },
   });
-  let views = viewsCount 
-  let likes = likesCount
+   let views = viewsCount ?? parseArray(likesNViews?.views).length;
+   let likes = likesCount ?? parseArray(likesNViews?.likes).length;
   let fav = favouritesCount ?? parseArray(favourites).length;
   return (
     <div

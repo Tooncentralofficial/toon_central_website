@@ -102,7 +102,7 @@ function HomeCarousel() {
       </div>
     );
   };
-  
+  console.log("@@carouselItems", carouselItems);
 
   const color = [
     "#21D19F",
@@ -141,6 +141,7 @@ function HomeCarousel() {
                     index={i}
                     queryKey={carouselQueryKey}
                     expand={true}
+
                     
                   />
                 </motion.div>
@@ -267,6 +268,7 @@ function HomeCarousel() {
                           hoverIndex === i ||
                           (hoverIndex === -1 && i === currentSlide)
                         }
+                        
                       />
                     </motion.div>
                   </SwiperSlide>

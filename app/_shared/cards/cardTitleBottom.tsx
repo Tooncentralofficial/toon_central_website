@@ -143,6 +143,10 @@ const CardTitleBottom = ({
                 queryKey={queryKey}
                 uid={cardData?.uuid}
                 favourites={cardData?.favourites}
+                viewsCount={cardData?.viewsCount}
+                likesCount={cardData?.likesCount}
+                favouritesCount={cardData?.favouritesCount}
+                
               />
               {expand &&
                 user?.id && (
