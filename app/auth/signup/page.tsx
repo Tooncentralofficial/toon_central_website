@@ -101,7 +101,6 @@ const Page = () => {
     validationSchema,
     enableReinitialize: true,
     onSubmit: (values) => {
-      console.log("@@values", values);
       // Map form values to API expected format
       const submitData = {
         firstName: values.firstName,
@@ -123,7 +122,6 @@ const Page = () => {
 
   const registerUser = useMutation({
     mutationFn: (data: any) =>{ 
-      console.log("@@data", data);
       return (postRequest(data, "/onboard/register"))
     },
     onSuccess(data, variables, context) {
@@ -134,7 +132,7 @@ const Page = () => {
           type: "success",
         });
         const code = resData;
-        console.log("@@code", code);
+      
         router.push(
           `/auth/signup/verify?email=${formik.values.email}&verification_code=${code}`
         );
