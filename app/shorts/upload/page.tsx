@@ -650,10 +650,8 @@ function Page() {
                         <p>{selectedFile?.name}</p>
                       </div>
                     </div>
-                    <div className="flex justify-between mt-10  items-center">
-                      <p className="text-medium text-[#969AA0]">
-                        Check complete. Copyright potrcted content found.
-                      </p>
+                    <div className="flex justify-end mt-10  items-center">
+                      
                       <button
                         onClick={() =>
                           handleNext(validateForm, setErrors, setFormStep)
@@ -702,10 +700,7 @@ function Page() {
 
                     <div className="flex justify-between mt-10">
                       <div className="flex gap-1">
-                        <CopyrightCheckIcon className="h-5 w-5" />{" "}
-                        <p>
-                          Check complete. Copyright protected content found.
-                        </p>
+                        
                       </div>
                       <button
                         onClick={() =>
@@ -799,16 +794,18 @@ function Page() {
                           <div className="flex gap-5">
                             <Link
                               href={
-                                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                                values.url
+                                  ? values.url
+                                  : "https://www.w3schools.com/html/mov_bbb.mp4"
                               }
                             >
-                              http://commondatastorage.googleapis.com/gtv...{" "}
+                              {`${values.url.slice(0, 40)}...`}
                             </Link>
                             <Copyicon />
                           </div>
                           <p>Filename</p>
 
-                          <p>BigBuckBunny.mp4</p>
+                          <p>{selectedFile?.name}</p>
                         </div>
                       </div>
                       <div className=" flex flex-col gap-5 mt-8">
@@ -848,10 +845,7 @@ function Page() {
                       </div>
                       <div className="flex justify-between mt-10">
                         <div className="flex gap-1">
-                          <CopyrightCheckIcon className="h-5 w-5" />{" "}
-                          <p>
-                            Check complete. Copyright protected content found.
-                          </p>
+                          
                         </div>
                         <button
                           type="submit"

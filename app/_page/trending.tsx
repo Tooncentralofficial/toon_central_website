@@ -9,6 +9,8 @@ import { dummyItems } from "../_shared/data";
 import { useState, useEffect } from "react";
 import { Seeall } from "../_shared/icons/icons";
 import Link from "next/link";
+import CardTitleOutside from "../_shared/cards/cardTitleOutside";
+import CardTitleInMobile from "../_shared/cards/cardTitleinMobile";
 
 const Trending = () => {
   const trendingQueryKey = "trending"
@@ -56,10 +58,11 @@ const Trending = () => {
                   {" "}
                   {comics.slice(0, sliced).map((item: any, i: number) => (
                     <div key={i}>
-                      <CardTitleTop
+                      <CardTitleOutside
                         cardData={item}
                         index={i}
                         queryKey={trendingQueryKey}
+
                       />
                     </div>
                   ))}
