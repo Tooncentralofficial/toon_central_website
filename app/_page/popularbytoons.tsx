@@ -21,7 +21,7 @@ const PopularByToons = () => {
   });
   const popularItems = data?.data?.comics || dummyItems;
   return (
-    <div className="parent-wrap  pt-10">
+    <div className="parent-wrap  pt-10 pb-10">
       <div className="child-wrap">
         <div className="flex justify-between items-center">
           <H2SectionTitle title="Popular by ToonCentral" />
