@@ -55,6 +55,7 @@ export const updateProfile = createAsyncThunk(
         mobile_operator_id: data?.mobileOperatorId,
         email: data?.email,
         welcome_note: data?.welcomeNote,
+        credits: data?.credits,
       };
       const payload = {
         userType: userType,
