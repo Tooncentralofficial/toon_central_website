@@ -136,6 +136,9 @@ export interface ShortsType {
   likesAndViews: ShortsLikesAndViews;
   user :Partial<User>
   genres: ShortsGenre[];
+  viewsCount?: number;
+  viewCount?: number;
+  likesCount: number;
 }
 
 
