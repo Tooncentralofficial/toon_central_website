@@ -7,6 +7,7 @@ import React from "react";
 import Originals from "../original/originals";
 import H2SectionTitle from "../_shared/layout/h2SectionTitle";
 import NotificationPanel from "./_components/NotificationPanel";
+import ClientPage from "./clientpage";
 
 export default function Notification() {
   const queryClient = new QueryClient();
@@ -15,15 +16,7 @@ export default function Notification() {
       <main>
         <div className="parent-wrap py-10">
           <div className="child-wrap min-h-screen  w-full">
-            <H2SectionTitle title="Notifications" />
-            <div className="flex flex-col gap-5 mt-5">
-              {Array(10)
-                .fill(0)
-                .map((item: number, i: number) => (
-                  <NotificationPanel key={i} />
-                ))}
-              
-            </div>
+            <ClientPage />
           </div>
         </div>
       </main>

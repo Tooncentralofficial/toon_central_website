@@ -126,16 +126,9 @@ export default function ShortsCard({
     const nearEnd = shortsLength > 0 && newIndex >= shortsLength - 2; // Trigger when less than 2 shorts remaining
 
     if (nearEnd && hasNextPage && !isFetchingNextPage) {
-      console.log(
-        "Fetching next page - Index:",
-        newIndex,
-        "Length:",
-        shortsLength,
-        "HasNext:",
-        hasNextPage,
-      );
+      
       const nextPage = await fetchNextPage();
-      console.log(nextPage);
+     
       // Update Swiper to recognize new slides after fetching
       setTimeout(() => {
         if (swiperRef.current && !swiperRef.current.destroyed) {
@@ -270,7 +263,6 @@ export default function ShortsCard({
       return response;
     },
     onSuccess: (data) => {
-      console.log("@@data", data);
       if (data?.success) {
         toast(data?.message, {
           type: "success",
@@ -323,14 +315,11 @@ export default function ShortsCard({
     },
   });
   //TODO REMOVE AFTER LIKE ISSUE HAS BEEN FIXED
-console.log("@@shorts?.[currentSlideIndex]", shorts?.[currentSlideIndex]);
+
 
   // Get creator ID from current short
   const creatorId = shorts?.[currentSlideIndex]?.user?.id;
-  console.log(
-    "@@shorts?.[currentSlideIndex]?.genres",
-    shorts?.[currentSlideIndex]?.genres,
-  );
+
 
   // Check follow status
   const {
@@ -422,6 +411,15 @@ console.log("@@shorts?.[currentSlideIndex]", shorts?.[currentSlideIndex]);
     );
   }, [shorts, currentSlideIndex, user?.id]);
 
+  const likesCount = useMemo(()=>{
+    return shorts?.[currentSlideIndex]?.likesCount
+    || 0;
+  }, [shorts, currentSlideIndex]);
+
+  const dislikesCount = useMemo(()=>{
+    return shorts?.[currentSlideIndex]?.dislikesCount
+    || 0;
+  }, [shorts, currentSlideIndex]);
   const lv = shorts?.[currentSlideIndex]?.likesAndViews?.[0];
   if (!Array.isArray(shorts) || shorts.length === 0) return null;
   if (!shorts?.[currentSlideIndex]) {
@@ -445,7 +443,7 @@ console.log("@@shorts?.[currentSlideIndex]", shorts?.[currentSlideIndex]);
         </button>
       </div>
       <div className="block md:flex md:gap-10 overflow-hidden">
-        <div className="absolute left-2 z-[22]  flex flex-col justify-end md:justify-between h-full">
+        <div className="absolute left-2 z-[22] pointer-events-none flex flex-col justify-end md:justify-between h-full">
           <div className="flex flex-col gap-4 mb-5 md:mb-0">
             <div className="flex gap-3 items-center">
               <h3 className="text-[#FCFCFDB2] text-sm md:text-xl line-clamp-1">
@@ -460,7 +458,7 @@ console.log("@@shorts?.[currentSlideIndex]", shorts?.[currentSlideIndex]);
                     isFollowingPending ||
                     isUnfollowingPending
                   }
-                  className={`px-3 py-1 rounded-2xl text-xs md:text-base transition-colors ${
+                  className={`pointer-events-auto px-3 py-1 rounded-2xl text-xs md:text-base transition-colors ${
                     isFollowing
                       ? "bg-[#475467] text-white"
                       : "bg-[#05834B] text-white hover:bg-[#047a42]"
@@ -500,7 +498,7 @@ console.log("@@shorts?.[currentSlideIndex]", shorts?.[currentSlideIndex]);
               </div>
             </div>
           </div>
-          <div className=" mb-12 sm:mb-5 lg:mb-10 xl:mb-20">
+          <div className="pointer-events-auto mb-12 sm:mb-5 lg:mb-10 xl:mb-20">
             <Link href={`/pubprofile/${shorts?.[currentSlideIndex]?.user.id}`}>
               <button className="flex items-center gap-2 bg-[#05834B] w-full justify-center py-2 rounded-md md:mb-2">
                 watch more <ArrowRight />
@@ -602,7 +600,7 @@ console.log("@@shorts?.[currentSlideIndex]", shorts?.[currentSlideIndex]);
                 hasLiked ? " text-[#05834B]" : "text-[#FCFCFDB2]"
               }`}
             />
-            <p className="text-xs md:text-base">{lv?.likes?.length || 0}</p>
+            <p className="text-xs md:text-base">{likesCount}</p>
           </div>
           <div
             className="flex flex-col items-center gap-2"
@@ -613,7 +611,7 @@ console.log("@@shorts?.[currentSlideIndex]", shorts?.[currentSlideIndex]);
                 hasdiLiked ? " text-[#05834B]" : "text-[#FCFCFDB2]"
               }`}
             />
-            <p className="text-xs md:text-base">{lv?.dislikes?.length || 0}</p>
+            <p className="text-xs md:text-base">{dislikesCount}</p>
           </div>
           <div
             className="flex flex-col items-center gap-2"

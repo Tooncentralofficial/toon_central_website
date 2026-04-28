@@ -139,6 +139,7 @@ export interface ShortsType {
   viewsCount?: number;
   viewCount?: number;
   likesCount: number;
+  dislikesCount: number;
 }
 
 

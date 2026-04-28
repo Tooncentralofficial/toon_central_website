@@ -102,7 +102,6 @@ function HomeCarousel() {
       </div>
     );
   };
-  console.log("@@carouselItems", carouselItems);
 
   const color = [
     "#21D19F",

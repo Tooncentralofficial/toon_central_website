@@ -27,10 +27,16 @@ const CardTitleOutside = ({
               <p className="text-[6.7px] md:text-[12px] text-[#061A29] ">
                 {views}
               </p>
-
               <DarkEyeIcon width={10} height={10} />
             </div>
           </div>
+          {cardData?.hasNewEpisode && (
+            <div className="absolute top-0 right-0 z-20 pointer-events-none">
+              <div className="bg-[#3EFFA2] text-[#061A29] font-bold tracking-wide rounded-full m-1 px-1.5 md:px-2 h-3 md:h-[18px] flex items-center text-[6.7px] md:text-[10px] leading-none uppercase shadow-[0_0_6px_rgba(62,255,162,0.45)]">
+                New
+              </div>
+            </div>
+          )}
           <ComicLink
             uuid={cardData?.uuid}
             className="block absolute inset-0 z-10"
