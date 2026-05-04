@@ -112,7 +112,7 @@ export default function ShortsContent() {
 
   const prevShortIdRef = useRef<string | null>(null);
 
-  const {
+  const { 
     data: shortCommentsdata,
     isLoading: shortCommentsLoading,
     isFetching: shortCommentsFetching,

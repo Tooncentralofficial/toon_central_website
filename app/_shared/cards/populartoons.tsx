@@ -18,7 +18,7 @@ const PopularToonscard = ({ item, index }: { item: Comic; index: number }) => {
         </p>
         <div className="w-[45px] h-[45px] overflow-hidden rounded-[6px]">
           <Image
-            src={optimizeCloudinaryUrl(item.coverImage)}
+            src={optimizeCloudinaryUrl(item.coverImage || item.cover_image || "")}
             width={40}
             height={40}
             alt={`item`}
@@ -62,7 +62,7 @@ export const PopularToonscardDesktop = ({
         </p>
         <div className="w-[6rem] h-[8rem] overflow-hidden rounded-[6px]">
           <Image
-            src={optimizeCloudinaryUrl(item.coverImage)}
+            src={optimizeCloudinaryUrl(item.coverImage || item.cover_image || ""   )}
             width={96}
             height={128}
             alt={`item`}

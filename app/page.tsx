@@ -20,6 +20,7 @@ import FloatingButton from "./_page/floatingButton";
 import { DEFAULT_OG_URL } from "./layout";
 import { Metadata } from "next";
 import HomeShorts from "./_page/shortsHome";
+import HomeContentWrapper from "./_page/HomeContentWrapper";
 
 const images = [
   {
@@ -71,6 +72,13 @@ export const revalidate = 60;
 export default async function Home() {
   const queryClient = new QueryClient();
 
+    
+  await queryClient.prefetchQuery({
+    queryKey: ["home"],
+    queryFn: () => getRequest("/home"),
+  }
+  )
+
   await Promise.all([
     queryClient.prefetchQuery({
       queryKey: ["all_genres"],
@@ -104,20 +112,7 @@ export default async function Home() {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <main>
-        <HomeCarousel />
-        <RecommendtnTabs />
-        <HomeShorts />
-        <Popular />
-        <Trending />
-        {/* <TodaysPicks /> */}
-        <TodaysPicksMobile />
-        <PopularByToons />
-        <HomeShorts offset={5} />
-        <HorizontalScroll />
-        <Originals />
-        <Footer />
-        <MainfooterWithDelay />
-        <FloatingButton />
+        <HomeContentWrapper />
       </main>
     </HydrationBoundary>
   );

@@ -42,7 +42,7 @@ const CardTitleOutside = ({
             className="block absolute inset-0 z-10"
           >
             <Image
-              src={optimizeCloudinaryUrl(cardData?.coverImage ?? "")}
+              src={optimizeCloudinaryUrl(cardData?.cover_image || cardData?.coverImage || "")}
               alt={`${cardData?.title || "toon_central"}`}
               width={200}
               height={240}

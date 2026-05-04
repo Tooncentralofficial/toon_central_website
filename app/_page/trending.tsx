@@ -11,14 +11,11 @@ import { Seeall } from "../_shared/icons/icons";
 import Link from "next/link";
 import CardTitleOutside from "../_shared/cards/cardTitleOutside";
 import CardTitleInMobile from "../_shared/cards/cardTitleinMobile";
+import { Comic } from "@/helpers/types";
 
-const Trending = () => {
+const Trending = ({trendingData, isLoading}:{trendingData: Comic[], isLoading: boolean}) => {
   const trendingQueryKey = "trending"
-  const { isLoading, data } = useQuery({
-    queryKey: [trendingQueryKey],
-    queryFn: () => getRequest("/home/trending?filter=all&page=1&limit=10"),
-  });
-  const comics = data?.data?.comics || [];
+  const comics = trendingData || [];
   const [sliced, setSliced] = useState<number>(10);
   useEffect(() => {
     const updateSliced = () => {

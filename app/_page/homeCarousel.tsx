@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -13,9 +13,16 @@ import { Autoplay } from "swiper/modules";
 // @ts-ignore
 import "swiper/css";
 import { motion } from "framer-motion";
+import { Comic } from "@/helpers/types";
 export const staticCardItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-function HomeCarousel() {
-  
+function HomeCarousel(
+  {
+    carouselData
+  }: {
+    carouselData: Comic[]
+  }
+) {
+  const carouselItems = useMemo(() => carouselData || [], [carouselData]);
   const [screenSize, setScreenSize] = useState<string>("");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [hoverIndex, setHoverIndex] = useState(-1);
@@ -31,7 +38,7 @@ function HomeCarousel() {
     staleTime:10000,
     refetchOnMount:"always"
   });
-  const carouselItems = data?.data?.comics || dummyItems;
+  // const carouselItems = data?.data?.comics || dummyItems;
   useEffect(() => {
     if (swiperRef.current && swiperRef.current.params) {
       const { slidesPerView } = swiperRef.current.params;
@@ -103,18 +110,21 @@ function HomeCarousel() {
     );
   };
 
-  const color = [
-    "#21D19F",
-    "#AB2346",
-    "#820263",
-    "#BFAB25",
-    "#21D19F",
-    "#AB2346",
-    "#F08080",
-    "#C5E7E2",
-    "#453F78",
-    "#664147",
-  ];
+  const color = useMemo(
+    () => [
+      "#21D19F",
+      "#AB2346",
+      "#820263",
+      "#BFAB25",
+      "#21D19F",
+      "#AB2346",
+      "#F08080",
+      "#C5E7E2",
+      "#453F78",
+      "#664147",
+    ],
+    []
+  );
   return (
     <>
       {screenSize === "small" ? (
@@ -284,4 +294,4 @@ function HomeCarousel() {
   );
 }
 
-export default HomeCarousel;
+export default React.memo(HomeCarousel);

@@ -118,7 +118,7 @@ const CardTitleBottom = ({
     >
       <div className="h-full overflow-hidden w-auto relative">
         <Image
-          src={optimizeCloudinaryUrl(cardData?.coverImage ?? "")}
+          src={optimizeCloudinaryUrl(cardData?.cover_image ?? "")}
           alt={`${cardData?.title || "toon_central"}`}
           width={200}
           height={260}

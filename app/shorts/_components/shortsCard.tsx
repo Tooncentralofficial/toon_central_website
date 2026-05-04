@@ -320,7 +320,6 @@ export default function ShortsCard({
   // Get creator ID from current short
   const creatorId = shorts?.[currentSlideIndex]?.user?.id;
 
-
   // Check follow status
   const {
     data: isFollowingdata,
