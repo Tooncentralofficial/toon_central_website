@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Read(//Users/jonathanogbeide/Documents/Projects/**)"
+      "Read(//Users/jonathanogbeide/Documents/Projects/**)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
