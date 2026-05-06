@@ -52,7 +52,6 @@ const Popular = ({
     queryFn: () =>
       getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
   });
-  console.log("@@popularData",popularData);
   const carouselItems = popularData || dummyItems;
   const sliderSlides: PopularSlide[] = useMemo(
     () => [

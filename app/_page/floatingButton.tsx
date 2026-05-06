@@ -14,7 +14,7 @@ import { Offer } from "@/helpers/types";
 
 /** Replace with final reward destination URL when ready */
 const PROMO_REWARD_LINK =
-  "https://www.jumia.com.ng/itel-city-200-7.45mm-12844gb-unibody-metallic-deco-6.78-120hz-ip65-5200mah-android-purple-419283461.html";
+  "https://www.jumia.com.ng/itel-city-200-7.45mm-12844gb-unibody-metallic-deco-6.78-120hz-ip65-5200mah-android-black-free-speaker-419283338.html";
 
 export default function FloatingButton() {
   const [isOpen, setIsOpen] = useState(true);
