@@ -12,6 +12,7 @@ import {
   ArrowDownIcon,
   MuteIcon,
   UnmuteIcon,
+  CopyrightCheckIcon,
 } from "@/app/_shared/icons/icons";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
@@ -502,6 +503,7 @@ export default function ShortView({
                   </Swiper>
                 </div>
               </div>
+              <CreatorInfoOverlay data={displayData} />
             </div>
           ) : (
             <div className="relative w-full h-full md:h-[60vw] md:max-h-[600px] md:min-h-0 md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container cursor-pointer">
@@ -558,6 +560,7 @@ export default function ShortView({
                 controls={false}
                 src={data?.upload}
               />
+              <CreatorInfoOverlay data={displayData} />
             </div>
           )}
           {/* Right Sidebar - Actions */}
@@ -566,7 +569,7 @@ export default function ShortView({
               onClick={() =>
                 currentShort?.uuid && likeShorts(currentShort.uuid)
               }
-              className="flex flex-col items-center gap-2"
+              className="flex flex-col items-center gap-2 cursor-pointer"
             >
               <LikeIcon
                 className={`w-6 md:w-10 h-6 md:h-10 ${
@@ -576,7 +579,7 @@ export default function ShortView({
               <p className="text-xs md:text-base">{lv?.likes?.length || 0}</p>
             </div>
             <div
-              className="flex flex-col items-center gap-2"
+              className="flex flex-col items-center gap-2 cursor-pointer"
               onClick={() =>
                 currentShort?.uuid && dislikeShorts(currentShort.uuid)
               }
@@ -586,12 +589,10 @@ export default function ShortView({
                   hasdiLiked ? " text-[#05834B]" : "text-[#FCFCFDB2]"
                 }`}
               />
-              <p className="text-xs md:text-base">
-                {lv?.dislikes?.length || 0}
-              </p>
+              <p className="text-xs md:text-base">Dislike</p>
             </div>
             <div
-              className="flex flex-col items-center gap-2"
+              className="flex flex-col items-center gap-2 cursor-pointer"
               onClick={() => setCommentsOpen((prev) => !prev)}
             >
               <CommentShortsIcon className="w-6 md:w-10 h-6 md:h-10" />
@@ -601,158 +602,183 @@ export default function ShortView({
             </div>
             <div className="flex flex-col items-center gap-2 cursor-pointer">
               <ShareShortsIcon className="w-6 md:w-10 h-6 md:h-10 ml-1" />
+              <p className="text-xs md:text-base">Share</p>
             </div>
-            {displayData?.user && (
-              <div className="overflow-hidden w-10 h-10 rounded-full">
-                <Image
-                  src={displayData.user.photo || "/static/images/auth_bkg.png"}
-                  width={50}
-                  height={50}
-                  alt={displayData.user.username || "Creator"}
-                  style={{
-                    objectFit: "cover",
-                    objectPosition: "center",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                />
-              </div>
-            )}
           </div>
           <div className="hidden md:flex flex-col gap-5 justify-center ml-5">
             <ArrowCircle type="left" disabled={isAtBeginning} />
             <ArrowCircle type="right" disabled={isAtEnd} />
           </div>
+
+          {/* Comments Sidebar - Desktop */}
+          <AnimatePresence>
+            {commentsOpen && (
+              <motion.aside
+                className="hidden md:flex flex-col h-[80vh] max-h-[720px] w-80 lg:w-96 bg-[var(--bg-secondary)] rounded-lg overflow-hidden ml-5"
+                initial={{ x: 40, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 40, opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+              >
+                <CommentsPanel
+                  total={shortComments.pagination.total || 0}
+                  loading={shortCommentsLoading}
+                  fetching={shortCommentsFetching}
+                  comments={shortComments.comments}
+                  hasMore={hasMoreComments}
+                  onClose={() => setCommentsOpen(false)}
+                  onLoadMore={handleLoadMore}
+                  shortId={currentShortId}
+                />
+              </motion.aside>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
-      {/* Backdrop Overlay - Desktop */}
+      {/* Comments Panel - Mobile */}
       <AnimatePresence>
         {commentsOpen && (
           <motion.div
-            className="hidden md:block fixed inset-0 bg-black/50 z-40"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            onClick={() => setCommentsOpen(false)}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Comments Sidebar - Desktop */}
-      <AnimatePresence>
-        {commentsOpen && (
-          <motion.div
-            className="hidden md:flex flex-col fixed right-0 top-0 h-screen w-80 bg-[var(--bg-secondary)] border-l border-foreground-300 z-50"
-            initial={{ x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
+            key="mobile-comments"
+            className="absolute left-0 right-0 bottom-0 z-[23] flex md:hidden flex-col bg-[#0D111D] rounded-t-2xl overflow-hidden"
+            style={{ height: "70vh" }}
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
           >
-            <div className="flex flex-col h-full p-4">
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-white text-lg font-semibold">
-                  {shortComments.pagination.total || 0} Comments
-                </span>
-                <button
-                  onClick={() => setCommentsOpen(false)}
-                  className="text-white hover:text-gray-400 cursor-pointer"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto no-scrollbar mb-4 min-h-0">
-                {shortCommentsLoading &&
-                (!Array.isArray(shortComments?.comments) ||
-                  shortComments.comments.length === 0) ? (
-                  <div className="text-center text-gray-400 animate-pulse">
-                    Loading comments...
-                  </div>
-                ) : Array.isArray(shortComments?.comments) &&
-                  shortComments.comments.length > 0 ? (
-                  <div className="flex flex-col gap-4">
-                    {shortComments.comments.map((comment: any, i: number) => (
-                      <ShortsComments
-                        key={comment.id || i}
-                        shortId={currentShortId}
-                        comment={comment}
-                      />
-                    ))}
-                    {hasMoreComments && (
-                      <button
-                        onClick={handleLoadMore}
-                        disabled={shortCommentsFetching}
-                        className="text-sm text-blue-500 hover:text-blue-600 disabled:opacity-50 py-2"
-                      >
-                        {shortCommentsFetching
-                          ? "Loading..."
-                          : "Load more comments"}
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  <div className="text-center text-gray-400">
-                    No comments yet. Be the first to comment!
-                  </div>
-                )}
-              </div>
-              <div className="flex-shrink-0">
-                <ShortCommentInput shortId={currentShortId} />
-              </div>
-            </div>
+            <CommentsPanel
+              total={shortComments.pagination.total || 0}
+              loading={shortCommentsLoading}
+              fetching={shortCommentsFetching}
+              comments={shortComments.comments}
+              hasMore={hasMoreComments}
+              onClose={() => setCommentsOpen(false)}
+              onLoadMore={handleLoadMore}
+              shortId={currentShortId}
+            />
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  );
+}
 
-      {/* Comments Panel - Mobile */}
-      <AnimatePresence>
-        <motion.div
-          className="absolute left-0 bottom-0 z-[23] flex md:hidden flex-col gap-4 bg-[#0D111D] w-full overflow-hidden"
-          initial={{ opacity: 0, height: 0 }}
-          animate={{
-            opacity: commentsOpen ? 1 : 0,
-            height: commentsOpen ? "70vh" : "1vh",
-            y: commentsOpen ? 0 : 20,
-          }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
+interface CommentsPanelProps {
+  total: number;
+  loading: boolean;
+  fetching: boolean;
+  comments: any[];
+  hasMore: boolean;
+  onClose: () => void;
+  onLoadMore: () => void;
+  shortId: string;
+}
+
+function CommentsPanel({
+  total,
+  loading,
+  fetching,
+  comments,
+  hasMore,
+  onClose,
+  onLoadMore,
+  shortId,
+}: CommentsPanelProps) {
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex justify-between items-center px-4 py-3 border-b border-white/10">
+        <span className="text-white text-base font-semibold">
+          {total} comments
+        </span>
+        <button
+          onClick={onClose}
+          className="text-white/80 hover:text-white cursor-pointer text-lg"
+          aria-label="Close comments"
         >
-          <div className="flex justify-between p-4">
-            <span className="text-white text-lg flex gap-2">
-              <p>{shortComments.pagination.total || 0}</p>
-              <p>Comments</p>
-            </span>
-            <button
-              onClick={() => setCommentsOpen(false)}
-              className="text-white cursor-pointer text-xl"
-            >
-              ✕
-            </button>
+          ✕
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto no-scrollbar px-4 py-3 min-h-0">
+        {loading && (!Array.isArray(comments) || comments.length === 0) ? (
+          <div className="text-center text-gray-400 animate-pulse">
+            Loading comments...
           </div>
-          <div className="flex flex-col gap-4 p-4 overflow-y-auto h-full">
-            {shortComments.comments.map((comment: any, idx: number) => (
+        ) : Array.isArray(comments) && comments.length > 0 ? (
+          <div className="flex flex-col gap-4">
+            {comments.map((comment: any, i: number) => (
               <ShortsComments
-                key={comment.id || idx}
-                shortId={currentShortId}
+                key={comment.id || i}
+                shortId={shortId}
                 comment={comment}
               />
             ))}
-            {hasMoreComments && (
+            {hasMore && (
               <button
-                onClick={handleLoadMore}
-                disabled={shortCommentsFetching}
-                className="text-sm text-blue-500 hover:text-blue-600 disabled:opacity-50 py-2"
+                onClick={onLoadMore}
+                disabled={fetching}
+                className="text-sm text-[#4ADD80] hover:text-[#7be8a8] disabled:opacity-50 py-2 self-start"
               >
-                {shortCommentsFetching ? "Loading..." : "Load more comments"}
+                {fetching ? "Loading..." : "Load more comments"}
               </button>
             )}
           </div>
-          <div className="p-4 border-t border-gray-700">
-            <ShortCommentInput shortId={currentShortId} />
+        ) : (
+          <div className="text-center text-gray-400">
+            No comments yet. Be the first to comment!
           </div>
-        </motion.div>
-      </AnimatePresence>
+        )}
+      </div>
+
+      <div className="flex-shrink-0 border-t border-white/10">
+        <ShortCommentInput shortId={shortId} />
+      </div>
+    </div>
+  );
+}
+
+function CreatorInfoOverlay({ data }: { data: any }) {
+  if (!data?.user && !data?.title && !data?.description) return null;
+  const username = data?.user?.username || "";
+  const photo = data?.user?.photo;
+  const title = data?.title || "";
+  const description = data?.description || "";
+
+  return (
+    <div className="absolute left-0 right-0 bottom-0 z-20 p-4 pb-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none">
+      <div className="flex items-center gap-2 mb-2">
+        {photo && (
+          <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+            <Image
+              src={photo}
+              alt={username || "Creator"}
+              width={32}
+              height={32}
+              style={{
+                objectFit: "cover",
+                objectPosition: "center",
+                width: "100%",
+                height: "100%",
+              }}
+            />
+          </div>
+        )}
+        {username && (
+          <span className="text-white text-sm font-medium flex items-center gap-1">
+            {username}
+            <CopyrightCheckIcon className="w-4 h-4 text-[#4ADD80]" />
+          </span>
+        )}
+      </div>
+      {(title || description) && (
+        <div className="text-white text-xs leading-snug line-clamp-2 max-w-[85%]">
+          {title && <span className="font-semibold">{title}</span>}
+          {title && description && <span> </span>}
+          {description && <span>{description}</span>}
+        </div>
+      )}
     </div>
   );
 }

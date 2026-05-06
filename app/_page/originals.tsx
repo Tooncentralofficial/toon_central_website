@@ -6,14 +6,21 @@ import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "../utils/queries/requests";
 import LoadingTitleOutside from "../_shared/cards/loadingTitleOutside";
 import { dummyItems } from "../_shared/data";
-const Originals = () => {
+import { Comic } from "@/helpers/types";
+const Originals = ({
+  originalsData,
+  isLoading
+}:{
+  originalsData: Comic[],
+  isLoading: boolean
+}) => {
   const originalsqueryKey = "originals";
-  const { isLoading, data } = useQuery({
-    queryKey: [originalsqueryKey],
-    queryFn: () =>
-      getRequest("/home/toon-central-originals?filter=all&page=1&limit=10"),
-  });
-  const comics = data?.data?.comics || [];
+  // const { isLoading, data } = useQuery({
+  //   queryKey: [originalsqueryKey],
+  //   queryFn: () =>
+  //     getRequest("/home/toon-central-originals?filter=all&page=1&limit=10"),
+  // });
+  const comics = originalsData || [];
 
   return (
     <div className="parent-wrap py-10">

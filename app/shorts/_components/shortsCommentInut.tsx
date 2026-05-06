@@ -10,29 +10,30 @@ import { toast } from "react-toastify";
 interface ShortCommentInputProps {
   shortId?: number | string | null;
   page?: number; // optional, defaults to 1 if parent wants to pass
+  uuid?: string;
 }
 
-function ShortCommentInput({ shortId, page = 1 }: ShortCommentInputProps) {
+function ShortCommentInput({ shortId, page = 1, uuid }: ShortCommentInputProps) {
   const [message, setMessage] = React.useState("");
   const queryClient = useQueryClient();
   const { token } = useSelector(selectAuthState) as { token?: string };
   const addComment = useMutation({
-    mutationKey: ["add_short_comment", shortId],
+    mutationKey: ["add_short_comment", uuid],
     mutationFn: async () =>
       postRequestProtected(
         { comment: message },
-        `short-comments/${shortId}/add-comment`,
+        `short-comments/${uuid}/add-comment`,
         token || "",
         prevRoutes().library,
         "json"
       ),
     onSuccess(data) {
       // Invalidate paginated comments for this short so server canonical data is fetched
-      queryClient.invalidateQueries({ queryKey: ["short-comments", shortId] });
+      queryClient.invalidateQueries({ queryKey: ["short-comments", uuid] });
       setMessage("");
       try {
         const { message: msg } = data;
-        if (msg) toast(msg, { toastId: `add_short_comment_${shortId}`, type: "success" });
+        if (msg) toast(msg, { toastId: `add_short_comment_${uuid}`, type: "success" });
       } catch (e) {
         // ignore
       }

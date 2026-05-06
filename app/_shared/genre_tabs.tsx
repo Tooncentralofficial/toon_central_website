@@ -69,6 +69,7 @@ export const GenreTabContent = ({ activeTab }: { activeTab: Tab }) => {
     enabled: activeTab !== null && activeTab.id !== undefined,
   });
   const comics = useMemo(() => data?.data?.comics || [], [data]);
+  console.log("comics",comics);
 
   return (
     <div className="grid grid-cols-3 xs:grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">

@@ -66,7 +66,7 @@ export default function ShortsContent() {
         setTotalPages(total);
         const nextPage =
           current && total && current < total ? current + 1 : null;
-        console.log("@@nextPage", nextPage);
+       
         // Ensure consistent return structure even if API response is malformed
         return {
           shorts: Array.isArray(res?.data?.shorts) ? res.data.shorts : [],
@@ -82,7 +82,6 @@ export default function ShortsContent() {
       }
     },
     getNextPageParam: (lastPage, allPages) => {
-      console.log("@@allPages", allPages, "@@lastPage", lastPage);
       const nextPage = allPages?.length ? allPages?.length + 1 : 1;
       // Return nextPage if available, otherwise undefined to stop fetching
       return nextPage;
@@ -90,7 +89,6 @@ export default function ShortsContent() {
     enabled: !!token,
   });
 
-  console.log("@@data", data);
 
   // Safely extract shorts with proper null checks
   const pages = Array.isArray(data?.pages) ? data.pages : [];
@@ -114,7 +112,7 @@ export default function ShortsContent() {
 
   const prevShortIdRef = useRef<string | null>(null);
 
-  const {
+  const { 
     data: shortCommentsdata,
     isLoading: shortCommentsLoading,
     isFetching: shortCommentsFetching,
@@ -126,7 +124,7 @@ export default function ShortsContent() {
     ],
     queryFn: () =>
       getRequestProtected(
-        `/short-comments/${currentShort?.id}?page=${shortComments.pagination.currentPage}&limit=5`,
+        `/short-comments/${currentShort?.uuid}?page=${shortComments.pagination.currentPage}&limit=5`,
         token,
         prevRoutes().library
       ),
@@ -210,6 +208,7 @@ export default function ShortsContent() {
       </div>
     );
   }
+  console.log("@@currentShort", currentShort);
 
   return (
     <div className="w-full h-full flex relative shorts-content-wrapper">
@@ -302,7 +301,7 @@ export default function ShortsContent() {
 
           {/* Input footer */}
           <div className="border-t border-slate-700/50 px-4 py-3">
-            <ShortCommentInput shortId={currentShort?.id} />
+            <ShortCommentInput shortId={currentShort?.id}  uuid={currentShort?.uuid} />
           </div>
         </div>
       </motion.div>

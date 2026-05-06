@@ -10,7 +10,7 @@ import { selectAuthState } from "@/lib/slices/auth-slice";
 import { useQuery } from "@tanstack/react-query";
 import { getRequest, getRequestProtected } from "../utils/queries/requests";
 import { ShortsType } from "@/helpers/types";
-import { ToonShortsLogo } from "../_shared/icons/icons";
+import { DarkEyeIcon, Seeall, ToonShortsLogo } from "../_shared/icons/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { optimizeCloudinaryUrl } from "../utils/imageUtils";
@@ -31,11 +31,16 @@ function HomeShorts({ offset = 0 }: { offset?: number } = {}) {
     queryKey: ["shorts-home"],
     queryFn: () => getRequest("home/shorts-carousel?page=1&limit=10"),
   });
+  console.log("@@shortsData",data);
   const allShorts = data?.data?.shorts || [];
   const shorts = offset > 0
     ? [...allShorts.slice(offset), ...allShorts.slice(0, offset)]
     : allShorts;
 
+  const getShortViews = (item: ShortsType) =>
+    item?.viewsCount ?? item?.viewCount ?? item?.likesAndViews?.[0]?.views ?? 0;
+
+  
   // Calculate initial slide index to fill the space
   const initialSlide = useMemo(() => {
     if (shorts?.length === 0) return 0;
@@ -68,7 +73,12 @@ function HomeShorts({ offset = 0 }: { offset?: number } = {}) {
   return (
     <div className="parent-wrap pt-10 md:py-10 md:pt-10 ">
       <div className="child-wrap">
+        <div className="flex justify-between items-center">
         <ToonShortsLogo className="w-18 h-12 mb-4  " />
+        <Link href={"/shorts"} className="mb-4">
+            <Seeall />
+          </Link>
+        </div>
         <div className="w-full justify-center flex md:hidden">
           <Swiper
             spaceBetween={12}
@@ -90,11 +100,12 @@ function HomeShorts({ offset = 0 }: { offset?: number } = {}) {
                   transition: "all 0.4s ease",
                   transform:
                     index === activeIndex ? "scale(1.1)" : "scale(0.9)",
+                  transformOrigin: "top center",
                   opacity: index === activeIndex ? 1 : 0.6,
                 }}
               >
                 <div
-                  className="bg-[#1e1e1e] rounded-medium h-[350px] flex items-center justify-center cursor-pointer relative"
+                  className="bg-[#1e1e1e] rounded-medium h-[350px] flex items-center justify-center cursor-pointer relative overflow-hidden"
                   onTouchStart={(e) => {
                     touchStartRef.current = {
                       x: e.touches[0].clientX,
@@ -128,6 +139,14 @@ function HomeShorts({ offset = 0 }: { offset?: number } = {}) {
                     router.push(`/shorts/${item.uuid}`);
                   }}
                 >
+                  <div className="absolute top-0 left-0 z-20 pointer-events-none">
+                    <div className="font-bold text-xl bg-[#3EFFA2] flex items-center gap-[0.2rem] m-1 rounded-full px-1 h-3 overflow-hidden">
+                      <p className="text-[6.7px] text-[#061A29]">
+                        {getShortViews(item)}
+                      </p>
+                      <DarkEyeIcon width={10} height={10} />
+                    </div>
+                  </div>
                   <video
                     ref={(el) => {
                       if (el) videoRefs.current[index] = el;
@@ -176,6 +195,7 @@ function HomeShorts({ offset = 0 }: { offset?: number } = {}) {
                   transition: "all 0.4s ease",
                   transform:
                     index === activeIndex ? "scale(1.1)" : "scale(0.9)",
+                  transformOrigin: "top center",
                   opacity: index === activeIndex ? 1 : 0.6,
                 }}
               >
@@ -183,7 +203,15 @@ function HomeShorts({ offset = 0 }: { offset?: number } = {}) {
                   href={`/shorts/${item.uuid}`}
                   className="block w-full h-full"
                 >
-                  <div className="bg-[#1e1e1e] rounded-medium h-[135px] sm:h-[250px] md:h-[320px] flex items-center justify-center cursor-pointer">
+                  <div className="bg-[#1e1e1e] rounded-medium h-[135px] sm:h-[250px] md:h-[320px] flex items-center justify-center cursor-pointer relative overflow-hidden">
+                    <div className="absolute top-0 left-0 z-20 pointer-events-none">
+                      <div className="font-bold text-xl bg-[#3EFFA2] flex items-center gap-[0.2rem] m-1 rounded-full px-1 h-3 overflow-hidden">
+                        <p className="text-[6.7px] md:text-[12px] text-[#061A29]">
+                          {getShortViews(item)}
+                        </p>
+                        <DarkEyeIcon width={10} height={10} />
+                      </div>
+                    </div>
                     <video
                       ref={(el) => {
                         if (el) videoRefs.current[index] = el;

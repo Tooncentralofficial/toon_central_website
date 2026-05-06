@@ -37,7 +37,11 @@ type PopularSlide =
   | { kind: "sponsored" }
   | { kind: "comic"; comic: Comic };
 
-const Popular = () => {
+const Popular = ({
+  popularData
+}:{
+  popularData: Comic[]
+}) => {
   let sliderRef = useRef<Slider | null>(null);
 
   const { user, token } = useSelector(selectAuthState);
@@ -48,7 +52,7 @@ const Popular = () => {
     queryFn: () =>
       getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
   });
-  const carouselItems = data?.data?.comics || dummyItems;
+  const carouselItems = popularData || dummyItems;
   const sliderSlides: PopularSlide[] = useMemo(
     () => [
       { kind: "sponsored" },
@@ -166,7 +170,7 @@ const Popular = () => {
             ) : (
               <div className="h-full overflow-hidden w-auto relative">
                 <Image
-                  src={optimizeCloudinaryUrl(item?.backgroundImage ?? "")}
+                  src={optimizeCloudinaryUrl(item?.background_image ?? "")}
                   alt={`${item?.title || "toon_central"}`}
                   width={600}
                   height={690}
@@ -206,7 +210,7 @@ const Popular = () => {
             ) : (
               <div className="h-full overflow-hidden w-auto relative">
                 <Image
-                  src={optimizeCloudinaryUrl(item?.backgroundImage ?? "")}
+                  src={optimizeCloudinaryUrl(item?.background_image ?? "")}
                   alt={`${item?.title || "toon_central"}`}
                   width={600}
                   height={690}

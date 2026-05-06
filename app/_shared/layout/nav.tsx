@@ -59,6 +59,8 @@ import {
   OriginalIcon,
   OriginalIconColored,
 } from "../icons/icons";
+
+
 import CreditsBanner from "./CreditsBanner";
 const menuItems: { name: string; link: string }[] = [
   {
@@ -153,6 +155,15 @@ const NavHome = () => {
     queryFn: () => getRequestProtected("profile/wallet", token, pathname),
     enabled: !!token,
   });
+
+  const { data: notificationsCount } = useQuery({
+    queryKey: ["notifications_count"],
+    queryFn: () => getRequestProtected("/notifications/unread-count", token, pathname),
+    enabled: token !== null,
+  });
+  console.log("@@notificationsCount", notificationsCount);
+  const unreadCount = notificationsCount?.data?.unread_count || 0;
+
   
   useEffect(() => {
     if (creditsData) {
@@ -271,7 +282,7 @@ const NavHome = () => {
                     className={`${!token && "bg-transparent min-w-0 px-0"} ${
                       token &&
                       "bg-[var(--green100)] text-white px-[18px] py-[10px] rounded-[8px]"
-                    } w-full`}
+                    } hidden md:block w-full`}
                     href={token ? "/creator/new" : "/creator"}
                     variant="flat"
                     onClick={() => handleToggle()}
@@ -326,6 +337,20 @@ const NavHome = () => {
                       className="h-[36px] border-white"
                     />
                   </div>
+
+                  <NavbarItem
+                    as={Link}
+                    href="notification"
+                    aria-label="Notifications"
+                    className="relative inline-flex items-center justify-center p-1"
+                  >
+                    <BellIcon className="w-6 h-6" />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 rounded-full bg-[var(--green100)] text-white text-[10px] font-semibold leading-[16px] text-center">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </NavbarItem>
 
                   <NavbarItem>
                     <Dropdown>
@@ -392,12 +417,10 @@ const NavHome = () => {
 
                 <NavbarItem className="hidden lg:flex h-full items-center">
                   <Button
-                    // as={Link}
                     className={`${!token && "bg-transparent min-w-0 px-0"} ${
                       token &&
                       "bg-[var(--green100)] text-white px-[18px] py-[10px] rounded-[8px]"
                     }`}
-                    // href={token ? "/creator/new" : "/creator"}
                     variant="flat"
                     onClick={() => setIsUploadOpen(!isUploadOpen)}
                   >
@@ -496,35 +519,3 @@ const NavHome = () => {
 };
 
 export default NavHome;
-
-{
-  /* <NavbarItem>
-      <Dropdown>
-        <DropdownTrigger>
-          <Button className="bg-transparent" isIconOnly>
-            <BellIcon />
-          </Button>
-        </DropdownTrigger>
-        <DropdownMenu aria-label="Notification">
-          <DropdownItem key="1">
-            Tooncentral Updated Chapter for Red Devils
-          </DropdownItem>
-          <DropdownItem key="2">
-            Tooncentral Updated Chapter for Red Devils
-          </DropdownItem>
-          <DropdownItem key="3">
-            Tooncentral Updated Chapter for Red Devils
-          </DropdownItem>
-          <DropdownItem
-            key="all"
-            className="text-danger text-center"
-            color="danger"
-            as={Link}
-            href="/user/notifications"
-          >
-            See all
-          </DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
-    </NavbarItem> */
-}

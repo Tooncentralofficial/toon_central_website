@@ -39,9 +39,11 @@ export interface User {
 export interface Comic {
   addToToonCentralCollection: string;
   backgroundImage: string;
+  background_image: string;
   country: Country;
   countryId: string;
   coverImage: string;
+  cover_image: string;
   createdAt: string;
   description: string;
   episodes: Array<any>; // You can replace `any` with a specific episode interface if you have one
@@ -136,6 +138,10 @@ export interface ShortsType {
   likesAndViews: ShortsLikesAndViews;
   user :Partial<User>
   genres: ShortsGenre[];
+  viewsCount?: number;
+  viewCount?: number;
+  likesCount: number;
+  dislikesCount: number;
 }
 
 

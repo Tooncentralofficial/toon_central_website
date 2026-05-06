@@ -10,16 +10,24 @@ import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { Seeall } from '../_shared/icons/icons';
 import { adGateToken } from '@/envs';
+import { Comic } from '@/helpers/types';
 
-const PopularByToons = () => {
+const PopularByToons = ({
+  popularData
+}:{
+  popularData: Comic[]
+}) => {
+  console.log("@@popularData",popularData);
+
   const { user,token } = useSelector(selectAuthState);
   const queryKey = "popular_by_toon";
-  const { data } = useQuery({
-    queryKey: [queryKey],
-    queryFn: () =>
-      getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
-  });
-  const popularItems = data?.data?.comics || dummyItems;
+  // const { data } = useQuery({
+  //   queryKey: [queryKey],
+  //   queryFn: () =>
+  //     getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
+  // });
+  const popularItems = popularData || dummyItems;
+  console.log("@@popularItems",popularItems);
   return (
     <div className="parent-wrap  pt-10 pb-10">
       <div className="child-wrap">
