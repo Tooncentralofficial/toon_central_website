@@ -13,3 +13,6 @@ export function formatDate(dateString:string|undefined) {
     return formattedDate;
   }
   
+export function formatUserName(firstName:string,lastName:string) {
+  return `${firstName?.charAt(0)} ${lastName?.charAt(0)}`;
+}

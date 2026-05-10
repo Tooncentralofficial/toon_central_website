@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import ComicOverview from "./_shared/overview";
 import ComicTabs from "./_shared/tabs";
 import BackButton from "@/app/_shared/layout/back";
-import { getRequestProtected } from "@/app/utils/queries/requests";
+import { getRequest, getRequestProtected } from "@/app/utils/queries/requests";
 import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
@@ -24,12 +24,10 @@ const PageClient = ({ params }: { params: { name: string } }) => {
   const pathname = usePathname();
   const [comic, setComic] = useState(null);
   const { name } = params;
-  const { token } = useSelector(selectAuthState);
   const queryKey = `comic_${name}`;
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [queryKey],
-    queryFn: () => getRequestProtected(`/comics/${name}/view`, token, prevRoutes(name).comic),
-    enabled: token !== null,
+    queryFn: () => getRequest(`/comics/${name}/view`),
   });
   const creator = data?.data.user;
 

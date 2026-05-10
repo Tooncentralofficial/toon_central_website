@@ -38,9 +38,11 @@ import {
   getUser,
   logoutSuccess,
   selectAuthState,
+  selectCredits,
+  setCredits,
 } from "@/lib/slices/auth-slice";
 import { useDispatch } from "react-redux";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { LogoutUser } from "@/app/auth/logout/logout";
 import { toast } from "react-toastify";
@@ -62,6 +64,7 @@ import {
 
 
 import CreditsBanner from "./CreditsBanner";
+import { fetchUnreadCount, selectUnreadCount } from "@/lib/slices/notification-slice";
 const menuItems: { name: string; link: string }[] = [
   {
     name: "home",
@@ -142,7 +145,17 @@ const menuItemsMobile: {
 
 const NavHome = () => {
   const { user, token } = useSelector(selectAuthState);
-  const [credits, setCredits] = useState(0);
+  const credits = useSelector(selectCredits);
+  const unreadCount = useSelector(selectUnreadCount);
+
+  const avatarProps = useMemo(
+    () => ({
+      src:
+        user?.photo ||
+        "https://avatars.githubusercontent.com/u/30373425?v=4",
+    }),
+    [user?.photo]
+  );
   let pathname = usePathname();
   const iscomics = usePathname().includes("/comics");
   if (iscomics) {
@@ -156,28 +169,23 @@ const NavHome = () => {
     enabled: !!token,
   });
 
-  const { data: notificationsCount } = useQuery({
-    queryKey: ["notifications_count"],
-    queryFn: () => getRequestProtected("/notifications/unread-count", token, pathname),
-    enabled: token !== null,
-  });
-  console.log("@@notificationsCount", notificationsCount);
-  const unreadCount = notificationsCount?.data?.unread_count || 0;
-
-  
-  useEffect(() => {
-    if (creditsData) {
-      setCredits(creditsData?.data?.coinBalance);
-    }
-  }, [creditsData]);
-
-  
   const [isSide, setIsSide] = useState(false);
   const dispatch = useDispatch();
   const logout = () => logoutUser("");
+
+  useEffect(() => {
+    if (creditsData) {
+      dispatch(setCredits(creditsData?.data?.coinBalance ?? 0));
+    }
+  }, [creditsData, dispatch]);
+
   useEffect(() => {
     dispatch(getUser() as any);
   }, []);
+
+  useEffect(() => {
+    if (token) dispatch(fetchUnreadCount() as any);
+  }, [token, dispatch]);
 
   const { mutate: logoutUser } = useMutation({
     mutationFn: (data: any) => LogoutUser(pathname),
@@ -364,12 +372,7 @@ const NavHome = () => {
                               //    as={Button}
                               //  isIconOnly
                               name=""
-                              avatarProps={{
-                                src: `${
-                                  user?.photo ||
-                                  "https://avatars.githubusercontent.com/u/30373425?v=4"
-                                }`,
-                              }}
+                              avatarProps={avatarProps}
                               // className="p-0 min-w-0 rounded-[50%]"
                             />
 

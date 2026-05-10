@@ -2,11 +2,20 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
+import { usePathname } from "next/navigation";
 import StatusPill from "./_components/StatusPill";
 import Meta from "./_components/Meta";
 import QuickAction from "./_components/QuickAction";
 import { StatIcon } from "./_components/Icons";
 import CreatorShell from "./_components/CreatorShell";
+import { selectAuthState } from "@/lib/slices/auth-slice";
+import { getRequestProtected } from "@/app/utils/queries/requests";
+import {
+  CreatorDashboardStats,
+  RecentComicPerformance,
+} from "@/app/utils/constants/typess";
 
 type Stat = {
   label: string;
@@ -14,66 +23,74 @@ type Stat = {
   delta: string;
 };
 
-type PerformanceItem = {
-  title: string;
-  episode: string;
-  status: "Published" | "Scheduled";
-  views: number;
-  likes: number;
-  comments: number;
-  time: string;
+const formatNumber = (value: number | undefined | null) =>
+  typeof value === "number" ? value.toLocaleString() : "—";
+
+const formatCurrency = (value: number | undefined | null) =>
+  typeof value === "number" ? `$${value.toLocaleString()}` : "—";
+
+const formatDelta = (change: number | null | undefined) => {
+  if (typeof change !== "number") return "—";
+  const sign = change > 0 ? "+" : "";
+  return `${sign}${change}% from last month`;
 };
 
+
 const DashboardClient = () => {
+  const { user, token } = useSelector(selectAuthState);
+  const pathname = usePathname();
+  const isLoggedIn = Boolean(token && user);
+
+  const { data: dashboardData } = useQuery({
+    queryKey: ["creator_dashboard_stats"],
+    queryFn: () => getRequestProtected("/creator/dashboard", token, pathname),
+    enabled: isLoggedIn,
+  });
+
+  const dashboardStats: CreatorDashboardStats | undefined =
+    dashboardData?.data;
+
   const stats: Stat[] = useMemo(
     () => [
       {
         label: "Total Views",
-        value: "156,847",
-        delta: "+12.5% from last month",
+        value: formatNumber(dashboardStats?.total_views),
+        delta: formatDelta(dashboardStats?.total_views_change),
       },
-      { label: "Subscribers", value: "8,429", delta: "+5.2% from last month" },
-      { label: "Total Likes", value: "24,891", delta: "+8.1% from last month" },
+      
+      {
+        label: "Subscribers",
+        value: formatNumber(dashboardStats?.subscribers),
+        delta: formatDelta(dashboardStats?.subscribers_change),
+      },
+      {
+        label: "Total Likes",
+        value: formatNumber(dashboardStats?.total_likes),
+        delta: formatDelta(dashboardStats?.total_likes_change),
+      },
       {
         label: "Total Earnings",
-        value: "$2,847",
-        delta: "+15.3% from last month",
+        value: formatCurrency(dashboardStats?.total_earnings),
+        delta: formatDelta(dashboardStats?.total_earnings_change),
       },
     ],
-    []
+    [dashboardStats]
   );
 
-  const performance: PerformanceItem[] = useMemo(
-    () => [
-      {
-        title: "Shadow ...",
-        episode: "Episode 15",
-        status: "Published",
-        views: 12500,
-        likes: 890,
-        comments: 800,
-        time: "2 days ago",
-      },
-      {
-        title: "Cyber Ni...",
-        episode: "Episode 8",
-        status: "Published",
-        views: 8200,
-        likes: 654,
-        comments: 700,
-        time: "5 days ago",
-      },
-      {
-        title: "Magic A...",
-        episode: "Episode 22",
-        status: "Scheduled",
-        views: 15600,
-        likes: 1200,
-        comments: 1200,
-        time: "Tomorrow",
-      },
-    ],
-    []
+  const { data: recentPerformanceData } = useQuery({
+    queryKey: ["creator_recent_performance", 5],
+    queryFn: () =>
+      getRequestProtected(
+        "/creator/recent-performance?limit=5",
+        token,
+        pathname
+      ),
+    enabled: isLoggedIn || !!token || !!user,
+  });
+  console.log("@@recentPerformanceData",recentPerformanceData);
+  const performance: RecentComicPerformance[] = useMemo(
+    () => recentPerformanceData?.data || [],
+    [recentPerformanceData]
   );
 
   return (
@@ -126,18 +143,18 @@ const DashboardClient = () => {
             </p>
           </div>
           <div className="flex flex-col gap-3">
-            {performance.map((item) => (
+            {performance.map((item, index) => (
               <div
-                key={item.title}
+                key={index}
                 className="bg-[#05060C] border border-[#122034] rounded-[12px] p-3 grid grid-cols-[72px_1fr_auto] gap-3 items-center md:grid-cols-[60px_1fr_auto]"
               >
                 <div className="w-[72px] h-[72px] md:w-[60px] md:h-[60px] rounded-[10px] bg-[#1a2434]" />
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between gap-2">
                     <div>
-                      <div className="font-semibold">{item.title}</div>
+                      <div className="font-semibold">{item.comic_title}</div>
                       <div className="text-[#7f8ca0] text-sm">
-                        {item.episode}
+                        {item.episode_title}
                       </div>
                     </div>
                     <StatusPill status={item.status} />
@@ -145,8 +162,7 @@ const DashboardClient = () => {
                   <div className="flex flex-wrap gap-3 text-[#a7b4c7]">
                     <Meta icon="eye">{item.views.toLocaleString()}</Meta>
                     <Meta icon="heart">{item.likes.toLocaleString()}</Meta>
-                    <Meta icon="comment">{item.comments.toLocaleString()}</Meta>
-                    <Meta icon="time">{item.time}</Meta>
+                    <Meta icon="time">{item.created_at}</Meta>
                   </div>
                 </div>
                 <Link
@@ -164,10 +180,12 @@ const DashboardClient = () => {
           <div className="bg-[#080B13] border border-[#0f1b28] rounded-[14px] p-4 shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold">Total Earnings</h3>
-              <span className="text-[22px] font-bold">$2,847</span>
+              <span className="text-[22px] font-bold">
+                {formatCurrency(dashboardStats?.total_earnings)}
+              </span>
             </div>
             <div className="text-[#1ec069] mt-2 text-sm">
-              +15.3% from last month
+              {formatDelta(dashboardStats?.total_earnings_change)}
             </div>
             <div className="mt-4 flex flex-col gap-2 bg-[#080B13] border border-[#122034] rounded-[10px] p-3 text-[14px] text-[#cdd6e2]">
               <div className="flex justify-between">
