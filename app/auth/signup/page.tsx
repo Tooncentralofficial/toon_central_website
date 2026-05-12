@@ -7,9 +7,14 @@ import Link from "next/link";
 import { getRequest, postRequest } from "@/app/utils/queries/requests";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
-import { useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
+import {
+  setReferralCode,
+  getReferralCode,
+  clearReferralCode,
+} from "@/lib/utils/referralStorage";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/lib/slices/auth-slice";
 import { GoogleLoginUser } from "../login/login";
@@ -20,6 +25,13 @@ import { MobileOperatorSelect } from "./_shared/MobileOperatorSelect";
 const Page = () => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const searchParams = useSearchParams();
+  const referralFromUrl = searchParams.get("referralCode") ?? "";
+
+  useEffect(() => {
+    if (referralFromUrl) setReferralCode(referralFromUrl);
+  }, [referralFromUrl]);
+
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
@@ -53,10 +65,10 @@ const Page = () => {
       mobileOperator: "",
       password: "",
       confirmPassword: "",
-      referralCode: "",
+      referralCode: referralFromUrl,
       acceptedTerms: false,
     }),
-    [defaultCountry]
+    [defaultCountry, referralFromUrl]
   );
 
   const validationSchema = Yup.object().shape({
@@ -168,10 +180,16 @@ const Page = () => {
 
   const googleSignupUser = useMutation({
     mutationFn: (vars: { credential: string; countryId: number }) =>
-      GoogleLoginUser(vars.credential, vars.countryId, false),
+      GoogleLoginUser(
+        vars.credential,
+        vars.countryId,
+        false,
+        getReferralCode(),
+      ),
     onSuccess(data) {
       const { success, message, data: resData } = data;
       if (success) {
+        clearReferralCode();
         toast(message, {
           toastId: "google-signup",
           type: "success",
@@ -400,6 +418,7 @@ const Page = () => {
             value={formik.values.referralCode}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            isDisabled={!!referralFromUrl}
             isInvalid={Boolean(
               formik.touched.referralCode && formik.errors.referralCode
             )}
