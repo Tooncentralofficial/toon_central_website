@@ -75,13 +75,13 @@ export async function GoogleLoginUser(
   credential: string,
   countryID: number,
   remembered: boolean,
-  referralCode: string | null = null,
+  referral_code: string | null = null,
 ) {
   const res = await postRequest(
     {
       google_token: credential,
       country_id: countryID,
-      referralCode,
+      referral_code: referral_code,
     },
     "/onboard/google",
   );
