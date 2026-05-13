@@ -143,8 +143,8 @@ const CardTitleBottom = ({
                 queryKey={queryKey}
                 uid={cardData?.uuid}
                 favourites={cardData?.favourites}
-                viewsCount={cardData?.viewsCount}
-                likesCount={cardData?.likesCount}
+                viewsCount={cardData?.views_count}
+                likesCount={cardData?.likes_count}
                 favouritesCount={cardData?.favouritesCount}
                 
               />
