@@ -9,6 +9,7 @@ import {
 import { FlatInput } from "@/app/_shared/inputs_actions/inputFields";
 import BackButton from "@/app/_shared/layout/back";
 import {
+    getRequest,
   getRequestProtected,
   postRequestProtected,
 } from "@/app/utils/queries/requests";
@@ -33,6 +34,7 @@ import { toast } from "react-toastify";
 import CommentPopUp from "../_shared/commentpopup";
 import { motion, AnimatePresence } from "framer-motion";
 import UnlockPanelDialog from "./_shared/UnlockPanelDialog";
+import { useLoginDialog } from "@/app/_shared/dialogs/LoginDialogProvider";
 const Page = ({
   params,
   searchParams,
@@ -66,7 +68,9 @@ const Page = ({
   const [selectedPanelImage, setSelectedPanelImage] = useState<string | null>(
     null
   );
+  const isFirstChapter = useMemo(() => chapter === 1, [chapter]);
   const [isLoadingUnlockOptions, setIsLoadingUnlockOptions] = useState(false);
+  const { openLoginDialog } = useLoginDialog();
 
   const toggleCommentPopup = () => {
     setShowCommentPopup((prev) => !prev);
@@ -84,9 +88,22 @@ const Page = ({
 
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [comicQueryKey],
-    queryFn: () => getRequestProtected(`/comics/${uid}/view`, token, fullUrl),
-    enabled: token !== null,
+    queryFn: () =>  
+    token
+    ? getRequestProtected(`/comics/${uid}/view`, token, fullUrl)
+    : getRequest(`/comics/${uid}/view`),
+enabled: !!uid && (token !== null || isFirstChapter),
   });
+  useEffect(() => {
+    if (!token && chapter > 1) {
+      openLoginDialog({
+        title: "Sign in to keep reading",
+        message: `Log in to continue ${data?.data?.title ?? "this comic"}.`,
+      });
+      setChapter(1);
+    }
+  }, [token, chapter, data?.data?.title, openLoginDialog]);
+
   useEffect(() => {
     if (data?.data?.episodes && data.data.episodes.length > 0) {
       const episode = parseArray(data.data.episodes)[chapter - 1];
@@ -175,7 +192,7 @@ const Page = ({
 
   const subscribe = () => {
     if (!token) {
-      router.push(`/auth/login?previous=${prevRoutes(uid).comic}`);
+      openLoginDialog();
       return;
     }
     likeComic();
@@ -188,13 +205,13 @@ const Page = ({
   } = useQuery({
     queryKey: ["episode", uid, episodeId, chapter],
     queryFn: () =>
-      getRequestProtected(
-        `comics/${uid}/episode/${episodeId}/get`,
-        token,
-        fullUrl
-      ),
-    enabled: token !== null && !!episodeId,
+      token
+        ? getRequestProtected(`comics/${uid}/episode/${episodeId}/get`, token, fullUrl)
+        : getRequest(`comics/${uid}/episode/${episodeId}/get`),
+    enabled: !!episodeId && (token !== null || isFirstChapter),
   });
+  console.log("@@chapter", chapter);
+  console.log("@@episodeId", episodeId);
   console.log("@@currentEpisode", currentEpisode);
 
   const images = useMemo(
@@ -206,7 +223,7 @@ const Page = ({
   // Handle unlock button click for locked images
   const handleUnlockClick = async (panelId: number, imageUrl: string) => {
     if (!token) {
-      router.push(`/auth/login?previous=${prevRoutes(uid).comic}`);
+      openLoginDialog();
       return;
     }
 
@@ -374,7 +391,13 @@ const Page = ({
   //   }
   // };
   const nextChapter = () => {
-    "clicked next chapter";
+    if (!token) {
+      openLoginDialog({
+        title: "Sign in to keep reading",
+        message: `Log in to continue ${data?.data?.title ?? "this comic"}.`,
+      });
+      return;
+    }
     if (chapter < parseArray(data?.data?.episodes).length) {
       setChapter((prev) => prev + 1);
       setTimeout(() => {

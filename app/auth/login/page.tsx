@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/lib/slices/auth-slice";
 import { useRouter, useSearchParams } from "next/navigation";
 import { GoogleLoginUser, LoginUser } from "./login";
+import { getReferralCode, clearReferralCode } from "@/lib/utils/referralStorage";
 import { Checkbox } from "@nextui-org/react";
 import GoogleSignInButton from "@/app/_shared/googleSignInButton";
 
@@ -104,10 +105,16 @@ const Page = () => {
 
   const googleLoginUser = useMutation({
     mutationFn: (vars: { credential: string; remembered: boolean }) =>
-      GoogleLoginUser(vars.credential, countryIdForGoogle, vars.remembered),
+      GoogleLoginUser(
+        vars.credential,
+        countryIdForGoogle,
+        vars.remembered,
+        getReferralCode(),
+      ),
     onSuccess(data) {
       const { success, message, data: resData } = data;
       if (success) {
+        clearReferralCode();
         toast(message, {
           toastId: "google-login",
           type: "success",

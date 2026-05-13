@@ -26,10 +26,22 @@ export const getUser = createAsyncThunk("auth/getuser", async () => {
   return user;
 });
 
-// export const getCredits = createAsyncThunk("profile/wallet", async () => {
-//   const credits: number = await retrieveCredits();
-//   return credits;
-// });
+export const getCredits = createAsyncThunk(
+  "auth/getCredits",
+  async (_, { getState }) => {
+    const state = getState() as { auth: AuthState };
+    const token = state.auth.token;
+    const response = await getRequestProtected(
+      "profile/wallet",
+      token,
+      typeof window !== "undefined" ? window.location.pathname : "/"
+    );
+    if (response?.success) {
+      return response?.data?.coinBalance ?? 0;
+    }
+    return 0;
+  }
+);
 
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
@@ -74,7 +86,7 @@ export const authSlice = createSlice({
   name: "auth",
   initialState: userInit,
   reducers: {
-    loginSuccess: (state, action) => {
+    loginSuccess: (state , action) => {
       // let remembered = action.payload?.rememberMe;
       let payload: AuthState = {
         user: action.payload?.profile,
@@ -92,9 +104,13 @@ export const authSlice = createSlice({
       };
       state.user = data;
     },
+    setCredits: (state, action) => {
+      state.credits = action.payload;
+    },
     logoutSuccess: (state) => {
       state.user = null;
       state.token = null;
+      state.credits = 0;
     },
   },
   extraReducers: (builder) => {
@@ -117,6 +133,9 @@ export const authSlice = createSlice({
     builder.addCase(getUser.rejected, (state) => {
       state.pending = false;
       state.error = true;
+    });
+    builder.addCase(getCredits.fulfilled, (state, { payload }) => {
+      state.credits = payload ?? 0;
     });
     builder.addCase(updateProfile.fulfilled, (state, { payload }) => {
       if (payload?.success) {
@@ -142,7 +161,10 @@ export const {
   loginSuccess,
   logoutSuccess,
   updateSuccess,
+  setCredits,
   //resetUserState
 } = authSlice.actions;
 export const selectAuthState = (state: { auth: AuthState }) => state.auth;
+export const selectCredits = (state: { auth: AuthState }) =>
+  state.auth.credits ?? 0;
 export default authSlice.reducer;

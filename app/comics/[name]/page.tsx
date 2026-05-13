@@ -55,14 +55,6 @@ export const generateMetadata = async ({
         };
 
         // ✅ Enhanced logging for debugging
-        console.log(`🔍 Metadata Debug for "${params?.name}":`, {
-          title: d.title,
-          logoUrl: d.logoUrl,
-          bgUrl: d.bgUrl,
-          originalCoverImage: data?.data?.coverImage,
-          originalBackgroundImage: data?.data?.backgroundImage,
-          isLogoUrlValid: d.logoUrl?.startsWith("https://"),
-        });
 
         return d;
       }
@@ -96,11 +88,7 @@ export const generateMetadata = async ({
     ];
 
     // ✅ Final metadata logging
-    console.log(`📝 Final metadata for "${params?.name}":`, {
-      title: `Toon Central - ${title}`,
-      url: `https://tooncentralhub.com/comics/${params.name}`,
-      imageUrl: logoUrl || DEFAULT_OG_URL,
-    });
+    
 
     return {
       title: `Toon Central - ${title}`,

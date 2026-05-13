@@ -50,7 +50,7 @@ const SetPassword = ({
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {
-        
+
         toast(message, {
           toastId: "verify",
           type: "success",

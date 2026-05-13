@@ -13,6 +13,7 @@ import { usePathname } from "next/navigation";
 import Mainfooter from "@/app/_shared/layout/footermain";
 import MainfooterWithDelay from "@/app/_shared/layout/footermain";
 import { useSessionTracker } from "./hooks/useSessionTracker";
+import { LoginDialogProvider } from "@/app/_shared/dialogs/LoginDialogProvider";
 // import { Provider } from "react-redux";
 // import { Store } from "./store";
 
@@ -76,14 +77,16 @@ export default function AppProvider({
       <Provider store={Store}>
         <SessionTracker />
         <QueryClientProvider client={queryClient}>
-          {!isShortsPage && <NavHome />}
-          <div>
-            {children}
-            <ToastContainer />
-            {process.env.NODE_ENV === "development" && (
-              <ReactQueryDevtools initialIsOpen={false} />
-            )}
-          </div>
+          <LoginDialogProvider>
+            {!isShortsPage && <NavHome />}
+            <div>
+              {children}
+              <ToastContainer />
+              {process.env.NODE_ENV === "development" && (
+                <ReactQueryDevtools initialIsOpen={false} />
+              )}
+            </div>
+          </LoginDialogProvider>
         </QueryClientProvider>
       </Provider>
     </NextUIProvider>

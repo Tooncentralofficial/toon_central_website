@@ -29,6 +29,7 @@ import { useDispatch } from "react-redux";
 import { usePathname } from "next/navigation";
 import { DateInput } from "@nextui-org/react";
 import { parseDate } from "@internationalized/date";
+import { PUBLICURL } from "@/envs";
 export default function DetailsTab() {
   const queryClient = useQueryClient();
   const pathname = usePathname();
@@ -72,6 +73,27 @@ export default function DetailsTab() {
     queryFn: () => getRequestProtected("/profile", token, pathname),
     enabled: token !== null,
   });
+  console.log("@@data", data)
+  const refralCode  = data?.data?.referralCode?.code;
+  console.log("@@refralCode", refralCode)
+
+  const referralUrl = useMemo(() => {
+    if (!refralCode) return "";
+    const base =
+      PUBLICURL ??
+      (typeof window !== "undefined" ? window.location.origin : "");
+    return `${base}/auth/signup?referralCode=${encodeURIComponent(refralCode)}`;
+  }, [refralCode]);
+
+  const handleCopyReferral = useCallback(async () => {
+    if (!referralUrl) return;
+    try {
+      await navigator.clipboard.writeText(referralUrl);
+      toast.success("Referral link copied!", { toastId: "copy-referral" });
+    } catch {
+      toast.error("Could not copy to clipboard", { toastId: "copy-referral" });
+    }
+  }, [referralUrl]);
 
 
   const {
@@ -442,6 +464,31 @@ export default function DetailsTab() {
                 />
               </div>
             </div>
+
+            {refralCode && (
+              <div className="bg-[#FBFBFB] p-4 rounded-[12px] flex flex-col gap-2">
+                <label className="text-[#272727]">Your referral link</label>
+                <div className="flex items-center gap-2">
+                  <p
+                    className="flex-1 text-[#000000] text-sm truncate select-all bg-white border border-[#E5E5E5] rounded-md px-3 py-2"
+                    title={referralUrl}
+                  >
+                    {referralUrl}
+                  </p>
+                  <Button
+                    onClick={handleCopyReferral}
+                    size="sm"
+                    className="bg-[#05834B] text-white font-semibold rounded-md px-4"
+                  >
+                    Copy
+                  </Button>
+                </div>
+                <p className="text-xs text-[#7a7a7a]">
+                  Share this link — when someone signs up through it, they&apos;ll
+                  be credited to you.
+                </p>
+              </div>
+            )}
           </div>
         </div>
         {/* <InputPicture formik={formik} fieldName={""} /> */}

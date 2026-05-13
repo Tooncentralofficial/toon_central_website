@@ -1,9 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import NavItem from "./NavItem";
 import { BellIcon, CoinsIcon, SearchIcon } from "./Icons";
+import { useSelector } from "react-redux";
+import {
+  getCredits,
+  selectAuthState,
+  selectCredits,
+} from "@/lib/slices/auth-slice";
+import { formatUserName } from "@/helpers/parsArray";
+import { useAppDispatch } from "@/lib/store";
 
 type CreatorShellProps = {
   activeNav: "dashboard" | "analytics" | "wallet";
@@ -12,7 +20,18 @@ type CreatorShellProps = {
 
 const CreatorShell = ({ activeNav, children }: CreatorShellProps) => {
   const [collapsed, setCollapsed] = useState(false);
+  const { user, token,credits } = useSelector(selectAuthState);
+  console.log("@@credits",credits);
+  // const credits = useSelector(selectCredits);
+  const dispatch = useAppDispatch();
+  console.log("@@user",user);
+  console.log("@@token",token);
 
+  useEffect(() => {
+    if (token) {
+      dispatch(getCredits());
+    }
+  }, [token, dispatch]);
   return (
     <div className="min-h-screen bg-[#050b12] text-[#f5f7fb] flex justify-center px-3 py-5">
       <div
@@ -20,7 +39,7 @@ const CreatorShell = ({ activeNav, children }: CreatorShellProps) => {
         style={{ gridTemplateColumns: collapsed ? "90px 1fr" : "260px 1fr" }}
       >
         <aside
-          className={`bg-[#080B13] border border-[#0f1b28] rounded-[14px] p-4 flex flex-col gap-6 transition-all duration-200 w-full ${
+          className={`bg-[#080B13] border border-[#0f1b28] rounded-[14px] p-4 flex flex-col gap-6 transition-all duration-200 w-full sticky top-5 self-start h-[calc(100vh-40px)] overflow-y-auto ${
             collapsed ? "items-center" : ""
           }`}
         >
@@ -87,11 +106,11 @@ const CreatorShell = ({ activeNav, children }: CreatorShellProps) => {
             }`}
           >
             <div className="w-11 h-11 rounded-xl bg-[#1ec069] text-[#062013] grid place-items-center font-bold">
-              CR
+              {formatUserName(user?.first_name, user?.last_name)}
             </div>
             {!collapsed && (
               <div className="flex flex-col gap-1">
-                <div className="font-bold">Creator Name</div>
+                <div className="font-bold">{user?.first_name} {user?.last_name}</div>
                 <div className="text-[#85f0b3] text-[13px]">Pro Member</div>
                 <div className="text-[#7f8ca0] text-[12px]">
                   Level 5 Creator
@@ -119,7 +138,7 @@ const CreatorShell = ({ activeNav, children }: CreatorShellProps) => {
             <div className="flex items-center gap-2 self-start md:self-auto">
               <div className="inline-flex items-center gap-2 bg-[#0f1b28] border border-[#122034] rounded-full px-3 py-2 text-[#1ec069] font-bold">
                 <CoinsIcon />
-                <span>2,847</span>
+                <span>{credits?.toLocaleString()}</span>
                 <span className="text-[#7f8ca0] font-semibold">Credits</span>
               </div>
               <button

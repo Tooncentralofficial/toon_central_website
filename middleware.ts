@@ -28,7 +28,7 @@ export async function middleware(request: NextRequest) {
   // Check if route is protected
   const isProtectedRoute = () => {
     return (
-      pathname.startsWith("/comics") ||
+      pathname.startsWith("/comics/[name]/chapter") ||
       pathname.startsWith("/user") ||
       pathname.startsWith("/creator/dashboard")
     );

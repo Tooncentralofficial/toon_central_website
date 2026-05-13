@@ -7,6 +7,7 @@ import { loginSuccess } from "@/lib/slices/auth-slice";
 import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import { getRequest } from "@/app/utils/queries/requests";
+import { clearReferralCode } from "@/lib/utils/referralStorage";
 
 interface VerifyEmailProps {
   verification_code: string | string[] | undefined;
@@ -76,6 +77,7 @@ export default function VerifyEmail({
       data?.data?.profile &&
       data?.data?.userType
     ) {
+      clearReferralCode();
       dispatch(loginSuccess(data.data));
       toast("Email verified successfully! Logging you in...", {
         toastId: "verify-email",

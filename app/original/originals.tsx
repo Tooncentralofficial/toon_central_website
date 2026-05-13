@@ -13,10 +13,13 @@ import SelectFilter from "../_shared/sort/selects";
 
 export default function Originals() {
   const [pagination, setPagination] = useState({ page: 1, total: 1 });
-  const [filter, setFilter] = useState<Filters>("ongoing");
+  const [filter, setFilter] = useState<Filters>("all");
   const categories = [
     { value: "ongoing", label: "Ongoing" },
     { value: "completed", label: "Completed" },
+    // { value: "recent", label: "Recent" },
+    // { value: "new", label: "New" },
+    // { value: "weekly", label: "Weekly" },
   ];
   const [comics, setComics] = useState([]);
   const { data, isLoading, isFetching, isSuccess } = useQuery({
@@ -85,14 +88,14 @@ export default function Originals() {
               <SelectItem key={item.value}>{item.label}</SelectItem>
             ))}
           </SelectFilter>
-          <SelectFilter
+          {/* <SelectFilter
             selectedKeys={[filter]}
             onChange={handleSelectionChange}
           >
             {SelectFilters.map((filter: string, i: number) => (
               <SelectItem key={filter}>{filter}</SelectItem>
             ))}
-          </SelectFilter>
+          </SelectFilter> */}
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 mt-5 mb-[60px]">

@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { FlatInput, InputOutline, InputSolid } from "@/app/_shared/inputs_actions/inputFields";
 import { SolidPrimaryButton } from "@/app/_shared/inputs_actions/buttons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getRequestProtected, postRequestProtected } from "@/app/utils/queries/requests";
+import { getRequest, getRequestProtected, postRequestProtected } from "@/app/utils/queries/requests";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { prevRoutes } from "@/lib/session/prevRoutes";
@@ -38,10 +38,10 @@ const Comments = ({ data }: ComicTab) => {
   } = useQuery({
     queryKey: [querykey,pagination.page],
     queryFn: () =>
-      getRequestProtected(
+      getRequest(
         `comments/${data?.id}?page=${pagination.page}&limit=5`,
-        token,
-        prevRoutes().library
+        
+        
       ),
     staleTime: 0,
   });
