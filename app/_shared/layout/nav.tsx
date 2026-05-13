@@ -346,7 +346,7 @@ const NavHome = () => {
                     />
                   </div>
 
-                  <NavbarItem
+                  {/* <NavbarItem
                     as={Link}
                     href="notification"
                     aria-label="Notifications"
@@ -358,7 +358,7 @@ const NavHome = () => {
                         {unreadCount}
                       </span>
                     )}
-                  </NavbarItem>
+                  </NavbarItem> */}
 
                   <NavbarItem>
                     <Dropdown>
