@@ -83,7 +83,7 @@ export default function Page() {
                         <div className="font-bold text-xl">
                           {newTrending[0]?.title}
                         </div>
-                        <Likes likesNViews={newTrending[0]?.likesAndViews} />
+                        <Likes likesNViews={newTrending[0]?.likesAndViews} likesCount={newTrending[0]?.likes_count ?? newTrending[0]?.likesCount} viewsCount={newTrending[0]?.views_count ?? newTrending[0]?.viewsCount} />
                       </div>
                       <div
                         onClick={(e) => {
@@ -127,7 +127,7 @@ export default function Page() {
                         <div className="font-bold text-xl">
                           {newTrending[1]?.title}
                         </div>
-                        <Likes likesNViews={newTrending[1]?.likesAndViews} />
+                        <Likes likesNViews={newTrending[1]?.likesAndViews} likesCount={newTrending[1]?.likes_count ?? newTrending[1]?.likesCount} viewsCount={newTrending[1]?.views_count ?? newTrending[1]?.viewsCount} />
                       </div>
                       <div
                         onClick={(e) => {
@@ -190,7 +190,7 @@ export default function Page() {
                         width: "100%",
                         maxWidth: "100%",
                         height: "100%",
-                        transform: "rotate(180deg)",
+                        
                       }}
                       priority
                     />
@@ -245,7 +245,7 @@ export default function Page() {
                         <div className="font-bold text-xl">
                           {mostRead[0]?.title}
                         </div>
-                        <Likes likesNViews={mostRead[0]?.likesAndViews} />
+                        <Likes likesNViews={mostRead[0]?.likesAndViews} likesCount={mostRead[0]?.likes_count ?? mostRead[0]?.likesCount} viewsCount={mostRead[0]?.views_count ?? mostRead[0]?.viewsCount} />
                       </div>
                       <div
                         onClick={(e) => {
