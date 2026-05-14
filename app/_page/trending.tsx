@@ -59,6 +59,7 @@ const Trending = ({trendingData, isLoading}:{trendingData: Comic[], isLoading: b
                         cardData={item}
                         index={i}
                         queryKey={trendingQueryKey}
+                        
 
                       />
                     </div>

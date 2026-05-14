@@ -43,6 +43,7 @@ export default function HomeContentWrapper() {
       () => data?.data?.originals || [],
       [data?.data?.originals]
     );
+    console.log("@@originalsData", originalsData)
 
   return (
     <div><HomeCarousel carouselData={carouselData}

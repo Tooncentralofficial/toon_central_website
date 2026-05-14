@@ -16,8 +16,16 @@ const CardTitleOutside = ({
   queryKey?: string;
   noTitle?: boolean;
 }) => {
+  console.log("@@cardData", cardData)
   const views =
-    cardData?.viewsCount ?? 0;
+    cardData?.views_count??cardData?.viewsCount;
+  const likes =
+    cardData?.likes_count??cardData?.likesCount;
+  const favourites =
+    cardData?.favourites_count??cardData?.favouritesCount;
+  const likesAndViews =
+    cardData?.likesAndViews??cardData?.likesAndViews;
+  console.log("@@likesAndViews", likesAndViews)
   return (
     <div>
       <div className="h-[135px] sm:h-[250px] md:h-[320px]  rounded-[4px] overflow-hidden">

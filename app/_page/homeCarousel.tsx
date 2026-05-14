@@ -165,9 +165,9 @@ function HomeCarousel(
             className="absolute inset-0 "
             style={{
               backgroundImage:
-                hoverIndex !== -1 && carouselItems[hoverIndex]?.backgroundImage
-                  ? `url(${carouselItems[hoverIndex]?.backgroundImage})`
-                  : `url(${carouselItems[currentSlide]?.backgroundImage})`,
+                hoverIndex !== -1 && carouselItems[hoverIndex]?.background_image
+                  ? `url(${carouselItems[hoverIndex]?.background_image})`
+                  : `url(${carouselItems[currentSlide]?.background_image})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               filter: "blur(2px)",

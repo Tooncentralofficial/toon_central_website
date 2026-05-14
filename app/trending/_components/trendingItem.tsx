@@ -108,6 +108,8 @@ const TrendingItem = ({ data ,refetchTrending}: { data: any,refetchTrending?: an
             queryKey={queryKey}
             uid={data?.uuid}
             favourites={data?.favourites}
+            likesCount={data?.likes_count ?? data?.likesCount}
+            viewsCount={data?.views_count ?? data?.viewsCount}
           />
         </div>
       </Link>
