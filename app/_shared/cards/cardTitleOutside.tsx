@@ -38,13 +38,25 @@ const CardTitleOutside = ({
               <DarkEyeIcon width={10} height={10} />
             </div>
           </div>
-          {cardData?.hasNewEpisode && (
-            <div className="absolute top-0 right-0 z-20 pointer-events-none">
-              <div className="bg-[#3EFFA2] text-[#061A29] font-bold tracking-wide rounded-full m-1 px-1.5 md:px-2 h-3 md:h-[18px] flex items-center text-[6.7px] md:text-[10px] leading-none uppercase shadow-[0_0_6px_rgba(62,255,162,0.45)]">
-                New
+          {(() => {
+            const isNewSeries =
+              cardData?.is_new_series ?? cardData?.isNewSeries ?? false;
+            const isNewEpisode =
+              !isNewSeries && (cardData?.hasNewEpisode ?? false);
+            if (!isNewSeries && !isNewEpisode) return null;
+            const styles = isNewSeries
+              ? "bg-[#3EFFA2] text-[#061A29] border border-[#3EFFA2]"
+              : "bg-[#061A29]/80 text-[#3EFFA2] border border-[#3EFFA2]";
+            return (
+              <div className="absolute bottom-2 left-2 z-20 pointer-events-none">
+                <div
+                  className={`${styles} font-bold rounded-[4px] px-3 py-1 text-[11px] md:text-xs leading-none backdrop-blur-sm`}
+                >
+                  {isNewSeries ? "New Series" : "New Episode"}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
           <ComicLink
             uuid={cardData?.uuid}
             className="block absolute inset-0 z-10"
