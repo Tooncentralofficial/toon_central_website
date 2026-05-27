@@ -113,7 +113,7 @@ export default async function Home() {
     <HydrationBoundary state={dehydrate(queryClient)}>
       <main>
         <HomeContentWrapper />
-      </main>
+      </main> 
     </HydrationBoundary>
   );
 }

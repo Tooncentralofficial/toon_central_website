@@ -29,9 +29,21 @@ export default function HomeContentWrapper() {
       () => data?.data?.popular_by_toon_central || [],
       [data?.data?.popular_by_toon_central]
     );
+    const recentUplpoad = useMemo(
+      () => data?.data?.recent_uploads || [],
+      [data?.data?.recent_uploads]
+    );
+    
+   
     const trendingData = useMemo(
       () => data?.data?.trending || [],
       [data?.data?.trending]
+    );
+
+    const Indiecomics = useMemo(
+      () => data?.data?.indie_comics
+      || [],
+      [data?.data?.indie_comics]
     );
 
     const PopularByToonData = useMemo(
@@ -51,12 +63,12 @@ export default function HomeContentWrapper() {
     <RecommendtnTabs />
     <HomeShorts />
     <Popular popularData={popularData} />
-    <Trending trendingData={trendingData} isLoading={isLoading} />
+    <Trending trendingData={recentUplpoad.length > 5 ? recentUplpoad : trendingData} isLoading={isLoading} />
     {/* <TodaysPicks /> */}
     <TodaysPicksMobile />
-    <PopularByToons  popularData={PopularByToonData} />
+    <PopularByToons  popularData={Indiecomics} />
     <HomeShorts offset={5} />
-    <HorizontalScroll />
+    <HorizontalScroll />s
     <Originals originalsData ={originalsData} isLoading = {isLoading}  />
     <Footer />
     <MainfooterWithDelay />

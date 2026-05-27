@@ -40,7 +40,7 @@ const Trending = ({trendingData, isLoading}:{trendingData: Comic[], isLoading: b
     <div className="parent-wrap py-10 hidden">
       <div className="child-wrap hidden md:block">
         <div className=" flex justify-between items-center">
-          <H2SectionTitle title="Trending" />
+          <H2SectionTitle title="Recent Updates" />
           <Link href={"/trending"}>
             <Seeall />
           </Link>

@@ -16,7 +16,7 @@ const CardTitleOutside = ({
   queryKey?: string;
   noTitle?: boolean;
 }) => {
-  console.log("@@cardData", cardData)
+
   const views =
     cardData?.views_count??cardData?.viewsCount;
   const likes =
@@ -25,7 +25,6 @@ const CardTitleOutside = ({
     cardData?.favourites_count??cardData?.favouritesCount;
   const likesAndViews =
     cardData?.likesAndViews??cardData?.likesAndViews;
-  console.log("@@likesAndViews", likesAndViews)
   return (
     <div>
       <div className="h-[135px] sm:h-[250px] md:h-[320px]  rounded-[4px] overflow-hidden">
@@ -40,9 +39,11 @@ const CardTitleOutside = ({
           </div>
           {(() => {
             const isNewSeries =
-              cardData?.is_new_series ?? cardData?.isNewSeries ?? false;
+              cardData?.is_new?? false;
             const isNewEpisode =
-              !isNewSeries && (cardData?.hasNewEpisode ?? false);
+              !isNewSeries && (cardData?.
+                has_new_episode ?? cardData?.hasNewEpisode
+                 ?? false);
             if (!isNewSeries && !isNewEpisode) return null;
             const styles = isNewSeries
               ? "bg-[#3EFFA2] text-[#061A29] border border-[#3EFFA2]"
