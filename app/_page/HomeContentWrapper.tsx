@@ -39,6 +39,8 @@ export default function HomeContentWrapper() {
       () => data?.data?.trending || [],
       [data?.data?.trending]
     );
+    const compiled = [...recentUplpoad, ...trendingData];
+    console.log("@@compiled", compiled)
 
     const Indiecomics = useMemo(
       () => data?.data?.indie_comics
@@ -63,7 +65,7 @@ export default function HomeContentWrapper() {
     <RecommendtnTabs />
     <HomeShorts />
     <Popular popularData={popularData} />
-    <Trending trendingData={recentUplpoad.length > 5 ? recentUplpoad : trendingData} isLoading={isLoading} />
+    <Trending trendingData={recentUplpoad.length > 5 ? recentUplpoad :compiled} isLoading={isLoading} />
     {/* <TodaysPicks /> */}
     <TodaysPicksMobile />
     <PopularByToons  popularData={Indiecomics} />
