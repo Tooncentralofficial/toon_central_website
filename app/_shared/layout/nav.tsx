@@ -388,11 +388,14 @@ const NavHome = () => {
                         <DropdownItem as={Link} href="/user/profile" key="1">
                           Profile
                         </DropdownItem>
+                        <DropdownItem as={Link} href="/creator/dashboard" key="2">
+                          Dashboard
+                        </DropdownItem>
                         <DropdownItem
                           className="flex sm:hidden"
                           as={Link}
                           href="/user/library"
-                          key="2"
+                          key="3"
                         >
                           Library
                         </DropdownItem>
