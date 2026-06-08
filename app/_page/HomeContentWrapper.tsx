@@ -67,7 +67,7 @@ export default function HomeContentWrapper() {
     <Popular popularData={popularData} />
     <Trending trendingData={recentUplpoad.length > 5 ? recentUplpoad :compiled} isLoading={isLoading} />
     {/* <TodaysPicks /> */}
-    <TodaysPicksMobile />
+    {/* <TodaysPicksMobile /> */}
     <PopularByToons  popularData={Indiecomics} />
     <HomeShorts offset={5} />
     <HorizontalScroll />s

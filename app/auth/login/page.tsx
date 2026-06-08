@@ -91,7 +91,10 @@ const Page = () => {
           toastId: "login",
           type: "success",
         });
-        dispatch(loginSuccess(resData));
+        dispatch(loginSuccess({
+          ...resData,
+          userType: resData?.profile?.user_type?.name,
+        }));
         router.replace(nextParam);
       } else {
         toast(message, {

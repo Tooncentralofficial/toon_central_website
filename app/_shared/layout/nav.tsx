@@ -144,7 +144,9 @@ const menuItemsMobile: {
 ];
 
 const NavHome = () => {
-  const { user, token } = useSelector(selectAuthState);
+  const { user, token, userType } = useSelector(selectAuthState);
+
+  console.log("@@userType", userType);
   const credits = useSelector(selectCredits);
   const unreadCount = useSelector(selectUnreadCount);
 
@@ -388,9 +390,12 @@ const NavHome = () => {
                         <DropdownItem as={Link} href="/user/profile" key="1">
                           Profile
                         </DropdownItem>
-                        <DropdownItem as={Link} href="/creator/dashboard" key="2">
-                          Dashboard
-                        </DropdownItem>
+                        {
+                          userType === "Creator" && (<DropdownItem as={Link} href="/creator/dashboard" key="2">
+                            Dashboard
+                          </DropdownItem>) || null
+                        }
+                        
                         <DropdownItem
                           className="flex sm:hidden"
                           as={Link}
