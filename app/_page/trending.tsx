@@ -20,7 +20,7 @@ const Trending = ({trendingData, isLoading}:{trendingData: Comic[], isLoading: b
   useEffect(() => {
     const updateSliced = () => {
       if (window.matchMedia("(max-width: 540px)").matches) {
-        setSliced(3);
+        setSliced(6);
       } else if (window.matchMedia("(max-width: 1024px)").matches) {
         setSliced(6);
       } else {
@@ -37,7 +37,7 @@ const Trending = ({trendingData, isLoading}:{trendingData: Comic[], isLoading: b
     };
   }, []);
   return (
-    <div className="parent-wrap py-10 hidden">
+    <div className="parent-wrap py-10">
       <div className="child-wrap block md:block">
         <div className=" flex justify-between items-center">
           <H2SectionTitle title="Recent Updates" />
@@ -45,7 +45,7 @@ const Trending = ({trendingData, isLoading}:{trendingData: Comic[], isLoading: b
             <Seeall />
           </Link>
         </div>
-        <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+        <div className="grid grid-cols-3 xs:grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
           {isLoading ? (
             dummyItems.map((item: number, i: number) => <LoadingTitleTop key={i} />)
           ) : (

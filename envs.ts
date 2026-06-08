@@ -9,6 +9,8 @@ export const PUBLICURL = process.env.NEXT_PUBLIC_SITE_URL;
 
 export const adGateToken = process.env.NEXT_AD_GATE_TOKEN;
 
+export const kebleUrl = process.env.NEXT_PUBLIC_KEBLE_URL;
+
 export const reverbAppId = Number(process.env.REVERB_APP_ID);
 export const reverbAppSecret = process.env.REVERB_APP_SECRET;
 export const reverbAppKey = process.env.NEXT_PUBLIC_REVERB_APP_KEY;
