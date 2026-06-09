@@ -22,6 +22,48 @@ const CreditPlanSkeleton = dynamic(
   () => import("./_components/CreditPlanSkeleton"),
   { ssr: false }
 );
+const SpecialOfferCard = dynamic(
+  () => import("./_components/SpecialOfferCard"),
+  { ssr: false }
+);
+
+const specialOffers = [
+  {
+    id: "day-pass",
+    name: "Day Pass",
+    amount: 500,
+    period: "1 day",
+    subtitle: "Unlock everything for a full day",
+    ctaLabel: "Get Day Pass",
+    infoText:
+      "Unlocks all locked content for 24 hours. Access resets at midnight — purchase again the next day to keep reading.",
+    features: [
+      "Access to all locked panels & chapters",
+      "All comics & series included",
+      "No credits needed for the day",
+      "Ad-free reading",
+    ],
+    highlighted: true,
+    badge: "BEST VALUE",
+  },
+  {
+    id: "week-pass",
+    name: "Week Pass",
+    amount: 1500,
+    period: "7 days",
+    subtitle: "A full week of unlimited reading",
+    ctaLabel: "Get Week Pass",
+    infoText:
+      "Unlocks all locked content for 7 days. Read as much as you want with no daily limits.",
+    features: [
+      "Access to all locked panels & chapters",
+      "All comics & series included",
+      "No credits needed for the week",
+      "Ad-free reading",
+    ],
+  },
+];
+
 function Page() {
   const { token } = useSelector(selectAuthState);
   const [activePlan, setActivePlan] = React.useState(0);
@@ -103,7 +145,7 @@ function Page() {
                     />
                   ))}
             </div>
-            <div className="w-full flex items-center flex-col ">
+            <div className="w-full flex items-center flex-col pt-10">
               <h3>By Credits</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5 items-stretch w-full">
                 {isLoadingCoins
@@ -121,6 +163,18 @@ function Page() {
                         activeIndex={activeCreditPlan}
                       />
                     ))}
+              </div>
+            </div>
+
+            <div className="w-full flex items-center flex-col pt-12">
+              <h3>Special Offers</h3>
+              <p className="text-xs text-[#7f8ca0] mt-1">
+                Limited-time passes to unlock everything
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5 items-stretch w-full max-w-[820px]">
+                {specialOffers.map((offer) => (
+                  <SpecialOfferCard key={offer.id} offer={offer} />
+                ))}
               </div>
             </div>
           </div>
