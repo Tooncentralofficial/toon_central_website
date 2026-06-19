@@ -65,8 +65,8 @@ const AnalyticsClient = () => {
           <div className="text-[#f5f7fb]">{label}</div>
           <div className="text-[#1ec069]">
             {payload[0].name === "adsRevenue"
-              ? `Ads Revenue: $${payload[0].value}`
-              : `Credits Revenue: $${payload[0].value}`}
+              ? `Ads Revenue: ₦${payload[0].value}`
+              : `Credits Revenue: ₦${payload[0].value}`}
           </div>
         </div>
       );

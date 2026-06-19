@@ -38,6 +38,7 @@ import {
   getUser,
   logoutSuccess,
   selectAuthState,
+  setSubscription,
   selectCredits,
   setCredits,
 } from "@/lib/slices/auth-slice";
@@ -171,6 +172,14 @@ const NavHome = () => {
     enabled: !!token,
   });
 
+  const { data: subStatusData } = useQuery({
+    queryKey: ["subscription_status"],
+    queryFn: () =>
+      getRequestProtected("recurring-subscription/status", token, pathname),
+    enabled: !!token,
+  });
+  console.log("@@subStatusData", subStatusData);
+
   const [isSide, setIsSide] = useState(false);
   const dispatch = useDispatch();
   const logout = () => logoutUser("");
@@ -180,6 +189,18 @@ const NavHome = () => {
       dispatch(setCredits(creditsData?.data?.coinBalance ?? 0));
     }
   }, [creditsData, dispatch]);
+
+  useEffect(() => {
+    if (subStatusData) {
+      const sub = subStatusData?.data;
+      dispatch(
+        setSubscription({
+          hasSubscription: sub?.has_subscription ?? false,
+          name: sub?.plan_name ?? null,
+        })
+      );
+    }
+  }, [subStatusData, dispatch]);
 
   useEffect(() => {
     dispatch(getUser() as any);

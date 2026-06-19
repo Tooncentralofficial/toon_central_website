@@ -10,6 +10,8 @@ export interface AuthState {
   pending?: boolean;
   error?: boolean;
   credits?: number;
+  hasSubscription?: boolean;
+  subscriptionName?: string | null;
 }
 
 const userInit: AuthState = {
@@ -19,6 +21,8 @@ const userInit: AuthState = {
   pending: false,
   error: false,
   credits: 0,
+  hasSubscription: false,
+  subscriptionName: null,
 };
 
 export const getUser = createAsyncThunk("auth/getuser", async () => {
@@ -107,10 +111,16 @@ export const authSlice = createSlice({
     setCredits: (state, action) => {
       state.credits = action.payload;
     },
+    setSubscription: (state, action) => {
+      state.hasSubscription = action.payload?.hasSubscription ?? false;
+      state.subscriptionName = action.payload?.name ?? null;
+    },
     logoutSuccess: (state) => {
       state.user = null;
       state.token = null;
       state.credits = 0;
+      state.hasSubscription = false;
+      state.subscriptionName = null;
     },
   },
   extraReducers: (builder) => {
@@ -162,9 +172,14 @@ export const {
   logoutSuccess,
   updateSuccess,
   setCredits,
+  setSubscription,
   //resetUserState
 } = authSlice.actions;
 export const selectAuthState = (state: { auth: AuthState }) => state.auth;
 export const selectCredits = (state: { auth: AuthState }) =>
   state.auth.credits ?? 0;
+export const selectHasSubscription = (state: { auth: AuthState }) =>
+  state.auth.hasSubscription ?? false;
+export const selectSubscriptionName = (state: { auth: AuthState }) =>
+  state.auth.subscriptionName ?? null;
 export default authSlice.reducer;

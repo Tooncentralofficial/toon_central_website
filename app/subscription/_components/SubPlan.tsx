@@ -32,16 +32,19 @@ export default function SubPlan({
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [paymentReference, setPaymentReference] = useState<string | null>(null);
 
+  const isRecurring = plan?.isRecurring || false
+  const url = isRecurring ?"recurring-subscription/subscribe": "checkout/subscription/proceed" 
   const handlePaymentSuccess = (reference: string) => {
     setPaymentReference(reference);
     setIsPaymentModalOpen(true);
   };
+ 
   const {mutate,  } = useMutation({
     mutationKey: ["subscribe"],
     mutationFn: (data: { subscriptionPlanId: number }) => {
       const res = postRequestProtected(
         data,
-        `checkout/subscription/proceed`,
+        "recurring-subscription/subscribe" ,
         token || "" ,
         pathname ,
         "json"

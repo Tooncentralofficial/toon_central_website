@@ -147,6 +147,8 @@ export default function Page({
     description: data?.data?.description || "",
     thumbnail: data?.data?.thumbnail || "",
     comicImages: images || [],
+    monetizationType:
+      data?.data?.monetizationType ?? data?.data?.monetization_type ?? "",
   };
   const validationSchema = Yup.object().shape({
     title: Yup.string().required(" is required"),
@@ -156,11 +158,20 @@ export default function Page({
       .of(Yup.mixed())
       .min(1, "At least one item is required")
       .notRequired(),
+    monetizationType: Yup.string().optional().nullable(),
   });
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
+      console.log("@@values", values);
+      if (enabled && !values.monetizationType) {
+        toast("Please select a monetization type", {
+          toastId: "monetization-type-required",
+          type: "info",
+        });
+        return;
+      }
       const formData = new FormData();
       formData?.append("title", values.title);
       formData?.append("description", values.description);
@@ -381,6 +392,10 @@ export default function Page({
         formData?.append("description", updatedValues.description);
         formData?.append("thumbnail", updatedValues.thumbnail);
         formData.append("isMonetized", enabled ? "1" : "0");
+        formData.append(
+          "monetizationType",
+          enabled ? formik.values.monetizationType || "" : ""
+        );
         updatedValues.comicImages.map((imageUrl: string, i: number) => {
           formData.append(`comicImage[${i}][image]`, imageUrl);
           // Add lock status - ensure we have a lock state for this index
@@ -584,6 +599,9 @@ export default function Page({
                         return;
                       }
                       setEnabled(value);
+                      if (!value) {
+                        formik.setFieldValue("monetizationType", "");
+                      }
                     }}
                     disabled={!canLockOrMonetize}
                   />
@@ -598,9 +616,16 @@ export default function Page({
                 </div>
 
                 <div className="border-1 border-[#3D434D] rounded-lg py-8 px-10 flex flex-col gap-5">
-                  <RadioGroup color="success">
+                  <RadioGroup
+                    color="success"
+                    value={formik.values.monetizationType}
+                    onValueChange={(val) =>
+                      formik.setFieldValue("monetizationType", val)
+                    }
+                    isDisabled={!enabled || !canLockOrMonetize}
+                  >
                     <Radio
-                      value="Ads"
+                      value="ads"
                       description="Ads will appear alongside your work"
                     >
                       Monetize with Ads

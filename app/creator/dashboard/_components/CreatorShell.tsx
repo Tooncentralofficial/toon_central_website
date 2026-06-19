@@ -129,11 +129,11 @@ const CreatorShell = ({ activeNav, children }: CreatorShellProps) => {
         <main className="flex flex-col gap-4">
           <header className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-3 bg-[#0f1b28] border border-[#122034] rounded-xl px-3 py-2 text-[#7f8ca0]">
-              <SearchIcon />
+              {/* <SearchIcon />
               <input
                 placeholder="Search your comics..."
                 className="bg-transparent outline-none text-[#f5f7fb] w-full placeholder:text-[#7f8ca0]"
-              />
+              /> */}
             </div>
             <div className="flex items-center gap-2 self-start md:self-auto">
               <div className="inline-flex items-center gap-2 bg-[#0f1b28] border border-[#122034] rounded-full px-3 py-2 text-[#1ec069] font-bold">
@@ -141,12 +141,12 @@ const CreatorShell = ({ activeNav, children }: CreatorShellProps) => {
                 <span>{credits?.toLocaleString()}</span>
                 <span className="text-[#7f8ca0] font-semibold">Credits</span>
               </div>
-              <button
+              {/* <button
                 className="w-10 h-10 rounded-xl border border-[#122034] bg-[#0f1b28] text-[#f5f7fb] grid place-items-center"
                 aria-label="Notifications"
               >
                 <BellIcon />
-              </button>
+              </button> */}
               <button className="w-10 h-10 rounded-xl border border-[#122034] bg-[#1ec069] text-[#062013] font-bold">
                 CR
               </button>

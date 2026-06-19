@@ -13,6 +13,7 @@ import PopularByToons from './popularbytoons'
 import HorizontalScroll from './test'
 import Originals from './originals'
 import TodaysPicks from './todaysPicks'
+import UnlockLibraryBanner from './unlockLibraryBanner'
 import { getRequest } from '../utils/queries/requests';
 import { useQuery } from '@tanstack/react-query';
 export default function HomeContentWrapper() {
@@ -64,6 +65,7 @@ export default function HomeContentWrapper() {
     />
     <RecommendtnTabs />
     <HomeShorts />
+    <UnlockLibraryBanner />
     <Popular popularData={popularData} />
     <Trending trendingData={recentUplpoad.length > 5 ? recentUplpoad :compiled} isLoading={isLoading} />
     {/* <TodaysPicks /> */}

@@ -2,6 +2,12 @@
 import { Button } from "@nextui-org/react";
 import { CheckIcon } from "@nextui-org/shared-icons";
 import React from "react";
+import { useMutation } from "@tanstack/react-query";
+import { postRequestProtected } from "@/app/utils/queries/requests";
+import { useSelector } from "react-redux";
+import { selectAuthState } from "@/lib/slices/auth-slice";
+import { usePathname } from "next/navigation";
+import { toast } from "react-toastify";
 
 export type SpecialOffer = {
   id: number | string;
@@ -14,6 +20,7 @@ export type SpecialOffer = {
   features: string[];
   highlighted?: boolean;
   badge?: string;
+  isRecurring?: boolean;
 };
 
 export default function SpecialOfferCard({
@@ -23,6 +30,55 @@ export default function SpecialOfferCard({
   offer: SpecialOffer;
   onSelect?: (offer: SpecialOffer) => void;
 }) {
+  const { token } = useSelector(selectAuthState);
+  const pathname = usePathname();
+  console.log("@@offer", offer);
+  // Same purchase flow as SubPlan: recurring plans hit the subscribe endpoint,
+  // one-off passes go through checkout; both redirect to the Paystack URL.
+  const url = offer.isRecurring
+    ? "recurring-subscription/subscribe"
+    : "checkout/subscription/proceed";
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["subscribe-special"],
+    mutationFn: (data: { subscriptionPlanId: number }) =>
+      postRequestProtected(data, url, token || "", pathname, "json"),
+    onSuccess: (data) => {
+      console.log("@@special-offer subscribe response", data);
+      const checkoutUrl =
+        data?.data?.check_out_url ||
+        data?.data?.checkout_url ||
+        data?.data?.authorization_url ||
+        data?.data?.url;
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      } else {
+        toast(data?.message || "Could not start checkout. Please try again.", {
+          toastId: "special-offer-subscribe",
+          type: "error",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("@@special-offer subscribe error", error);
+      toast("Something went wrong. Please try again.", {
+        toastId: "special-offer-subscribe",
+        type: "error",
+      });
+    },
+  });
+
+  const handleSubscribe = () => {
+    if (!token) {
+      toast("Please log in to subscribe.", {
+        toastId: "special-offer-subscribe",
+        type: "info",
+      });
+      return;
+    }
+    onSelect?.(offer);
+    mutate({ subscriptionPlanId: Number(offer.id) });
+  };
+
   const isHighlighted = !!offer.highlighted;
   const accent = isHighlighted ? "#F2BB30" : "#3B4554";
   const accentSoft = isHighlighted ? "#F2BB30" : "#6d7889";
@@ -76,12 +132,13 @@ export default function SpecialOfferCard({
       </p>
 
       <Button
-        onPress={() => onSelect?.(offer)}
         className={`w-full mt-5 rounded-xl h-[44px] font-semibold transition-colors duration-300 ease-in-out ${
           isHighlighted
             ? "bg-[#F2BB30] text-[#1A1505]"
-            : "bg-transparent border-[1.5px] text-[#F2BB30]"
+            : "bg-transparent border-[  1.5px] text-[#F2BB30]"
         }`}
+        onPress={handleSubscribe}
+        isLoading={isPending}
         style={isHighlighted ? undefined : { borderColor: "#F2BB30" }}
       >
         {offer.ctaLabel}

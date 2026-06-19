@@ -6,9 +6,9 @@ import { CheckIcon } from "@nextui-org/shared-icons";
 import { CreditPlans, SubPlans } from "../utils/constants/constants";
 import dynamic from "next/dynamic";
 import { useSelector } from "react-redux";
-import { selectAuthState } from "@/lib/slices/auth-slice";
+import { selectAuthState, selectHasSubscription, selectSubscriptionName } from "@/lib/slices/auth-slice";
 import { usePathname } from "next/navigation";
-import { getRequestProtected } from "../utils/queries/requests";
+import { getRequest, getRequestProtected } from "../utils/queries/requests";
 import { useQueries, useQuery } from "@tanstack/react-query";
 
 const CreditPlan = dynamic(() => import("./_components/CreditPlan"), {
@@ -27,45 +27,42 @@ const SpecialOfferCard = dynamic(
   { ssr: false }
 );
 
-const specialOffers = [
-  {
-    id: "day-pass",
-    name: "Day Pass",
-    amount: 500,
-    period: "1 day",
-    subtitle: "Unlock everything for a full day",
-    ctaLabel: "Get Day Pass",
-    infoText:
-      "Unlocks all locked content for 24 hours. Access resets at midnight — purchase again the next day to keep reading.",
-    features: [
-      "Access to all locked panels & chapters",
-      "All comics & series included",
-      "No credits needed for the day",
-      "Ad-free reading",
-    ],
-    highlighted: true,
-    badge: "BEST VALUE",
-  },
-  {
-    id: "week-pass",
-    name: "Week Pass",
-    amount: 1500,
-    period: "7 days",
-    subtitle: "A full week of unlimited reading",
-    ctaLabel: "Get Week Pass",
-    infoText:
-      "Unlocks all locked content for 7 days. Read as much as you want with no daily limits.",
-    features: [
-      "Access to all locked panels & chapters",
-      "All comics & series included",
-      "No credits needed for the week",
-      "Ad-free reading",
-    ],
-  },
-];
+// Short period label shown next to the price (e.g. "NGN/week").
+const periodLabel = (plan: any) =>
+  plan?.duration?.slug ?? plan?.duration?.name ?? plan?.interval ?? "";
+
+// Build the renewal/info line from the plan's billing data.
+const buildInfoText = (plan: any) => {
+  const every =
+    plan?.duration?.description ?? plan?.interval ?? plan?.duration?.name ?? "";
+  return plan?.isRecurring
+    ? `Auto-renews ${every} until you cancel. Manage or cancel anytime.`
+    : `One-time payment for ${every || "the period"} of full access.`;
+};
+
+// Derive the feature checklist from the plan's benefit flags.
+const buildFeatures = (plan: any): string[] => {
+  const features: string[] = [];
+  if (plan?.accessToTooncentral) {
+    features.push("Access to all locked panels & chapters");
+    features.push("All comics & series included");
+  }
+  if (plan?.hideAds) features.push("Ad-free reading");
+  if (plan?.offlineDownload) features.push("Offline downloads");
+  if (plan?.membership) features.push("Membership perks");
+  if (plan?.creditPoint)
+    features.push(`${Number(plan.creditPoint).toLocaleString()} credits included`);
+  if (plan?.bonusCreditPoint)
+    features.push(
+      `${Number(plan.bonusCreditPoint).toLocaleString()} bonus credits`
+    );
+  return features;
+};
 
 function Page() {
   const { token } = useSelector(selectAuthState);
+  const subscriptionName = useSelector(selectSubscriptionName);
+  const hasSubscription = useSelector(selectHasSubscription)
   const [activePlan, setActivePlan] = React.useState(0);
   const [selectedPlanIndex, setSelectedPlanIndex] = React.useState(0);
   const [activeCreditPlan, setActiveCreditPlan] = React.useState(0);
@@ -73,29 +70,64 @@ function Page() {
   const [selectedCreditPlanIndex, setSelectedCreditPlanIndex] =
     React.useState(0);
 
+  console.log("@@subscriptionName", subscriptionName);
+  console.log("@@hasSubscription", hasSubscription);
+
+  const {data:subStatusData} = useQuery({
+    queryKey: ["subscription_status"],
+    queryFn: () =>
+      getRequestProtected("subscription/status", token, pathname),
+    enabled: !!token,
+  });
+  const subStatus = subStatusData?.data;
+  console.log("@@subStatus", subStatus);  
+
   const results = useQueries({
     queries: [
       {
         queryKey: ["subscription_plans"],
         queryFn: () =>
-          getRequestProtected("selectables/plans", token, pathname),
-        enabled: !!token,
+          getRequest("selectables/plans"),
       },
       {
         queryKey: ["subscription_coin"],
         queryFn: () =>
-          getRequestProtected("selectables/comic-coin", token, pathname),
-        enabled: !!token,
+          getRequest("selectables/comic-coin"),
+        
+      },
+      {
+        queryKey: ["subscription_special_plans"],
+        queryFn: () =>
+          getRequest("selectables/special-plans"),
+        
       },
     ],
   });
   const subscriptionPlans = results[0].data;
   const subscriptionCoin = results[1].data;
+  const subscriptionSpecialPlans = results[2].data;
   const isLoadingPlans = results[0].isLoading;
   const isLoadingCoins = results[1].isLoading;
-
+  const isLoadingSpecialPlans = results[2].isLoading;
   const plans = subscriptionPlans?.data;
   const coin = subscriptionCoin?.data;
+  const specialPlans = subscriptionSpecialPlans?.data;
+  console.log("@@specialPlans", specialPlans);
+
+  // Build each special-offer card entirely from the API plan data.
+  const specialOffers = (specialPlans ?? []).map((plan: any, i: number) => ({
+    id: plan?.id,
+    name: plan?.name,
+    amount: plan?.amount,
+    period: periodLabel(plan),
+    subtitle: plan?.description ?? "",
+    ctaLabel: `Get ${plan?.name ?? "Plan"}`,
+    infoText: buildInfoText(plan),
+    features: buildFeatures(plan),
+    isRecurring: plan?.isRecurring ?? false,
+    highlighted: i === 0,
+    badge: i === 0 ? "BEST VALUE" : undefined,
+  }));
 
   if(isLoadingPlans || isLoadingCoins) return (
     <div className="parent-wrap py-10">
@@ -172,9 +204,13 @@ function Page() {
                 Limited-time passes to unlock everything
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5 items-stretch w-full max-w-[820px]">
-                {specialOffers.map((offer) => (
-                  <SpecialOfferCard key={offer.id} offer={offer} />
-                ))}
+                {isLoadingSpecialPlans
+                  ? Array.from({ length: 2 }).map((_: unknown, i: number) => (
+                      <SubPlanSkeleton key={i} />
+                    ))
+                  : specialOffers.map((offer: any) => (
+                      <SpecialOfferCard key={offer.id} offer={offer} />
+                    ))}
               </div>
             </div>
           </div>
