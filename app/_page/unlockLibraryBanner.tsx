@@ -6,10 +6,10 @@ export default function UnlockLibraryBanner() {
   return (
     <div className="parent-wrap py-4">
       <div className="child-wrap">
-        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between rounded-[16px] border border-white/10 bg-gradient-to-r from-[#0d1b16] via-[#10231b] to-[#0c1118] px-6 py-6 md:px-9 md:py-8">
+        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between rounded-[5px] border-[0.1px] border-white/20 bg-gradient-to-r from-[#0d1b16] via-[#10231b] to-[#0c1118] px-4 py-5 md:px-9 md:py-8 " >
           {/* Left: icon + copy */}
-          <div className="flex items-center gap-5">
-            <div className="flex h-[58px] w-[58px] flex-shrink-0 items-center justify-center rounded-[14px] bg-[#0c1612]">
+          <div className="flex w-full items-center gap-4 sm:gap-5">
+            <div className="flex h-[46px] w-[46px] md:h-[58px] md:w-[58px] flex-shrink-0 items-center justify-center rounded-[5px] bg-[#0c1612]">
               <svg
                 width="26"
                 height="26"
@@ -37,10 +37,10 @@ export default function UnlockLibraryBanner() {
               </svg>
             </div>
             <div className="flex flex-col gap-1.5">
-              <h2 className="text-[22px] font-bold uppercase leading-none tracking-wide text-white md:text-[30px]">
+              <h2 className="text-[17px] font-bold uppercase leading-tight tracking-wide text-white md:text-[30px] md:leading-none">
                 Unlock the full library
               </h2>
-              <p className="text-sm text-[#9aa6b4] md:text-base">
+              <p className="text-[11px] text-[#9aa6b4] md:text-base">
                 Premium titles, early chapters, and ad-free reading - all from{" "}
                 <span className="line-through">₦500</span>/month.
               </p>
@@ -53,7 +53,7 @@ export default function UnlockLibraryBanner() {
             className="group relative inline-flex w-full flex-shrink-0 self-stretch sm:w-auto sm:self-center"
           >
             <span
-              className="relative inline-flex w-full items-center justify-center rounded-[6px] bg-gradient-to-b from-[#5fd877] via-[#34c759] to-[#27ab49] px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-[#0c1612] shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-3px_0_rgba(0,0,0,0.18),-7px_7px_0_0_#ffffff] transition-all duration-150 group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-3px_0_rgba(0,0,0,0.18),-9px_9px_0_0_#ffffff] group-active:translate-x-0.5 group-active:translate-y-0.5 group-active:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-2px_0_rgba(0,0,0,0.18),-4px_4px_0_0_#ffffff] sm:w-auto"
+              className="relative inline-flex w-full items-center justify-center rounded-[2px] bg-gradient-to-b from-[#5fd877] via-[#34c759] to-[#27ab49] px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-[#0c1612] shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-3px_0_rgba(0,0,0,0.18),-7px_7px_0_0_#ffffff] transition-all duration-150 group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-3px_0_rgba(0,0,0,0.18),-9px_9px_0_0_#ffffff] group-active:translate-x-0.5 group-active:translate-y-0.5 group-active:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-2px_0_rgba(0,0,0,0.18),-4px_4px_0_0_#ffffff] sm:w-auto"
             >
               Subscribe Now
             </span>
