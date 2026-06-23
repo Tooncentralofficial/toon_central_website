@@ -17,3 +17,5 @@ export const reverbAppKey = process.env.NEXT_PUBLIC_REVERB_APP_KEY;
 export const reverbHost = process.env.NEXT_PUBLIC_REVERB_HOST;
 export const reverbPort = Number(process.env.NEXT_PUBLIC_REVERB_PORT);
 export const reverbScheme = process.env.NEXT_PUBLIC_REVERB_SCHEME;
+
+export const porpellerAdsUrl = process.env.NEXT_PUBLIC_PROPELLER_ADS_LINK;

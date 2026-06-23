@@ -70,8 +70,7 @@ function Page() {
   const [selectedCreditPlanIndex, setSelectedCreditPlanIndex] =
     React.useState(0);
 
-  console.log("@@subscriptionName", subscriptionName);
-  console.log("@@hasSubscription", hasSubscription);
+
 
   const {data:subStatusData} = useQuery({
     queryKey: ["subscription_status"],
@@ -80,7 +79,6 @@ function Page() {
     enabled: !!token,
   });
   const subStatus = subStatusData?.data;
-  console.log("@@subStatus", subStatus);  
 
   const results = useQueries({
     queries: [
@@ -112,10 +110,34 @@ function Page() {
   const plans = subscriptionPlans?.data;
   const coin = subscriptionCoin?.data;
   const specialPlans = subscriptionSpecialPlans?.data;
-  console.log("@@specialPlans", specialPlans);
+
+
+  // When linked from the home banner (/subscription#special-offers), smoothly
+  // scroll to the special offers section once the page content has loaded.
+  // The element id intentionally differs from the hash so the browser does NOT
+  // perform an instant native jump — the smooth scroll below handles it.
+  React.useEffect(() => {
+    if (isLoadingPlans || isLoadingCoins) return;
+    if (typeof window === "undefined") return;
+    if (window.location.hash !== "#special-offers") return;
+    const id = setTimeout(() => {
+      const el = document.getElementById("special-offers-section");
+      if (el) {
+        window.requestAnimationFrame(() =>
+          el.scrollIntoView({ behavior: "smooth", block: "start" })
+        );
+      }
+    }, 150);
+    return () => clearTimeout(id);
+  }, [isLoadingPlans, isLoadingCoins]);
+
+  // Show the daily (cheapest) plan first so it carries the BEST VALUE badge.
+  const sortedSpecialPlans = [...(specialPlans ?? [])].sort(
+    (a: any, b: any) => (a?.amount ?? 0) - (b?.amount ?? 0)
+  );
 
   // Build each special-offer card entirely from the API plan data.
-  const specialOffers = (specialPlans ?? []).map((plan: any, i: number) => ({
+  const specialOffers = sortedSpecialPlans.map((plan: any, i: number) => ({
     id: plan?.id,
     name: plan?.name,
     amount: plan?.amount,
@@ -198,7 +220,10 @@ function Page() {
               </div>
             </div>
 
-            <div className="w-full flex items-center flex-col pt-12">
+            <div
+              id="special-offers-section"
+              className="w-full flex items-center flex-col pt-12 scroll-mt-24"
+            >
               <h3>Special Offers</h3>
               <p className="text-xs text-[#7f8ca0] mt-1">
                 Limited-time passes to unlock everything

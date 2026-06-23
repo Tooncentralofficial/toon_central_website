@@ -49,7 +49,7 @@ export default function UnlockLibraryBanner() {
 
           {/* Right: CTA */}
           <Link
-            href="/subscription"
+            href="/subscription#special-offers"
             className="group relative inline-flex w-full flex-shrink-0 self-stretch sm:w-auto sm:self-center"
           >
             <span

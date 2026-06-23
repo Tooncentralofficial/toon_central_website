@@ -5,9 +5,14 @@ import React from "react";
 import { useMutation } from "@tanstack/react-query";
 import { postRequestProtected } from "@/app/utils/queries/requests";
 import { useSelector } from "react-redux";
-import { selectAuthState } from "@/lib/slices/auth-slice";
+import {
+  selectAuthState,
+  selectHasSubscription,
+  selectSubscriptionName,
+} from "@/lib/slices/auth-slice";
 import { usePathname } from "next/navigation";
 import { toast } from "react-toastify";
+import CancelSubscriptionButton from "./CancelSubscriptionButton";
 
 export type SpecialOffer = {
   id: number | string;
@@ -31,8 +36,14 @@ export default function SpecialOfferCard({
   onSelect?: (offer: SpecialOffer) => void;
 }) {
   const { token } = useSelector(selectAuthState);
+  const hasSubscription = useSelector(selectHasSubscription);
+  const subscriptionName = useSelector(selectSubscriptionName);
+  const isActive =
+    hasSubscription &&
+    !!subscriptionName &&
+    subscriptionName.trim().toLowerCase() ===
+      String(offer?.name ?? "").trim().toLowerCase();
   const pathname = usePathname();
-  console.log("@@offer", offer);
   // Same purchase flow as SubPlan: recurring plans hit the subscribe endpoint,
   // one-off passes go through checkout; both redirect to the Paystack URL.
   const url = offer.isRecurring
@@ -43,7 +54,7 @@ export default function SpecialOfferCard({
     mutationFn: (data: { subscriptionPlanId: number }) =>
       postRequestProtected(data, url, token || "", pathname, "json"),
     onSuccess: (data) => {
-      console.log("@@special-offer subscribe response", data);
+      
       const checkoutUrl =
         data?.data?.check_out_url ||
         data?.data?.checkout_url ||
@@ -131,18 +142,25 @@ export default function SpecialOfferCard({
         {offer.subtitle}
       </p>
 
-      <Button
-        className={`w-full mt-5 rounded-xl h-[44px] font-semibold transition-colors duration-300 ease-in-out ${
-          isHighlighted
-            ? "bg-[#F2BB30] text-[#1A1505]"
-            : "bg-transparent border-[  1.5px] text-[#F2BB30]"
-        }`}
-        onPress={handleSubscribe}
-        isLoading={isPending}
-        style={isHighlighted ? undefined : { borderColor: "#F2BB30" }}
-      >
-        {offer.ctaLabel}
-      </Button>
+      {isActive ? (
+        <CancelSubscriptionButton
+          planName={offer.name}
+          className="w-full mt-5 rounded-xl h-[44px] font-semibold bg-[#E11D48] text-[#FCFCFD]"
+        />
+      ) : (
+        <Button
+          className={`w-full mt-5 rounded-xl h-[44px] font-semibold transition-colors duration-300 ease-in-out ${
+            isHighlighted
+              ? "bg-[#F2BB30] text-[#1A1505]"
+              : "bg-transparent border-[  1.5px] text-[#F2BB30]"
+          }`}
+          onPress={handleSubscribe}
+          isLoading={isPending}
+          style={isHighlighted ? undefined : { borderColor: "#F2BB30" }}
+        >
+          {offer.ctaLabel}
+        </Button>
+      )}
 
       <div
         className="mt-5 px-4 py-3 rounded-[10px] border-[1.5px]"
