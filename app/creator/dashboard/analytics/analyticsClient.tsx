@@ -1,6 +1,14 @@
 "use client";
 
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { usePathname } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { Select, SelectItem } from "@nextui-org/react";
 import CreatorShell from "../_components/CreatorShell";
+import { selectAuthState } from "@/lib/slices/auth-slice";
+import { getRequestProtected } from "@/app/utils/queries/requests";
+import { parseArray } from "@/helpers/parsArray";
 import {
   AreaChart,
   Area,
@@ -16,6 +24,22 @@ import {
 } from "recharts";
 
 const AnalyticsClient = () => {
+  const pathname = usePathname();
+  const { token } = useSelector(selectAuthState);
+  const [selectedComicId, setSelectedComicId] = useState<string>("");
+
+  const { data: comicsResponse, isLoading: comicsLoading } = useQuery({
+    queryKey: ["creator_analytics_comics"],
+    queryFn: () =>
+      getRequestProtected(
+        `/my-libraries/comics?page=1&limit=50`,
+        token,
+        pathname
+      ),
+    enabled: !!token,
+  });
+
+  const comics = parseArray(comicsResponse?.data?.comics);
   const adsRevenueData = [
     { month: "Jan", value: 45 },
     { month: "Feb", value: 52 },
@@ -41,8 +65,8 @@ const AnalyticsClient = () => {
           <div className="text-[#f5f7fb]">{label}</div>
           <div className="text-[#1ec069]">
             {payload[0].name === "adsRevenue"
-              ? `Ads Revenue: $${payload[0].value}`
-              : `Credits Revenue: $${payload[0].value}`}
+              ? `Ads Revenue: ₦${payload[0].value}`
+              : `Credits Revenue: ₦${payload[0].value}`}
           </div>
         </div>
       );
@@ -90,10 +114,38 @@ const AnalyticsClient = () => {
         <p className="text-[#7f8ca0] text-sm">
           Choose a comic to view detailed analytics
         </p>
-        <button className="bg-[#0f1b28] border border-[#122034] text-[#f5f7fb] rounded-[10px] px-4 py-3 flex items-center justify-between">
-          Shadow Realm Chronicles
-          <span className="text-[#7f8ca0]">⌄</span>
-        </button>
+        <Select
+          aria-label="Select comic series"
+          radius="sm"
+          placeholder={
+            comicsLoading
+              ? "Loading your comics..."
+              : comics.length === 0
+              ? "No comics found"
+              : "Select a comic"
+          }
+          selectedKeys={selectedComicId ? [selectedComicId] : []}
+          onChange={(e) => setSelectedComicId(e.target.value)}
+          isDisabled={comicsLoading || comics.length === 0}
+          classNames={{
+            trigger:
+              "bg-[#0f1b28] border border-[#122034] text-[#f5f7fb] rounded-[10px] px-4 py-3 data-[hover=true]:bg-[#0f1b28]",
+            value: "text-[#f5f7fb]",
+            popoverContent: "bg-[#0f1b28] border border-[#122034]",
+            selectorIcon: "text-[#7f8ca0]",
+          }}
+          listboxProps={{
+            itemClasses: {
+              base: "text-[#f5f7fb] data-[selectable=true]:focus:bg-[#122034] data-[hover=true]:bg-[#122034]",
+            },
+          }}
+        >
+          {comics.map((comic: any) => (
+            <SelectItem key={comic.id} value={comic.id}>
+              {comic.title}
+            </SelectItem>
+          ))}
+        </Select>
         <div className="flex items-center gap-3">
           <button className="bg-[#0f1b28] text-[#cdd6e2] border border-[#122034] rounded-[8px] px-3 py-2 text-sm">
             Overview

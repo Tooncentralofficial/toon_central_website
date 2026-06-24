@@ -9,8 +9,13 @@ import { SubPlans } from "@/app/utils/constants/constants";
 import { useMutation } from "@tanstack/react-query";
 import { postRequestProtected } from "@/app/utils/queries/requests";
 import { useSelector } from "react-redux";
-import { selectAuthState } from "@/lib/slices/auth-slice";
+import {
+  selectAuthState,
+  selectHasSubscription,
+  selectSubscriptionName,
+} from "@/lib/slices/auth-slice";
 import { usePathname } from "next/navigation";
+import CancelSubscriptionButton from "./CancelSubscriptionButton";
 
 export default function SubPlan({
   id,
@@ -28,20 +33,31 @@ export default function SubPlan({
   activeIndex: number;
 }) {
   const { token } = useSelector(selectAuthState);
+  const hasSubscription = useSelector(selectHasSubscription);
+  const subscriptionName = useSelector(selectSubscriptionName);
+  console.log(subscriptionName, plan?.name)
+  const isActive =
+    hasSubscription &&
+    !!subscriptionName &&
+    subscriptionName.trim().toLowerCase() ===
+      String(plan?.name ?? "").trim().toLowerCase();
   const pathname = usePathname();
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [paymentReference, setPaymentReference] = useState<string | null>(null);
 
+  const isRecurring = plan?.isRecurring || false
+  const url = isRecurring ?"recurring-subscription/subscribe": "checkout/subscription/proceed" 
   const handlePaymentSuccess = (reference: string) => {
     setPaymentReference(reference);
     setIsPaymentModalOpen(true);
   };
+ 
   const {mutate,  } = useMutation({
     mutationKey: ["subscribe"],
     mutationFn: (data: { subscriptionPlanId: number }) => {
       const res = postRequestProtected(
         data,
-        `checkout/subscription/proceed`,
+        "recurring-subscription/subscribe" ,
         token || "" ,
         pathname ,
         "json"
@@ -96,10 +112,11 @@ export default function SubPlan({
       </p>
       {/* <p className="w-full text-center text-xs mt-2 ">{plan.title}</p> */}
 
-      {index === activeIndex ? (
-        <Button className="bg-[#6d7889] text-[#FCFCFD] w-full mt-6 rounded-xl">
-          Active
-        </Button>
+      {isActive ? (
+        <CancelSubscriptionButton
+          planName={plan?.name}
+          className="bg-[#E11D48] text-[#FCFCFD] w-full mt-6 rounded-xl h-[40px] font-semibold"
+        />
       ) : (
         <Button
           onPress={() => mutate({ subscriptionPlanId: id })}

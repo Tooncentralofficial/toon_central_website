@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { prevRoutes } from "@/lib/session/prevRoutes";
+import PaginationCustom from "@/app/_shared/sort/pagination";
 const CommentPopUp = ({
   closePopup,
   episodeComments,
@@ -18,19 +19,22 @@ const CommentPopUp = ({
   queryString?:string
 }) => {
   const [episdoeComment,setEpisodeComment]= useState([])
-  
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalComments, setTotalComments] = useState(0);
+
   const episodeId = episodeComments?.[0]?.id;
   const { user, token }: any = useSelector(selectAuthState);
-  
+
   const {
     data: commentResponse,
     isSuccess: isCommentSuccess,
     isLoading: isCommentLoading,
   } = useQuery({
-    queryKey: [queryString],
+    queryKey: [queryString, page],
     queryFn: () =>
       getRequestProtected(
-        `/episode-comments/${comicId}?page=1&limit=10`,
+        `/episode-comments/${comicId}?page=${page}&limit=10`,
         token,
         prevRoutes().comic
       ),
@@ -39,11 +43,24 @@ const CommentPopUp = ({
   useEffect(()=>{
     if(isCommentSuccess){
       setEpisodeComment(commentResponse?.data?.comic_catalog_comments);
+      setTotalPages(commentResponse?.data?.pagination?.totalPages || 1);
+      setTotalComments(
+        commentResponse?.data?.pagination?.totalItems ??
+          commentResponse?.data?.pagination?.total ??
+          commentResponse?.data?.comic_catalog_comments?.length ??
+          0
+      );
     }
   },[commentResponse])
-  
+
+  useEffect(() => {
+    if (page > totalPages && totalPages > 0) {
+      setPage(1);
+    }
+  }, [totalPages]);
+
   return (
-    <div className="w-full h-[30rem] bg-[#151D29] px-[24px] pt-5 overflow-y-auto">
+    <div className="w-full h-[30rem] bg-[#151D29] px-[24px] pt-5 overflow-y-auto flex flex-col">
       <div className="flex gap-2 ">
         <div className="flex flex-col">
           <div className="flex gap-2">
@@ -52,16 +69,25 @@ const CommentPopUp = ({
             </div>
             <h3>Comments </h3>
           </div>
-          <p className="ml-5"> {episdoeComment?.length} Comment(s)</p>
+          <p className="ml-5"> {totalComments} Comment(s)</p>
         </div>
       </div>
-      <div className="mb-5">
+      <div className="mb-5 flex-1">
         {episdoeComment?.map((item: any, i: number) => (
           <div key={i}>
             <Comment data={item} />
           </div>
         ))}
       </div>
+      {totalPages > 1 && (
+        <div className="mt-auto pb-4">
+          <PaginationCustom
+            onChange={(p: number) => setPage(p)}
+            total={totalPages}
+            page={page}
+          />
+        </div>
+      )}
     </div>
   );
 };

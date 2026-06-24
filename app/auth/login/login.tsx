@@ -17,6 +17,8 @@ const setExpiry = (remember: boolean) => {
 
 async function applyLoginSuccess(res: any, remember: boolean) {
   const profile = res?.data?.profile;
+  
+  const userType = profile?.user_type?.name
 
   const minimalUser = {
     id: profile?.id,
@@ -29,14 +31,14 @@ async function applyLoginSuccess(res: any, remember: boolean) {
   };
 
   const payload = {
-    userType: res?.data?.userType,
+    userType: userType,
     user: minimalUser,
     token: res?.data?.accessToken,
   };
 
   const expires = setExpiry(remember);
   const token = await generateToken(payload);
-  console.log("Minimal JWT token generated, length:", token?.length);
+
 
   try {
     const cookieStore = cookies();

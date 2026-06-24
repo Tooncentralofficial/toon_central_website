@@ -27,7 +27,7 @@ const formatNumber = (value: number | undefined | null) =>
   typeof value === "number" ? value.toLocaleString() : "—";
 
 const formatCurrency = (value: number | undefined | null) =>
-  typeof value === "number" ? `$${value.toLocaleString()}` : "—";
+  typeof value === "number" ? `₦${value.toLocaleString()}` : "—";
 
 const formatDelta = (change: number | null | undefined) => {
   if (typeof change !== "number") return "—";
@@ -190,15 +190,15 @@ const DashboardClient = () => {
             <div className="mt-4 flex flex-col gap-2 bg-[#080B13] border border-[#122034] rounded-[10px] p-3 text-[14px] text-[#cdd6e2]">
               <div className="flex justify-between">
                 <span>Ads Revenue</span>
-                <span>$20</span>
+                <span>₦20</span>
               </div>
               <div className="flex justify-between">
                 <span>Credits</span>
-                <span>$200</span>
+                <span>₦200</span>
               </div>
               <div className="flex justify-between">
                 <span>Bonus</span>
-                <span>$10</span>
+                <span>₦10</span>
               </div>
             </div>
           </div>

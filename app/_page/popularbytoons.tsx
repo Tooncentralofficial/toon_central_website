@@ -32,7 +32,7 @@ const PopularByToons = ({
     <div className="parent-wrap  pt-10 pb-10">
       <div className="child-wrap">
         <div className="flex justify-between items-center">
-          <H2SectionTitle title="Popular by ToonCentral" />
+          <H2SectionTitle title="Popular by Indies" />
           <Link href={"/trending"} className="mb-4">
             <Seeall />
           </Link>

@@ -13,6 +13,7 @@ import PopularByToons from './popularbytoons'
 import HorizontalScroll from './test'
 import Originals from './originals'
 import TodaysPicks from './todaysPicks'
+import UnlockLibraryBanner from './unlockLibraryBanner'
 import { getRequest } from '../utils/queries/requests';
 import { useQuery } from '@tanstack/react-query';
 export default function HomeContentWrapper() {
@@ -29,9 +30,23 @@ export default function HomeContentWrapper() {
       () => data?.data?.popular_by_toon_central || [],
       [data?.data?.popular_by_toon_central]
     );
+    const recentUplpoad = useMemo(
+      () => data?.data?.recent_uploads || [],
+      [data?.data?.recent_uploads]
+    );
+    
+   
     const trendingData = useMemo(
       () => data?.data?.trending || [],
       [data?.data?.trending]
+    );
+    const compiled = [...recentUplpoad, ...trendingData];
+    console.log("@@compiled", compiled)
+
+    const Indiecomics = useMemo(
+      () => data?.data?.indie_comics
+      || [],
+      [data?.data?.indie_comics]
     );
 
     const PopularByToonData = useMemo(
@@ -50,13 +65,14 @@ export default function HomeContentWrapper() {
     />
     <RecommendtnTabs />
     <HomeShorts />
+    <UnlockLibraryBanner />
     <Popular popularData={popularData} />
-    <Trending trendingData={trendingData} isLoading={isLoading} />
+    <Trending trendingData={recentUplpoad.length > 5 ? recentUplpoad :compiled} isLoading={isLoading} />
     {/* <TodaysPicks /> */}
-    <TodaysPicksMobile />
-    <PopularByToons  popularData={PopularByToonData} />
+    {/* <TodaysPicksMobile /> */}
+    <PopularByToons  popularData={Indiecomics} />
     <HomeShorts offset={5} />
-    <HorizontalScroll />
+    <HorizontalScroll />s
     <Originals originalsData ={originalsData} isLoading = {isLoading}  />
     <Footer />
     <MainfooterWithDelay />

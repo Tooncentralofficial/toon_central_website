@@ -15,7 +15,7 @@ import {
 } from "@/app/utils/queries/requests";
 import { parseArray } from "@/helpers/parsArray";
 import { prevRoutes } from "@/lib/session/prevRoutes";
-import { selectAuthState } from "@/lib/slices/auth-slice";
+import { selectAuthState, selectHasSubscription, selectSubscriptionName } from "@/lib/slices/auth-slice";
 import { Button } from "@nextui-org/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
@@ -35,6 +35,7 @@ import CommentPopUp from "../_shared/commentpopup";
 import { motion, AnimatePresence } from "framer-motion";
 import UnlockPanelDialog from "./_shared/UnlockPanelDialog";
 import { useLoginDialog } from "@/app/_shared/dialogs/LoginDialogProvider";
+import { porpellerAdsUrl } from "@/envs";
 const Page = ({
   params,
   searchParams,
@@ -46,7 +47,7 @@ const Page = ({
     comicid: string;
   };
 }) => {
-  const adLink = "https://otieu.com/4/9441919";
+  const adLink = porpellerAdsUrl || "https://otieu.com/4/9441919";
   const { uid, chapter: chapterSlug, comicid } = searchParams;
   const pathname = usePathname();
   const queryClient = useQueryClient();
@@ -69,8 +70,15 @@ const Page = ({
     null
   );
   const isFirstChapter = useMemo(() => chapter === 1, [chapter]);
+  const [adShownForChapter, setAdShownForChapter] = useState<number | null>(
+    null
+  );
   const [isLoadingUnlockOptions, setIsLoadingUnlockOptions] = useState(false);
   const { openLoginDialog } = useLoginDialog();
+  const hasSubscitpion = useSelector(selectHasSubscription);
+  const subscriptionName = useSelector(selectSubscriptionName);
+  console.log("@@hasSubscitpion", hasSubscitpion);
+  console.log("@@subscriptionName", subscriptionName);
 
   const toggleCommentPopup = () => {
     setShowCommentPopup((prev) => !prev);
@@ -213,6 +221,10 @@ enabled: !!uid && (token !== null || isFirstChapter),
   console.log("@@chapter", chapter);
   console.log("@@episodeId", episodeId);
   console.log("@@currentEpisode", currentEpisode);
+
+  const adsMonetizationType = currentEpisode?.data?.monetizationType;
+  console.log("@@adsMonetizationType", adsMonetizationType);
+  
 
   const images = useMemo(
     () => parseArray(currentEpisode?.data?.comicImages || []),
@@ -398,15 +410,45 @@ enabled: !!uid && (token !== null || isFirstChapter),
       });
       return;
     }
-    if (chapter < parseArray(data?.data?.episodes).length) {
-      setChapter((prev) => prev + 1);
-      setTimeout(() => {
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        });
-      }, 50);
+
+    const episodesLength = parseArray(data?.data?.episodes).length;
+    if (chapter >= episodesLength) return; // no next chapter
+
+    const shouldGateWithAd =
+      chapter >= 4 && adsMonetizationType === "ads" && !hasSubscitpion;
+
+    console.log("@@nextChapter gate", {
+      chapter,
+      adsMonetizationType,
+      hasSubscitpion,
+      adShownForChapter,
+      shouldGateWithAd,
+      willShowAd: shouldGateWithAd && adShownForChapter !== chapter,
+    });
+
+    // First click on this chapter: show the ad, don't advance.
+    if (shouldGateWithAd && adShownForChapter !== chapter) {
+      // Open the ad first so the click is still treated as a user gesture
+      // (helps avoid popup blocking), then mark this chapter as gated.
+      const adTab = window.open(adLink, "_blank");
+      setAdShownForChapter(chapter);
+      // If the browser blocked the new tab, fall back to same-tab navigation
+      // so the ad still loads (user returns via the back button).
+      if (!adTab) {
+        window.location.href = adLink;
+      }
+      return;
     }
+
+    // Advance, and reset the flag so the next chapter gates again.
+    setChapter((prev) => prev + 1);
+    setAdShownForChapter(null);
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }, 50);
   };
   const [scrolling, setScrolling] = useState(false);
   const [speed, setSpeed] = useState(initialSpeed);

@@ -84,6 +84,8 @@ import GreeFlameIcon from "@/public/static/svg/shorts/greenflame.svg"
 import ToonShortsLogo from "@/public/static/svg/shorts/toonshortslogo.svg"
 import MuteIcon from "@/public/static/svg/shorts/mute.svg"
 import UnmuteIcon from "@/public/static/svg/shorts/unmute.svg"
+import Keblelogo from "@/public/static/svg/keble/keblelogo.svg"
+import VerifiedIcon from "@/public/static/svg/keble/verified.svg"
 export {
   ToonCentralIcon,
   ThumbsSolid,
@@ -172,3 +174,9 @@ export {
   MuteIcon,
   UnmuteIcon
 };
+
+export {
+  Keblelogo,
+  VerifiedIcon
+
+}

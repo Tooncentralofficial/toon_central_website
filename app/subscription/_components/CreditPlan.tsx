@@ -41,6 +41,7 @@ function CreditPlan({
      return res;
    },
    onSuccess: (data) => {
+    console.log("@@data", data);
      const paystackUrl = data.data.check_out_url;
      if (paystackUrl) {
        window.location.href = paystackUrl;

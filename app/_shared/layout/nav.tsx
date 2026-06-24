@@ -38,6 +38,7 @@ import {
   getUser,
   logoutSuccess,
   selectAuthState,
+  setSubscription,
   selectCredits,
   setCredits,
 } from "@/lib/slices/auth-slice";
@@ -144,7 +145,9 @@ const menuItemsMobile: {
 ];
 
 const NavHome = () => {
-  const { user, token } = useSelector(selectAuthState);
+  const { user, token, userType } = useSelector(selectAuthState);
+
+  console.log("@@userType", userType);
   const credits = useSelector(selectCredits);
   const unreadCount = useSelector(selectUnreadCount);
 
@@ -169,6 +172,14 @@ const NavHome = () => {
     enabled: !!token,
   });
 
+  const { data: subStatusData } = useQuery({
+    queryKey: ["subscription_status"],
+    queryFn: () =>
+      getRequestProtected("recurring-subscription/status", token, pathname),
+    enabled: !!token,
+  });
+  console.log("@@subStatusData", subStatusData);
+
   const [isSide, setIsSide] = useState(false);
   const dispatch = useDispatch();
   const logout = () => logoutUser("");
@@ -178,6 +189,18 @@ const NavHome = () => {
       dispatch(setCredits(creditsData?.data?.coinBalance ?? 0));
     }
   }, [creditsData, dispatch]);
+
+  useEffect(() => {
+    if (subStatusData) {
+      const sub = subStatusData?.data;
+      dispatch(
+        setSubscription({
+          hasSubscription: sub?.has_subscription ?? false,
+          name: sub?.plan_name ?? null,
+        })
+      );
+    }
+  }, [subStatusData, dispatch]);
 
   useEffect(() => {
     dispatch(getUser() as any);
@@ -388,11 +411,17 @@ const NavHome = () => {
                         <DropdownItem as={Link} href="/user/profile" key="1">
                           Profile
                         </DropdownItem>
+                        {
+                          userType === "Creator" && (<DropdownItem as={Link} href="/creator/dashboard" key="2">
+                            Dashboard
+                          </DropdownItem>) || null
+                        }
+                        
                         <DropdownItem
                           className="flex sm:hidden"
                           as={Link}
                           href="/user/library"
-                          key="2"
+                          key="3"
                         >
                           Library
                         </DropdownItem>

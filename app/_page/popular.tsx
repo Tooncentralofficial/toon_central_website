@@ -248,7 +248,7 @@ const Popular = ({
 
   return (
     <div>
-      <div className="parent-wrap py-0 md:py-10 relative">
+      <div className="parent-wrap pt-10  md:py-10 relative">
         <div className=" flex w-full flex-col child-wrap ">
           <div className="">
             <H2SectionTitle title="Popular by ToonCentral" />
@@ -267,7 +267,7 @@ const Popular = ({
           </div>
         </div>
       </div>
-      <div className=" slider-container block md:hidden">
+      <div className=" slider-container block md:hidden pb-8">
         {/* @ts-ignore */}
         <Slider
           ref={(slider: Slider) => {
