@@ -131,6 +131,11 @@ function Page() {
     return () => clearTimeout(id);
   }, [isLoadingPlans, isLoadingCoins]);
 
+  // Show the free (cheapest) plan first, same ordering as the special offers.
+  const sortedPlans = [...(plans ?? [])].sort(
+    (a: any, b: any) => (a?.amount ?? 0) - (b?.amount ?? 0)
+  );
+
   // Show the daily (cheapest) plan first so it carries the BEST VALUE badge.
   const sortedSpecialPlans = [...(specialPlans ?? [])].sort(
     (a: any, b: any) => (a?.amount ?? 0) - (b?.amount ?? 0)
@@ -182,12 +187,12 @@ function Page() {
               </p>
             </aside>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5 ">
               {isLoadingPlans
                 ? Array.from({ length: 4 }).map((_: unknown, i: number) => (
                     <SubPlanSkeleton key={i} />
                   ))
-                : plans?.map((plan: any, i: number) => (
+                : sortedPlans?.map((plan: any, i: number) => (
                     <SubPlan
                       id={plan.id}
                       key={i}
