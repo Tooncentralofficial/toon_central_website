@@ -577,7 +577,7 @@ enabled: !!uid && (token !== null || isFirstChapter),
                 </div>
               ) : images && images.length > 0 ? (
                 images.map((image: any, i: number) => {
-                  const isLocked = image?.is_lock === 1;
+                  const isLocked = image?.is_lock === 1 && !hasSubscitpion;
                   return (
                     <div
                       key={i}

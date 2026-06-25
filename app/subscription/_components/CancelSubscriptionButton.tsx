@@ -19,9 +19,11 @@ import { selectAuthState, setSubscription } from "@/lib/slices/auth-slice";
 export default function CancelSubscriptionButton({
   planName,
   className,
+  isCancelled,
 }: {
   planName: string;
   className?: string;
+  isCancelled: boolean;
 }) {
   const { token } = useSelector(selectAuthState);
   const pathname = usePathname();
@@ -66,8 +68,8 @@ export default function CancelSubscriptionButton({
 
   return (
     <>
-      <Button onPress={onOpen} className={className}>
-        Cancel Subscription
+      <Button onPress={onOpen} className={className} isDisabled={isCancelled}>
+        {isCancelled ? "Subscription Cancelled" : "Cancel Subscription"}
       </Button>
 
       <Modal

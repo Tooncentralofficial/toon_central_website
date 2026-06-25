@@ -26,13 +26,16 @@ export type SpecialOffer = {
   highlighted?: boolean;
   badge?: string;
   isRecurring?: boolean;
+
 };
 
 export default function SpecialOfferCard({
   offer,
   onSelect,
+  isCancelled
 }: {
   offer: SpecialOffer;
+  isCancelled:boolean
   onSelect?: (offer: SpecialOffer) => void;
 }) {
   const { token } = useSelector(selectAuthState);
@@ -145,6 +148,7 @@ export default function SpecialOfferCard({
       {isActive ? (
         <CancelSubscriptionButton
           planName={offer.name}
+          isCancelled={isCancelled}
           className="w-full mt-5 rounded-xl h-[44px] font-semibold bg-[#E11D48] text-[#FCFCFD]"
         />
       ) : (

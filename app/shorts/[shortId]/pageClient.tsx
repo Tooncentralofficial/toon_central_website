@@ -27,12 +27,13 @@ const PageClient = ({ params }: { params: { shortId: string } }) => {
     isFetchingNextPage,
     isLoading: shortsLoading,
   } = useInfiniteQuery({
-    queryKey: ["shorts_infinite"],
+    queryKey: ["shorts_infinite",shortId],
     initialPageParam: 1,
     queryFn: async ({ pageParam = 1 }) => {
       try {
         const res = await getRequest(
-          `shorts/${shortId}/infinite-view`
+          `shorts/${shortId}/view
+`
         );
 
         const pagination = res?.data?.pagination;
