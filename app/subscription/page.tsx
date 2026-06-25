@@ -1,12 +1,12 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import H2SectionTitle from "../_shared/layout/h2SectionTitle";
 
 import { CheckIcon } from "@nextui-org/shared-icons";
 import { CreditPlans, SubPlans } from "../utils/constants/constants";
 import dynamic from "next/dynamic";
-import { useSelector } from "react-redux";
-import { selectAuthState, selectHasSubscription, selectSubscriptionName } from "@/lib/slices/auth-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectAuthState, selectHasSubscription, selectSubscriptionName, setSubscription } from "@/lib/slices/auth-slice";
 import { usePathname } from "next/navigation";
 import { getRequest, getRequestProtected } from "../utils/queries/requests";
 import { useQueries, useQuery } from "@tanstack/react-query";
@@ -69,6 +69,7 @@ function Page() {
   const pathname = usePathname();
   const [selectedCreditPlanIndex, setSelectedCreditPlanIndex] =
     React.useState(0);
+  const dispatch = useDispatch();
 
 
 
@@ -78,7 +79,24 @@ function Page() {
       getRequestProtected("subscription/status", token, pathname),
     enabled: !!token,
   });
+
+  // set context from here on page reload
+
+  
   const subStatus = subStatusData?.data;
+  console.log("@@subStatus", subStatus);
+
+  useEffect(() => {
+    if (subStatus) {
+      dispatch(setSubscription({
+        hasSubscription: subStatus?.status === "active",
+        name: subStatus?.plan_name ?? null,
+      }));
+    }
+  }, [subStatus]);
+
+const isCancelled = subStatus?.status === "cancelled";
+console.log("@@isCancelled", isCancelled);
 
   const results = useQueries({
     queries: [
@@ -201,6 +219,7 @@ function Page() {
                       selectedPlanIndex={selectedPlanIndex}
                       index={i}
                       activeIndex={activePlan}
+                      isCancelled={isCancelled}
                     />
                   ))}
             </div>
@@ -239,7 +258,7 @@ function Page() {
                       <SubPlanSkeleton key={i} />
                     ))
                   : specialOffers.map((offer: any) => (
-                      <SpecialOfferCard key={offer.id} offer={offer} />
+                      <SpecialOfferCard key={offer.id} offer={offer} isCancelled={isCancelled} />
                     ))}
               </div>
             </div>

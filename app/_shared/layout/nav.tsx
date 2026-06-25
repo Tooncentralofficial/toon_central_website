@@ -178,7 +178,7 @@ const NavHome = () => {
       getRequestProtected("recurring-subscription/status", token, pathname),
     enabled: !!token,
   });
-  console.log("@@subStatusData", subStatusData);
+
 
   const [isSide, setIsSide] = useState(false);
   const dispatch = useDispatch();

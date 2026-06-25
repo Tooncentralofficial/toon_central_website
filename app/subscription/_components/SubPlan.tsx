@@ -16,6 +16,7 @@ import {
 } from "@/lib/slices/auth-slice";
 import { usePathname } from "next/navigation";
 import CancelSubscriptionButton from "./CancelSubscriptionButton";
+import { toast } from "react-toastify";
 
 export default function SubPlan({
   id,
@@ -24,6 +25,7 @@ export default function SubPlan({
   index,
   selectedPlanIndex,
   activeIndex,
+  isCancelled,
 }: {
   id:number;
   plan: any;
@@ -31,16 +33,20 @@ export default function SubPlan({
   index: number;
   selectedPlanIndex: number;
   activeIndex: number;
+  isCancelled: boolean;
 }) {
   const { token } = useSelector(selectAuthState);
   const hasSubscription = useSelector(selectHasSubscription);
   const subscriptionName = useSelector(selectSubscriptionName);
-  console.log(subscriptionName, plan?.name)
+  const planName = String(plan?.name ?? "").trim().toLowerCase();
+  // The Free plan is the user's default plan whenever they have no paid subscription.
+  const isFreePlan = planName === "free" || Number(plan?.amount) === 0;
   const isActive =
     hasSubscription &&
     !!subscriptionName &&
-    subscriptionName.trim().toLowerCase() ===
-      String(plan?.name ?? "").trim().toLowerCase();
+    subscriptionName.trim().toLowerCase() === planName;
+  // No paid subscription → the Free plan is the active/current plan.
+  const isFreeActive = !hasSubscription && isFreePlan;
   const pathname = usePathname();
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [paymentReference, setPaymentReference] = useState<string | null>(null);
@@ -70,9 +76,17 @@ export default function SubPlan({
       if(paystackUrl) {
         window.location.href = paystackUrl;
       }
+      toast.success("Subscription successful", {
+        toastId: "subscription-success",
+        type: "success",
+      });
     },
     onError: (error) => {
       console.log("@@error", error);
+      toast.error("Subscription failed", {
+        toastId: "subscription-failed",
+        type: "error",
+      });
     },
   });
  const features = SubPlans.find((p) => p.type === plan.name)?.content;
@@ -112,8 +126,16 @@ export default function SubPlan({
       </p>
       {/* <p className="w-full text-center text-xs mt-2 ">{plan.title}</p> */}
 
-      {isActive ? (
+      {isFreeActive ? (
+        <Button
+          isDisabled
+          className="bg-[#05834B] text-[#FCFCFD] w-full mt-6 rounded-xl h-[40px] font-semibold opacity-100"
+        >
+          Current Plan
+        </Button>
+      ) : isActive ? (
         <CancelSubscriptionButton
+          isCancelled={isCancelled}
           planName={plan?.name}
           className="bg-[#E11D48] text-[#FCFCFD] w-full mt-6 rounded-xl h-[40px] font-semibold"
         />
