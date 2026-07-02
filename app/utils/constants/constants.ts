@@ -217,7 +217,7 @@ export const SubPlans : SubPlansType[] = [
     title: "Explore Toon Central’s Everyday",
     content: [
       "Access to Toon Central",
-      "50 free Credits monthly",
+      "190 free Credits monthly",
       "Hide ads",
       "Episode Discounts",
     ],
@@ -228,9 +228,9 @@ export const SubPlans : SubPlansType[] = [
     title: "Explore freely with expanded access",
     content: [
       "Everything in basic",
-      "1000 free credits monthly",
+      "310 free credits monthly",
       "Download comics for offline read",
-      "500 free bonus credits",
+     
     ],
   },
   {
@@ -239,7 +239,7 @@ export const SubPlans : SubPlansType[] = [
     title: "Best plan to fully and freely explore ToonCentral",
     content: [
       "Everything in basic",
-      "10,000 free credits monthly",
+      "600 free credits monthly",
       "Membership access to Toon Centrals creative community",
     ],
   },
