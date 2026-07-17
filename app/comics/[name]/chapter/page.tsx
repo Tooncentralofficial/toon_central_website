@@ -74,6 +74,7 @@ const Page = ({
     null
   );
   const [isLoadingUnlockOptions, setIsLoadingUnlockOptions] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const { openLoginDialog } = useLoginDialog();
   const hasSubscitpion = useSelector(selectHasSubscription);
   const subscriptionName = useSelector(selectSubscriptionName);
@@ -83,6 +84,27 @@ const Page = ({
   const toggleCommentPopup = () => {
     setShowCommentPopup((prev) => !prev);
   };
+  const toggleFullscreen = async () => {
+    const el = document.documentElement;
+    try {
+      if (!document.fullscreenElement) {
+        await el.requestFullscreen?.();
+      } else {
+        await document.exitFullscreen?.();
+      }
+    } catch {
+      /* ignore — fall back to chrome-hide only */
+    }
+    // drive immersive state directly so it works even without native FS support
+    setIsFullscreen((prev) => !prev);
+  };
+  useEffect(() => {
+    const onFsChange = () => {
+      if (!document.fullscreenElement) setIsFullscreen(false);
+    };
+    document.addEventListener("fullscreenchange", onFsChange);
+    return () => document.removeEventListener("fullscreenchange", onFsChange);
+  }, []);
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 600);
@@ -513,21 +535,68 @@ enabled: !!uid && (token !== null || isFirstChapter),
   return (
     <main>
       <div className="parent-wrap py-10 relative">
-        <div className="min-h-screen   w-[100%] max-w-[1400px] px-[5px] sm:px-[5px] md:px-[10px] lg:px-[25px] xl:px-[25px]  ">
+        <div
+          className={`min-h-screen w-[100%] ${
+            isFullscreen
+              ? "max-w-none px-0"
+              : "max-w-[1400px] px-[5px] sm:px-[5px] md:px-[10px] lg:px-[25px] xl:px-[25px]"
+          }`}
+        >
           <AnimatePresence>
             {showButton && (
-              <motion.button
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2 }}
-                id="scroll-button"
-                className="fixed bottom-16 right-1 sm:right-5 w-20 h-20 flex flex-col items-center justify-center gap-1 bg-[#061A29] text-white rounded-full shadow-md z-[20] hover:scale-105"
-                onClick={handleAutoScroll}
+                className="fixed bottom-16 right-1 sm:right-5 z-[20] flex flex-col items-center gap-3"
               >
-                <AutoScrollIcon className="w-4 h-9 text-white" />
-                {speed / initialSpeed}x
-              </motion.button>
+                <button
+                  aria-label={
+                    isFullscreen ? "Exit full screen" : "Enter full screen"
+                  }
+                  className="w-14 h-14 flex items-center justify-center bg-[#061A29] text-white rounded-full shadow-md hover:scale-105"
+                  onClick={toggleFullscreen}
+                >
+                  {isFullscreen ? (
+                    <svg
+                      className="w-6 h-6 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 9L4 4m0 0v4m0-4h4m6 5l5-5m0 0v4m0-4h-4M9 15l-5 5m0 0v-4m0 4h4m6-5l5 5m0 0v-4m0 4h-4"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-6 h-6 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+                      />
+                    </svg>
+                  )}
+                </button>
+                <button
+                  id="scroll-button"
+                  className="w-20 h-20 flex flex-col items-center justify-center gap-1 bg-[#061A29] text-white rounded-full shadow-md hover:scale-105"
+                  onClick={handleAutoScroll}
+                >
+                  <AutoScrollIcon className="w-4 h-9 text-white" />
+                  {speed / initialSpeed}x
+                </button>
+              </motion.div>
             )}
           </AnimatePresence>
           <>
@@ -538,34 +607,36 @@ enabled: !!uid && (token !== null || isFirstChapter),
               </button>
             </div> */}
           </>
-          <div className="flex items-center justify-between">
-            <BackButton />
-            <div className="flex items-center gap-4">
-              <button
-                disabled={backDisabled}
-                className={`${backDisabled ? "text-[#475467]" : ""}`}
-                onClick={() => prevChapter()}
+          {!isFullscreen && (
+            <div className="flex items-center justify-between">
+              <BackButton />
+              <div className="flex items-center gap-4">
+                <button
+                  disabled={backDisabled}
+                  className={`${backDisabled ? "text-[#475467]" : ""}`}
+                  onClick={() => prevChapter()}
+                >
+                  <BXSLeft />
+                </button>
+                Chapter {chapter}
+                <button
+                  disabled={nextDisabled}
+                  className={`${nextDisabled ? "text-[#475467]" : ""}`}
+                  onClick={() => nextChapter()}
+                >
+                  <BXSRight />
+                </button>
+              </div>
+              <Button
+                isLoading={isPending}
+                onClick={() => subscribe()}
+                className="bg-[#475467] font-bold"
+                size="sm"
               >
-                <BXSLeft />
-              </button>
-              Chapter {chapter}
-              <button
-                disabled={nextDisabled}
-                className={`${nextDisabled ? "text-[#475467]" : ""}`}
-                onClick={() => nextChapter()}
-              >
-                <BXSRight />
-              </button>
+                {subscribed ? "Unsubscribe" : "Subscribe"}
+              </Button>
             </div>
-            <Button
-              isLoading={isPending}
-              onClick={() => subscribe()}
-              className="bg-[#475467] font-bold"
-              size="sm"
-            >
-              {subscribed ? "Unsubscribe" : "Subscribe"}
-            </Button>
-          </div>
+          )}
 
           <div className="my-10 sm:my-1 md:my-2 relative">
             <div className="flex flex-col items-center gap-0 lg:gap-0">
@@ -583,7 +654,7 @@ enabled: !!uid && (token !== null || isFirstChapter),
                       key={i}
                       className="relative"
                       style={{
-                        width: isMobile ? "98%" : "80%",
+                        width: isFullscreen ? "100%" : isMobile ? "98%" : "80%",
                         maxWidth: "100%",
                       }}
                     >
@@ -664,6 +735,7 @@ enabled: !!uid && (token !== null || isFirstChapter),
           </div>
         </div>
       </div>
+      {!isFullscreen && (
       <div className="sticky bottom-[0] left-0 z-[10]">
         <div className="w-full bg-[#1d2a3c] h-12 flex items-end justify-center px-[5px] sm:px-[5px] md:px-[10px] lg:px-[25px] xl:px-[25px]">
           <div className=" w-[74%]  flex justify-center items-center gap-14 px-1 relative">
@@ -719,6 +791,7 @@ enabled: !!uid && (token !== null || isFirstChapter),
           </AnimatePresence>
         </div>
       </div>
+      )}
       <UnlockPanelDialog
         isOpen={showUnlockDialog}
         onClose={() => {
