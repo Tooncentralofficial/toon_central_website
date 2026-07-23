@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 //@ts-ignore
 import "swiper/css";
@@ -18,6 +18,37 @@ function HomeShorts({ offset = 0 }: { offset?: number } = {}) {
   const router = useRouter();
   const videoRefs = useRef<HTMLVideoElement[]>([]);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const observersRef = useRef<IntersectionObserver[]>([]);
+
+  // Disconnect all autoplay observers on unmount.
+  useEffect(() => {
+    const observers = observersRef.current;
+    return () => {
+      observers.forEach((o) => o.disconnect());
+      observersRef.current = [];
+    };
+  }, []);
+
+  // iOS Safari has no hover events, so the hover-to-play trigger never fires
+  // there and the video stays on a blank (grey) frame. Attach a per-video
+  // IntersectionObserver that autoplays a muted/playsInline short once it
+  // scrolls into view — the only reliable way to get playback on touch devices.
+  const attachAutoPlay = (el: HTMLVideoElement | null) => {
+    if (!el || el.dataset.autoObserved) return;
+    el.dataset.autoObserved = "true";
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.play().catch(() => {});
+        } else {
+          el.pause();
+        }
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(el);
+    observersRef.current.push(observer);
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ["shorts-home"],
@@ -110,13 +141,16 @@ function HomeShorts({ offset = 0 }: { offset?: number } = {}) {
                   <video
                     ref={(el) => {
                       if (el) videoRefs.current[index] = el;
+                      attachAutoPlay(el);
                     }}
                     src={item.upload}
+                    poster={item.coverImage || undefined}
                     preload="metadata"
                     className="w-full h-full object-cover rounded-medium pointer-events-none"
                     controls={false}
                     playsInline
                     muted
+                    loop
                   />
                 </div>
               </SwiperSlide>
@@ -171,6 +205,7 @@ function HomeShorts({ offset = 0 }: { offset?: number } = {}) {
                         if (el) videoRefs.current[index] = el;
                       }}
                       src={item.upload}
+                      poster={item.coverImage || undefined}
                       preload="metadata"
                       className="w-full h-full object-cover rounded-medium pointer-events-none"
                       controls={false}
