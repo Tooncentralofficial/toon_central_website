@@ -80,6 +80,33 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
         <ClientLayout>{children}</ClientLayout>
+        <Script id="xeelaa-config" strategy="afterInteractive">
+          {`
+            window.__EMBED_CONFIG__ = {
+              publicToken: "tlJl0cJku5WaR7hUxLFM8AdHY0224l4fzCqRH7oc6NQua5A4rttjn29ECvCjsVmE",
+              getUserToken: function() {
+                return document.querySelector("meta[name=user-token]")?.content || null;
+              },
+              getUserId: function() {
+                return document.querySelector("meta[name=user-id]")?.content || null;
+              },
+              getUserName: function() {
+                return document.querySelector("meta[name=user-name]")?.content || null;
+              },
+              getUserEmail: function() {
+                return document.querySelector("meta[name=user-email]")?.content || null;
+              },
+              getUserRole: function() {
+                return document.querySelector("meta[name=user-role]")?.content || null;
+              }
+            };
+          `}
+        </Script>
+
+        <Script
+          src="https://xeelaa.com/widget.js?key=tlJl0cJku5WaR7hUxLFM8AdHY0224l4fzCqRH7oc6NQua5A4rttjn29ECvCjsVmE"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

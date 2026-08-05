@@ -157,6 +157,14 @@ function LibraryShorts({ tabName }: { tabName: string }) {
                             >
                               Add Shorts
                             </SolidPrimaryButton>
+                            <SolidPrimaryButton
+                              className="w-max"
+                              isDisabled={!item?.uuid}
+                              as={Link}
+                              href={`/shorts/edit?shortId=${item.uuid}`}
+                            >
+                              Edit
+                            </SolidPrimaryButton>
                             {/* <Button
                               onClick={() => {
                                 setDeletingComic(item.id);
@@ -195,7 +203,7 @@ function LibraryShorts({ tabName }: { tabName: string }) {
                       <p className="text-gray text-base mb-7">
                         {item?.description}
                       </p>
-                      <div>
+                      <div className="flex gap-4">
                         <SolidPrimaryButton
                           className="w-max bg-gradient-to-r from-[#00A96E] to-[#22C55E] lg:w-[13rem]"
                           disabled={item?.uuid}
@@ -203,6 +211,14 @@ function LibraryShorts({ tabName }: { tabName: string }) {
                           href={`/user/library/books?uuid=${item.uuid}&id=${item.id}`}
                         >
                           Add Shorts
+                        </SolidPrimaryButton>
+                        <SolidPrimaryButton
+                          className="w-max"
+                          isDisabled={!item?.uuid}
+                          as={Link}
+                          href={`/shorts/edit?shortId=${item.uuid}`}
+                        >
+                          Edit
                         </SolidPrimaryButton>
                       </div>
                       <div className="">
