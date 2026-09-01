@@ -20,6 +20,16 @@ import { ShortsResponse, ShortsType } from "@/helpers/types";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import { prevRoutes } from "@/lib/session/prevRoutes";
+import {
+  EMPTY_COMMENT_PAGINATION,
+  EMPTY_COMMENT_STATE,
+  mergeServerComments,
+  ShortComment,
+  ShortCommentsState,
+  withConfirmedComment,
+  withOptimisticComment,
+  withoutOptimisticComment,
+} from "./commentState";
 
 export interface ShortsInfiniteData {
   pages: ShortsResponse[];
@@ -31,16 +41,8 @@ export default function ShortsContent() {
   const [totalPages, setTotalPages] = useState<number>(0);
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [shortComments, setShortComments] = useState({
-    comments: [],
-    pagination: {
-      total: 0,
-      count: 0,
-      perPage: 10,
-      currentPage: 1,
-      totalPages: 1,
-    },
-  });
+  const [shortComments, setShortComments] =
+    useState<ShortCommentsState>(EMPTY_COMMENT_STATE);
   const [commentsOpen, setCommentsOpen] = useState(false);
 
   const {
@@ -133,24 +135,15 @@ export default function ShortsContent() {
 
   useEffect(() => {
     if (shortCommentsdata?.data) {
-      const pagination = shortCommentsdata.data.pagination;
-      const currentPage = pagination?.currentPage || 1;
-      setShortComments((prev) => ({
-        comments:
-          currentPage === 1
-            ? shortCommentsdata.data.short_comments || []
-            : [
-                ...prev.comments,
-                ...(shortCommentsdata.data.short_comments || []),
-              ],
-        pagination: pagination || {
-          total: 0,
-          count: 0,
-          perPage: 10,
-          currentPage: 1,
-          totalPages: 1,
-        },
-      }));
+      const serverComments: ShortComment[] =
+        shortCommentsdata.data.short_comments || [];
+      setShortComments((prev) =>
+        mergeServerComments(
+          prev,
+          serverComments,
+          shortCommentsdata.data.pagination
+        )
+      );
     }
   }, [shortCommentsdata]);
 
@@ -159,17 +152,36 @@ export default function ShortsContent() {
     if (prevShortIdRef.current !== currentShort?.id) {
       setShortComments({
         comments: shortCommentsdata?.data?.short_comments || [],
-        pagination: shortCommentsdata?.data?.pagination || {
-          total: 0,
-          count: 0,
-          perPage: 10,
-          currentPage: 1,
-          totalPages: 1,
-        },
+        pagination:
+          shortCommentsdata?.data?.pagination || EMPTY_COMMENT_PAGINATION,
       });
       prevShortIdRef.current = currentShort?.id ?? null;
     }
   }, [currentShort?.id, shortCommentsdata]);
+
+  const addOptimisticComment = React.useCallback((comment: ShortComment) => {
+    setShortComments((prev) => withOptimisticComment(prev, comment));
+  }, []);
+
+  const confirmOptimisticComment = React.useCallback(
+    (tempId: number | string, saved?: Partial<ShortComment> | null) => {
+      setShortComments((prev) => withConfirmedComment(prev, tempId, saved));
+    },
+    []
+  );
+
+  const revertOptimisticComment = React.useCallback(
+    (tempId: number | string) => {
+      setShortComments((prev) => withoutOptimisticComment(prev, tempId));
+    },
+    []
+  );
+
+  // The carousel payload only carries whatever comments came inline with the
+  // short, so prefer the paginated total once it has loaded.
+  const commentsCount = shortCommentsdata?.data?.pagination
+    ? shortComments.pagination?.total ?? 0
+    : currentShort?.comments?.length ?? 0;
 
   const handleLoadMore = () => {
     if (
@@ -214,6 +226,7 @@ export default function ShortsContent() {
     <div className="w-full h-full flex relative shorts-content-wrapper">
       <ShortsCard
         shortComment={shortComments}
+        commentsCount={commentsCount}
         shorts={shorts}
         featured={true}
         index={0}
@@ -223,6 +236,12 @@ export default function ShortsContent() {
         fetchNextPage={fetchNextPage}
         hasNextPage={hasNextPage ?? false}
         isFetchingNextPage={isFetchingNextPage}
+        onOptimisticAdd={addOptimisticComment}
+        onOptimisticConfirm={confirmOptimisticComment}
+        onOptimisticRevert={revertOptimisticComment}
+        onLoadMoreComments={handleLoadMore}
+        hasMoreComments={hasMoreComments}
+        commentsFetching={shortCommentsFetching}
       />
       <motion.div
         className="hidden md:flex flex-col absolute top-0 right-0 z-10 h-screen overflow-hidden bg-[#1A202C] border-l border-slate-600/50"
@@ -240,7 +259,7 @@ export default function ShortsContent() {
           {/* Header */}
           <div className="flex justify-between items-center py-3 px-4 border-b border-slate-700/40">
             <span className="text-[#FCFCFD] font-medium">
-              {shortComments?.pagination?.total ?? 0} Comments
+              {commentsCount} Comments
             </span>
             <button
               type="button"
@@ -282,6 +301,7 @@ export default function ShortsContent() {
                     key={item.id || i}
                     shortId={currentShort?.id}
                     comment={item}
+                    pending={item.__pending}
                   />
                 ))}
                 {hasMoreComments && (
@@ -301,7 +321,13 @@ export default function ShortsContent() {
 
           {/* Input footer */}
           <div className="border-t border-slate-700/50 px-4 py-3">
-            <ShortCommentInput shortId={currentShort?.id}  uuid={currentShort?.uuid} />
+            <ShortCommentInput
+              shortId={currentShort?.id}
+              uuid={currentShort?.uuid}
+              onOptimisticAdd={addOptimisticComment}
+              onOptimisticConfirm={confirmOptimisticComment}
+              onOptimisticRevert={revertOptimisticComment}
+            />
           </div>
         </div>
       </motion.div>

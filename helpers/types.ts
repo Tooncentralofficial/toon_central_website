@@ -142,6 +142,8 @@ export interface ShortsType {
   viewCount?: number;
   likesCount: number;
   dislikesCount: number;
+  isLiked: boolean;
+  isDisliked: boolean;
 }
 
 
@@ -164,6 +166,7 @@ export interface PaginationInfo {
 
 export interface CommentType {
   id: number;
+  isLiked: boolean;
   comment: string;
   created_at: string;
   updated_at: string;
@@ -171,6 +174,7 @@ export interface CommentType {
   short_id: number;
   user_id: number;
   user: User
+  likesCount: number;
 }
 
 export interface PaginationType {
