@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -32,6 +32,15 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "../../shorts.css";
 import { ShortsType } from "@/helpers/types";
+import {
+  EMPTY_COMMENT_STATE,
+  mergeServerComments,
+  ShortComment,
+  ShortCommentsState,
+  withConfirmedComment,
+  withOptimisticComment,
+  withoutOptimisticComment,
+} from "@/app/shorts/_components/commentState";
 
 interface ShortViewProps {
   shortId: string;
@@ -70,16 +79,8 @@ export default function ShortView({
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
-  const [shortComments, setShortComments] = useState({
-    comments: [],
-    pagination: {
-      total: 0,
-      count: 0,
-      perPage: 10,
-      currentPage: 1,
-      totalPages: 1,
-    },
-  });
+  const [shortComments, setShortComments] =
+    useState<ShortCommentsState>(EMPTY_COMMENT_STATE);
 
   // Lock body scroll to prevent page scrolling
   useEffect(() => {
@@ -140,40 +141,40 @@ export default function ShortView({
 
   // Reset comments when short changes
   useEffect(() => {
-    setShortComments({
-      comments: [],
-      pagination: {
-        total: 0,
-        count: 0,
-        perPage: 10,
-        currentPage: 1,
-        totalPages: 1,
-      },
-    });
+    setShortComments(EMPTY_COMMENT_STATE);
   }, [currentShortId]);
 
   useEffect(() => {
     if (shortCommentsdata?.data) {
-      const pagination = shortCommentsdata.data.pagination;
-      const currentPage = pagination?.currentPage || 1;
-      setShortComments((prev) => ({
-        comments:
-          currentPage === 1
-            ? shortCommentsdata.data.short_comments || []
-            : [
-                ...prev.comments,
-                ...(shortCommentsdata.data.short_comments || []),
-              ],
-        pagination: pagination || {
-          total: 0,
-          count: 0,
-          perPage: 10,
-          currentPage: 1,
-          totalPages: 1,
-        },
-      }));
+      const serverComments: ShortComment[] =
+        shortCommentsdata.data.short_comments || [];
+      setShortComments((prev) =>
+        mergeServerComments(
+          prev,
+          serverComments,
+          shortCommentsdata.data.pagination,
+        ),
+      );
     }
   }, [shortCommentsdata]);
+
+  const addOptimisticComment = useCallback((comment: ShortComment) => {
+    setShortComments((prev) => withOptimisticComment(prev, comment));
+  }, []);
+
+  const confirmOptimisticComment = useCallback(
+    (tempId: number | string, saved?: Partial<ShortComment> | null) => {
+      setShortComments((prev) => withConfirmedComment(prev, tempId, saved));
+    },
+    [],
+  );
+
+  const revertOptimisticComment = useCallback(
+    (tempId: number | string) => {
+      setShortComments((prev) => withoutOptimisticComment(prev, tempId));
+    },
+    [],
+  );
 
   // Handle slide change
   const handleSlideChange = async (swiper: any) => {
@@ -629,6 +630,9 @@ export default function ShortView({
                   onClose={() => setCommentsOpen(false)}
                   onLoadMore={handleLoadMore}
                   shortId={currentShortId}
+                  onOptimisticAdd={addOptimisticComment}
+                  onOptimisticConfirm={confirmOptimisticComment}
+                  onOptimisticRevert={revertOptimisticComment}
                 />
               </motion.aside>
             )}
@@ -657,6 +661,9 @@ export default function ShortView({
               onClose={() => setCommentsOpen(false)}
               onLoadMore={handleLoadMore}
               shortId={currentShortId}
+              onOptimisticAdd={addOptimisticComment}
+              onOptimisticConfirm={confirmOptimisticComment}
+              onOptimisticRevert={revertOptimisticComment}
             />
           </motion.div>
         )}
@@ -674,6 +681,9 @@ interface CommentsPanelProps {
   onClose: () => void;
   onLoadMore: () => void;
   shortId: string;
+  onOptimisticAdd: (comment: any) => void;
+  onOptimisticConfirm: (tempId: number | string, saved?: any) => void;
+  onOptimisticRevert: (tempId: number | string) => void;
 }
 
 function CommentsPanel({
@@ -685,6 +695,9 @@ function CommentsPanel({
   onClose,
   onLoadMore,
   shortId,
+  onOptimisticAdd,
+  onOptimisticConfirm,
+  onOptimisticRevert,
 }: CommentsPanelProps) {
   return (
     <div className="flex flex-col h-full">
@@ -713,6 +726,7 @@ function CommentsPanel({
                 key={comment.id || i}
                 shortId={shortId}
                 comment={comment}
+                pending={comment?.__pending}
               />
             ))}
             {hasMore && (
@@ -733,7 +747,15 @@ function CommentsPanel({
       </div>
 
       <div className="flex-shrink-0 border-t border-white/10">
-        <ShortCommentInput shortId={shortId} />
+        {/* shortId here is the short's uuid, which is what the post endpoint
+            and the comments query key are both keyed on */}
+        <ShortCommentInput
+          shortId={shortId}
+          uuid={shortId}
+          onOptimisticAdd={onOptimisticAdd}
+          onOptimisticConfirm={onOptimisticConfirm}
+          onOptimisticRevert={onOptimisticRevert}
+        />
       </div>
     </div>
   );

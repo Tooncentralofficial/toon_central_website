@@ -27,6 +27,7 @@ import "swiper/css/pagination";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import ShortsComments from "./shortscomments";
+import ShortCommentInput from "./shortsCommentInut";
 import { shortLike, ShortsType } from "@/helpers/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getRequestProtected } from "@/app/utils/queries/requests";
@@ -44,9 +45,18 @@ interface ShortsCardProps {
   commentsOpen: boolean;
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
   shortComment: any;
+  commentsCount: number;
   fetchNextPage: () => Promise<any>;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
+  // the mobile sheet posts comments too, so it needs the same optimistic
+  // handlers and pagination controls the desktop panel gets
+  onOptimisticAdd?: (comment: any) => void;
+  onOptimisticConfirm?: (tempId: number | string, saved?: any) => void;
+  onOptimisticRevert?: (tempId: number | string) => void;
+  onLoadMoreComments?: () => void;
+  hasMoreComments?: boolean;
+  commentsFetching?: boolean;
 }
 
 export default function ShortsCard({
@@ -57,9 +67,16 @@ export default function ShortsCard({
   commentsOpen,
   setCurrentIndex,
   shortComment,
+  commentsCount,
   fetchNextPage,
   hasNextPage,
   isFetchingNextPage,
+  onOptimisticAdd,
+  onOptimisticConfirm,
+  onOptimisticRevert,
+  onLoadMoreComments,
+  hasMoreComments,
+  commentsFetching,
 }: ShortsCardProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -389,25 +406,23 @@ export default function ShortsCard({
       follow();
     }
   };
+  // current short
+  console.log( "current shorttttttt", shorts?.[currentSlideIndex])
 
   const hasLiked = useMemo(() => {
-    if (!user?.id || !shorts?.[currentSlideIndex]?.likesAndViews) {
+    if (!user?.id || !shorts?.[currentSlideIndex]?.isLiked) {
       return false;
     }
 
-    return shorts?.[currentSlideIndex]?.likesAndViews.some((item) =>
-      item.likes?.find((like) => like.user_id === user?.id),
-    );
+    return shorts?.[currentSlideIndex]?.isLiked;
   }, [shorts, currentSlideIndex, user?.id]);
 
   const hasdiLiked = useMemo(() => {
-    if (!user?.id || !shorts?.[currentSlideIndex]?.likesAndViews) {
+    if (!user?.id || !shorts?.[currentSlideIndex]?.isDisliked) {
       return false;
     }
 
-    return shorts?.[currentSlideIndex].likesAndViews.some((item) =>
-      item?.dislikes?.find((like) => like.user_id === user?.id),
-    );
+    return shorts?.[currentSlideIndex]?.isDisliked;
   }, [shorts, currentSlideIndex, user?.id]);
 
   const likesCount = useMemo(()=>{
@@ -420,12 +435,13 @@ export default function ShortsCard({
     || 0;
   }, [shorts, currentSlideIndex]);
   const lv = shorts?.[currentSlideIndex]?.likesAndViews?.[0];
+  const currentShort = shorts?.[currentSlideIndex];
   if (!Array.isArray(shorts) || shorts.length === 0) return null;
   if (!shorts?.[currentSlideIndex]) {
     return null;
   }
 
-  // Calculate if we're at beginning or end
+  
   const isAtBeginning = currentSlideIndex === 0;
   const isAtEnd =
     Array.isArray(shorts) && currentSlideIndex >= shorts.length - 1;
@@ -617,9 +633,7 @@ export default function ShortsCard({
             onClick={() => setCommentOpen((prev: any) => !prev)}
           >
             <CommentShortsIcon className="w-6 md:w-10 h-6 md:h-10" />
-            <p className="text-xs md:text-base">
-              {shorts?.[currentSlideIndex]?.comments?.length || 0}
-            </p>
+            <p className="text-xs md:text-base">{commentsCount ?? 0}</p>
           </div>
           <div
             className="flex flex-col items-center gap-2 cursor-pointer"
@@ -658,10 +672,9 @@ export default function ShortsCard({
           }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
         >
-          <div className="flex justify-between">
+          <div className="flex justify-between flex-shrink-0">
             <span className="py-2 px-4 text-lg flex gap-2">
-              <p>{shorts?.[currentSlideIndex]?.comments?.length}</p>{" "}
-              <p>Comments </p>
+              <p>{commentsCount ?? 0}</p> <p>Comments </p>
             </span>
 
             <p
@@ -671,13 +684,40 @@ export default function ShortsCard({
               X
             </p>
           </div>
-          <div className="flex flex-col gap-4 p-4 overflow-y-auto h-full">
-            {shorts?.[currentSlideIndex]?.comments?.map(
-              (comment: any, idx: number) => (
-                <ShortsComments key={idx} comment={comment} />
-              ),
+          <div className="flex flex-col gap-4 px-4 flex-1 min-h-0 overflow-y-auto">
+            {/* same fetched list the desktop panel renders, so posting a
+                comment shows up here immediately too */}
+            {shortComment?.comments?.map((comment: any, idx: number) => (
+              <ShortsComments
+                key={comment?.id ?? idx}
+                shortId={currentShort?.id}
+                comment={comment}
+                pending={comment?.__pending}
+              />
+            ))}
+            {hasMoreComments && (
+              <button
+                onClick={onLoadMoreComments}
+                disabled={commentsFetching}
+                className="text-sm text-[#4ADD80] hover:text-[#7be8a8] disabled:opacity-50 py-2 self-start"
+              >
+                {commentsFetching ? "Loading..." : "Load more comments"}
+              </button>
             )}
           </div>
+          {/* mounted only while the sheet is open so the collapsed sheet does
+              not leave a focusable input behind */}
+          {commentsOpen && (
+            <div className="flex-shrink-0 border-t border-white/10">
+              <ShortCommentInput
+                shortId={currentShort?.id}
+                uuid={currentShort?.uuid}
+                onOptimisticAdd={onOptimisticAdd}
+                onOptimisticConfirm={onOptimisticConfirm}
+                onOptimisticRevert={onOptimisticRevert}
+              />
+            </div>
+          )}
         </motion.div>
       </AnimatePresence>
       <ShareModal
