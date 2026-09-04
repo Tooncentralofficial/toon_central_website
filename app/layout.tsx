@@ -7,6 +7,7 @@ import Script from "next/script";
 import localFont from "next/font/local";
 
 import PropellerAdsScript from "./Scripts";
+import HeaderAd from "./_shared/headerAd";
 export const DEFAULT_OG_URL = `https://tooncentralhub.com/opengraph-image.png`;
 
 const satoshi = localFont({
@@ -79,6 +80,9 @@ export default function RootLayout({
           src="https://accounts.google.com/gsi/client"
           strategy="afterInteractive"
         />
+        {/* a fixed overlay, so it has to live in the body — a <div> in <head>
+            makes the parser close <head> early and hydration mismatch */}
+        <HeaderAd />
         <ClientLayout>{children}</ClientLayout>
         <Script id="xeelaa-config" strategy="afterInteractive">
           {`
