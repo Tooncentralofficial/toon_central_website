@@ -15,7 +15,7 @@ import {
 } from "@/app/utils/queries/requests";
 import { parseArray } from "@/helpers/parsArray";
 import { prevRoutes } from "@/lib/session/prevRoutes";
-import { selectAuthState, selectHasSubscription, selectSubscriptionName } from "@/lib/slices/auth-slice";
+import { selectAuthState, selectHasSubscription } from "@/lib/slices/auth-slice";
 import { Button } from "@nextui-org/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
@@ -77,9 +77,6 @@ const Page = ({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const { openLoginDialog } = useLoginDialog();
   const hasSubscitpion = useSelector(selectHasSubscription);
-  const subscriptionName = useSelector(selectSubscriptionName);
-  console.log("@@hasSubscitpion", hasSubscitpion);
-  console.log("@@subscriptionName", subscriptionName);
 
   const toggleCommentPopup = () => {
     setShowCommentPopup((prev) => !prev);
@@ -240,19 +237,13 @@ enabled: !!uid && (token !== null || isFirstChapter),
         : getRequest(`comics/${uid}/episode/${episodeId}/get`),
     enabled: !!episodeId && (token !== null || isFirstChapter),
   });
-  console.log("@@chapter", chapter);
-  console.log("@@episodeId", episodeId);
-  console.log("@@currentEpisode", currentEpisode);
 
   const adsMonetizationType = currentEpisode?.data?.monetizationType;
-  console.log("@@adsMonetizationType", adsMonetizationType);
-  
 
   const images = useMemo(
     () => parseArray(currentEpisode?.data?.comicImages || []),
     [currentEpisode, chapter]
   );
-  console.log("@comicImages", images);
 
   // Handle unlock button click for locked images
   const handleUnlockClick = async (panelId: number, imageUrl: string) => {
@@ -272,7 +263,6 @@ enabled: !!uid && (token !== null || isFirstChapter),
         token,
         fullUrl
       );
-      console.log("@@response", response);
 
       if (response?.success && Array.isArray(response?.data)) {
         setUnlockOptions(response.data);
@@ -438,15 +428,6 @@ enabled: !!uid && (token !== null || isFirstChapter),
 
     const shouldGateWithAd =
       chapter >= 4 && adsMonetizationType === "ads" && !hasSubscitpion;
-
-    console.log("@@nextChapter gate", {
-      chapter,
-      adsMonetizationType,
-      hasSubscitpion,
-      adShownForChapter,
-      shouldGateWithAd,
-      willShowAd: shouldGateWithAd && adShownForChapter !== chapter,
-    });
 
     // First click on this chapter: show the ad, don't advance.
     if (shouldGateWithAd && adShownForChapter !== chapter) {

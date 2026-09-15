@@ -25,9 +25,7 @@ export default function ClientPage() {
     // });
     // const notifications = data?.data?.data || [];
 
-    console.log("@@notifications", notifications);
-    
-  return (
+    return (
     <div>
       <H2SectionTitle title="Notifications" />
             <div className="flex flex-col gap-5 mt-5">

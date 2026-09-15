@@ -31,10 +31,6 @@ function ShortsComponentscontent() {
   });
   const pages = data?.pages ?? [];
   const shorts = pages.flatMap((p) => p?.shorts ?? []);
-  const currentShort = shorts[currentIndex] ?? null;
-  console.log(currentShort);
-  console.log(shorts)
-  
 
   return (
     <div>ShortsComponentscontent</div>

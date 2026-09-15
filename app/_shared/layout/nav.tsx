@@ -35,7 +35,6 @@ import {
 import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 import {
-  getUser,
   logoutSuccess,
   selectAuthState,
   setSubscription,
@@ -147,7 +146,6 @@ const menuItemsMobile: {
 const NavHome = () => {
   const { user, token, userType } = useSelector(selectAuthState);
 
-  console.log("@@userType", userType);
   const credits = useSelector(selectCredits);
   const unreadCount = useSelector(selectUnreadCount);
 
@@ -202,9 +200,8 @@ const NavHome = () => {
     }
   }, [subStatusData, dispatch]);
 
-  useEffect(() => {
-    dispatch(getUser() as any);
-  }, []);
+  // getUser now runs in AuthBootstrap: this nav is hidden on /shorts, and
+  // dispatching from here meant a reload there never loaded the token.
 
   useEffect(() => {
     if (token) dispatch(fetchUnreadCount() as any);

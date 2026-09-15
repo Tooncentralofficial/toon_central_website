@@ -83,7 +83,6 @@ export default function Page({
       ),
     enabled: episodeId !== null && token !== null,
   });
-  console.log("@@edit data", data);
 
   // Fetch comic data to get episode count for restriction check
   const { data: comicData, isSuccess: isComicDataSuccess } = useQuery({
@@ -112,7 +111,6 @@ export default function Page({
   // Check if user can lock panels or enable monetization (requires at least 3 chapters)
   const canLockOrMonetize = useMemo(() => {
     const episodes = comicData?.data?.episodes || [];
-    console.log("@@episodes", episodes);
     return episodes.length >= 3;
   }, [comicData?.data?.episodes]);
 
@@ -164,7 +162,6 @@ export default function Page({
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      console.log("@@values", values);
       if (enabled && !values.monetizationType) {
         toast("Please select a monetization type", {
           toastId: "monetization-type-required",
@@ -346,7 +343,6 @@ export default function Page({
         "form"
       ),
     onSuccess(data, variables, context) {
-      console.log("@@publishChapter success", data);
       setisLoading(false);
       const { success, message, data: resData } = data;
       if (success) {
@@ -363,7 +359,6 @@ export default function Page({
       }
     },
     onError(error, variables, context) {
-      console.log("@@publishChapter error", error);
       toast("Some error occured. Contact help !", {
         toastId: "add_comic",
         type: "error",
@@ -430,7 +425,6 @@ export default function Page({
     onSuccess(data, variables, context) {
       setisLoading(false);
       const { success, message, data: resData } = data;
-      console.log("@@edit comic data", data);
       if (success) {
         toast("Chapter added", {
           toastId: "add_comic",
@@ -445,7 +439,6 @@ export default function Page({
       }
     },
     onError(error, variables, context) {
-      console.log("@@edit comic error", error);
       toast("Some error occured. Contact help !", {
         toastId: "add_comic",
         type: "error",

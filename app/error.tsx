@@ -1,7 +1,7 @@
 "use client";
 
 export default function Error({ error }: { error: Error }) {
-  console.log(error); // ✅ fixed
+  console.error(error);
 
   return (
     <main>

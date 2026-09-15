@@ -14,6 +14,7 @@ import Mainfooter from "@/app/_shared/layout/footermain";
 import MainfooterWithDelay from "@/app/_shared/layout/footermain";
 import { useSessionTracker } from "./hooks/useSessionTracker";
 import { LoginDialogProvider } from "@/app/_shared/dialogs/LoginDialogProvider";
+import { AuthBootstrap } from "@/app/_shared/authBootstrap";
 // import { Provider } from "react-redux";
 // import { Store } from "./store";
 
@@ -75,6 +76,8 @@ export default function AppProvider({
   return (
     <NextUIProvider>
       <Provider store={Store}>
+        {/* mounts on every route — the nav below does not */}
+        <AuthBootstrap />
         <SessionTracker />
         <QueryClientProvider client={queryClient}>
           <LoginDialogProvider>

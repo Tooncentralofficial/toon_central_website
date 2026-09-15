@@ -96,7 +96,7 @@ export default function HeaderAd() {
       script.async = true;
       script.src = PREBID_JS_URL;
 
-      script.onload = () => {
+        script.onload = () => {
         if (cancelled) return;
 
         console.log("Prebid.js script loaded:", PREBID_JS_URL);

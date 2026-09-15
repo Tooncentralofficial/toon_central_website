@@ -21,7 +21,6 @@ export default function HomeContentWrapper() {
         queryKey: ["home"],
         queryFn: () => getRequest("/home"),
     })
-   console.log("@@homeData",data);
     const carouselData = useMemo(
       () => data?.data?.carousel || [],
       [data?.data?.carousel]
@@ -41,7 +40,6 @@ export default function HomeContentWrapper() {
       [data?.data?.trending]
     );
     const compiled = [...recentUplpoad, ...trendingData];
-    console.log("@@compiled", compiled)
 
     const Indiecomics = useMemo(
       () => data?.data?.indie_comics
@@ -58,7 +56,6 @@ export default function HomeContentWrapper() {
       () => data?.data?.originals || [],
       [data?.data?.originals]
     );
-    console.log("@@originalsData", originalsData)
 
   return (
     <div><HomeCarousel carouselData={carouselData}

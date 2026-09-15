@@ -50,15 +50,8 @@ async function applyLoginSuccess(res: any, remember: boolean) {
       secure: process.env.NODE_ENV === "production",
     });
 
-    const verifyCookie = cookieStore.get(cookieName);
-    if (verifyCookie) {
-      console.log("✅ Cookie set successfully:", cookieName);
-      console.log("✅ Cookie value length:", verifyCookie.value?.length);
-    } else {
-      console.error("❌ Cookie was NOT set - verification failed");
-    }
   } catch (error) {
-    console.error("❌ Error setting cookie:", error);
+    console.error("Error setting cookie:", error);
   }
 }
 
@@ -118,12 +111,7 @@ export async function UpdateUser(payload: any, remember: boolean) {
 
   // Generate local JWT with minimal payload
   const token = await generateToken(minimalPayload);
-  console.log(
-    "UpdateUser - minimal JWT token generated, length:",
-    token?.length
-  );
 
-  // Set cookie with local JWT containing minimal user data
   try {
     const cookieStore = cookies();
     cookieStore.set(cookieName, token, {
@@ -133,15 +121,7 @@ export async function UpdateUser(payload: any, remember: boolean) {
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
     });
-
-    // Verify cookie was set
-    const verifyCookie = cookieStore.get(cookieName);
-    if (verifyCookie) {
-      console.log("✅ Cookie updated successfully:", cookieName);
-    } else {
-      console.error("❌ Cookie was NOT updated - verification failed");
-    }
   } catch (error) {
-    console.error("❌ Error updating cookie:", error);
+    console.error("Error updating cookie:", error);
   }
 }

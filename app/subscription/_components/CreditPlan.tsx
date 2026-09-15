@@ -46,9 +46,6 @@ function CreditPlan({
        window.location.href = paystackUrl;
      }
    },
-   onError: (error) => {
-     console.log("@@error", error);
-   },
  });
 
   

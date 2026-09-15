@@ -71,7 +71,6 @@ export default function SubPlan({
       return res;
     },
     onSuccess: (data) => {
-      console.log("@@data", data);
       const paystackUrl  = data.data.check_out_url;
       if(paystackUrl) {
         window.location.href = paystackUrl;
@@ -81,8 +80,7 @@ export default function SubPlan({
         type: "success",
       });
     },
-    onError: (error) => {
-      console.log("@@error", error);
+    onError: () => {
       toast.error("Subscription failed", {
         toastId: "subscription-failed",
         type: "error",

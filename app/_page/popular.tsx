@@ -42,6 +42,7 @@ const Popular = ({
 }:{
   popularData: Comic[]
 }) => {
+ 
   let sliderRef = useRef<Slider | null>(null);
 
   const { user, token } = useSelector(selectAuthState);
@@ -191,9 +192,12 @@ const Popular = ({
                     </div>
                     <div className="flex items-center gap-[9px] my-4">
                       <Likes
-                        likesNViews={item?.likesAndViews}
+                        likesNViews={null}
+                        likesCount={item?.likes_count}
+                        viewsCount={item?.views_count}
                         uid={item?.uuid}
                         queryKey={queryKey}
+                        favouritesCount={item?.favourites?.length}
                       />
                     </div>
                     <div>{item?.genre?.name}</div>
@@ -234,6 +238,9 @@ const Popular = ({
                         likesNViews={item?.likesAndViews}
                         uid={item?.uuid}
                         queryKey={queryKey}
+                        favouritesCount={item?.favourites?.length}
+                        likesCount={item?.likes_count}
+                        viewsCount={item?.views_count}
                       />
                     </div>
                   </div>

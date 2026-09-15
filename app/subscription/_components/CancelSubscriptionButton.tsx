@@ -57,8 +57,7 @@ export default function CancelSubscriptionButton({
         });
       }
     },
-    onError: (error) => {
-      console.log("@@cancel-subscription error", error);
+    onError: () => {
       toast("Something went wrong. Please try again.", {
         toastId: "cancel-subscription",
         type: "error",

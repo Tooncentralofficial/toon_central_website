@@ -29,7 +29,6 @@ export const fetchNotifications = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     const state = getState() as { auth: AuthState };
     const token = state.auth.token;
-    console.log("@@fetchNotifications");
     if (!token) return rejectWithValue("no_token");
     const pathname =
       typeof window !== "undefined" ? window.location.pathname : "/";
@@ -38,7 +37,6 @@ export const fetchNotifications = createAsyncThunk(
       token,
       pathname
     );
-    console.log("@@response", response);
     if (response?.success) {
       return response?.data?.notifications;
     }
@@ -128,7 +126,6 @@ const notificationSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(fetchNotifications.fulfilled, (state, action) => {
-            console.log("@@action", action);
             state.notifications = action.payload ?? [];
             state.loading = false;
         });

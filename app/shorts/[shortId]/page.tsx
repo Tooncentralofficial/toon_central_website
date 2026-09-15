@@ -20,7 +20,6 @@ export const generateMetadata = async ({
       pathname
     ).then((data) => {
       if (data?.success) {
-        console.log(data?.data);
         const cleanImageUrl = (url: string) => {
           if (!url) return DEFAULT_OG_URL;
 

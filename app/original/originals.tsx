@@ -45,7 +45,6 @@ export default function Originals() {
       page: page,
     }));
   };
-  console.log(filter)
   const handleSelectionChange = (e: any) => {
     setFilter(e.target.value);
   };

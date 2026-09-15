@@ -29,7 +29,6 @@ export const MobileOperatorSelect = ({
   const OperatorsList = useMemo(() => {
     return mobileOperators?.data || [];
   }, [mobileOperators]);
-  console.log("@@OperatorsList", OperatorsList);
   return (
     <Select
       {...props}

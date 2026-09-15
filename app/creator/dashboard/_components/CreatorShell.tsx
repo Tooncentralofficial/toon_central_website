@@ -21,11 +21,8 @@ type CreatorShellProps = {
 const CreatorShell = ({ activeNav, children }: CreatorShellProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const { user, token,credits } = useSelector(selectAuthState);
-  console.log("@@credits",credits);
   // const credits = useSelector(selectCredits);
   const dispatch = useAppDispatch();
-  console.log("@@user",user);
-  console.log("@@token",token);
 
   useEffect(() => {
     if (token) {

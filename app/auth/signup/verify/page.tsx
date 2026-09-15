@@ -20,7 +20,6 @@ export default async function Page({
     .catch((error: any) => {
       return { success: false, message: error?.response?.data?.message, data: null };
     });
-  console.log("@@verify", verify);
 
   if (!verify) {
     return (

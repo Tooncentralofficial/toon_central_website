@@ -17,8 +17,7 @@ const PopularByToons = ({
 }:{
   popularData: Comic[]
 }) => {
-  console.log("@@popularData",popularData);
-
+  
   const { user,token } = useSelector(selectAuthState);
   const queryKey = "popular_by_toon";
   // const { data } = useQuery({
@@ -27,7 +26,6 @@ const PopularByToons = ({
   //     getRequest("/home/popular-by-toon-central?filter=all&page=1&limit=10"),
   // });
   const popularItems = popularData || dummyItems;
-  console.log("@@popularItems",popularItems);
   return (
     <div className="parent-wrap  pt-10 pb-10">
       <div className="child-wrap">

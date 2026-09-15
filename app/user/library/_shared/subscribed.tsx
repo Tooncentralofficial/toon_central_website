@@ -18,7 +18,6 @@ const Subscribed = () => {
   const [comics, setComics] = useState<any[]>([]);
   const [pagination, setPagination] = useState({ page: 1, total: 1 });
   const { token } = useSelector(selectAuthState);
-  console.log("@@subcibed comics", comics);
   // const { data, isLoading, isFetching, isSuccess } = useQuery({
   //   queryKey: [`my_library`, pagination],
   //   queryFn: () =>
@@ -35,7 +34,6 @@ const Subscribed = () => {
     enabled: token !== null,
     refetchOnWindowFocus: true,
   });
-  console.log("@@data", data);
   useEffect(() => {
     if (isSuccess) {
       setComics(parseArray(data?.data?.comics));
