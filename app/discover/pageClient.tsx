@@ -38,7 +38,6 @@ function DiscoverClientPage() {
     }
   };
 
-  console.log("Client fetched all_genres data", data);
   return (
     <div className="auth-container  p-2 sm:p-5  md:p-10">
       <div className="child-wrap max-h-screen flex w-full flex-col gap-5 px-2 sm:px-[1rem] md:px-[5rem] lg:px-[10rem]">

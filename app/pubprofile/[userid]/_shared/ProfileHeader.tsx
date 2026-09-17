@@ -33,13 +33,11 @@ const ProfileHeader = ({
   userid,
   queryKey,
 }: ProfileHeaderProps) => {
-  console.log("@@data", data);
   const { onClose, onOpen, isOpen, onOpenChange } = useDisclosure();
   const { user, token } = useSelector(selectAuthState);
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const creatorId = data?.id;
-  console.log("@@creatorId", creatorId);
   const {
     data: isFollowingdata,
     isLoading: isCheckingFollow,

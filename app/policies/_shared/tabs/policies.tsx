@@ -244,8 +244,7 @@ const Policies = () => {
               </li>
             </ul>
             <p className="mt-2">
-              To exercise your rights, contact us at [Insert Contact
-              Information].
+              To exercise your rights, contact us at tooncentralhub@gmail.com.
             </p>
           </div>
 
@@ -295,10 +294,10 @@ const Policies = () => {
               <li>
                 Email:{" "}
                 <a
-                  href="mailto:tcadmin@tooncentralhub.com"
+                  href="mailto:tooncentralhub@gmail.com"
                   className="underline"
                 >
-                  tcadmin@tooncentralhub.com
+                  tooncentralhub@gmail.com
                 </a>
               </li>
               <li>Phone: +2348148292571</li>

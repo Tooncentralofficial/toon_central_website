@@ -84,7 +84,6 @@ function Page() {
 
   
   const subStatus = subStatusData?.data;
-  console.log("@@subStatus", subStatus);
 
   useEffect(() => {
     if (subStatus) {
@@ -96,7 +95,6 @@ function Page() {
   }, [subStatus]);
 
 const isCancelled = subStatus?.status === "cancelled";
-console.log("@@isCancelled", isCancelled);
 
   const results = useQueries({
     queries: [

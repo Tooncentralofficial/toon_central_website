@@ -239,7 +239,7 @@ const Cookiepolicies = () => {
             </ul>
             <p>
               To exercise these rights, contact us at:
-              <strong>Email:</strong> tcadmin@tooncentralhub.com
+              <strong>Email:</strong> tooncentralhub@gmail.com
             </p>
           </div>
 
@@ -264,7 +264,7 @@ const Cookiepolicies = () => {
                 <strong>Toon Central</strong>
               </div>
               <div>
-                <strong>Email:</strong> tcadmin@tooncentralhub.com
+                <strong>Email:</strong> tooncentralhub@gmail.com
               </div>
               <div>
                 <strong>Phone:</strong> +2348148292571

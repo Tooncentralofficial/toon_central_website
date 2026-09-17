@@ -29,14 +29,22 @@
   -webkit-line-clamp: 2;
 }
 
-/* Swiper vertical slider styles - scoped to shorts only */
+/* Swiper vertical slider styles - scoped to shorts only.
+
+   100% rather than 100vh. These rules are not breakpoint-scoped, so a 100vh
+   swiper also applied on desktop, where the card is capped at a few hundred
+   pixels tall with overflow hidden. Every slide was then taller than the box
+   it sat in, and object-contain letterboxed the video into that oversized
+   slide — so the visible card showed only the middle of the video and cut the
+   top and bottom off. Inheriting the container height keeps the whole frame
+   on screen. */
 .vertical-shorts-swiper {
-  height: 100vh !important;
+  height: 100% !important;
   width: 100% !important;
 }
 
 .vertical-shorts-swiper .swiper-slide {
-  height: 100vh !important;
+  height: 100% !important;
   width: 100% !important;
   display: flex !important;
   align-items: center !important;
@@ -45,8 +53,13 @@
 
 /* Prevent page scroll on mobile when shorts Swiper is active */
 @media (max-width: 767px) {
+  /* dvh, with vh as the fallback for anything that does not know it: 100vh on
+     mobile means the viewport with the browser chrome hidden, so while the URL
+     bar is showing a 100vh video is taller than what you can actually see and
+     loses its top and bottom. */
   .shorts-content-wrapper {
     height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     position: relative;
   }
@@ -55,6 +68,7 @@
     touch-action: none;
     -webkit-overflow-scrolling: touch;
     height: 100vh;
+    height: 100dvh;
     overflow: hidden;
   }
 
@@ -62,6 +76,7 @@
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
     height: 100vh;
+    height: 100dvh;
   }
 
   .vertical-shorts-swiper {
@@ -101,4 +116,45 @@
 .swiper-pagination-bullet-active {
   background: #fff !important;
   opacity: 1 !important;
+}
+
+/* ── Feed chrome: tap feedback and the next-short nudge ── */
+@keyframes shorts-pop-in {
+  0% {
+    transform: scale(0.7);
+    opacity: 1;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.shorts-play-pulse {
+  animation: shorts-pop-in 0.55s ease forwards;
+}
+
+@keyframes shorts-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+.shorts-scroll-bob {
+  animation: shorts-bob 1.5s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shorts-play-pulse,
+  .shorts-scroll-bob {
+    animation: none;
+  }
 }

@@ -21,7 +21,6 @@ export async function middleware(request: NextRequest) {
 
   // Allow all social media crawlers to access any page without redirects
   if (isSocialCrawler) {
-    console.log(`Social crawler accessing: ${pathname}`);
     return NextResponse.next();
   }
 
@@ -44,10 +43,7 @@ export async function middleware(request: NextRequest) {
 
   if (token) {
     // Verify the local JWT token (contains minimal user data)
-    const userVerified = await verifyToken(token).catch((err) => {
-      console.log("middleware err verifying user", err);
-      return null;
-    });
+    const userVerified = await verifyToken(token).catch(() => null);
 
     if (userVerified) {
       // Token verified successfully - user is authenticated

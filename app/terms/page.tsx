@@ -16,7 +16,7 @@ export default function Page() {
           <ul className="list-disc pl-6">
             <li>
               <span className="font-bold">&quot;Toon Central&quot; </span> refers to the
-              Nigerian company with its principal office at [Insert Address],
+              Nigerian company with its principal office at 11 chiene street achara layout, Enugu
               which creates, publishes, and licenses comic-related content
             </li>
             <li>
@@ -272,10 +272,10 @@ export default function Page() {
             <li>
               <strong>Email:</strong>{" "}
               <a
-                href="mailto:tcadmin@tooncentralhub.com"
+                href="mailto:tooncentralhub@gmail.com"
                 className="text-blue-500 underline"
               >
-                tcadmin@tooncentralhub.com
+                tooncentralhub@gmail.com
               </a>
             </li>
             <li>

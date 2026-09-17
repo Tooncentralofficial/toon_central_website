@@ -158,7 +158,6 @@ export default function Page({
     updateDays: comicData?.updateDays || "",
     socialMediaHandle: comicData?.socialMediaHandle || "",
   };
-  console.log(comicData?.genres.map((item) => item.genre_id));
   const validationSchema = Yup.object().shape({
     backgroundImage: Yup.mixed().required(" is required"),
     coverImage: Yup.mixed().required(" is required"),
@@ -213,7 +212,6 @@ export default function Page({
     values: any,
     urls: { coverImageUrl?: string; backgroundImageUrl?: string }
   ) => {
-    console.log(values, urls);
     const formData = new FormData();
     const coverUrl =
       urls.coverImageUrl ??
@@ -257,7 +255,6 @@ export default function Page({
     },
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
-      console.log(data);
       if (success) {
         toast("Comic added", {
           toastId: "add_comic",
@@ -278,7 +275,6 @@ export default function Page({
       }
     },
     onError(error, variables, context) {
-      console.log(error);
       toast("Some error occured. Contact help !", {
         toastId: "add_comic",
         type: "error",

@@ -20,7 +20,6 @@ import ShareModal from "@/app/_shared/modals/shareModal";
 import Link from "next/link";
 
 const ComicOverview = ({ uid, data, isLoading, queryKey }: ViewComicProps) => {
-  console.log("@@comicOverviewData", data);
   const userId = data?.userId;
 
   const { onClose, onOpen, isOpen, onOpenChange } = useDisclosure();

@@ -67,7 +67,6 @@ const TrendingItem = ({ data ,refetchTrending}: { data: any,refetchTrending?: an
       return value?.user_id === user?.id;
     });
   }, [user, data]);
-  console.log(data.genres);
   return (
     <div className="flex items-center gap-4 justify-between">
       <Link

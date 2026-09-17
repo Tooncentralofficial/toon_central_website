@@ -86,8 +86,6 @@ export const usePaystack = () => {
         if (onClose) onClose();
       },
       callback: (response: any) => {
-        // Dummy call - backend will integrate verify endpoint later
-        console.log("Payment Success:", response);
         const reference = response.reference;
 
         // Store reference in localStorage for backend sync

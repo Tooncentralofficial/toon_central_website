@@ -72,8 +72,7 @@ export default function SpecialOfferCard({
         });
       }
     },
-    onError: (error) => {
-      console.log("@@special-offer subscribe error", error);
+    onError: () => {
       toast("Something went wrong. Please try again.", {
         toastId: "special-offer-subscribe",
         type: "error",

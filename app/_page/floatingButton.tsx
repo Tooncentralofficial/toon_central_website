@@ -17,7 +17,7 @@ const PROMO_REWARD_LINK =
   "https://www.jumia.com.ng/itel-city-200-7.45mm-12844gb-unibody-metallic-deco-6.78-120hz-ip65-5200mah-android-black-free-speaker-419283338.html";
 
 export default function FloatingButton() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const { user, token } = useSelector(selectAuthState);
   const router = useRouter();
   const pathname = usePathname()
@@ -33,7 +33,6 @@ export default function FloatingButton() {
 const itelOffer = (Array.isArray(data?.data) ? data.data : []).find(
   (offer: Offer) => offer.name === "itel_offer",
 );
-console.log("itelOffer", itelOffer);
  const {mutate: claimOffer} = useMutation({
   mutationKey: ["claim_offer"],
   mutationFn: () => postRequestProtected({},`offers/${itelOffer?.id}/claim`,token as any,pathname,"json"),

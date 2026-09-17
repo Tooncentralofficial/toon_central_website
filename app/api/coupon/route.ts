@@ -14,7 +14,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Extract authentication token from request headers
     const authHeader = req.headers.get("authorization");
     const token = authHeader?.replace("Bearer ", "");
-    console.log("token", token);
 
     if (!token) {
       return NextResponse.json(
@@ -64,7 +63,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
       // For 404 or other errors, continue to generate new coupon
-      console.log("No existing coupon found, proceeding to generate new one");
     }
 
     // Generate new coupon from external API

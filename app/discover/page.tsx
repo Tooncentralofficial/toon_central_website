@@ -17,7 +17,6 @@ export default async function Page() {
     queryFn: () =>
       getRequest("/trending/new-and-trending?filter=all&page=1&limit=50"),
   });
-  console.log("Prefetched all_genres data",  );
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

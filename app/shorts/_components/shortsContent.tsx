@@ -38,7 +38,6 @@ export interface ShortsInfiniteData {
 
 export default function ShortsContent() {
   const { token } = useSelector(selectAuthState);
-  const [totalPages, setTotalPages] = useState<number>(0);
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [shortComments, setShortComments] =
@@ -57,19 +56,22 @@ export default function ShortsContent() {
     queryKey: ["shorts"],
     initialPageParam: 1,
     queryFn: async ({ pageParam = 1 }) => {
+      const url = `home/shorts-carousel?page=${pageParam}&limit=10`;
+
       try {
-        const res = await getRequest(
-          `home/shorts-carousel?page=${pageParam}&limit=10`
-        );
+        // signed-in readers need the protected call: it is what carries their
+        // own like state back on each short
+        const res = token
+          ? await getRequestProtected(url, token, prevRoutes().library)
+          : await getRequest(url);
 
         const pagination = res?.data?.pagination;
         const current = pagination?.currentPage ?? 1;
         const total = pagination?.totalPages ?? 1;
-        setTotalPages(total);
         const nextPage =
           current && total && current < total ? current + 1 : null;
-       
-        // Ensure consistent return structure even if API response is malformed
+
+
         return {
           shorts: Array.isArray(res?.data?.shorts) ? res.data.shorts : [],
           nextPage,
@@ -88,7 +90,6 @@ export default function ShortsContent() {
       // Return nextPage if available, otherwise undefined to stop fetching
       return nextPage;
     },
-    enabled: !!token,
   });
 
 
@@ -220,7 +221,6 @@ export default function ShortsContent() {
       </div>
     );
   }
-  console.log("@@currentShort", currentShort);
 
   return (
     <div className="w-full h-full flex relative shorts-content-wrapper">

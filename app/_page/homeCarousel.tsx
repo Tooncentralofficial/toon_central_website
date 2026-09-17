@@ -31,8 +31,6 @@ function HomeCarousel(
   const swiperRef: any = useRef(null);
   const [currentGroup, setCurrentGroup] = useState(0);
   const carouselQueryKey = "carousel";
-  // reduce the time to fetch new data not cached data
-  console.log("@@carouselData", carouselData)
   const { data, isLoading } = useQuery({
     queryKey: [carouselQueryKey],
     queryFn: () => getRequest("/home/top-carousel?page=1&limit=10"),

@@ -42,7 +42,6 @@ function LibraryShorts({ tabName }: { tabName: string }) {
         pathname
       ),
     onSuccess(data, variables, context) {
-      console.log(data);
       const { success, message, data: resData } = data;
       if (success) {
         toast(message, {
@@ -61,7 +60,6 @@ function LibraryShorts({ tabName }: { tabName: string }) {
       }
     },
     onError(error, variables, context) {
-      console.log(error);
       toast("Some error occured. Contact help !", {
         toastId: "comic_delete",
         type: "error",
@@ -185,7 +183,6 @@ function LibraryShorts({ tabName }: { tabName: string }) {
                           <button
                             className="bg-[#20324C] p-3 rounded-lg flex items-center justify-center"
                             onClick={() => {
-                              console.log(item.uuid);
                               setDeletingShort(item.id);
                               deleteShort(item?.uuid);
                             }}
@@ -224,7 +221,6 @@ function LibraryShorts({ tabName }: { tabName: string }) {
                       <div className="">
                         <Button
                           onClick={() => {
-                            console.log(item.uuid);
                             setDeletingShort(item.id);
                             deleteShort(item?.uuid);
                           }}

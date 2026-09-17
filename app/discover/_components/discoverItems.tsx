@@ -13,7 +13,6 @@ const DiscoverItems = ({
   onToggleSubscribe: () => void;
   queryKey: string;
 }) => {
-  console.log(data);
   return (
     <div className="flex items-end justify-between gap-4 px-2 py-4 md:px-8 rounded-lg bg-primary mt-3">
       <div className="flex gap-5 ">

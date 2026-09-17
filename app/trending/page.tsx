@@ -46,7 +46,6 @@ export default function Page() {
       setMostRead(readComics?.data?.comics || []);
     }
   }, [isFetching, fetchingRead, readComics, trendingComics]);
-  console.log(newTrending);
   return (
     <div>
       <div className="parent-wrap py-10">

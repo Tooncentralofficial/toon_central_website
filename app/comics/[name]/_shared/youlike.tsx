@@ -16,7 +16,6 @@ const YouLike = ({uuid}:{uuid:string}) => {
   });
   const comic = data?.data?.comic
   const comics: Comic[] = data?.data?.comics;
-  console.log(comics);
   return (
     <div>
       {comics && (

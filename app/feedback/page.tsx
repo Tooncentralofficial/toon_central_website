@@ -37,21 +37,14 @@ export default function Page() {
     initialValues,
     validationSchema,
     onSubmit: (values:any) => {
-      console.log(values)
       let formData = new FormData();
       if (values.backgroundImage) {
         if (Array.isArray(values.backgroundImage)) {
-          // If it's an array of files
           values.backgroundImage.forEach((file: File, index: number) => {
             formData.append(`backgroundImage[${index}]`, file);
           });
-          console.log(
-            `Added ${values.backgroundImage.length} files to formData`
-          );
         } else {
-          // If it's a single file
           formData.append("backgroundImage", values.backgroundImage);
-          console.log("Added single file to formData");
         }
       }
 

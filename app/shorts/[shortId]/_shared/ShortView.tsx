@@ -22,6 +22,13 @@ import { usePathname } from "next/navigation";
 import { toast } from "react-toastify";
 import ShortsComments from "@/app/shorts/_components/shortscomments";
 import ShortCommentInput from "@/app/shorts/_components/shortsCommentInut";
+import {
+  DurationBadge,
+  PlayPulse,
+  ScrollHint,
+  ShortMeta,
+  ShortProgressBar,
+} from "@/app/shorts/_components/shortsChrome";
 import { Skeleton } from "@nextui-org/react";
 import { prevRoutes } from "@/lib/session/prevRoutes";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -78,6 +85,8 @@ export default function ShortView({
   const [isMuted, setIsMuted] = useState(true);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [pulseTrigger, setPulseTrigger] = useState(0);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [shortComments, setShortComments] =
     useState<ShortCommentsState>(EMPTY_COMMENT_STATE);
@@ -180,6 +189,9 @@ export default function ShortView({
   const handleSlideChange = async (swiper: any) => {
     const index = swiper.activeIndex;
     setCurrentIndex(index);
+    setHasScrolled(true);
+    // the incoming slide autoplays, so the pause overlay must not carry over
+    setIsPaused(false);
 
     // Fetch next page if near end
     const shortsLength = Array.isArray(shorts) ? shorts.length : 0;
@@ -201,22 +213,39 @@ export default function ShortView({
     });
   };
 
+  /*
+   * Both feeds have to be refreshed, not just this page's: the same short is
+   * cached under the carousel keys too, so liking here and swiping back to
+   * /shorts would otherwise show the old state. `short_<id>` is invalidated
+   * for both the route param and the slide in view, which differ once the
+   * reader swipes.
+   */
+  const invalidateShortQueries = () => {
+    queryClient.invalidateQueries({ queryKey: [queryKey] });
+    queryClient.invalidateQueries({ queryKey: [`short_${currentShortId}`] });
+    queryClient.invalidateQueries({ queryKey: ["shorts_infinite"] });
+    queryClient.invalidateQueries({ queryKey: ["shorts"] });
+    queryClient.invalidateQueries({ queryKey: ["shorts-home"] });
+  };
+
   // Like mutation
-  const { mutate: likeShorts } = useMutation({
-    mutationKey: ["like_short", currentShort?.uuid],
+  const { mutate: likeShorts, isPending: likePending } = useMutation({
+    mutationKey: ["like_short", currentShortId],
     mutationFn: async (uuid: string) =>
       getRequestProtected(
         `shorts/${uuid}/like`,
         token || "",
         prevRoutes().library,
       ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [queryKey] });
-      queryClient.invalidateQueries({
-        queryKey: ["short-comments", currentShortId],
-      });
-      queryClient.invalidateQueries({ queryKey: ["shorts"] });
-      queryClient.invalidateQueries({ queryKey: ["shorts-home"] });
+    onSuccess: (data) => {
+      // the request helpers resolve on API failure too, so without this flag a
+      // rejected like looked identical to a successful one and nothing moved
+      if (!data?.success) {
+        toast(data?.message || "Failed to like short", { type: "error" });
+        return;
+      }
+      if (data?.message) toast(data.message, { type: "success" });
+      invalidateShortQueries();
     },
     onError: () => {
       toast("Failed to like short", { type: "error" });
@@ -224,22 +253,49 @@ export default function ShortView({
   });
 
   // Dislike mutation
-  const { mutate: dislikeShorts } = useMutation({
-    mutationKey: ["dislike_short", currentShort?.uuid],
+  const { mutate: dislikeShorts, isPending: dislikePending } = useMutation({
+    mutationKey: ["dislike_short", currentShortId],
     mutationFn: async (uuid: string) =>
       getRequestProtected(`shorts/${uuid}/dislike`, token || "", pathname),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [queryKey] });
-      queryClient.invalidateQueries({
-        queryKey: ["short-comments", currentShortId],
-      });
-      queryClient.invalidateQueries({ queryKey: ["shorts"] });
-      queryClient.invalidateQueries({ queryKey: ["shorts-home"] });
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast(data?.message || "Failed to dislike short", { type: "error" });
+        return;
+      }
+      if (data?.message) toast(data.message, { type: "success" });
+      invalidateShortQueries();
     },
     onError: () => {
       toast("Failed to dislike short", { type: "error" });
     },
   });
+
+  /*
+   * currentShortId, not currentShort?.uuid: the old guard silently did nothing
+   * whenever the short object had not resolved yet, which is most of the time
+   * on first paint. This falls back to the route param.
+   */
+  const handleLike = () => {
+    if (!token) {
+      toast.info("Please login to like this short", {
+        toastId: "login_to_like_short",
+      });
+      return;
+    }
+    if (!currentShortId || likePending) return;
+    likeShorts(currentShortId);
+  };
+
+  const handleDislike = () => {
+    if (!token) {
+      toast.info("Please login to dislike this short", {
+        toastId: "login_to_dislike_short",
+      });
+      return;
+    }
+    if (!currentShortId || dislikePending) return;
+    dislikeShorts(currentShortId);
+  };
 
   const handleUnmute = () => {
     const currentVideo = videoRefs.current[currentIndex];
@@ -259,12 +315,13 @@ export default function ShortView({
   };
 
   const handleTogglePause = () => {
+    // a counter, not a flag: two taps in a row have to replay the animation
+    setPulseTrigger((count) => count + 1);
+
     const currentVideo = videoRefs.current[currentIndex];
     if (currentVideo) {
       if (isPaused) {
-        currentVideo.play().catch((error) => {
-          console.log("Video play failed:", error);
-        });
+        currentVideo.play().catch(() => {});
         setIsPaused(false);
       } else {
         currentVideo.pause();
@@ -387,6 +444,15 @@ export default function ShortView({
 
   const lv = displayData?.likesAndViews?.[0];
 
+  /*
+   * Same source the carousel counts from. likesAndViews[0].likes is the
+   * membership list and the API scopes it, so counting its length here made
+   * the number disagree with /shorts for the same short.
+   */
+  const likesCount = displayData?.likesCount ?? lv?.likes?.length ?? 0;
+  const dislikesCount =
+    displayData?.dislikesCount ?? lv?.dislikes?.length ?? 0;
+
   if (isLoading || shortsLoading) {
     return (
       <div className="w-full flex justify-center items-center min-h-[60vh]">
@@ -405,18 +471,19 @@ export default function ShortView({
   const shortsToDisplay = shorts.length > 0 ? shorts : data ? [data] : [];
 
   return (
-    <div
-      className="w-full h-full flex shorts-content-wrapper "
-      style={{ height: "100vh", overflow: "hidden" }}
-    >
-      <div
-        className="w-full h-full block md:flex md:justify-center md:items-center relative flex-1 overflow-hidden shorts-card-container"
-        style={{ height: "100vh" }}
-      >
+    <div className="w-full h-[100dvh] overflow-hidden flex shorts-content-wrapper">
+      <div className="w-full h-[100dvh] block md:flex md:justify-center md:items-center relative flex-1 overflow-hidden shorts-card-container">
         <div className="block md:flex md:items-center md:justify-center md:gap-10 overflow-hidden h-full w-full relative">
           {/* Main Video Section with Swiper */}
           {shortsToDisplay.length > 0 ? (
-            <div className="relative w-full h-full md:h-[60vw] md:max-h-[600px] md:min-h-0 md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container">
+            <div className="relative w-full h-full md:h-[82dvh] md:max-h-[720px] md:min-h-0 md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container">
+              <ShortProgressBar videoRefs={videoRefs} index={currentIndex} />
+              <DurationBadge
+                videoRefs={videoRefs}
+                index={currentIndex}
+                className="top-3 left-3"
+              />
+
               {/* Unmute Button - Shows on first load */}
               {!hasInteracted && (
                 <button
@@ -504,10 +571,28 @@ export default function ShortView({
                   </Swiper>
                 </div>
               </div>
+
+              <PlayPulse trigger={pulseTrigger} isPaused={isPaused} />
+              <ScrollHint
+                visible={
+                  !hasScrolled && !commentsOpen && shortsToDisplay.length > 1
+                }
+              />
               <CreatorInfoOverlay data={displayData} />
             </div>
           ) : (
-            <div className="relative w-full h-full md:h-[60vw] md:max-h-[600px] md:min-h-0 md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container cursor-pointer">
+            <div
+              onClick={handleTogglePause}
+              className="relative w-full h-full md:h-[82dvh] md:max-h-[720px] md:min-h-0 md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container cursor-pointer"
+            >
+              {/* the lone video is parked at videoRefs[0] on this branch */}
+              <ShortProgressBar videoRefs={videoRefs} index={0} />
+              <DurationBadge
+                videoRefs={videoRefs}
+                index={0}
+                className="top-3 left-3"
+              />
+
               <video
                 className="absolute inset-0 w-full h-full object-cover blur-xl scale-110"
                 autoPlay
@@ -561,15 +646,14 @@ export default function ShortView({
                 controls={false}
                 src={data?.upload}
               />
+              <PlayPulse trigger={pulseTrigger} isPaused={isPaused} />
               <CreatorInfoOverlay data={displayData} />
             </div>
           )}
           {/* Right Sidebar - Actions */}
           <div className="absolute mb-12 md:static right-5 bottom-0 md:bottom-auto z-[22] flex flex-col gap-5 md:gap-10 justify-end md:justify-center md:mb-5">
             <div
-              onClick={() =>
-                currentShort?.uuid && likeShorts(currentShort.uuid)
-              }
+              onClick={handleLike}
               className="flex flex-col items-center gap-2 cursor-pointer"
             >
               <LikeIcon
@@ -577,20 +661,18 @@ export default function ShortView({
                   hasLiked ? " text-[#05834B]" : "text-[#FCFCFDB2]"
                 }`}
               />
-              <p className="text-xs md:text-base">{lv?.likes?.length || 0}</p>
+              <p className="text-xs md:text-base">{likesCount}</p>
             </div>
             <div
               className="flex flex-col items-center gap-2 cursor-pointer"
-              onClick={() =>
-                currentShort?.uuid && dislikeShorts(currentShort.uuid)
-              }
+              onClick={handleDislike}
             >
               <DislikeIcon
                 className={`w-6 md:w-10 h-6 md:h-10 ${
                   hasdiLiked ? " text-[#05834B]" : "text-[#FCFCFDB2]"
                 }`}
               />
-              <p className="text-xs md:text-base">Dislike</p>
+              <p className="text-xs md:text-base">{dislikesCount}</p>
             </div>
             <div
               className="flex flex-col items-center gap-2 cursor-pointer"
@@ -765,42 +847,33 @@ function CreatorInfoOverlay({ data }: { data: any }) {
   if (!data?.user && !data?.title && !data?.description) return null;
   const username = data?.user?.username || "";
   const photo = data?.user?.photo;
-  const title = data?.title || "";
-  const description = data?.description || "";
 
   return (
     <div className="absolute left-0 right-0 bottom-0 z-20 p-4 pb-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none">
-      <div className="flex items-center gap-2 mb-2">
-        {photo && (
-          <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-            <Image
-              src={photo}
-              alt={username || "Creator"}
-              width={32}
-              height={32}
-              style={{
-                objectFit: "cover",
-                objectPosition: "center",
-                width: "100%",
-                height: "100%",
-              }}
-            />
-          </div>
-        )}
-        {username && (
-          <span className="text-white text-sm font-medium flex items-center gap-1">
-            {username}
-            <CopyrightCheckIcon className="w-4 h-4 text-[#4ADD80]" />
-          </span>
-        )}
-      </div>
-      {(title || description) && (
-        <div className="text-white text-xs leading-snug line-clamp-2 max-w-[85%]">
-          {title && <span className="font-semibold">{title}</span>}
-          {title && description && <span> </span>}
-          {description && <span>{description}</span>}
-        </div>
-      )}
+      <ShortMeta
+        short={data}
+        compact
+        className="max-w-[85%]"
+        avatar={
+          photo ? (
+            <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+              <Image
+                src={photo}
+                alt={username || "Creator"}
+                width={32}
+                height={32}
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "center",
+                  width: "100%",
+                  height: "100%",
+                }}
+              />
+            </div>
+          ) : null
+        }
+        badge={<CopyrightCheckIcon className="w-4 h-4 text-[#4ADD80]" />}
+      />
     </div>
   );
 }

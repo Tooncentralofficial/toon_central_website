@@ -28,6 +28,13 @@ import { useSelector } from "react-redux";
 import { selectAuthState } from "@/lib/slices/auth-slice";
 import ShortsComments from "./shortscomments";
 import ShortCommentInput from "./shortsCommentInut";
+import {
+  DurationBadge,
+  PlayPulse,
+  ScrollHint,
+  ShortMeta,
+  ShortProgressBar,
+} from "./shortsChrome";
 import { shortLike, ShortsType } from "@/helpers/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getRequestProtected } from "@/app/utils/queries/requests";
@@ -86,6 +93,8 @@ export default function ShortsCard({
   const [hasInteracted, setHasInteracted] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [pulseTrigger, setPulseTrigger] = useState(0);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const { user, token } = useSelector(selectAuthState);
 
@@ -137,6 +146,9 @@ export default function ShortsCard({
     const newIndex = swiper.activeIndex;
     setCurrentSlideIndex(newIndex);
     setCurrentIndex(newIndex);
+    setHasScrolled(true);
+    // a new slide autoplays, so the pause overlay must not carry over
+    setIsPaused(false);
 
     // Check if we need to fetch more shorts
     const shortsLength = Array.isArray(shorts) ? shorts.length : 0;
@@ -167,9 +179,7 @@ export default function ShortsCard({
     // Play the current video
     const currentVideo = videoRefs.current[newIndex];
     if (currentVideo) {
-      currentVideo.play().catch((error) => {
-        console.log("Video play failed:", error);
-      });
+      currentVideo.play().catch(() => {});
     }
 
     // Reset pause state when slide changes
@@ -191,12 +201,13 @@ export default function ShortsCard({
   }, [Array.isArray(shorts) ? shorts.length : 0]);
 
   const handleTogglePause = () => {
+    // a counter, not a flag: two taps in a row have to replay the animation
+    setPulseTrigger((count) => count + 1);
+
     const currentVideo = videoRefs.current[currentSlideIndex];
     if (currentVideo) {
       if (isPaused) {
-        currentVideo.play().catch((error) => {
-          console.log("Video play failed:", error);
-        });
+        currentVideo.play().catch(() => {});
         setIsPaused(false);
       } else {
         currentVideo.pause();
@@ -297,7 +308,6 @@ export default function ShortsCard({
       }
     },
     onError: (error) => {
-      console.log("@@error", error);
       toast(error?.message, {
         type: "error",
       });
@@ -406,9 +416,6 @@ export default function ShortsCard({
       follow();
     }
   };
-  // current short
-  console.log( "current shorttttttt", shorts?.[currentSlideIndex])
-
   const hasLiked = useMemo(() => {
     if (!user?.id || !shorts?.[currentSlideIndex]?.isLiked) {
       return false;
@@ -458,13 +465,13 @@ export default function ShortsCard({
         </button>
       </div>
       <div className="block md:flex md:gap-10 overflow-hidden">
-        <div className="absolute left-2 z-[22] pointer-events-none flex flex-col justify-end md:justify-between h-full">
-          <div className="flex flex-col gap-4 mb-5 md:mb-0">
-            <div className="flex gap-3 items-center">
-              <h3 className="text-[#FCFCFDB2] text-sm md:text-xl line-clamp-1">
-                {shorts?.[currentSlideIndex]?.user?.username}
-              </h3>
-              {user?.id !== creatorId && (
+        {/* right-16 on mobile keeps the copy clear of the action rail */}
+        <div className="absolute left-2 right-16 md:right-auto z-[22] pointer-events-none flex flex-col justify-end md:justify-between h-full">
+          <ShortMeta
+            short={currentShort}
+            className="mb-5 md:mb-0 md:max-w-[22rem]"
+            followSlot={
+              user?.id !== creatorId ? (
                 <button
                   onClick={handleFollow}
                   disabled={
@@ -473,7 +480,7 @@ export default function ShortsCard({
                     isFollowingPending ||
                     isUnfollowingPending
                   }
-                  className={`pointer-events-auto px-3 py-1 rounded-2xl text-xs md:text-base transition-colors ${
+                  className={`pointer-events-auto px-3 py-1 rounded-2xl text-xs md:text-sm transition-colors flex-shrink-0 ${
                     isFollowing
                       ? "bg-[#475467] text-white"
                       : "bg-[#05834B] text-white hover:bg-[#047a42]"
@@ -495,33 +502,26 @@ export default function ShortsCard({
                       ? "Following"
                       : "Follow"}
                 </button>
-              )}
-            </div>
-            <div className="flex flex-col gap-2 ml-0 md:ml-5">
-              <h3 className="text-sm md:text-2xl line-clamp-1">
-                {shorts?.[currentSlideIndex]?.title}
-              </h3>
-
-              <div className="flex gap-3">
-                {shorts?.[currentSlideIndex]?.genres.map((genre) => (
-                  <React.Fragment key={genre.id}>
-                    <p className="border-[1px] px-1 py-[0.1rem] md:px-3 md:py-1 border-[#05834BF5] text-xs md:text-base flex items-center justify-center">
-                      {genre.genre.name}
-                    </p>
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-          </div>
+              ) : null
+            }
+          />
           <div className="pointer-events-auto mb-12 sm:mb-5 lg:mb-10 xl:mb-20">
-            <Link href={`/pubprofile/${shorts?.[currentSlideIndex]?.user.id}`}>
-              <button className="flex items-center gap-2 bg-[#05834B] w-full justify-center py-2 rounded-md md:mb-2">
+            <Link href={`/pubprofile/${currentShort?.user?.id}`}>
+              <button className="flex items-center gap-2 bg-[#05834B] hover:bg-[#047a42] transition-colors w-full justify-center py-2 px-4 rounded-md md:mb-2">
                 watch more <ArrowRight />
               </button>
             </Link>
           </div>
         </div>
-        <div className="relative h-full min-h-[400px] md:h-[60vw] md:max-h-[600px] md:min-h-0 w-full md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container">
+        <div className="relative h-full min-h-[400px] md:h-[82dvh] md:max-h-[720px] md:min-h-0 w-full md:max-w-[480px] rounded-md z-10 overflow-hidden bg-black shorts-swiper-container">
+          <ShortProgressBar videoRefs={videoRefs} index={currentSlideIndex} />
+          {/* pushed clear of the back button on mobile */}
+          <DurationBadge
+            videoRefs={videoRefs}
+            index={currentSlideIndex}
+            className="top-3 left-[4.5rem] md:left-3"
+          />
+
           {/* Unmute Button - Shows on first load */}
           {!hasInteracted && (
             <button
@@ -604,6 +604,11 @@ export default function ShortsCard({
               </SwiperSlide>
             ))}
           </Swiper>
+
+          <PlayPulse trigger={pulseTrigger} isPaused={isPaused} />
+          <ScrollHint
+            visible={!hasScrolled && !commentsOpen && shorts.length > 1}
+          />
         </div>
         <div className="absolute mb-12 md:static right-5 bottom-0 z-[22] flex flex-col gap-5 md:gap-10 justify-end md:mb-5">
           <div

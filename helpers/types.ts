@@ -62,6 +62,18 @@ export interface Comic {
   userId: string;
   uuid: string;
   socialMediaHandle:string
+  likes_count: number;
+  views_count: number;
+  favourites: Favourite[];
+
+}
+interface Favourite {
+  
+comic_id: number;
+created_at: string;
+id: number;
+updated_at: string;
+user_id: number;
 }
 
 interface ComicGenre {

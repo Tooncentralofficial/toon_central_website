@@ -54,8 +54,7 @@ const PageClient = ({ params }: { params: { shortId: string } }) => {
         };
       }
     },
-    getNextPageParam: (lastPage, allPages) => {
-      console.log("@@allPages", allPages, "@@lastPage", lastPage);
+    getNextPageParam: (_lastPage, allPages) => {
       const nextPage = allPages?.length ? allPages?.length + 1 : 1;
       // Return nextPage if available, otherwise undefined to stop fetching
       return nextPage;
@@ -123,9 +122,9 @@ const PageClient = ({ params }: { params: { shortId: string } }) => {
 
   return (
     <main
-      className="bg-[var(--bg-primary)] overflow-hidden h-[100vh] w-full p-0 m-0 relative"
+      className="bg-[var(--bg-primary)] overflow-hidden h-[100dvh] w-full p-0 m-0 relative"
       style={{
-        minHeight: "100vh",
+        minHeight: "100dvh",
       }}
     >
       <div className="h-full w-full overflow-hidden">

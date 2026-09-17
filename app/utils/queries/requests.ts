@@ -42,7 +42,6 @@ export const getRequestProtected = async (
       );
     }
   } catch (error: any) {
-    console.log("err", error?.response);
     if (error?.response?.status === 401) {
       return await LogoutUser(prevClientUrl);
     }
@@ -65,7 +64,6 @@ export const postRequest = async (data: any, url: string) => {
       );
     }
   } catch (error: any) {
-    console.log("response error", error);
     return FailedResponse(
       error?.response?.data?.message || "Some error occured",
       error?.response?.data
@@ -94,7 +92,6 @@ export const postRequestProtected = async (
       );
     }
   } catch (error: any) {
-    console.log("error:", error);
     if (error?.response?.status === 401) {
       return await LogoutUser(prevClientUrl);
     }
@@ -123,7 +120,6 @@ export const putRequestProtected = async (
       );
     }
   } catch (error: any) {
-    console.log("error:", error);
     if (error?.response?.status === 401) {
       return await LogoutUser(prevClientUrl);
     }
@@ -185,7 +181,6 @@ export const deleteRequestProtected = async (
       );
     }
   } catch (error: any) {
-    console.log("err", error?.response);
     if (error?.response?.status === 401) {
       return await LogoutUser(prevClientUrl);
     }

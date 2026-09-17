@@ -73,9 +73,7 @@ export default function DetailsTab() {
     queryFn: () => getRequestProtected("/profile", token, pathname),
     enabled: token !== null,
   });
-  console.log("@@data", data)
   const refralCode  = data?.data?.referralCode?.code;
-  console.log("@@refralCode", refralCode)
 
   const referralUrl = useMemo(() => {
     if (!refralCode) return "";
@@ -165,7 +163,6 @@ export default function DetailsTab() {
     validationSchema,
     enableReinitialize: true,
     onSubmit: (values) => {
-      console.log("@@values", values)
       updateUser.mutate(values);
     },
   });
@@ -187,7 +184,6 @@ export default function DetailsTab() {
         ...data,
         mobileOperatorId: parseInt(data.mobileOperatorId),
       }
-      console.log("@@finaldata", finalData )
       return patchRequestProtected(finalData, "profile/update", token || "", pathname)
     },
     onSuccess(data, variables, context) {
@@ -206,7 +202,6 @@ export default function DetailsTab() {
       }
     },
     onError(error, variables, context) {
-      console.log("@@error", error)
       toast("Some error occured. Contact help !", {
         toastId: "profile",
         type: "error",
@@ -238,7 +233,6 @@ export default function DetailsTab() {
       }
     },
     onError(error, variables, context) {
-      console.log("@@error", error)
       toast("Some error occured. Contact help !", {
         toastId: "profile",
         type: "error",

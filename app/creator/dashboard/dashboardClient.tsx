@@ -87,7 +87,6 @@ const DashboardClient = () => {
       ),
     enabled: isLoggedIn || !!token || !!user,
   });
-  console.log("@@recentPerformanceData",recentPerformanceData);
   const performance: RecentComicPerformance[] = useMemo(
     () => recentPerformanceData?.data || [],
     [recentPerformanceData]

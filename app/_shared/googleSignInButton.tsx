@@ -48,7 +48,6 @@ export default function GoogleSignInButton({
       window.google.accounts.id.initialize({
         client_id: clientId,
         callback: (res) => {
-          console.log("res", res);
           if (disabledRef.current || !res.credential) return;
           onCredentialRef.current(res.credential);
         },
