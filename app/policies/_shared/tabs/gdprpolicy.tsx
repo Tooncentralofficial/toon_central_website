@@ -239,8 +239,8 @@ const GDPRPolicy = () => {
                 <strong>Toon Central</strong>
                 <br />
                 Email:{" "}
-                <a href="mailto:tcadmin@tooncentralhub.com">
-                  tcadmin@tooncentralhub.com
+                <a href="mailto:tooncentralhub@gmail.com">
+                  tooncentralhub@gmail.com
                 </a>
                 <br />
                 Phone: +2348148292571

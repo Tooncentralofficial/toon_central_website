@@ -141,8 +141,8 @@ const DMCApolicy = () => {
                 Toon Central
                 <br />
                 Email:{" "}
-                <a href="mailto:tcadmin@tooncentralhub.com">
-                  tcadmin@tooncentralhub.com
+                <a href="mailto:tooncentralhub@gmail.com">
+                  tooncentralhub@gmail.com
                 </a>
                 <br />
                 Mailing Address: 11 Chiene Street Achara Layout, Enugu, Enugu
@@ -211,8 +211,8 @@ const DMCApolicy = () => {
             <strong>Toon Central</strong>
             <br />
             Email:{" "}
-            <a href="mailto:tcadmin@tooncentralhub.com">
-              tcadmin@tooncentralhub.com
+            <a href="mailto:tooncentralhub@gmail.com">
+              tooncentralhub@gmail.com
             </a>
             <br />
             Phone: +2348148292571
