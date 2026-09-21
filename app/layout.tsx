@@ -51,6 +51,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="monetag" content="b1560b2812f90a46572fbf59094c6458" />
+        <meta name="google-adsense-account" content="ca-pub-6117729713891583"></meta>
       </head>
       <body className={` ${satoshi.className} `}>
         <PropellerAdsScript />
