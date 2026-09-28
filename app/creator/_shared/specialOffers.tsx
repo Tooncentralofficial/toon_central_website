@@ -67,14 +67,14 @@ const offers: Offer[] = [
       { name: "Absolute", genre: "Sci-Fi" },
     ],
   },
-  {
-    id: "ai-friend",
-    kind: "promo",
-    title: "Virtual AI Friend",
-    description:
-      "AI Friend that cares, have a friendly chat, roles play and tells secrets about characters in their comics",
-    cta: "Get Started",
-  },
+  // {
+  //   id: "ai-friend",
+  //   kind: "promo",
+  //   title: "Virtual AI Friend",
+  //   description:
+  //     "AI Friend that cares, have a friendly chat, roles play and tells secrets about characters in their comics",
+  //   cta: "Get Started",
+  // },
   {
     id: "character-design",
     kind: "deal",
