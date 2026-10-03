@@ -134,3 +134,24 @@ body {
 p {
   font-family: var(--font-satoshi-regular);
 }
+
+.special-offers-swiper {
+  padding-bottom: 34px;
+}
+.special-offers-swiper .swiper-pagination-bullet {
+  background: #fcfcfd;
+  opacity: 0.45;
+  width: 7px;
+  height: 7px;
+}
+.special-offers-swiper .swiper-pagination-bullet-active {
+  opacity: 1;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

@@ -134,8 +134,8 @@ const LibraryBookOverview = ({
                       Edit
                     </SolidPrimaryButton>
                     <Button
-                      isDisabled={data?.statusId == 1}
-                      onClick={() => data?.statusId == 0 && publish()}
+                      isDisabled={disabled}
+                      onClick={() => !disabled && publish()}
                       className="  rounded-lg"
                       size="lg"
                       isLoading={isPublishing}
