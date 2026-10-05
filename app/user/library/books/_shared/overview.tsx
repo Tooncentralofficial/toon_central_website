@@ -124,7 +124,12 @@ const LibraryBookOverview = ({
       });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: comicQueryKey });
+      // Prefix-matches both this page's [comic_uuid, id] and the public /comics/[uuid] page's [comic_uuid]
+      queryClient.invalidateQueries({ queryKey: [`comic_${uid}`] });
+      queryClient.invalidateQueries({ queryKey: ["my_library"] });
+      ["home", "trending", "popular_by_toon", "originals", "carousel"].forEach(
+        (key) => queryClient.invalidateQueries({ queryKey: [key] })
+      );
     },
   });
   return (
