@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import { optimizeCloudinaryUrl } from "@/app/utils/imageUtils";
-import { usePathname, useRouter } from "next/navigation";
 import { ViewComicProps } from "../page";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getRequestProtected,
   putRequestProtected,
@@ -27,6 +26,11 @@ const LibraryBookOverview = ({
   comicId,
 }: ViewComicProps) => {
   const disabled = useMemo(() => data?.episodes?.length <= 0, [data]);
+  const queryClient = useQueryClient();
+  const comicQueryKey = useMemo(
+    () => [`comic_${uid}`, comicId],
+    [uid, comicId]
+  );
 
   const [isLiked, setIsLiked] = useState(false);
   const { token } = useSelector(selectAuthState);
@@ -68,24 +72,68 @@ const LibraryBookOverview = ({
         prevRoutes().library,
         "json"
       ),
-    onSuccess(data, variables, context) {
-      const { success, message, data: resData } = data;
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: comicQueryKey });
+      const previous = queryClient.getQueryData(comicQueryKey);
+      queryClient.setQueryData(comicQueryKey, (old: { data?: { statusId?: number } } | undefined) => {
+        if (!old?.data) return old;
+        const nextStatusId = Number(old.data.statusId) === 1 ? 0 : 1;
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            statusId: nextStatusId,
+          },
+        };
+      });
+      return { previous };
+    },
+    onSuccess(response, _variables, context) {
+      const { success, message, data: resData } = response;
       if (success) {
+        if (resData) {
+          queryClient.setQueryData(comicQueryKey, (old: { data?: Record<string, unknown> } | undefined) => {
+            if (!old?.data) return old;
+            return {
+              ...old,
+              data: { ...old.data, ...resData },
+            };
+          });
+        }
         toast(message, {
           toastId: "comic_in_library",
           type: "success",
         });
       } else {
+        if (context?.previous !== undefined) {
+          queryClient.setQueryData(comicQueryKey, context.previous);
+        }
         toast(message, {
           toastId: "comic_in_library",
           type: "error",
         });
       }
     },
-    onError(error, variables, context) {
+    onError(_error, _variables, context) {
+      if (context?.previous !== undefined) {
+        queryClient.setQueryData(comicQueryKey, context.previous);
+      }
       toast("Some error occured. Contact help !", {
         toastId: "comic_in_library",
         type: "error",
+      });
+    },
+    onSettled: () => {
+      // Prefix-matches both this page's [comic_uuid, id] and the public /comics/[uuid] page's [comic_uuid]
+      queryClient.invalidateQueries({ queryKey: [`comic_${uid}`] });
+      queryClient.invalidateQueries({ queryKey: ["my_library"] });
+      ["home", "trending", "popular_by_toon", "originals", "carousel"].forEach(
+        (key) => queryClient.invalidateQueries({ queryKey: [key] })
+      );
+      // Genre tabs (Top recommended, /genres) cache per genre as [`genre_${id}`, ...]
+      queryClient.invalidateQueries({
+        predicate: ({ queryKey }) =>
+          typeof queryKey[0] === "string" && queryKey[0].startsWith("genre_"),
       });
     },
   });
