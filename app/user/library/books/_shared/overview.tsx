@@ -130,6 +130,11 @@ const LibraryBookOverview = ({
       ["home", "trending", "popular_by_toon", "originals", "carousel"].forEach(
         (key) => queryClient.invalidateQueries({ queryKey: [key] })
       );
+      // Genre tabs (Top recommended, /genres) cache per genre as [`genre_${id}`, ...]
+      queryClient.invalidateQueries({
+        predicate: ({ queryKey }) =>
+          typeof queryKey[0] === "string" && queryKey[0].startsWith("genre_"),
+      });
     },
   });
   return (
