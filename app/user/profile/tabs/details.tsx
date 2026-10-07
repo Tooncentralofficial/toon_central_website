@@ -189,6 +189,7 @@ export default function DetailsTab() {
     onSuccess(data, variables, context) {
       const { success, message, data: resData } = data;
       if (success) {
+        console.log(data?.data);
         dispatch(updateProfile(data?.data || null) as any);
         toast(message, {
           toastId: "profile",
@@ -202,6 +203,7 @@ export default function DetailsTab() {
       }
     },
     onError(error, variables, context) {
+      console.log(error);
       toast("Some error occured. Contact help !", {
         toastId: "profile",
         type: "error",
