@@ -196,14 +196,25 @@ const LibraryBookOverview = ({
             </div>
             <div className="md:hidden ">
               <p className="text-gray text-base mb-7">{data?.description}</p>
-              <SolidPrimaryButton
-                className="w-max"
-                disabled={!data?.uuid}
-                as={Link}
-                href={`/creator/edit?uuid=${data?.uuid}&comicId=${data?.id}`}
-              >
-                Edit
-              </SolidPrimaryButton>
+              <div className="flex gap-5 items-center">
+                <SolidPrimaryButton
+                  className="w-max"
+                  disabled={!data?.uuid}
+                  as={Link}
+                  href={`/creator/edit?uuid=${data?.uuid}&comicId=${data?.id}`}
+                >
+                  Edit
+                </SolidPrimaryButton>
+                <Button
+                  isDisabled={disabled}
+                  onClick={() => !disabled && publish()}
+                  className="  rounded-lg"
+                  size="lg"
+                  isLoading={isPublishing}
+                >
+                  {data?.statusId == 1 ? "Published" : "Publish"}
+                </Button>
+              </div>
             </div>
           </div>
         )}
