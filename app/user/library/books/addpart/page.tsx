@@ -343,6 +343,7 @@ export default function Page({
         "form"
       ),
     onSuccess(data, variables, context) {
+      console.log(data);
       setisLoading(false);
       const { success, message, data: resData } = data;
       if (success) {
@@ -359,6 +360,7 @@ export default function Page({
       }
     },
     onError(error, variables, context) {
+      console.log(error);
       toast("Some error occured. Contact help !", {
         toastId: "add_comic",
         type: "error",
@@ -370,6 +372,7 @@ export default function Page({
     mutationKey: [`comic${comicId}_upload_picture`],
     mutationFn: (data: any) => axios.post("/api/upload", data),
     onSuccess(data) {
+      console.log(data);
       const imageUrls = data?.data?.message;
       // setImageUrls(data?.data?.message);
       if (imageUrls) {
@@ -406,6 +409,7 @@ export default function Page({
       }
     },
     onError(error, variables, context) {
+      console.log(error);
       toast("Some error occured. Contact help !", {
         toastId: "add_Images",
         type: "error",
@@ -423,6 +427,7 @@ export default function Page({
         "form"
       ),
     onSuccess(data, variables, context) {
+      console.log(data);
       setisLoading(false);
       const { success, message, data: resData } = data;
       if (success) {
@@ -439,6 +444,7 @@ export default function Page({
       }
     },
     onError(error, variables, context) {
+      console.log(error);
       toast("Some error occured. Contact help !", {
         toastId: "add_comic",
         type: "error",
