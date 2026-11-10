@@ -39,6 +39,7 @@ const MyBooksTab = ({ tabName }: { tabName: string }) => {
       ),
     enabled: !!token,
   });
+  console.log(data);
 
   const { mutate: deleteComic } = useMutation({
     mutationKey: [queryKey],
@@ -141,7 +142,7 @@ const MyBooksTab = ({ tabName }: { tabName: string }) => {
                           </span>
                           <span>
                             {" "}
-                            Published : {formatDate(item?.updatedAt)}
+                            Last Episode At : {formatDate(item?.updatedAt)}
                           </span>
                           <span>
                             {" "}

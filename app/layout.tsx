@@ -85,7 +85,7 @@ export default function RootLayout({
             makes the parser close <head> early and hydration mismatch */}
         <HeaderAd />
         <ClientLayout>{children}</ClientLayout>
-        <Script id="xeelaa-config" strategy="afterInteractive">
+        {/* <Script id="xeelaa-config" strategy="afterInteractive">
           {`
             window.__EMBED_CONFIG__ = {
               publicToken: "tlJl0cJku5WaR7hUxLFM8AdHY0224l4fzCqRH7oc6NQua5A4rttjn29ECvCjsVmE",
@@ -111,7 +111,7 @@ export default function RootLayout({
         <Script
           src="https://xeelaa.com/widget.js?key=tlJl0cJku5WaR7hUxLFM8AdHY0224l4fzCqRH7oc6NQua5A4rttjn29ECvCjsVmE"
           strategy="afterInteractive"
-        />
+        /> */}
       </body>
     </html>
   );
